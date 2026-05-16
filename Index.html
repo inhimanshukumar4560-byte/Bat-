@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batkaro</title>
+    
+    <!-- Original Styles and Fonts -->
+    <style>
+        /* --- 🌑 GLOBAL THEME & STYLE (DEFAULT/LIGHT MODE) --- */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-pink: #E91E63;
+            --accent-cyan: #00BCD4;
+            --primary-blue: #4A90E2;
+            --light-bg: #F4F6F8; /* Light gray background */
+            --content-bg: #FFFFFF; /* White for cards and elements */
+            --text-color: #212121; /* Dark gray for text */
+            --text-muted: #666666; /* Muted text color */
+            --muted-pink: rgba(233, 30, 99, 0.8);
+            --shadow-color: rgba(100, 100, 111, 0.2);
+            --sent-bubble-bg: #e1ffc7; /* Light green for sent messages */
+            --online-indicator: #4CAF50; /* Green for online status */
+            --danger-red: #f44336;
+            --seen-blue: #34B7F1; /* Blue color for seen ticks */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* MODIFIED: Body styles for better desktop viewing */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            justify-content: center;
+            background-color: #e5e5e5; /* A neutral background for desktop */
+        }
+        
+        /* NEW: Main container for mobile view on desktop */
+        #app-container {
+            width: 100%;
+            max-width: 500px; /* Max width for the app frame */
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            background-color: var(--light-bg);
+            overflow: hidden; /* Hide overflow within the app frame */
+        }
+        
+        /* MODIFIED: Page styles to allow content to grow */
+        .page {
+            display: none;
+            min-height: 100vh; /* Changed from height to min-height */
+            width: 100%;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            background-color: var(--light-bg);
+        }
+        
+        .page.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- ✨ NEW: AUTHENTICATION SCREEN --- */
+        #auth-screen {
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #fce4ec, #e3f2fd);
+            overflow-y: auto;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--content-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px var(--shadow-color);
+        }
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-pink);
+            font-weight: 700;
+        }
+        .auth-form .input-group {
+            margin-bottom: 15px;
+        }
+        .auth-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .auth-form input, .auth-form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .auth-form button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background-color: var(--primary-pink);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .auth-form button:hover {
+            background-color: #d81b60;
+        }
+        .auth-form button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .auth-toggle-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        .auth-toggle-link span {
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* NEW: Styles for Image Upload in Signup Form */
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        #image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #eee;
+            object-fit: cover;
+            display: none; /* Initially hidden */
+        }
+        #signup-image-label {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        #signup-image {
+            display: none; /* Hide the actual file input */
+        }
+        #upload-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            height: 1.2em;
+        }
+
+
+        /* --- 🏠 PAGE 2 — HOME SCREEN (Connecto Style) --- */
+        #home-screen .page-header {
+            background: var(--content-bg);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .app-logo-home { font-size: 1.5rem; font-weight: 700; color: var(--primary-pink); }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .balance-display { background: #f0f0f0; padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 0.9rem; }
+        .header-profile-icon img { width: 32px; height: 32px; border-radius: 50%; }
+
+        .home-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px 15px 90px 15px; /* Added padding-bottom for nav bar */
+        }
+        
+        .random-call-card {
+            background: linear-gradient(135deg, #e3f2fd, #e8eaf6);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .random-call-card .text h3 { font-size: 1rem; margin-bottom: 2px; }
+        .random-call-card .text p { font-size: 0.8rem; color: var(--text-muted); }
+        .random-call-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .category-bar-container {
+            padding: 0 0 15px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .category-bar-container::-webkit-scrollbar { display: none; }
+        .category-item {
+             display: inline-block;
+             color: var(--text-muted);
+             padding: 6px 18px;
+             margin-right: 8px;
+             border-radius: 20px;
+             font-size: 0.9rem;
+             font-weight: 500;
+             cursor: pointer;
+             border: 1px solid #ddd;
+             transition: all 0.3s ease;
+        }
+        .category-item.active {
+            background-color: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .profile-card.offline {
+            opacity: 0.6;
+            filter: grayscale(50%);
+        }
+        
+        .profile-card.offline .online-dot {
+            background-color: #9E9E9E; /* Grey dot for offline */
+        }
+
+
+        .profile-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            aspect-ratio: 9 / 16;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .profile-card-img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .profile-card .online-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 14px;
+            height: 14px;
+            background-color: var(--online-indicator);
+            border-radius: 50%;
+            border: 2px solid white;
+            z-index: 3;
+        }
+
+        .profile-card-overlay {
+            position: relative;
+            z-index: 2;
+            padding: 12px;
+            color: white;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        .profile-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .profile-card .profile-name {
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+        
+        .profile-card .rating {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .profile-card .rating svg {
+            width: 14px; height: 14px;
+            fill: #fbc02d;
+            margin-right: 4px;
+        }
+
+        .profile-card-tags {
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .profile-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .profile-card .rate {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+         .card-action-btn:active {
+             transform: scale(0.9);
+         }
+        
+        .card-action-btn.message-btn { background-color: var(--accent-cyan); }
+        .card-action-btn.call-btn { background-color: var(--primary-blue); }
+        .card-action-btn svg { width: 20px; height: 20px; fill: white; }
+
+
+        /* --- 👤 PAGE 3 — PROFILE SCREEN --- */
+        #profile-screen { justify-content: flex-start; overflow-y: auto; }
+        .profile-header {
+            background-color: var(--content-bg);
+            padding: 30px 20px;
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%; box-shadow: 0 4px 10px var(--shadow-color);
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+        }
+        .profile-picture-container { position: relative; width: 120px; height: 120px; }
+        .profile-picture { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-pink); }
+        .upload-icon { position: absolute; bottom: 5px; right: 5px; background-color: var(--accent-cyan); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid white; }
+        .upload-icon svg { width: 16px; height: 16px; fill: white; }
+        .profile-actions { display: flex; gap: 15px; margin-top: 20px; }
+        .profile-action-btn { padding: 10px 20px; font-size: 0.9rem; font-weight: 600; color: white; border: none; border-radius: 25px; cursor: pointer; transition: all 0.2s ease; }
+        .edit-profile-btn { background-color: var(--primary-pink); box-shadow: 0 4px 0 #b9184f; }
+        .add-balance-btn { background-color: var(--accent-cyan); box-shadow: 0 4px 0 #008a9a; }
+        .profile-action-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+        .settings-list { list-style: none; padding: 20px 20px 90px 20px; width: 100%; }
+        .settings-item { display: flex; align-items: center; background-color: var(--content-bg); padding: 15px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow-color); transition: transform 0.2s ease; }
+        .settings-item:active { transform: scale(0.98); }
+        .settings-item span { flex-grow: 1; font-weight: 500; }
+        .settings-item .chevron { width: 18px; height: 18px; color: #ccc; }
+        #logout-btn { background-color: var(--danger-red) !important; color: white; justify-content: center; font-weight: 600;}
+
+
+        /* --- 💬 CHAT PAGES --- */
+        .app-header { display: flex; align-items: center; padding: 10px 15px; background-color: var(--content-bg); box-shadow: 0 2px 4px var(--shadow-color); flex-shrink: 0; }
+        .back-button { background: none; border: none; cursor: pointer; margin-right: 10px; padding: 5px; }
+        .back-button svg { width: 24px; height: 24px; color: var(--text-color); }
+
+        /* Chat List Screen */
+        #chat-list-screen, #recent-screen { overflow-y: auto; }
+        .app-header h1 { font-size: 1.2rem; }
+        .chat-list { list-style: none; padding-bottom: 90px; }
+        .chat-list-item { display: flex; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #eee; background-color: var(--content-bg); }
+        .chat-list-item:hover { background-color: var(--light-bg); }
+        .chat-list-item img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; }
+        .chat-info { flex-grow: 1; }
+        .chat-info-header { display: flex; justify-content: space-between; align-items: center; }
+        .chat-name { font-weight: 600; }
+        .chat-timestamp { font-size: 0.75rem; color: var(--text-muted); }
+        .last-message { font-size: 0.9rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .empty-list-placeholder { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+
+        /* MODIFIED: Chat Conversation Screen (WhatsApp Style) */
+        #chat-conversation-screen { background-color: #e5ddd5; }
+        .chat-header-info { display: flex; align-items: center; }
+        .chat-header-info img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+        .chat-header-info .details { display: flex; flex-direction: column; }
+        .chat-header-info .details .name { font-weight: 600; font-size: 1rem; }
+        .chat-header-info .details .status { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .message-bubble { position: relative; max-width: 75%; padding: 8px 12px; border-radius: 10px; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; }
+        .message-bubble.sent { background-color: var(--sent-bubble-bg); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .message-bubble.received { background-color: var(--content-bg); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .delete-btn { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: #ff4d4d; color: white; border: none; border-radius: 50%; font-size: 12px; line-height: 20px; text-align: center; cursor: pointer; display: none; }
+        .message-bubble:hover .delete-btn { display: block; }
+        
+        /* NEW: Styles for message metadata (time and ticks) */
+        .message-content {
+            margin-bottom: 2px;
+            margin-right: 10px; /* Space for metadata */
+        }
+        .message-meta {
+            align-self: flex-end;
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
+        .message-meta .timestamp {
+            margin-right: 5px;
+        }
+        .message-meta .ticks {
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        /* MODIFIED: Changed seen tick color from pink to blue */
+        .message-meta .ticks.seen {
+             color: var(--seen-blue);
+        }
+
+        .chat-input-area { display: flex; padding: 10px; background-color: var(--light-bg); border-top: 1px solid #ddd; }
+        .chat-input-area input { flex-grow: 1; border: none; padding: 12px; border-radius: 25px; background-color: var(--content-bg); }
+        .chat-input-area input:focus { outline: none; }
+        .send-btn { background: var(--primary-pink); border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; margin-left: 10px; cursor: pointer; flex-shrink: 0; }
+        .send-btn svg { width: 24px; height: 24px; fill: white; }
+
+        /* --- 🔻 BOTTOM NAVIGATION BAR (USER) --- */
+        .bottom-nav {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 30px); max-width: 500px; display: flex; justify-content: space-around;
+            align-items: center; background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 10px 0; border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); border: 1px solid #eee; z-index: 100;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #9E9E9E; transition: color 0.3s ease; }
+        .nav-item.active { color: var(--primary-pink); }
+        .nav-item:hover { color: var(--primary-pink); }
+        .nav-item svg { width: 26px; height: 26px; stroke-width: 2; fill: none; stroke: currentColor; transition: transform 0.3s ease; }
+        .nav-item:active svg { transform: scale(0.9); }
+    </style>
+    
+    <!-- New Welcome Screen Dependencies -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2b8c",
+                        "background-light": "#f8f6f7",
+                        "background-dark": "#221019",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                        'glow': '0 0 20px rgba(238, 43, 140, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Styles for the new Welcome Screen */
+        #welcome-screen.page.active {
+            display: block; /* Override flex to allow Tailwind to control layout */
+            font-family: 'Plus Jakarta Sans', sans-serif; /* Use the new font */
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(34, 16, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .floating-icon {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* NEW: 3D Button Style */
+        #getStartedBtn {
+            box-shadow: 0 5px 0 #c11b6d; /* Darker shade of primary color */
+            transition: all 0.1s ease-out;
+        }
+        #getStartedBtn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #c11b6d;
+        }
+        
+        /* NEW: Font Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            /* Start with opacity 0 to prevent flash before animation starts */
+            opacity: 0; 
+            animation: fadeInUp 0.7s ease-out forwards;
+        }
+    </style>
+
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-[#181114] overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <!-- NEW: Main App Container -->
+    <div id="app-container">
+
+        <!-- PAGE 1: NEW WELCOME SCREEN -->
+        <div id="welcome-screen" class="page">
+            <!-- Main Mobile Container -->
+            <div class="relative mx-auto flex min-h-screen w-full flex-col overflow-hidden bg-white dark:bg-background-dark shadow-2xl">
+            <!-- Background Gradients & Ambient Light -->
+            <div class="absolute inset-0 z-0 pointer-events-none">
+            <!-- Main soft gradient base -->
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-[#2a1b25] dark:via-[#221019] dark:to-[#1a1520]"></div>
+            <!-- Colorful Orbs for Depth -->
+            <div class="absolute top-[-5%] left-[-20%] h-[400px] w-[400px] rounded-full bg-blue-400/20 blur-[80px] mix-blend-multiply dark:bg-blue-600/10"></div>
+            <div class="absolute top-[20%] right-[-30%] h-[300px] w-[300px] rounded-full bg-purple-400/20 blur-[60px] mix-blend-multiply dark:bg-purple-600/10"></div>
+            <div class="absolute bottom-[-10%] left-[20%] h-[350px] w-[350px] rounded-full bg-primary/15 blur-[70px] mix-blend-multiply dark:bg-primary/10"></div>
+            </div>
+            <!-- Content Area -->
+            <div class="relative z-10 flex h-full flex-grow flex-col justify-between px-6 pt-12 pb-8">
+            <!-- 1. Header Area -->
+            <div class="flex flex-col items-center">
+                <h1 class="text-3xl font-extrabold tracking-tight text-[#181114] dark:text-white drop-shadow-sm animate-fade-in-up">
+                    Bat<span class="text-primary">Karo</span>
+                </h1>
+            </div>
+            <!-- 2. Hero Section (Image + Floating Elements) -->
+            <div class="relative flex flex-col items-center justify-center py-6">
+            <!-- Main Circular Frame -->
+            <div class="relative z-10 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <!-- Glow effect behind image -->
+            <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-purple-400 to-primary opacity-40 blur-md"></div>
+            <!-- Image Container -->
+            <div class="relative h-72 w-72 overflow-hidden rounded-full border-[6px] border-white dark:border-white/10 shadow-2xl">
+                <!-- MODIFIED: Using <img> tag for better image control -->
+                <img src="https://i.ibb.co/8DxPkwCP/uh-OSAwl3-S0-SBZPYo-Wy42y-Q.webp" alt="Welcome Image" class="h-full w-full object-cover transition-transform duration-700 hover:scale-105">
+            </div>
+            <!-- Floating 3D Icon: Heart (Top Right) -->
+            <div class="floating-icon glass-panel absolute -right-2 top-4 flex h-14 w-14 rotate-12 items-center justify-center rounded-2xl">
+            <span class="material-symbols-outlined text-[32px] text-primary drop-shadow-sm" style="font-variation-settings: 'FILL' 1, 'wght' 600;">favorite</span>
+            </div>
+            <!-- Floating 3D Icon: Chat Bubble (Bottom Left) -->
+            <div class="floating-icon glass-panel absolute -left-4 bottom-12 flex h-16 w-16 -rotate-6 items-center justify-center rounded-full">
+            <span class="material-symbols-outlined text-[36px] text-blue-500 drop-shadow-sm" style="font-variation-settings: 'FILL' 1, 'wght' 500;">chat_bubble</span>
+            </div>
+            <!-- Floating 3D Icon: Call (Bottom Right) -->
+            <div class="floating-icon absolute -bottom-4 right-10 flex h-12 w-12 rotate-6 items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
+            <span class="material-symbols-outlined text-2xl text-purple-600 dark:text-purple-400" style="font-variation-settings: 'FILL' 1;">call</span>
+            </div>
+            </div>
+            </div>
+            <!-- 3. Text & Action Section -->
+            <div class="flex flex-col items-center gap-6 text-center">
+            <!-- Slogans -->
+            <div class="space-y-3">
+            <h2 class="px-2 text-[26px] leading-[1.2] font-bold text-[#181114] dark:text-white animate-fade-in-up" style="animation-delay: 0.4s;">
+                                    BatKaro – Jab Dil Kare,<br/>
+            <span class="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Bas Baat Karo</span> ❤️
+                                </h2>
+            <p class="px-6 text-base font-medium text-gray-500 dark:text-gray-400 animate-fade-in-up" style="animation-delay: 0.6s;">
+                                    Real Conversations, Real Connections
+                                </p>
+            </div>
+            <!-- Spacer -->
+            <div class="h-2"></div>
+            <!-- Primary Button -->
+            <div class="w-full max-w-[320px] animate-fade-in-up" style="animation-delay: 0.8s;">
+                <button id="getStartedBtn" class="group relative flex w-full h-14 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-primary shadow-glow transition-all hover:shadow-[0_0_30px_rgba(238,43,140,0.5)]">
+                    <!-- Shine Effect -->
+                    <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full"></div>
+                    <span class="text-[17px] font-bold tracking-wide text-white">Get Started</span>
+                    <span class="material-symbols-outlined ml-2 text-[20px] text-white transition-transform group-hover:translate-x-1">arrow_forward</span>
+                </button>
+            </div>
+            <!-- iOS Home Indicator Safe Area -->
+            <div class="mt-4 h-1.5 w-32 rounded-full bg-gray-200 dark:bg-gray-700 opacity-80"></div>
+            </div>
+            </div>
+            </div>
+        </div>
+        
+        <!-- PAGE: AUTHENTICATION SCREEN -->
+        <div id="auth-screen" class="page">
+            <div class="auth-container">
+                <!-- Sign Up Form -->
+                <form id="signup-form" class="auth-form">
+                    <h2>Create Account</h2>
+
+                    <!-- *** NEW: Image Upload Section *** -->
+                    <div class="image-upload-container">
+                        <img id="image-preview" src="https://via.placeholder.com/100" alt="Profile Preview">
+                        <label for="signup-image" id="signup-image-label">Choose Profile Picture</label>
+                        <input type="file" id="signup-image" accept="image/*">
+                        <p id="upload-status"></p>
+                        <input type="hidden" id="signup-image-url">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="signup-name">Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-age">Age</label>
+                        <input type="number" id="signup-age" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-gender">Gender</label>
+                        <select id="signup-gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-mobile">Mobile Number</label>
+                        <input type="tel" id="signup-mobile" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required minlength="6">
+                    </div>
+                    <button type="submit">Sign Up</button>
+                    <p class="auth-toggle-link">
+                        Already have an account? <span id="show-signin-link">Sign In</span>
+                    </p>
+                </form>
+                
+                <!-- Sign In Form -->
+                <form id="signin-form" class="auth-form hidden">
+                    <h2>Welcome Back!</h2>
+                    <div class="input-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" required>
+                    </div>
+                    <button type="submit">Sign In</button>
+                     <p class="auth-toggle-link">
+                        Don't have an account? <span id="show-signup-link">Sign Up</span>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- PAGE 2: HOME SCREEN -->
+        <div id="home-screen" class="page">
+            <header class="page-header">
+                <h1 class="app-logo-home">Batkaro</h1>
+                <div class="header-actions">
+                    <div class="balance-display">₹5.00</div>
+                    <div class="header-profile-icon">
+                        <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100" alt="My Profile">
+                    </div>
+                </div>
+            </header>
+            <main class="home-content">
+                <div class="random-call-card">
+                    <div class="text">
+                        <h3>Connect & Make Friends</h3>
+                        <p>@ ₹5/min only!</p>
+                    </div>
+                    <button class="random-call-btn">Random Call</button>
+                </div>
+                 <div class="category-bar-container">
+                    <div class="category-item active">All</div><div class="category-item">Star</div><div class="category-item">Relationship</div><div class="category-item">Marriage</div><div class="category-item">Confident</div>
+                </div>
+                <section class="profile-grid">
+                     <!-- Profile cards will be dynamically generated here -->
+                </section>
+            </main>
+        </div>
+
+        <!-- PAGE 3: PROFILE SCREEN -->
+        <div id="profile-screen" class="page">
+            <header class="profile-header">
+                <div class="profile-picture-container">
+                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Profile Picture" class="profile-picture">
+                    <div class="upload-icon"><svg viewBox="0 0 24 24"><path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"></path></svg></div>
+                </div>
+                <div class="profile-actions">
+                    <button class="profile-action-btn edit-profile-btn">Edit Profile</button>
+                    <button class="profile-action-btn add-balance-btn">Add Balance</button>
+                </div>
+            </header>
+            <ul class="settings-list">
+                 <li class="settings-item"><span>Transaction</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Change Language</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Rate Us</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Share App</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Privacy Policy</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Term and Condition</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li class="settings-item"><span>Contact Us</span><svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></li>
+                <li id="logout-btn" class="settings-item"><span>Logout</span></li>
+            </ul>
+        </div>
+        
+        <!-- PAGE 4: CHAT LIST SCREEN -->
+        <div id="chat-list-screen" class="page">
+            <header class="app-header">
+                <h1>Chats</h1>
+            </header>
+            <main>
+                <ul class="chat-list">
+                    <!-- Chat list items will be dynamically generated here -->
+                </ul>
+            </main>
+        </div>
+
+        <!-- PAGE 5: CHAT CONVERSATION SCREEN -->
+        <div id="chat-conversation-screen" class="page">
+            <header class="app-header">
+                <button class="back-button" data-page="chat-list-screen">
+                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div class="chat-header-info">
+                    <img src="" alt="Profile Pic"> <!-- Image src will be set by JS -->
+                    <div class="details">
+                        <span class="name"></span> <!-- Name will be set by JS -->
+                        <span class="status">online</span>
+                    </div>
+                </div>
+            </header>
+            <main class="chat-messages">
+                <!-- Messages will be loaded from Firebase here -->
+            </main>
+            <footer class="chat-input-area">
+                <input id="chat-input-field" type="text" placeholder="Type a message...">
+                <button id="send-message-btn" class="send-btn"><svg viewBox="0 0 24 24"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"></path></svg></button>
+            </footer>
+        </div>
+        
+        <!-- PAGE 6: RECENT CALLS SCREEN -->
+        <div id="recent-screen" class="page">
+            <header class="app-header">
+                <h1>Recent Calls</h1>
+            </header>
+            <main>
+                <ul id="recent-calls-list" class="chat-list">
+                    <!-- Recent call items will be dynamically inserted here -->
+                </ul>
+            </main>
+        </div>
+
+        <!-- REGULAR USER BOTTOM NAVIGATION BAR -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-page="home-screen"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></div>
+            <div class="nav-item" data-page="chat-list-screen"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div>
+            <div class="nav-item" data-page="recent-screen"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+            <div class="nav-item" data-page="profile-screen"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+        </nav>
+    
+    </div> <!-- End of #app-container -->
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2PG5JvDko2UmQDlY9gN5lBgga2vQy-Ws",
+            authDomain: "conceptra-c1000.firebaseapp.com",
+            databaseURL: "https://conceptra-c1000-default-rtdb.firebaseio.com",
+            projectId: "conceptra-c1000",
+            storageBucket: "conceptra-c1000.appspot.com",
+            messagingSenderId: "298402987968",
+            appId: "1:298402987968:web:c0d0d7d6c08cdfa6bc5225",
+            measurementId: "G-QRQYEVSJJ6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const firestore = firebase.firestore();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elements ---
+            const pages = document.querySelectorAll('.page');
+            const navItems = document.querySelectorAll('.nav-item');
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            const bottomNav = document.querySelector('.bottom-nav');
+            
+            // Auth elements
+            const signupForm = document.getElementById('signup-form');
+            const signinForm = document.getElementById('signin-form');
+            const showSigninLink = document.getElementById('show-signin-link');
+            const showSignupLink = document.getElementById('show-signup-link');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            // *** NEW: Cloudinary and Image Upload Elements ***
+            const signupImageInput = document.getElementById('signup-image');
+            const imagePreview = document.getElementById('image-preview');
+            const signupImageUrlInput = document.getElementById('signup-image-url');
+            const uploadStatus = document.getElementById('upload-status');
+            const signupButton = signupForm.querySelector('button[type="submit"]');
+
+            const CLOUD_NAME = 'dtvrhjtt4';
+            const UPLOAD_PRESET = 'Soul_Spark';
+            const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+            let currentChatId = null;
+            let currentUserId = null; 
+            let currentOpenChatOtherUserId = null; 
+
+            let messagesRef = null;
+            let messagesListener = null;
+            let chatListListener = null;
+            
+            // --- Mock DB for active chats (will be replaced by Firebase listener) ---
+            const db = {
+                activeChats: []
+            };
+
+            // --- Page Navigation (Simplified) ---
+            const showPage = (pageId) => {
+                pages.forEach(page => page.classList.remove('active'));
+                const pageToShow = document.getElementById(pageId);
+                if (pageToShow) {
+                    pageToShow.classList.add('active');
+                }
+                
+                const pagesWithoutNav = ['welcome-screen', 'auth-screen', 'chat-conversation-screen'];
+                if (pagesWithoutNav.includes(pageId)) {
+                    bottomNav.style.display = 'none';
+                } else {
+                    bottomNav.style.display = 'flex';
+                }
+
+                navItems.forEach(item => {
+                    const isChatRelated = item.dataset.page === 'chat-list-screen' && (pageId === 'chat-list-screen' || pageId === 'chat-conversation-screen');
+                    item.classList.toggle('active', item.dataset.page === pageId || isChatRelated);
+                });
+            };
+            
+            // --- MODIFIED: Central Authentication Logic ---
+            // This is the most important change. It checks the user's login state
+            // as soon as the app loads and decides which page to show.
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // If user is logged in:
+                    currentUserId = user.uid;
+                    listenForNewChats(user.uid);
+                    fetchAllUsers();
+                    showPage('home-screen'); // Directly go to the home screen
+                } else {
+                    // If user is not logged in:
+                    currentUserId = null;
+                    if (chatListListener) chatListListener.off();
+                    // Clear any old data from the screen
+                    document.querySelector('.profile-grid').innerHTML = '';
+                    document.querySelector('.chat-list').innerHTML = '';
+                    showPage('welcome-screen'); // Show the welcome screen
+                }
+            });
+
+            // --- Event Listeners ---
+            getStartedBtn.addEventListener('click', () => {
+                // This button's logic is now simpler. It will only be clicked
+                // when the user is logged out.
+                showPage('auth-screen');
+            });
+            
+            showSigninLink.addEventListener('click', () => {
+                signupForm.classList.add('hidden');
+                signinForm.classList.remove('hidden');
+            });
+
+            showSignupLink.addEventListener('click', () => {
+                signinForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+            });
+            
+            // *** NEW: Cloudinary Image Upload Function ***
+            async function uploadImageToCloudinary(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET);
+                
+                try {
+                    const response = await fetch(CLOUDINARY_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    return data.secure_url;
+                } catch (error) {
+                    console.error('Error uploading to Cloudinary:', error);
+                    return null;
+                }
+            }
+
+            // *** NEW: Event Listener for Image Selection ***
+            signupImageInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Show preview
+                imagePreview.style.display = 'block';
+                imagePreview.src = URL.createObjectURL(file);
+                
+                // Update status and disable button
+                uploadStatus.textContent = 'Uploading image...';
+                signupButton.disabled = true;
+
+                const imageUrl = await uploadImageToCloudinary(file);
+
+                if (imageUrl) {
+                    signupImageUrlInput.value = imageUrl; // Store the URL in the hidden input
+                    uploadStatus.textContent = 'Image uploaded successfully!';
+                    signupButton.disabled = false; // Re-enable button
+                } else {
+                    uploadStatus.textContent = 'Upload failed. Please try again.';
+                    alert('Image upload failed. Please select another image.');
+                    signupImageUrlInput.value = '';
+                    imagePreview.style.display = 'none';
+                    signupButton.disabled = false; // Also re-enable on failure
+                }
+            });
+
+            // *** UPDATED: Signup Form Submission ***
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const profileImg = signupImageUrlInput.value;
+                if (!profileImg) {
+                    alert('Please choose a profile picture and wait for it to upload.');
+                    return;
+                }
+
+                const name = signupForm['signup-name'].value;
+                const email = signupForm['signup-email'].value;
+                const age = signupForm['signup-age'].value;
+                const gender = signupForm['signup-gender'].value;
+                const mobile = signupForm['signup-mobile'].value;
+                const password = signupForm['signup-password'].value;
+
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(cred => {
+                        return firestore.collection('users').doc(cred.user.uid).set({
+                            uid: cred.user.uid,
+                            name: name,
+                            age: age,
+                            gender: gender,
+                            mobile: mobile,
+                            email: email,
+                            profileImg: profileImg, // Use the uploaded image URL
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    })
+                    .then(() => {
+                        // After signup, the onAuthStateChanged will automatically handle
+                        // showing the home screen. No need to call showPage here.
+                        signupForm.reset();
+                        imagePreview.style.display = 'none';
+                        uploadStatus.textContent = '';
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    });
+            });
+
+            signinForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = signinForm['signin-email'].value;
+                const password = signinForm['signin-password'].value;
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => { 
+                        // After signin, the onAuthStateChanged will automatically handle
+                        // showing the home screen. No need to call showPage here.
+                        signinForm.reset(); 
+                    })
+                    .catch(err => { alert("Failed to sign in. Please check your email and password."); console.error(err); });
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                auth.signOut();
+                // After signing out, onAuthStateChanged will automatically handle
+                // showing the welcome screen and cleaning up data.
+            });
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => { showPage(item.dataset.page); });
+            });
+            
+            // Simplified click listener for dynamic content
+            document.body.addEventListener('click', (e) => {
+                const backButton = e.target.closest('.back-button');
+                if (backButton) { showPage(backButton.dataset.page); }
+                
+                const messageBtn = e.target.closest('.message-btn');
+                if (messageBtn) {
+                     if (!currentUserId) { alert("Please sign in to chat."); return; }
+                    openChat(messageBtn.dataset.profileUid, messageBtn.dataset.profileName, messageBtn.dataset.profileImg);
+                }
+
+                const callBtn = e.target.closest('.call-btn');
+                if (callBtn) {
+                     if (!currentUserId) { alert("Please sign in to call."); return; }
+                     alert(`Calling ${callBtn.dataset.profileName}...`);
+                }
+
+                const chatListItem = e.target.closest('.chat-list-item');
+                if(chatListItem) {
+                    openChat(chatListItem.dataset.otherUserId, chatListItem.dataset.profileName, chatListItem.dataset.profileImg);
+                }
+            });
+
+            // --- CHAT AND USER-RELATED FUNCTIONS ---
+
+            // *** NEW: Function to mark messages as seen ***
+            function markMessagesAsSeen(chatId, otherUserId) {
+                if (!chatId || !otherUserId) return;
+
+                const messagesRef = database.ref(`chats/${chatId}`);
+                // Find messages sent by the other user that are not yet 'seen'
+                messagesRef.orderByChild('senderId').equalTo(otherUserId).once('value', snapshot => {
+                    snapshot.forEach(childSnapshot => {
+                        const message = childSnapshot.val();
+                        if (message.status !== 'seen') {
+                            // Update the status of this specific message to 'seen'
+                            childSnapshot.ref.update({ status: 'seen' });
+                        }
+                    });
+                });
+            }
+
+            function openChat(otherUserId, name, img) {
+                if (!currentUserId || !otherUserId) return;
+                const ids = [currentUserId, otherUserId].sort();
+                currentChatId = ids.join('_');
+                currentOpenChatOtherUserId = otherUserId;
+
+                const headerInfo = document.querySelector('#chat-conversation-screen .chat-header-info');
+                headerInfo.querySelector('.name').textContent = name;
+                headerInfo.querySelector('img').src = img;
+                
+                loadMessages(currentChatId);
+                // *** NEW: Mark incoming messages as seen when chat is opened ***
+                markMessagesAsSeen(currentChatId, otherUserId);
+                showPage('chat-conversation-screen');
+            }
+
+            function loadMessages(chatId) {
+                if (messagesRef && messagesListener) { 
+                    messagesRef.off('value', messagesListener); 
+                }
+                
+                const messagesContainer = document.querySelector('.chat-messages');
+                messagesContainer.innerHTML = ''; 
+                messagesRef = database.ref(`chats/${chatId}`);
+                
+                messagesListener = messagesRef.orderByChild('timestamp').on('value', (snapshot) => {
+                    messagesContainer.innerHTML = '';
+                    snapshot.forEach((childSnapshot) => {
+                        displayMessage(childSnapshot.key, childSnapshot.val());
+                    });
+                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                });
+            }
+
+            function displayMessage(messageId, message) {
+                const messagesContainer = document.querySelector('.chat-messages');
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble', message.senderId === currentUserId ? 'sent' : 'received');
+
+                // MODIFIED: Logic to display single, double, and blue ticks
+                const getTicksHTML = (status) => {
+                    // Assuming 'delivered' status might be added later. For now, anything not 'sent' is treated as delivered (double grey tick).
+                    // And if it's 'seen', the '.seen' class will make it blue.
+                    if (status === 'sent') {
+                        return '<span class="ticks">✓</span>'; // Single grey tick
+                    }
+                    // For 'delivered' or 'seen'
+                    return `<span class="ticks ${status === 'seen' ? 'seen' : ''}">✓✓</span>`; // Double tick (blue if seen)
+                };
+
+                messageBubble.innerHTML = `
+                    <span class="message-content">${message.text}</span>
+                    <div class="message-meta">
+                        <span class="timestamp">${new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        ${message.senderId === currentUserId ? getTicksHTML(message.status) : ''}
+                    </div>
+                `;
+                messagesContainer.appendChild(messageBubble);
+            }
+
+            async function sendMessage() {
+                const chatInput = document.getElementById('chat-input-field');
+                const messageText = chatInput.value.trim();
+                if (messageText === '' || !currentChatId || !currentUserId) return;
+
+                try {
+                    const myProfileDoc = await firestore.collection('users').doc(currentUserId).get();
+                    const otherProfileDoc = await firestore.collection('users').doc(currentOpenChatOtherUserId).get();
+
+                    if (!myProfileDoc.exists || !otherProfileDoc.exists) {
+                        alert("Cannot send message. User profile not found.");
+                        return;
+                    }
+                    
+                    const myProfileData = myProfileDoc.data();
+                    const otherProfileData = otherProfileDoc.data();
+
+                    // Message status starts as 'sent'. It will be updated to 'delivered' and 'seen' by other events.
+                    const messageData = { senderId: currentUserId, text: messageText, timestamp: firebase.database.ServerValue.TIMESTAMP, status: 'sent' };
+                    await database.ref(`chats/${currentChatId}`).push().set(messageData);
+                    
+                    const chatInfo = { lastMessage: messageText, timestamp: firebase.database.ServerValue.TIMESTAMP };
+                    await database.ref(`userChats/${currentUserId}/${currentOpenChatOtherUserId}`).set({ ...chatInfo, withUserName: otherProfileData.name, withUserImg: otherProfileData.profileImg });
+                    await database.ref(`userChats/${currentOpenChatOtherUserId}/${currentUserId}`).set({ ...chatInfo, withUserName: myProfileData.name, withUserImg: myProfileData.profileImg });
+                    
+                    chatInput.value = '';
+                } catch (error) {
+                    console.error("Error sending message:", error);
+                    alert("Failed to send message. Please check your connection and Firebase rules.");
+                }
+            }
+
+            function listenForNewChats(uid) {
+                if (chatListListener) chatListListener.off();
+                chatListListener = database.ref(`userChats/${uid}`);
+                chatListListener.on('value', snapshot => {
+                    db.activeChats = [];
+                    snapshot.forEach(child => {
+                        db.activeChats.push({ otherUserId: child.key, ...child.val() });
+                    });
+                    db.activeChats.sort((a, b) => b.timestamp - a.timestamp);
+                    renderChatList();
+                });
+            }
+
+            function renderChatList() {
+                const chatList = document.querySelector('#chat-list-screen .chat-list');
+                chatList.innerHTML = '';
+                if (db.activeChats.length === 0) {
+                    chatList.innerHTML = `<p class="empty-list-placeholder">No active chats.</p>`;
+                    return;
+                }
+                db.activeChats.forEach(chat => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'chat-list-item';
+                    listItem.dataset.profileName = chat.withUserName;
+                    listItem.dataset.profileImg = chat.withUserImg;
+                    listItem.dataset.otherUserId = chat.otherUserId;
+                    listItem.innerHTML = `<img src="${chat.withUserImg || 'https://via.placeholder.com/50'}" alt="${chat.withUserName}"><div class="chat-info"><div class="chat-info-header"><span class="chat-name">${chat.withUserName}</span><span class="chat-timestamp">${new Date(chat.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div><p class="last-message">${chat.lastMessage}</p></div>`;
+                    chatList.appendChild(listItem);
+                });
+            }
+            
+            const sendBtn = document.getElementById('send-message-btn');
+            const chatInput = document.getElementById('chat-input-field');
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+            // *** NEW: Functions to fetch and display all users on home screen ***
+            async function fetchAllUsers() {
+                if (!currentUserId) return;
+                try {
+                    const usersSnapshot = await firestore.collection('users').get();
+                    const users = [];
+                    usersSnapshot.forEach(doc => {
+                        if (doc.id !== currentUserId) { // Don't show the current user's own profile
+                            users.push(doc.data());
+                        }
+                    });
+                    renderUsersOnHomeScreen(users);
+                } catch (error) {
+                    console.error("Error fetching users:", error);
+                }
+            }
+
+            function renderUsersOnHomeScreen(users) {
+                const profileGrid = document.querySelector('.profile-grid');
+                profileGrid.innerHTML = ''; // Clear previous users
+                users.forEach(user => {
+                    const profileCard = document.createElement('div');
+                    profileCard.className = 'profile-card';
+                    profileCard.dataset.profileUid = user.uid;
+
+                    profileCard.innerHTML = `
+                        <img src="${user.profileImg}" alt="Profile" class="profile-card-img">
+                        <div class="online-dot"></div>
+                        <div class="profile-card-overlay">
+                            <div class="profile-card-header">
+                                <span class="profile-name">${user.name} • ${user.age} Y</span>
+                                <div class="rating">
+                                    <svg viewBox="0 0 24 24"><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"></path></svg>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                            <div class="profile-card-tags">
+                                <span>Hindi</span> • <span>Friendly</span>
+                            </div>
+                            <div class="profile-card-footer">
+                                <span class="rate">₹5/min</span>
+                                <div class="card-actions">
+                                    <button class="card-action-btn message-btn" data-profile-uid="${user.uid}" data-profile-name="${user.name}" data-profile-img="${user.profileImg}">
+                                        <svg viewBox="0 0 24 24"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2M20 16H5.2L4 17.2V4H20V16Z"></path></svg>
+                                    </button>
+                                    <button class="card-action-btn call-btn" data-profile-name="${user.name} • ${user.age} Y">
+                                        <svg viewBox="0 0 24 24"><path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    profileGrid.appendChild(profileCard);
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>
