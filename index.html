@@ -270,39 +270,12 @@
               border-color: rgba(255, 255, 255, 0.2);
               margin-left: auto;
           }
-
-          /* === NEW THEME OVERRIDES FOR LIGHT MODE (WITHOUT DELETING DARK CSS) === */
-          html:not(.dark) body {
-              background: linear-gradient(to bottom, #f9f9f9, #e5e5e5) !important;
-              color: #1a1a1a !important;
-          }
-          html:not(.dark) .glass-panel, html:not(.dark) .glass-panel-heavy {
-              background: rgba(255, 255, 255, 0.85) !important;
-              border-color: rgba(255, 0, 76, 0.2) !important;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
-          }
-          html:not(.dark) .text-white { color: #1a1a1a !important; }
-          html:not(.dark) .text-glow-white { text-shadow: none !important; color: #1a1a1a !important; }
-          html:not(.dark) .bg-gradient-to-b.from-\[\#0a0a0a\] { background: #f0f0f0 !important; }
-          html:not(.dark) .bg-\[\#0a0a0a\] { background-color: #ffffff !important; }
-          html:not(.dark) .bg-\[\#131313\] { background-color: #f5f5f5 !important; }
-          html:not(.dark) .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
-          html:not(.dark) .text-white\/50 { color: rgba(0,0,0,0.5) !important; }
-          html:not(.dark) .text-white\/60 { color: rgba(0,0,0,0.6) !important; }
-          html:not(.dark) .text-white\/70 { color: rgba(0,0,0,0.7) !important; }
-          html:not(.dark) .text-white\/80 { color: rgba(0,0,0,0.8) !important; }
-          html:not(.dark) .text-white\/90 { color: rgba(0,0,0,0.9) !important; }
-          html:not(.dark) .bg-white\/10 { background-color: rgba(0,0,0,0.05) !important; }
-          html:not(.dark) .bg-white\/5 { background-color: rgba(0,0,0,0.03) !important; }
-          html:not(.dark) .overlay-glass { background: rgba(255, 255, 255, 0.9) !important; }
-          /* Preserve White text in specific buttons during light mode */
-          html:not(.dark) .btn-hot-pink-gradient .text-white,
-          html:not(.dark) .bg-red-600 .text-white,
-          html:not(.dark) .bg-green-500 .text-white,
-          html:not(.dark) #see-all-grid .text-white { color: #ffffff !important; }
       </style>
 </head>
 <body class="bg-gradient-to-b from-[#0a0a0a] to-[#040404] text-on-background relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
+
+<!-- Hidden Profile Trigger Button (Keeps functions unbroken) -->
+<div id="header-profile-btn" class="hidden"></div>
 
 <!-- Ambient Background Glows - Enhanced Opacity and Blur for better atmosphere -->
 <div class="fixed inset-0 z-0 pointer-events-none">
@@ -311,43 +284,28 @@
     <div class="absolute top-[40%] left-[30%] w-[40vw] h-[40vw] rounded-full bg-[#ff3b6b]/5 blur-[180px]"></div>
 </div>
 
-<!-- ================= TOP HEADER ================= -->
+<!-- ================= TOP HEADER (REDESIGNED) ================= -->
 <header class="sticky top-0 w-full z-50 glass-panel-heavy px-4 py-3 flex justify-between items-center shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-white/5">
-    <!-- User Profile & Status (Added ID for click event) -->
-    <div class="flex items-center gap-3 cursor-pointer group" id="header-profile-btn">
-        <div class="relative transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
-            <img id="top-user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-10 h-10 rounded-full object-cover border-2 border-[#ff004c] shadow-[0_0_10px_rgba(255,0,76,0.4)]" alt="Profile">
-            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#131313] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-[14px] font-bold tracking-wide text-white group-hover:text-glow-white transition-all" id="top-user-greeting">Hi, Guest</span>
-            <span class="text-[10px] text-[#ff8fa3] font-semibold">Online</span>
-        </div>
-    </div>
-
-    <!-- Center Logo (CHANGED TO ZINGOO) -->
-    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-3d-animated cursor-pointer">
+    
+    <!-- LEFT: Zingoo Logo -->
+    <div class="flex items-center text-3d-animated cursor-pointer">
         <span class="text-glow-white tracking-[0.1em] font-light text-[18px]" style="font-family: 'Times New Roman', serif;">ZIN</span>
         <span class="text-[#ff004c] font-black text-[24px] text-glow-red ml-1 transform scale-y-125 -rotate-6">GOO</span>
     </div>
 
-    <!-- Wallet, Theme Toggle & Notifications -->
-    <div class="flex items-center gap-3 md:gap-4">
-        <div class="flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 shadow-inner hover:bg-white/20 transition-all cursor-pointer">
-            <span class="material-symbols-outlined text-[#ffd700] text-[16px] drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">diamond</span>
-            <span class="text-[12px] font-bold text-white drop-shadow-md">1,250</span>
-        </div>
-        
-        <!-- NEW: Theme Toggle Button -->
-        <div class="relative cursor-pointer transition-transform duration-300 hover:scale-110" id="theme-toggle">
-            <span class="material-symbols-outlined text-white text-[24px] hover:text-[#ff004c] transition-all" id="theme-icon">light_mode</span>
-        </div>
+    <!-- CENTER: Coins -->
+    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 shadow-inner hover:bg-white/20 transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[#ffd700] text-[16px] drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">diamond</span>
+        <span class="text-[12px] font-bold text-white drop-shadow-md">1,250</span>
+    </div>
 
-        <div class="relative cursor-pointer transition-transform duration-300 hover:scale-110">
-            <span class="material-symbols-outlined text-white text-[24px] hover:text-[#ff004c] hover:drop-shadow-[0_0_10px_rgba(255,0,76,0.8)] transition-all">notifications</span>
-            <div class="absolute top-0 right-0 w-2.5 h-2.5 bg-[#ff004c] rounded-full border border-black shadow-[0_0_8px_rgba(255,0,76,0.8)] animate-pulse"></div>
+    <!-- RIGHT: 3-Line Menu -->
+    <div class="flex items-center gap-3">
+        <div class="relative cursor-pointer transition-transform duration-300 hover:scale-110" onclick="alert('Menu options will be displayed here.')">
+            <span class="material-symbols-outlined text-white text-[28px] hover:text-[#ff004c] transition-all">menu</span>
         </div>
     </div>
+    
 </header>
 
 <!-- ================= MAIN CONTENT ================= -->
@@ -495,7 +453,7 @@
         <div class="absolute top-0 right-0 w-3 h-3 bg-[#ff004c] rounded-full border-2 border-[#0a0a0a] shadow-[0_0_8px_rgba(255,0,76,0.8)] animate-pulse"></div>
     </div>
 
-    <!-- Profile (Also links to manage profile) -->
+    <!-- Profile (Links to manage profile safely) -->
     <div class="flex flex-col items-center gap-1.5 cursor-pointer text-white/50 nav-item-hover transition-all duration-300 bottom-nav-btn" onclick="document.getElementById('header-profile-btn').click()">
         <span class="material-symbols-outlined text-[28px]">person</span>
         <span class="text-[11px] font-medium tracking-wide">Profile</span>
@@ -503,6 +461,19 @@
     </div>
 
 </nav>
+
+<!-- ================= NEW: FULL SCREEN VIDEO PLAYER OVERLAY ================= -->
+<div id="video-player-overlay" class="fixed inset-0 bg-[#000000] z-[9500] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-[#ff004c]/20 absolute top-0 w-full z-50">
+        <button class="text-white hover:text-[#ff004c] transition-colors" onclick="closeVideoPlayer()"><span class="material-symbols-outlined text-[28px]">arrow_back</span></button>
+        <h3 class="text-white font-bold text-lg text-glow-white tracking-widest uppercase text-[12px]">Now Playing</h3>
+        <div class="w-6"></div> <!-- Spacer for center alignment -->
+    </div>
+    
+    <div id="video-player-container" class="w-full h-full flex items-center justify-center pb-4 pt-16 bg-black">
+        <!-- The video tag or youtube iframe will be dynamically injected here -->
+    </div>
+</div>
 
 <!-- ================= EXISTING "SEE ALL" GRID PAGE OVERLAY ================= -->
 <div id="see-all-overlay" class="fixed inset-0 bg-[#0a0a0a] z-[8000] flex-col hidden overflow-hidden transition-all duration-300">
@@ -539,49 +510,17 @@
         </button>
     </div>
 
-    <!-- Feed Container -->
+    <!-- Feed Container (Emptied prototypes to let only real uploads show) -->
     <div class="flex-1 overflow-y-auto pb-24 no-scrollbar bg-[#0a0a0a]">
-        
         <!-- Shorts Grid (9:16) -->
         <div id="shorts-feed-container" class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-            <!-- Dummy Short 1 -->
-            <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-white/10 group cursor-pointer">
-                <img src="https://images.unsplash.com/photo-1516483638261-f40af5a5a191?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
-                <div class="absolute bottom-3 left-3 right-3">
-                    <h4 class="text-white text-sm font-bold line-clamp-2 leading-tight">Dancing to the new trend! 🔥</h4>
-                    <p class="text-[#ff004c] text-[10px] font-bold mt-1">@ZingooStar</p>
-                </div>
-            </div>
-            <!-- Dummy Short 2 -->
-            <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-white/10 group cursor-pointer">
-                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
-                <div class="absolute bottom-3 left-3 right-3">
-                    <h4 class="text-white text-sm font-bold line-clamp-2 leading-tight">Behind the scenes look 👀</h4>
-                    <p class="text-[#ff004c] text-[10px] font-bold mt-1">@CreatorVibe</p>
-                </div>
-            </div>
+            <!-- Dynamically injected real uploads will appear here -->
         </div>
 
         <!-- Long Videos Grid (16:9) -->
         <div id="longs-feed-container" class="p-4 flex flex-col gap-6 hidden">
-            <!-- Dummy Long Video 1 -->
-            <div class="w-full cursor-pointer group">
-                <div class="relative w-full rounded-2xl overflow-hidden aspect-video shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-white/10 mb-3 group-hover:border-[#ff004c]/50 transition-colors">
-                    <img src="https://images.unsplash.com/photo-1593697821252-0c9137d9fc45?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
-                    <div class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded-md">10:45</div>
-                </div>
-                <div class="flex gap-3 px-1">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=long1&backgroundColor=131313" class="w-10 h-10 rounded-full border border-[#ff004c]">
-                    <div>
-                        <h4 class="text-white font-bold text-[15px] leading-tight mb-1 group-hover:text-[#ff004c] transition-colors">My Secret Vacation Vlog 2024 - Zingoo Exclusive</h4>
-                        <p class="text-white/50 text-[11px]">Zingoo Creator • 12K views • 2 hours ago</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Dynamically injected real uploads will appear here -->
         </div>
-
     </div>
 </div>
 
@@ -848,7 +787,36 @@
   let currentUser = localStorage.getItem("zingoo_user") || localStorage.getItem("privateX_user");
   let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
 
-  // --- NEW ADDITION: UI Toggles for Video Upload & Video Feed ---
+  // --- NEW ADDITION: Full Screen Video Player Logic ---
+  window.playVideo = function(url, type, isYouTube) {
+      const overlay = document.getElementById('video-player-overlay');
+      const container = document.getElementById('video-player-container');
+      
+      overlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      if(isYouTube) {
+          let embedUrl = url;
+          if (url.includes('watch?v=')) {
+              embedUrl = url.replace('watch?v=', 'embed/');
+          } else if (url.includes('youtu.be/')) {
+              embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
+          }
+          container.innerHTML = `<iframe class="w-full ${type === 'short' ? 'h-[85vh] aspect-[9/16]' : 'aspect-video'}" src="${embedUrl}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      } else {
+          container.innerHTML = `<video class="w-full ${type === 'short' ? 'h-[85vh] object-contain' : 'aspect-video'}" controls autoplay playsinline>
+              <source src="${url}" type="video/mp4">
+              Your browser does not support the video tag.
+          </video>`;
+      }
+  };
+
+  window.closeVideoPlayer = function() {
+      document.getElementById('video-player-overlay').style.display = 'none';
+      document.getElementById('video-player-container').innerHTML = ''; // Destroys the video element so it stops playing
+  };
+
+  // --- UI Toggles for Video Upload & Video Feed ---
   window.toggleUploadSource = function(type) {
       const btnUpload = document.getElementById('src-btn-upload');
       const btnLink = document.getElementById('src-btn-link');
@@ -898,7 +866,7 @@
       if (isUpload) {
           const videoFile = document.getElementById('video-file-input').files[0];
           if(!videoFile) { alert('Please select a video file!'); return; }
-          // Create temporary local URL for frontend display without crashing DB limits
+          // Create temporary local URL for the actual video to play
           mediaUrl = URL.createObjectURL(videoFile);
       } else {
           const ytLink = document.getElementById('upload-yt-link').value;
@@ -907,17 +875,23 @@
       }
 
       const thumbFile = document.getElementById('thumb-file-input').files[0];
+      // Default thumbnail if none selected
       let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop"; 
       if (thumbFile) {
           thumbUrl = URL.createObjectURL(thumbFile);
       }
 
-      // Add to UI Dynamically
+      const isYouTube = !isUpload;
+      const clickHandler = `playVideo('${mediaUrl}', '${type}', ${isYouTube})`;
+
+      // Add to UI Dynamically with the onClick Play function attached
       if (type === 'short') {
           const shortHtml = `
-          <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-[#ff004c]/50 group cursor-pointer animate-fade-up">
+          <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-[#ff004c]/50 group cursor-pointer animate-fade-up" onclick="${clickHandler}">
               <img src="${thumbUrl}" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-center justify-center">
+                  <span class="material-symbols-outlined text-white/70 text-[40px] drop-shadow-md">play_circle</span>
+              </div>
               <div class="absolute bottom-3 left-3 right-3">
                   <h4 class="text-white text-sm font-bold line-clamp-2 leading-tight">${title}</h4>
                   <p class="text-[#ff004c] text-[10px] font-bold mt-1">@${currentUser || 'You'}</p>
@@ -926,9 +900,12 @@
           document.getElementById('shorts-feed-container').insertAdjacentHTML('afterbegin', shortHtml);
       } else {
           const longHtml = `
-          <div class="w-full cursor-pointer group animate-fade-up mb-4">
+          <div class="w-full cursor-pointer group animate-fade-up mb-4" onclick="${clickHandler}">
               <div class="relative w-full rounded-2xl overflow-hidden aspect-video shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-[#ff004c]/50 mb-3 group-hover:border-[#ff004c] transition-colors">
                   <img src="${thumbUrl}" class="w-full h-full object-cover">
+                  <div class="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/40 transition-all">
+                      <span class="material-symbols-outlined text-white text-[50px] drop-shadow-lg">play_arrow</span>
+                  </div>
                   <div class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded-md">NEW</div>
               </div>
               <div class="flex gap-3 px-1">
@@ -971,29 +948,11 @@
   });
 
 
-  // --- 0. THEME TOGGLE LOGIC ---
+  // --- 0. THEME TOGGLE LOGIC (Forced Default Dark Theme as requested) ---
   const htmlEl = document.documentElement;
-  const themeToggle = document.getElementById('theme-toggle');
-  const themeIcon = document.getElementById('theme-icon');
-
-  if (localStorage.getItem('zingoo_theme') === 'light') {
-      htmlEl.classList.remove('dark');
-      themeIcon.innerText = 'dark_mode';
-  } else {
-      htmlEl.classList.add('dark');
-      themeIcon.innerText = 'light_mode';
-  }
-
-  themeToggle.addEventListener('click', () => {
-      htmlEl.classList.toggle('dark');
-      if (htmlEl.classList.contains('dark')) {
-          localStorage.setItem('zingoo_theme', 'dark');
-          themeIcon.innerText = 'light_mode';
-      } else {
-          localStorage.setItem('zingoo_theme', 'light');
-          themeIcon.innerText = 'dark_mode';
-      }
-  });
+  // Strongly forcing dark theme 
+  htmlEl.classList.add('dark');
+  localStorage.setItem('zingoo_theme', 'dark');
 
   // --- 1. PROFILE CREATION, IMAGE UPLOAD & LOCALSTORAGE LOGIC ---
   let currentAge = localStorage.getItem("zingoo_age") || "";
@@ -1003,15 +962,11 @@
   let uploadedAvatarBase64 = currentAvatar;
 
   const authOverlay = document.getElementById("auth-overlay");
-  const topGreeting = document.getElementById("top-user-greeting");
-  const topAvatar = document.getElementById("top-user-avatar");
   
   if (!currentUser) {
       authOverlay.style.display = "flex";
       document.body.style.overflow = "hidden";
   } else {
-      topGreeting.innerText = "Hi, " + currentUser;
-      topAvatar.src = currentAvatar;
       listenForIncomingCalls(); 
   }
 
@@ -1060,9 +1015,6 @@
           currentAddress = address;
           currentState = state;
           currentAvatar = uploadedAvatarBase64;
-          
-          topGreeting.innerText = "Hi, " + name;
-          topAvatar.src = uploadedAvatarBase64;
           
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
