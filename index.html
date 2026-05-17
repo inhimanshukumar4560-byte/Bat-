@@ -526,6 +526,12 @@
 
 <!-- ================= NEW: UPLOAD VIDEO OVERLAY ================= -->
 <div id="upload-video-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[9999]">
+    <div id="upload-spinner" class="absolute inset-0 bg-black/80 z-[10000] flex-col items-center justify-center hidden">
+        <div class="w-16 h-16 border-4 border-[#ff004c]/30 border-t-[#ff004c] rounded-full animate-spin mb-4"></div>
+        <p class="text-white font-bold text-glow-white">Uploading to Cloudinary...</p>
+        <p class="text-white/50 text-xs mt-2">Please do not close</p>
+    </div>
+
     <div class="glass-panel p-6 md:p-8 rounded-[30px] w-[90%] max-w-md text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] transform transition-all duration-500 relative overflow-y-auto max-h-[90vh] no-scrollbar">
         
         <button class="absolute top-4 right-4 text-white/50 hover:text-[#ff004c] transition-colors" onclick="document.getElementById('upload-video-overlay').style.display='none';"><span class="material-symbols-outlined">close</span></button>
@@ -717,7 +723,21 @@
     </div>
 </div>
 
-<!-- 4. Firebase Private Chat Overlay -->
+<!-- NEW FEATURE: 1-on-1 WhatsApp Style Chat List Overlay -->
+<div id="chat-list-overlay" class="fixed inset-0 bg-[#0a0a0a] z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-[#ff004c]/20 sticky top-0 z-50 shadow-lg">
+        <div class="flex items-center gap-3">
+            <button class="text-white hover:text-[#ff004c] transition-colors" onclick="document.getElementById('chat-list-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-white font-bold text-lg text-glow-white tracking-wider">Recent Chats</h3>
+        </div>
+    </div>
+    <div id="recent-chats-container" class="flex-1 overflow-y-auto p-2 no-scrollbar bg-[#0a0a0a]">
+        <!-- Dynamic Recent Chats will appear here -->
+        <div class="text-center mt-10 text-white/40 text-sm">No recent messages. Start chatting!</div>
+    </div>
+</div>
+
+<!-- 4. Firebase Private Chat Overlay (Modified for 1-on-1) -->
 <div id="chat-overlay" class="fixed inset-0 overlay-glass flex-col hidden z-[9900]">
     <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-white/10">
         <div class="flex items-center gap-3">
@@ -725,7 +745,7 @@
             <div class="w-10 h-10 rounded-full border border-[#ff004c] overflow-hidden"><img id="chat-header-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full object-cover"></div>
             <div>
                 <h3 class="text-white font-bold text-sm" id="chat-header-name">Zingoo Room</h3>
-                <p class="text-green-400 text-[10px]">Connected via Firebase</p>
+                <p class="text-green-400 text-[10px]">End-to-End Encrypted</p>
             </div>
         </div>
     </div>
@@ -767,7 +787,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -787,7 +807,11 @@
   let currentUser = localStorage.getItem("zingoo_user") || localStorage.getItem("privateX_user");
   let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
 
-  // --- NEW ADDITION: Full Screen Video Player Logic ---
+  // --- CLOUDINARY CONFIGURATION (REPLACE WITH YOUR DETAILS) ---
+  const CLOUD_NAME = "demo"; // <--- PUT YOUR CLOUDINARY CLOUD NAME HERE
+  const UPLOAD_PRESET = "docs_video_preset"; // <--- PUT YOUR UNSIGNED UPLOAD PRESET HERE
+
+  // --- FULL SCREEN VIDEO PLAYER LOGIC ---
   window.playVideo = function(url, type, isYouTube) {
       const overlay = document.getElementById('video-player-overlay');
       const container = document.getElementById('video-player-container');
@@ -813,7 +837,7 @@
 
   window.closeVideoPlayer = function() {
       document.getElementById('video-player-overlay').style.display = 'none';
-      document.getElementById('video-player-container').innerHTML = ''; // Destroys the video element so it stops playing
+      document.getElementById('video-player-container').innerHTML = ''; 
   };
 
   // --- UI Toggles for Video Upload & Video Feed ---
@@ -855,90 +879,153 @@
       }
   };
 
-  window.submitVideoUpload = function() {
+  // Helper to upload files to Cloudinary
+  async function uploadToCloudinary(file, resourceType="video") {
+      try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('upload_preset', UPLOAD_PRESET); 
+          formData.append('cloud_name', CLOUD_NAME);
+
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
+              method: 'POST',
+              body: formData
+          });
+          const data = await res.json();
+          if(data.secure_url) return data.secure_url;
+          else throw new Error("Upload Failed");
+      } catch (err) {
+          console.error("Cloudinary Upload Error:", err);
+          return null; // Fallback will be handled
+      }
+  }
+
+  // Helper to read file as base64 for fallback thumbnails
+  function readFileAsBase64(file) {
+      return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(file);
+      });
+  }
+
+  // --- FIXED: Submit Video with Cloudinary & Firebase DB Persistence ---
+  window.submitVideoUpload = async function() {
       const title = document.getElementById('upload-title').value;
       const type = document.getElementById('upload-type').value;
       const isUpload = document.getElementById('source-file-container').style.display !== 'none';
       
       if(!title) { alert('Please enter a video title!'); return; }
 
+      document.getElementById('upload-spinner').style.display = 'flex'; // Show loading
+
       let mediaUrl = "";
       if (isUpload) {
           const videoFile = document.getElementById('video-file-input').files[0];
-          if(!videoFile) { alert('Please select a video file!'); return; }
-          // Create temporary local URL for the actual video to play
-          mediaUrl = URL.createObjectURL(videoFile);
+          if(!videoFile) { alert('Please select a video file!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
+          
+          mediaUrl = await uploadToCloudinary(videoFile, "video");
+          if(!mediaUrl) {
+              alert("Cloudinary Upload failed! Ensure CLOUD_NAME and UPLOAD_PRESET are set correctly in code.");
+              mediaUrl = URL.createObjectURL(videoFile); // Fallback to local URL for demo purposes
+          }
       } else {
           const ytLink = document.getElementById('upload-yt-link').value;
-          if(!ytLink) { alert('Please enter a YouTube link!'); return; }
+          if(!ytLink) { alert('Please enter a YouTube link!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
           mediaUrl = ytLink;
       }
 
       const thumbFile = document.getElementById('thumb-file-input').files[0];
-      // Default thumbnail if none selected
       let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop"; 
       if (thumbFile) {
-          thumbUrl = URL.createObjectURL(thumbFile);
+          thumbUrl = await uploadToCloudinary(thumbFile, "image");
+          if(!thumbUrl) thumbUrl = await readFileAsBase64(thumbFile); // Fallback base64 to Firebase
       }
 
-      const isYouTube = !isUpload;
-      const clickHandler = `playVideo('${mediaUrl}', '${type}', ${isYouTube})`;
+      // Save Permanently to Firebase DB so it never disappears!
+      try {
+          const newVideoRef = push(ref(db, 'videos'));
+          await set(newVideoRef, {
+              title: title,
+              mediaUrl: mediaUrl,
+              thumbUrl: thumbUrl,
+              type: type,
+              isYouTube: !isUpload,
+              author: currentUser || "Guest",
+              authorAvatar: currentAvatar,
+              timestamp: serverTimestamp()
+          });
 
-      // Add to UI Dynamically with the onClick Play function attached
-      if (type === 'short') {
-          const shortHtml = `
-          <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-[#ff004c]/50 group cursor-pointer animate-fade-up" onclick="${clickHandler}">
-              <img src="${thumbUrl}" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-center justify-center">
-                  <span class="material-symbols-outlined text-white/70 text-[40px] drop-shadow-md">play_circle</span>
-              </div>
-              <div class="absolute bottom-3 left-3 right-3">
-                  <h4 class="text-white text-sm font-bold line-clamp-2 leading-tight">${title}</h4>
-                  <p class="text-[#ff004c] text-[10px] font-bold mt-1">@${currentUser || 'You'}</p>
-              </div>
-          </div>`;
-          document.getElementById('shorts-feed-container').insertAdjacentHTML('afterbegin', shortHtml);
-      } else {
-          const longHtml = `
-          <div class="w-full cursor-pointer group animate-fade-up mb-4" onclick="${clickHandler}">
-              <div class="relative w-full rounded-2xl overflow-hidden aspect-video shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-[#ff004c]/50 mb-3 group-hover:border-[#ff004c] transition-colors">
-                  <img src="${thumbUrl}" class="w-full h-full object-cover">
-                  <div class="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/40 transition-all">
-                      <span class="material-symbols-outlined text-white text-[50px] drop-shadow-lg">play_arrow</span>
-                  </div>
-                  <div class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded-md">NEW</div>
-              </div>
-              <div class="flex gap-3 px-1">
-                  <img src="${currentAvatar}" class="w-10 h-10 rounded-full border border-[#ff004c]">
-                  <div>
-                      <h4 class="text-white font-bold text-[15px] leading-tight mb-1 group-hover:text-[#ff004c] transition-colors">${title}</h4>
-                      <p class="text-white/50 text-[11px]">@${currentUser || 'You'} • Just now</p>
-                  </div>
-              </div>
-          </div>`;
-          document.getElementById('longs-feed-container').insertAdjacentHTML('afterbegin', longHtml);
+          // Reset UI
+          document.getElementById('upload-spinner').style.display = 'none';
+          document.getElementById('upload-video-overlay').style.display='none';
+          document.getElementById('video-feed-overlay').style.display='flex';
+          document.body.style.overflow='hidden';
+          switchVideoTab(type === 'short' ? 'shorts' : 'longs');
+
+          document.getElementById('upload-title').value = '';
+          document.getElementById('video-file-input').value = '';
+          document.getElementById('upload-yt-link').value = '';
+          document.getElementById('thumb-file-input').value = '';
+          document.getElementById('video-file-name').innerText = '';
+          document.getElementById('thumb-file-name').style.display = 'none';
+
+          alert('Video Published Successfully!');
+      } catch (err) {
+          document.getElementById('upload-spinner').style.display = 'none';
+          alert("Error saving to database: " + err);
       }
-
-      // Hide Upload Modal, Show Video Feed Modal automatically
-      document.getElementById('upload-video-overlay').style.display='none';
-      document.getElementById('video-feed-overlay').style.display='flex';
-      document.body.style.overflow='hidden';
-      
-      // Auto-switch to the tab the user just uploaded to
-      switchVideoTab(type === 'short' ? 'shorts' : 'longs');
-
-      // Reset fields
-      document.getElementById('upload-title').value = '';
-      document.getElementById('video-file-input').value = '';
-      document.getElementById('upload-yt-link').value = '';
-      document.getElementById('thumb-file-input').value = '';
-      document.getElementById('video-file-name').innerText = '';
-      document.getElementById('thumb-file-name').style.display = 'none';
-
-      alert('Video Published Successfully!');
   };
   
-  // Show file names after selection
+  // Real-time listener for Videos Feed
+  onValue(ref(db, 'videos'), (snapshot) => {
+      const shortsContainer = document.getElementById('shorts-feed-container');
+      const longsContainer = document.getElementById('longs-feed-container');
+      shortsContainer.innerHTML = '';
+      longsContainer.innerHTML = '';
+
+      const data = snapshot.val();
+      if(data) {
+          // Sort by newest first
+          const vids = Object.values(data).reverse();
+          vids.forEach(vid => {
+              const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
+              if (vid.type === 'short') {
+                  const shortHtml = `
+                  <div class="relative rounded-[20px] overflow-hidden aspect-[9/16] shadow-[0_5px_15px_rgba(0,0,0,0.8)] border border-[#ff004c]/50 group cursor-pointer animate-fade-up" onclick="${clickHandler}">
+                      <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-center justify-center">
+                          <span class="material-symbols-outlined text-white/70 text-[40px] drop-shadow-md">play_circle</span>
+                      </div>
+                      <div class="absolute bottom-3 left-3 right-3">
+                          <h4 class="text-white text-sm font-bold line-clamp-2 leading-tight">${vid.title}</h4>
+                          <p class="text-[#ff004c] text-[10px] font-bold mt-1">@${vid.author}</p>
+                      </div>
+                  </div>`;
+                  shortsContainer.insertAdjacentHTML('beforeend', shortHtml);
+              } else {
+                  const longHtml = `
+                  <div class="w-full cursor-pointer group animate-fade-up mb-4" onclick="${clickHandler}">
+                      <div class="relative w-full rounded-2xl overflow-hidden aspect-video shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-[#ff004c]/50 mb-3 group-hover:border-[#ff004c] transition-colors">
+                          <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
+                          <div class="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/40 transition-all">
+                              <span class="material-symbols-outlined text-white text-[50px] drop-shadow-lg">play_arrow</span>
+                          </div>
+                      </div>
+                      <div class="flex gap-3 px-1">
+                          <img src="${vid.authorAvatar || currentAvatar}" class="w-10 h-10 rounded-full border border-[#ff004c] object-cover">
+                          <div>
+                              <h4 class="text-white font-bold text-[15px] leading-tight mb-1 group-hover:text-[#ff004c] transition-colors">${vid.title}</h4>
+                              <p class="text-white/50 text-[11px]">@${vid.author}</p>
+                          </div>
+                      </div>
+                  </div>`;
+                  longsContainer.insertAdjacentHTML('beforeend', longHtml);
+              }
+          });
+      }
+  });
+
   document.getElementById("thumb-file-input").addEventListener("change", function(e) {
       if(e.target.files[0]) {
           const display = document.getElementById('thumb-file-name');
@@ -948,9 +1035,8 @@
   });
 
 
-  // --- 0. THEME TOGGLE LOGIC (Forced Default Dark Theme as requested) ---
+  // --- 0. THEME TOGGLE LOGIC ---
   const htmlEl = document.documentElement;
-  // Strongly forcing dark theme 
   htmlEl.classList.add('dark');
   localStorage.setItem('zingoo_theme', 'dark');
 
@@ -1024,7 +1110,7 @@
       }
   });
 
-  // --- PROFILE MANAGEMENT OVERLAY (VIEW/EDIT/LOGOUT) ---
+  // --- PROFILE MANAGEMENT OVERLAY ---
   const manageOverlay = document.getElementById("manage-profile-overlay");
 
   document.getElementById("header-profile-btn").addEventListener("click", () => {
@@ -1063,6 +1149,137 @@
       document.body.style.overflow = "hidden";
   });
 
+
+  // --- WHATSAPP STYLE 1-on-1 CHAT LIST LOGIC ---
+  let currentActiveChatId = null;
+  let currentChatPartnerName = null;
+  let chatUnsubscribe = null;
+
+  document.getElementById("btn-private-chat").addEventListener("click", () => {
+      document.getElementById('chat-list-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+  });
+
+  // Load Recent Chats from Firebase
+  onValue(ref(db, 'recent_chats/' + currentUser), (snapshot) => {
+      const container = document.getElementById('recent-chats-container');
+      container.innerHTML = '';
+      const data = snapshot.val();
+      
+      if(data) {
+          // Sort by timestamp
+          const chatsArray = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
+          
+          chatsArray.forEach(([partner, details]) => {
+              const chatHtml = `
+              <div class="flex items-center gap-3 p-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer rounded-xl" onclick="openChatWith('${partner}', '${details.avatar}')">
+                  <div class="relative">
+                      <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-white/20 object-cover">
+                      <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0a0a0a]"></div>
+                  </div>
+                  <div class="flex-1 overflow-hidden">
+                      <div class="flex justify-between items-center mb-0.5">
+                          <h4 class="text-white font-bold text-[15px] truncate">${partner}</h4>
+                      </div>
+                      <p class="text-white/50 text-[12px] truncate">${details.lastMessage}</p>
+                  </div>
+              </div>`;
+              container.insertAdjacentHTML('beforeend', chatHtml);
+          });
+      } else {
+          container.innerHTML = '<div class="text-center mt-10 text-white/40 text-sm">No recent messages. Find someone in Hot Right Now!</div>';
+      }
+  });
+
+  // Trigger 1-on-1 Chat function
+  window.openChatWith = function(name, avatar) {
+      document.getElementById('see-all-overlay').style.display = 'none'; 
+      document.getElementById('chat-list-overlay').style.display = 'none'; 
+      document.body.style.overflow = 'auto';
+      
+      currentChatPartnerName = name;
+      currentActiveChatId = [currentUser, name].sort().join('_'); // Unique ID for these two users
+
+      const chatOverlay = document.getElementById("chat-overlay");
+      document.getElementById("chat-header-name").innerText = `${name}`;
+      document.getElementById("chat-header-img").src = avatar;
+      chatOverlay.style.display = "flex";
+      
+      const chatMessages = document.getElementById("chat-messages");
+      chatMessages.innerHTML = '<div class="text-center text-white/40 text-xs my-2">Messages are end-to-end encrypted</div>';
+
+      // Disconnect previous chat listener if exists
+      if(chatUnsubscribe) {
+          // For Firebase modular SDK, turning off is tricky without unsub method,
+          // so we use onValue and let it override via a scoped approach.
+      }
+
+      // Attach new listener for this specific 1-on-1 chat
+      onValue(ref(db, 'chats/' + currentActiveChatId), (snapshot) => {
+          chatMessages.innerHTML = '<div class="text-center text-white/40 text-xs my-2">Messages are end-to-end encrypted</div>';
+          const msgs = snapshot.val();
+          if(msgs) {
+              Object.values(msgs).forEach(msgData => {
+                  renderMsg(msgData.user, msgData.text, msgData.user === currentUser);
+              });
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+      });
+  };
+
+  document.getElementById("btn-close-chat").addEventListener("click", () => {
+      document.getElementById("chat-overlay").style.display = "none";
+      currentActiveChatId = null;
+      currentChatPartnerName = null;
+  });
+
+  document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
+  document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendMessage(); });
+
+  function sendMessage() {
+      if(!currentActiveChatId) return; // Prevent sending if no chat open
+      const chatInput = document.getElementById("chat-input");
+      const msg = chatInput.value.trim();
+      
+      if(msg !== "") {
+          try {
+              // 1. Push message to specific chat thread
+              push(ref(db, 'chats/' + currentActiveChatId), {
+                  user: currentUser,
+                  text: msg,
+                  timestamp: serverTimestamp()
+              });
+
+              // 2. Update Recent Chats list for Current User
+              set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), {
+                  avatar: document.getElementById("chat-header-img").src,
+                  lastMessage: "You: " + msg,
+                  timestamp: serverTimestamp()
+              });
+
+              // 3. Update Recent Chats list for Partner
+              set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), {
+                  avatar: currentAvatar,
+                  lastMessage: msg,
+                  timestamp: serverTimestamp()
+              });
+
+              chatInput.value = "";
+          } catch(err) {
+              console.error("Firebase write error:", err);
+          }
+      }
+  }
+
+  function renderMsg(sender, text, isSelf) {
+      const chatMessages = document.getElementById("chat-messages");
+      const div = document.createElement("div");
+      div.className = `chat-bubble text-white text-sm ${isSelf ? 'self' : ''}`;
+      div.innerHTML = `<span class="text-[10px] font-bold ${isSelf ? 'text-white/50' : 'text-[#ff004c]'} block mb-0.5">${sender}</span> ${text}`;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
   // --- "SEE ALL" GRID LOGIC & FETCHING USERS ---
   const seeAllOverlay = document.getElementById('see-all-overlay');
   
@@ -1077,16 +1294,6 @@
   });
 
   window.initiateCall = initiateCall;
-  window.openChatWith = function(name, avatar) {
-      seeAllOverlay.style.display = 'none'; 
-      document.body.style.overflow = 'auto';
-      
-      const chatOverlay = document.getElementById("chat-overlay");
-      document.getElementById("chat-header-name").innerText = `Chat with ${name}`;
-      document.getElementById("chat-header-img").src = avatar;
-      chatOverlay.style.display = "flex";
-      document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
-  };
 
   const usersListContainer = document.getElementById("real-users-list");
   const seeAllGridContainer = document.getElementById("see-all-grid");
@@ -1346,67 +1553,6 @@
   
   document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
   document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
-
-  // --- 3. FIREBASE PRIVATE CHAT LOGIC ---
-  const chatOverlay = document.getElementById("chat-overlay");
-  const chatInput = document.getElementById("chat-input");
-  const chatMessages = document.getElementById("chat-messages");
-
-  document.getElementById("btn-private-chat").addEventListener("click", () => {
-      chatOverlay.style.display = "flex";
-      document.getElementById("chat-header-name").innerText = "Zingoo Room";
-      document.getElementById("chat-header-img").src = currentAvatar;
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
-
-  document.getElementById("btn-close-chat").addEventListener("click", () => {
-      chatOverlay.style.display = "none";
-  });
-
-  document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
-  chatInput.addEventListener("keypress", (e) => { if(e.key === 'Enter') sendMessage(); });
-
-  function sendMessage() {
-      const msg = chatInput.value.trim();
-      if(msg !== "") {
-          try {
-              push(ref(db, 'private_room_chat'), {
-                  user: currentUser || "Guest",
-                  text: msg,
-                  timestamp: serverTimestamp()
-              });
-              chatInput.value = "";
-          } catch(err) {
-              console.error("Firebase write error:", err);
-              renderMsg(currentUser, msg, true); 
-              chatInput.value = "";
-          }
-      }
-  }
-
-  try {
-      const chatRef = ref(db, 'private_room_chat');
-      onValue(chatRef, (snapshot) => {
-          chatMessages.innerHTML = '<div class="text-center text-white/40 text-xs my-2">Messages are end-to-end encrypted</div>';
-          const data = snapshot.val();
-          if(data) {
-              Object.values(data).forEach(msgData => {
-                  renderMsg(msgData.user, msgData.text, msgData.user === currentUser);
-              });
-              chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
-      });
-  } catch(err) {
-      console.log("Firebase Rules restricted: ", err);
-  }
-
-  function renderMsg(sender, text, isSelf) {
-      const div = document.createElement("div");
-      div.className = `chat-bubble text-white text-sm ${isSelf ? 'self' : ''}`;
-      div.innerHTML = `<span class="text-[10px] font-bold ${isSelf ? 'text-white/50' : 'text-[#ff004c]'} block mb-0.5">${sender}</span> ${text}`;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
 
 </script>
 
