@@ -331,7 +331,7 @@
     </section>
 
     <!-- BIG PROMO BANNER -->
-    <section class="w-full relative rounded-3xl overflow-hidden shadow-[0_15px_50px_rgba(255,0,76,0.35)] floating-element-2 border border-[#ff004c]/30 animate-fade-up delay-100 group cursor-pointer" onclick="document.getElementById('btn-video-call').click()">
+    <section class="w-full relative rounded-3xl overflow-hidden shadow-[0_15px_50px_rgba(255,0,76,0.35)] floating-element-2 border border-[#ff004c]/30 animate-fade-up delay-100 group cursor-pointer" onclick="alert('Select a user from Hot Right Now to call!')">
         <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1000&auto=format&fit=crop" class="w-full h-44 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Promo">
         <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent"></div>
         <div class="absolute inset-0 p-6 flex flex-col justify-center">
@@ -348,7 +348,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             
             <!-- Video Call -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-video-call">
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-video-call" onclick="alert('Please select a user from Hot Right Now to video call.')">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#ff004c]/20 to-[#ff8fa3]/10 flex items-center justify-center text-[#ff004c] shadow-[0_0_20px_rgba(255,0,76,0.25)] group-hover:shadow-[0_0_30px_rgba(255,0,76,0.5)] transition-all">
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">video_camera_front</span>
                 </div>
@@ -359,7 +359,7 @@
             </div>
 
             <!-- Audio Call -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-audio-call">
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-audio-call" onclick="alert('Please select a user from Hot Right Now to audio call.')">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#8b0000]/30 to-[#ff004c]/10 flex items-center justify-center text-[#ff8fa3] shadow-[0_0_20px_rgba(139,0,0,0.3)] group-hover:shadow-[0_0_30px_rgba(255,0,76,0.4)] transition-all">
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">call</span>
                 </div>
@@ -395,7 +395,7 @@
             </div>
 
             <!-- Live Shows -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group relative overflow-hidden" onclick="document.getElementById('btn-video-call').click()">
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group relative overflow-hidden" onclick="alert('Select a user from Hot Right Now to view show.')">
                 <div class="absolute inset-0 bg-[#ff004c]/5 group-hover:bg-[#ff004c]/10 transition-colors"></div>
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#ff004c] to-[#8b0000] flex items-center justify-center text-white shadow-[0_0_25px_rgba(255,0,76,0.7)] floating-element-1 ring-2 ring-[#ff004c]/50">
                     <span class="material-symbols-outlined text-[32px] group-hover:rotate-12 transition-transform">stream</span>
@@ -445,7 +445,7 @@
     </div>
 
     <!-- Main Center Action Button (3D) -->
-    <div class="relative -top-8 group" onclick="document.getElementById('btn-video-call').click()">
+    <div class="relative -top-8 group" onclick="alert('Select a user from Hot Right Now to interact.')">
         <button class="w-16 h-16 rounded-full btn-hot-pink-gradient flex items-center justify-center btn-3d-effect border-[5px] border-[#0a0a0a] shadow-[0_0_30px_rgba(255,0,76,0.5)] group-hover:shadow-[0_0_40px_rgba(255,0,76,0.8)] transition-all duration-300 ring-2 ring-[#ff004c]/30">
             <span class="material-symbols-outlined text-white text-[36px] font-bold group-hover:rotate-90 transition-transform duration-500">add</span>
         </button>
@@ -470,7 +470,7 @@
 
 <!-- ================= FUNCTIONAL OVERLAYS ================= -->
 
-<!-- 1. Profile Creation/Edit Guard Overlay (Enhanced Version with all new fields) -->
+<!-- 1. Profile Creation/Edit Guard Overlay -->
 <div id="auth-overlay" class="fixed inset-0 overlay-glass flex flex-col items-center justify-center hidden z-[9999]">
     <div class="glass-panel p-6 md:p-8 rounded-[30px] w-[90%] max-w-md text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] transform transition-all duration-500 scale-100 relative overflow-y-auto max-h-[90vh] no-scrollbar">
         
@@ -561,6 +561,28 @@
     </div>
 </div>
 
+<!-- ================= NEW INCOMING CALL OVERLAY ================= -->
+<div id="incoming-call-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[10000]">
+    <div class="glass-panel p-8 rounded-[30px] w-[90%] max-w-sm text-center border border-[#ff004c]/50 shadow-[0_20px_60px_rgba(255,0,76,0.5)] relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#ff004c]/20 to-transparent"></div>
+        <div class="w-32 h-32 mx-auto mb-6 relative">
+            <div class="live-pulse"></div>
+            <img id="incoming-caller-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full rounded-full border-[4px] border-[#ff004c] object-cover shadow-[0_0_20px_rgba(255,0,76,0.8)] relative z-10">
+        </div>
+        <h2 id="incoming-caller-name" class="text-white text-3xl font-bold mb-1 tracking-wide relative z-10">Caller Name</h2>
+        <p class="text-[#ff8fa3] text-sm mb-8 font-medium tracking-widest uppercase animate-pulse relative z-10">Incoming Call...</p>
+        
+        <div class="flex justify-center gap-6 relative z-10">
+            <button id="btn-decline-call" class="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.8)] hover:scale-110 transition-transform btn-3d-effect">
+                <span class="material-symbols-outlined text-white text-[32px]">call_end</span>
+            </button>
+            <button id="btn-accept-call" class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.8)] hover:scale-110 transition-transform btn-3d-effect">
+                <span class="material-symbols-outlined text-white text-[32px]">call</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- 2. WebRTC Video Call Overlay -->
 <div id="video-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[9900]">
     <div class="w-full h-full relative bg-black">
@@ -633,7 +655,7 @@
     </div>
 </div>
 
-<!-- 5. Profile View/Manage Overlay (NEW ADDITION) -->
+<!-- 5. Profile View/Manage Overlay -->
 <div id="manage-profile-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[9999]">
     <div class="glass-panel p-8 rounded-[30px] w-[90%] max-w-sm text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] relative overflow-hidden">
         <button id="btn-close-manage" class="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"><span class="material-symbols-outlined">close</span></button>
@@ -697,6 +719,7 @@
   } else {
       topGreeting.innerText = "Hi, " + currentUser;
       topAvatar.src = currentAvatar;
+      listenForIncomingCalls(); // Start listening when logged in
   }
 
   // Handle Image Upload Selection
@@ -722,7 +745,6 @@
 
       if (name !== "" && age >= 18 && phone !== "" && state !== "") {
           
-          // Save actual real user to Firebase
           set(ref(db, 'users/' + name), {
               name: name,
               age: age,
@@ -753,6 +775,7 @@
           
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
+          listenForIncomingCalls();
       } else {
           alert("Please fill all required fields correctly (Age must be 18+).");
       }
@@ -761,7 +784,6 @@
   // --- PROFILE MANAGEMENT OVERLAY (VIEW/EDIT/LOGOUT) ---
   const manageOverlay = document.getElementById("manage-profile-overlay");
 
-  // Open Manage Profile
   document.getElementById("header-profile-btn").addEventListener("click", () => {
       if(currentUser) {
           document.getElementById("manage-avatar").src = currentAvatar;
@@ -772,26 +794,20 @@
       }
   });
 
-  // Close Manage Profile
   document.getElementById("btn-close-manage").addEventListener("click", () => {
       manageOverlay.style.display = "none";
   });
 
-  // Log Out Function
   document.getElementById("btn-logout").addEventListener("click", () => {
       if(confirm("Are you sure you want to log out of your secret identity?")) {
-          // Remove from Firebase (optional, or just set status offline)
           if(currentUser) remove(ref(db, 'users/' + currentUser));
           localStorage.clear();
           location.reload();
       }
   });
 
-  // Edit Profile Function
   document.getElementById("btn-edit-profile").addEventListener("click", () => {
       manageOverlay.style.display = "none";
-      
-      // Populate auth overlay fields
       document.getElementById("auth-name").value = currentUser;
       document.getElementById("auth-age").value = currentAge;
       document.getElementById("auth-phone").value = currentPhone;
@@ -814,17 +830,18 @@
       
       if(data) {
           Object.values(data).forEach(user => {
-              // Exclude self from Hot Right Now if desired, but for now showing everyone
-              const userHtml = `
-              <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
-                  <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
-                      <div class="live-pulse"></div>
-                      <img src="${user.avatar}" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
-                      <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 bg-[#ff004c] text-white text-[9px] font-extrabold px-2.5 py-[2px] rounded-sm uppercase tracking-widest shadow-[0_4px_10px_rgba(255,0,76,0.8)] ring-1 ring-white/20">LIVE</div>
-                  </div>
-                  <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">${user.name}</span>
-              </div>`;
-              usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+              if (user.name !== currentUser) { // Don't show self in list
+                  const userHtml = `
+                  <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+                      <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
+                          <div class="live-pulse"></div>
+                          <img src="${user.avatar}" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
+                          <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 bg-[#ff004c] text-white text-[9px] font-extrabold px-2.5 py-[2px] rounded-sm uppercase tracking-widest shadow-[0_4px_10px_rgba(255,0,76,0.8)] ring-1 ring-white/20">LIVE</div>
+                      </div>
+                      <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">${user.name}</span>
+                  </div>`;
+                  usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+              }
           });
           attachModelBtnEvents();
       } else {
@@ -843,7 +860,12 @@
               document.getElementById('audio-partner-name').innerText = name;
               document.getElementById('audio-partner-img').src = avatar;
               
-              document.getElementById('btn-video-call').click();
+              // Ask user how they want to call
+              if(confirm(`Do you want to video call ${name}? (Cancel for Audio)`)){
+                  initiateCall(name, avatar, true);
+              } else {
+                  initiateCall(name, avatar, false);
+              }
           });
       });
   }
@@ -865,94 +887,189 @@
       });
   });
 
-  // --- 2. WEBRTC VIDEO & AUDIO LOGIC (Real P2P Connection via Firebase) ---
+  // --- 2. WEBRTC VIDEO & AUDIO SIGNALING (FIXED WITH CALLER/RECEIVER LOGIC) ---
   let localStream = null;
   let peerConnection = null;
+  let currentCallPath = null;
+  let incomingCallData = null;
+  
   const servers = {
       iceServers: [
           { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }
       ]
   };
 
-  async function setupWebRTC(isVideo) {
-      peerConnection = new RTCPeerConnection(servers);
-      const callRef = ref(db, 'webrtc_global_room');
-      
-      localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-      if(isVideo) document.getElementById("local-video").srcObject = localStream;
-      else document.getElementById("local-audio").srcObject = localStream;
-
-      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-      peerConnection.ontrack = event => {
-          if(isVideo) document.getElementById("remote-video").srcObject = event.streams[0];
-          else document.getElementById("remote-audio").srcObject = event.streams[0];
-          document.getElementById("video-partner-name").innerText = "Connected!";
-          document.getElementById("audio-status").innerText = "Call Connected";
-      };
-
-      peerConnection.onicecandidate = event => {
-          if (event.candidate) {
-              push(ref(db, 'webrtc_global_room/candidates'), event.candidate.toJSON());
-          }
-      };
-
-      const offerDescription = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offerDescription);
-      
-      const offer = {
-          sdp: offerDescription.sdp,
-          type: offerDescription.type,
-      };
-      await set(ref(db, 'webrtc_global_room/offer'), offer);
-
-      onValue(ref(db, 'webrtc_global_room/answer'), (snapshot) => {
+  // Listen for incoming calls
+  function listenForIncomingCalls() {
+      if(!currentUser) return;
+      onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
           const data = snapshot.val();
-          if (!peerConnection.currentRemoteDescription && data) {
-              const answerDescription = new RTCSessionDescription(data);
-              peerConnection.setRemoteDescription(answerDescription);
+          if (data && data.offer && !peerConnection) {
+              // Incoming call detected
+              incomingCallData = data;
+              document.getElementById('incoming-caller-name').innerText = data.caller;
+              document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
+              document.getElementById('incoming-call-overlay').style.display = 'flex';
+          } else if (!data && peerConnection) {
+              // Remote hung up
+              stopWebRTC();
+          } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
+              // Remote cancelled before answer
+              document.getElementById('incoming-call-overlay').style.display = 'none';
+              incomingCallData = null;
           }
       });
+  }
 
-      onChildAdded(ref(db, 'webrtc_global_room/candidates'), (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-              const candidate = new RTCIceCandidate(data);
-              peerConnection.addIceCandidate(candidate);
-          }
-      });
+  // Caller side: Start the call
+  async function initiateCall(targetUser, isVideo) {
+      if(peerConnection) return;
+      currentCallPath = `calls/${targetUser}`;
+      
+      if(isVideo) document.getElementById("video-overlay").style.display = "flex";
+      else document.getElementById("audio-overlay").style.display = "flex";
+      
+      document.getElementById(isVideo ? "video-partner-name" : "audio-status").innerText = `Calling ${targetUser}...`;
+
+      try {
+          peerConnection = new RTCPeerConnection(servers);
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+          
+          if(isVideo) document.getElementById("local-video").srcObject = localStream;
+          else document.getElementById("local-audio").srcObject = localStream;
+
+          localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+          peerConnection.ontrack = event => {
+              if(isVideo) document.getElementById("remote-video").srcObject = event.streams[0];
+              else document.getElementById("remote-audio").srcObject = event.streams[0];
+              document.getElementById(isVideo ? "video-partner-name" : "audio-status").innerText = "Connected!";
+          };
+
+          peerConnection.onicecandidate = event => {
+              if (event.candidate) {
+                  push(ref(db, `${currentCallPath}/candidates/caller`), event.candidate.toJSON());
+              }
+          };
+
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          
+          // Write offer to receiver's node
+          set(ref(db, currentCallPath), {
+              caller: currentUser,
+              callerAvatar: currentAvatar,
+              offer: { type: offer.type, sdp: offer.sdp },
+              isVideo: isVideo
+          });
+
+          // Listen for answer from receiver
+          onValue(ref(db, `${currentCallPath}/answer`), (snapshot) => {
+              const data = snapshot.val();
+              if (!peerConnection.currentRemoteDescription && data) {
+                  peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+              }
+          });
+
+          // Listen for ICE candidates from receiver
+          onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                  peerConnection.addIceCandidate(new RTCIceCandidate(data));
+              }
+          });
+
+      } catch (err) {
+          alert("Media access denied: " + err.message);
+          stopWebRTC();
+      }
+  }
+
+  // Receiver side: Answer the call
+  async function answerCall() {
+      if(!incomingCallData) return;
+      const isVideo = incomingCallData.isVideo;
+      currentCallPath = `calls/${currentUser}`;
+      
+      document.getElementById('incoming-call-overlay').style.display = 'none';
+      
+      if(isVideo) document.getElementById("video-overlay").style.display = "flex";
+      else document.getElementById("audio-overlay").style.display = "flex";
+      
+      document.getElementById(isVideo ? "video-partner-name" : "audio-status").innerText = "Connecting...";
+
+      try {
+          peerConnection = new RTCPeerConnection(servers);
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+          
+          if(isVideo) document.getElementById("local-video").srcObject = localStream;
+          else document.getElementById("local-audio").srcObject = localStream;
+
+          localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+          peerConnection.ontrack = event => {
+              if(isVideo) document.getElementById("remote-video").srcObject = event.streams[0];
+              else document.getElementById("remote-audio").srcObject = event.streams[0];
+              document.getElementById(isVideo ? "video-partner-name" : "audio-status").innerText = "Connected!";
+          };
+
+          peerConnection.onicecandidate = event => {
+              if (event.candidate) {
+                  push(ref(db, `${currentCallPath}/candidates/callee`), event.candidate.toJSON());
+              }
+          };
+
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+          
+          // Write answer back to node
+          set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
+
+          // Listen for ICE candidates from caller
+          onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                  peerConnection.addIceCandidate(new RTCIceCandidate(data));
+              }
+          });
+
+      } catch (err) {
+          alert("Media access denied: " + err.message);
+          stopWebRTC();
+      }
   }
 
   function stopWebRTC() {
       if(localStream) localStream.getTracks().forEach(track => track.stop());
       if(peerConnection) peerConnection.close();
+      
       if(document.getElementById("remote-video").srcObject) document.getElementById("remote-video").srcObject = null;
-      remove(ref(db, 'webrtc_global_room')); 
+      if(document.getElementById("remote-audio").srcObject) document.getElementById("remote-audio").srcObject = null;
+      
+      document.getElementById("video-overlay").style.display = "none";
+      document.getElementById("audio-overlay").style.display = "none";
+      document.getElementById("incoming-call-overlay").style.display = "none";
+      
+      if(currentCallPath) {
+          remove(ref(db, currentCallPath));
+          currentCallPath = null;
+      }
+      
+      peerConnection = null;
+      incomingCallData = null;
   }
 
-  document.getElementById("btn-video-call").addEventListener("click", async () => {
-      document.getElementById("video-overlay").style.display = "flex";
-      try { await setupWebRTC(true); } 
-      catch (err) { alert("Camera access denied: " + err.message); }
+  // UI Event Listeners for Calls
+  document.getElementById("btn-accept-call").addEventListener("click", answerCall);
+  document.getElementById("btn-decline-call").addEventListener("click", () => {
+      if(currentUser) remove(ref(db, `calls/${currentUser}`));
+      document.getElementById("incoming-call-overlay").style.display = "none";
+      incomingCallData = null;
   });
-
-  document.getElementById("btn-end-video").addEventListener("click", () => {
-      stopWebRTC();
-      document.getElementById("video-overlay").style.display = "none";
-      document.getElementById("video-partner-name").innerText = "Waiting for peer...";
-  });
-
-  document.getElementById("btn-audio-call").addEventListener("click", async () => {
-      document.getElementById("audio-overlay").style.display = "flex";
-      try { await setupWebRTC(false); } 
-      catch (err) { alert("Microphone access denied: " + err.message); }
-  });
-
-  document.getElementById("btn-end-audio").addEventListener("click", () => {
-      stopWebRTC();
-      document.getElementById("audio-overlay").style.display = "none";
-      document.getElementById("audio-status").innerText = "Connecting audio stream...";
-  });
+  
+  document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
+  document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
 
   // --- 3. FIREBASE PRIVATE CHAT LOGIC ---
   const chatOverlay = document.getElementById("chat-overlay");
@@ -1017,4 +1134,4 @@
 </script>
 
 </body>
-</html>
+</html>,
