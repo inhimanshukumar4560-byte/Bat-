@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>Private X - Home Dashboard</title>
+<title>Zingoo - Home Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&amp;family=Syne:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
@@ -270,6 +270,36 @@
               border-color: rgba(255, 255, 255, 0.2);
               margin-left: auto;
           }
+
+          /* === NEW THEME OVERRIDES FOR LIGHT MODE (WITHOUT DELETING DARK CSS) === */
+          html:not(.dark) body {
+              background: linear-gradient(to bottom, #f9f9f9, #e5e5e5) !important;
+              color: #1a1a1a !important;
+          }
+          html:not(.dark) .glass-panel, html:not(.dark) .glass-panel-heavy {
+              background: rgba(255, 255, 255, 0.85) !important;
+              border-color: rgba(255, 0, 76, 0.2) !important;
+              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+          }
+          html:not(.dark) .text-white { color: #1a1a1a !important; }
+          html:not(.dark) .text-glow-white { text-shadow: none !important; color: #1a1a1a !important; }
+          html:not(.dark) .bg-gradient-to-b.from-\[\#0a0a0a\] { background: #f0f0f0 !important; }
+          html:not(.dark) .bg-\[\#0a0a0a\] { background-color: #ffffff !important; }
+          html:not(.dark) .bg-\[\#131313\] { background-color: #f5f5f5 !important; }
+          html:not(.dark) .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+          html:not(.dark) .text-white\/50 { color: rgba(0,0,0,0.5) !important; }
+          html:not(.dark) .text-white\/60 { color: rgba(0,0,0,0.6) !important; }
+          html:not(.dark) .text-white\/70 { color: rgba(0,0,0,0.7) !important; }
+          html:not(.dark) .text-white\/80 { color: rgba(0,0,0,0.8) !important; }
+          html:not(.dark) .text-white\/90 { color: rgba(0,0,0,0.9) !important; }
+          html:not(.dark) .bg-white\/10 { background-color: rgba(0,0,0,0.05) !important; }
+          html:not(.dark) .bg-white\/5 { background-color: rgba(0,0,0,0.03) !important; }
+          html:not(.dark) .overlay-glass { background: rgba(255, 255, 255, 0.9) !important; }
+          /* Preserve White text in specific buttons during light mode */
+          html:not(.dark) .btn-hot-pink-gradient .text-white,
+          html:not(.dark) .bg-red-600 .text-white,
+          html:not(.dark) .bg-green-500 .text-white,
+          html:not(.dark) #see-all-grid .text-white { color: #ffffff !important; }
       </style>
 </head>
 <body class="bg-gradient-to-b from-[#0a0a0a] to-[#040404] text-on-background relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
@@ -295,18 +325,24 @@
         </div>
     </div>
 
-    <!-- Center Logo -->
+    <!-- Center Logo (CHANGED TO ZINGOO) -->
     <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-3d-animated cursor-pointer">
-        <span class="text-glow-white tracking-[0.1em] font-light text-[18px]" style="font-family: 'Times New Roman', serif;">PRIVATE</span>
-        <span class="text-[#ff004c] font-black text-[24px] text-glow-red ml-1 transform scale-y-125 -rotate-6">X</span>
+        <span class="text-glow-white tracking-[0.1em] font-light text-[18px]" style="font-family: 'Times New Roman', serif;">ZIN</span>
+        <span class="text-[#ff004c] font-black text-[24px] text-glow-red ml-1 transform scale-y-125 -rotate-6">GOO</span>
     </div>
 
-    <!-- Wallet & Notifications -->
-    <div class="flex items-center gap-4">
+    <!-- Wallet, Theme Toggle & Notifications -->
+    <div class="flex items-center gap-3 md:gap-4">
         <div class="flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 shadow-inner hover:bg-white/20 transition-all cursor-pointer">
             <span class="material-symbols-outlined text-[#ffd700] text-[16px] drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">diamond</span>
             <span class="text-[12px] font-bold text-white drop-shadow-md">1,250</span>
         </div>
+        
+        <!-- NEW: Theme Toggle Button -->
+        <div class="relative cursor-pointer transition-transform duration-300 hover:scale-110" id="theme-toggle">
+            <span class="material-symbols-outlined text-white text-[24px] hover:text-[#ff004c] transition-all" id="theme-icon">light_mode</span>
+        </div>
+
         <div class="relative cursor-pointer transition-transform duration-300 hover:scale-110">
             <span class="material-symbols-outlined text-white text-[24px] hover:text-[#ff004c] hover:drop-shadow-[0_0_10px_rgba(255,0,76,0.8)] transition-all">notifications</span>
             <div class="absolute top-0 right-0 w-2.5 h-2.5 bg-[#ff004c] rounded-full border border-black shadow-[0_0_8px_rgba(255,0,76,0.8)] animate-pulse"></div>
@@ -321,7 +357,7 @@
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-end px-1 mb-4">
             <h2 class="text-[18px] font-display-lg text-white text-glow-white tracking-wide">Hot Right Now 🔥</h2>
-            <span class="text-[12px] font-bold text-[#ff8fa3] cursor-pointer hover:text-white transition-colors hover:underline hover:drop-shadow-[0_0_8px_rgba(255,143,163,0.8)]">See All</span>
+            <span id="see-all-trigger" class="text-[12px] font-bold text-[#ff8fa3] cursor-pointer hover:text-white transition-colors hover:underline hover:drop-shadow-[0_0_8px_rgba(255,143,163,0.8)]">See All</span>
         </div>
         
         <!-- Real users list fetched from Firebase -->
@@ -331,12 +367,12 @@
     </section>
 
     <!-- BIG PROMO BANNER -->
-    <section class="w-full relative rounded-3xl overflow-hidden shadow-[0_15px_50px_rgba(255,0,76,0.35)] floating-element-2 border border-[#ff004c]/30 animate-fade-up delay-100 group cursor-pointer" onclick="alert('Select a user from Hot Right Now to call!')">
+    <section class="w-full relative rounded-3xl overflow-hidden shadow-[0_15px_50px_rgba(255,0,76,0.35)] floating-element-2 border border-[#ff004c]/30 animate-fade-up delay-100 group cursor-pointer" onclick="alert('Select a user from Hot Right Now or See All to call!')">
         <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1000&auto=format&fit=crop" class="w-full h-44 object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Promo">
         <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent"></div>
         <div class="absolute inset-0 p-6 flex flex-col justify-center">
             <span class="text-[#ff004c] font-black text-[11px] tracking-[0.2em] uppercase mb-1 drop-shadow-[0_0_8px_rgba(255,0,76,0.8)]">Exclusive VIP</span>
-            <h3 class="text-white text-[24px] font-display-lg leading-tight mb-4 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] text-glow-white">Join The Ultimate<br>Private Party</h3>
+            <h3 class="text-white text-[24px] font-display-lg leading-tight mb-4 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] text-glow-white">Join The Ultimate<br>Zingoo Party</h3>
             <button class="w-max px-7 py-2.5 rounded-full btn-hot-pink-gradient text-white text-[13px] font-extrabold tracking-[0.1em] uppercase btn-3d-effect ring-2 ring-white/10">
                 Enter Room
             </button>
@@ -348,7 +384,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             
             <!-- Video Call -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-video-call" onclick="alert('Please select a user from Hot Right Now to video call.')">
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-video-call" onclick="alert('Please select a user from Hot Right Now or See All to video call.')">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#ff004c]/20 to-[#ff8fa3]/10 flex items-center justify-center text-[#ff004c] shadow-[0_0_20px_rgba(255,0,76,0.25)] group-hover:shadow-[0_0_30px_rgba(255,0,76,0.5)] transition-all">
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">video_camera_front</span>
                 </div>
@@ -359,7 +395,7 @@
             </div>
 
             <!-- Audio Call -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-audio-call" onclick="alert('Please select a user from Hot Right Now to audio call.')">
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" id="btn-audio-call" onclick="alert('Please select a user from Hot Right Now or See All to audio call.')">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#8b0000]/30 to-[#ff004c]/10 flex items-center justify-center text-[#ff8fa3] shadow-[0_0_20px_rgba(139,0,0,0.3)] group-hover:shadow-[0_0_30px_rgba(255,0,76,0.4)] transition-all">
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">call</span>
                 </div>
@@ -378,7 +414,7 @@
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">chat</span>
                 </div>
                 <div class="text-center">
-                    <h4 class="text-white font-extrabold text-[15px] tracking-wide group-hover:text-glow-white">Private Chat</h4>
+                    <h4 class="text-white font-extrabold text-[15px] tracking-wide group-hover:text-glow-white">Zingoo Chat</h4>
                     <p class="text-white/60 text-[11px] mt-1 group-hover:text-white/90 transition-opacity">Encrypted texts</p>
                 </div>
             </div>
@@ -438,14 +474,14 @@
     </div>
 
     <!-- Discover -->
-    <div class="flex flex-col items-center gap-1.5 cursor-pointer text-white/50 nav-item-hover transition-all duration-300 bottom-nav-btn">
+    <div class="flex flex-col items-center gap-1.5 cursor-pointer text-white/50 nav-item-hover transition-all duration-300 bottom-nav-btn" onclick="document.getElementById('see-all-trigger').click()">
         <span class="material-symbols-outlined text-[28px]">explore</span>
         <span class="text-[11px] font-medium tracking-wide">Discover</span>
         <div class="w-1.5 h-1.5 bg-transparent rounded-full mt-0.5 active-dot hidden"></div>
     </div>
 
     <!-- Main Center Action Button (3D) -->
-    <div class="relative -top-8 group" onclick="alert('Select a user from Hot Right Now to interact.')">
+    <div class="relative -top-8 group" onclick="alert('Select a user from Hot Right Now or Discover to interact.')">
         <button class="w-16 h-16 rounded-full btn-hot-pink-gradient flex items-center justify-center btn-3d-effect border-[5px] border-[#0a0a0a] shadow-[0_0_30px_rgba(255,0,76,0.5)] group-hover:shadow-[0_0_40px_rgba(255,0,76,0.8)] transition-all duration-300 ring-2 ring-[#ff004c]/30">
             <span class="material-symbols-outlined text-white text-[36px] font-bold group-hover:rotate-90 transition-transform duration-500">add</span>
         </button>
@@ -468,6 +504,21 @@
 
 </nav>
 
+<!-- ================= NEW: "SEE ALL" GRID PAGE OVERLAY ================= -->
+<div id="see-all-overlay" class="fixed inset-0 bg-[#0a0a0a] z-[8000] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-[#ff004c]/20 sticky top-0 z-50 shadow-lg">
+        <div class="flex items-center gap-3">
+            <button id="btn-close-see-all" class="text-white hover:text-[#ff004c] transition-colors"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-white font-bold text-lg text-glow-white tracking-wider">All Zingoo Profiles</h3>
+        </div>
+        <div class="live-pulse relative w-3 h-3 mr-2 hidden"></div> <!-- Optional live indicator -->
+    </div>
+    
+    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 no-scrollbar">
+        <!-- 9:16 Aspect Ratio Profile Cards injected via JS -->
+    </div>
+</div>
+
 <!-- ================= FUNCTIONAL OVERLAYS ================= -->
 
 <!-- 1. Profile Creation/Edit Guard Overlay -->
@@ -477,7 +528,7 @@
         <!-- Ambient glow behind modal -->
         <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-[200px] h-[200px] bg-[#ff004c]/20 rounded-full blur-[60px] pointer-events-none"></div>
 
-        <div class="text-glow-white tracking-[0.1em] font-light text-[28px] mb-1 relative z-10" style="font-family: 'Times New Roman', serif;">PRIVATE<span class="text-[#ff004c] font-black text-glow-red ml-1">X</span></div>
+        <div class="text-glow-white tracking-[0.1em] font-light text-[28px] mb-1 relative z-10" style="font-family: 'Times New Roman', serif;">ZIN<span class="text-[#ff004c] font-black text-glow-red ml-1">GOO</span></div>
         <p class="text-white/60 text-[13px] mb-4 font-medium relative z-10 tracking-wide">Setup your secret identity to enter.</p>
         
         <!-- File Input for Image Upload -->
@@ -636,7 +687,7 @@
             <button id="btn-close-chat" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">arrow_back</span></button>
             <div class="w-10 h-10 rounded-full border border-[#ff004c] overflow-hidden"><img id="chat-header-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full object-cover"></div>
             <div>
-                <h3 class="text-white font-bold text-sm">Secret Chat Room</h3>
+                <h3 class="text-white font-bold text-sm" id="chat-header-name">Zingoo Room</h3>
                 <p class="text-green-400 text-[10px]">Connected via Firebase</p>
             </div>
         </div>
@@ -700,13 +751,37 @@
   const analytics = getAnalytics(app);
   const db = getDatabase(app);
 
+  // --- 0. THEME TOGGLE LOGIC ---
+  const htmlEl = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+
+  if (localStorage.getItem('zingoo_theme') === 'light') {
+      htmlEl.classList.remove('dark');
+      themeIcon.innerText = 'dark_mode';
+  } else {
+      htmlEl.classList.add('dark');
+      themeIcon.innerText = 'light_mode';
+  }
+
+  themeToggle.addEventListener('click', () => {
+      htmlEl.classList.toggle('dark');
+      if (htmlEl.classList.contains('dark')) {
+          localStorage.setItem('zingoo_theme', 'dark');
+          themeIcon.innerText = 'light_mode';
+      } else {
+          localStorage.setItem('zingoo_theme', 'light');
+          themeIcon.innerText = 'dark_mode';
+      }
+  });
+
   // --- 1. PROFILE CREATION, IMAGE UPLOAD & LOCALSTORAGE LOGIC ---
-  let currentUser = localStorage.getItem("privateX_user");
-  let currentAge = localStorage.getItem("privateX_age") || "";
-  let currentPhone = localStorage.getItem("privateX_phone") || "";
-  let currentAddress = localStorage.getItem("privateX_address") || "";
-  let currentState = localStorage.getItem("privateX_state") || "";
-  let currentAvatar = localStorage.getItem("privateX_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
+  let currentUser = localStorage.getItem("zingoo_user") || localStorage.getItem("privateX_user"); // backwards compatibility check
+  let currentAge = localStorage.getItem("zingoo_age") || "";
+  let currentPhone = localStorage.getItem("zingoo_phone") || "";
+  let currentAddress = localStorage.getItem("zingoo_address") || "";
+  let currentState = localStorage.getItem("zingoo_state") || "";
+  let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
   let uploadedAvatarBase64 = currentAvatar;
 
   const authOverlay = document.getElementById("auth-overlay");
@@ -719,10 +794,9 @@
   } else {
       topGreeting.innerText = "Hi, " + currentUser;
       topAvatar.src = currentAvatar;
-      listenForIncomingCalls(); // Start listening when logged in
+      listenForIncomingCalls(); 
   }
 
-  // Handle Image Upload Selection
   document.getElementById("profile-image-upload").addEventListener("change", function(e) {
       const file = e.target.files[0];
       if(file) {
@@ -735,7 +809,6 @@
       }
   });
 
-  // Save/Edit Profile to Firebase and LocalStorage
   document.getElementById("btn-create-profile").addEventListener("click", () => {
       const name = document.getElementById("auth-name").value.trim();
       const age = document.getElementById("auth-age").value.trim();
@@ -756,12 +829,12 @@
               timestamp: serverTimestamp()
           });
 
-          localStorage.setItem("privateX_user", name);
-          localStorage.setItem("privateX_age", age);
-          localStorage.setItem("privateX_phone", phone);
-          localStorage.setItem("privateX_address", address);
-          localStorage.setItem("privateX_state", state);
-          localStorage.setItem("privateX_avatar", uploadedAvatarBase64);
+          localStorage.setItem("zingoo_user", name);
+          localStorage.setItem("zingoo_age", age);
+          localStorage.setItem("zingoo_phone", phone);
+          localStorage.setItem("zingoo_address", address);
+          localStorage.setItem("zingoo_state", state);
+          localStorage.setItem("zingoo_avatar", uploadedAvatarBase64);
           
           currentUser = name;
           currentAge = age;
@@ -820,17 +893,44 @@
       document.body.style.overflow = "hidden";
   });
 
+  // --- "SEE ALL" GRID LOGIC & FETCHING USERS ---
+  const seeAllOverlay = document.getElementById('see-all-overlay');
+  
+  document.getElementById('see-all-trigger').addEventListener('click', () => {
+      seeAllOverlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+  });
+  
+  document.getElementById('btn-close-see-all').addEventListener('click', () => {
+      seeAllOverlay.style.display = 'none';
+      document.body.style.overflow = 'auto';
+  });
 
-  // --- DYNAMIC REAL USERS FETCHING ---
+  // Make initiateCall and openChatWith globally accessible for inline HTML onClick handlers
+  window.initiateCall = initiateCall;
+  window.openChatWith = function(name, avatar) {
+      seeAllOverlay.style.display = 'none'; // hide grid overlay
+      document.body.style.overflow = 'auto';
+      
+      const chatOverlay = document.getElementById("chat-overlay");
+      document.getElementById("chat-header-name").innerText = `Chat with ${name}`;
+      document.getElementById("chat-header-img").src = avatar;
+      chatOverlay.style.display = "flex";
+      document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
+  };
+
   const usersListContainer = document.getElementById("real-users-list");
+  const seeAllGridContainer = document.getElementById("see-all-grid");
   
   onValue(ref(db, 'users'), (snapshot) => {
       usersListContainer.innerHTML = '';
+      seeAllGridContainer.innerHTML = '';
       const data = snapshot.val();
       
       if(data) {
           Object.values(data).forEach(user => {
-              if (user.name !== currentUser) { // Don't show self in list
+              if (user.name !== currentUser) { 
+                  // 1. Fill Horizontal List
                   const userHtml = `
                   <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
                       <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
@@ -841,51 +941,59 @@
                       <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">${user.name}</span>
                   </div>`;
                   usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+
+                  // 2. Fill "See All" 9:16 Grid
+                  const gridCardHtml = `
+                  <div class="relative rounded-2xl overflow-hidden aspect-[9/16] shadow-[0_10px_20px_rgba(0,0,0,0.5)] group border border-white/10 hover:border-[#ff004c]/50 transition-colors">
+                      <img src="${user.avatar}" class="w-full h-full object-cover">
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                      <div class="absolute bottom-0 w-full p-3 flex flex-col gap-2">
+                          <div class="flex items-center gap-2 drop-shadow-md">
+                              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(34,197,94,0.8)]"></div>
+                              <span class="text-white font-bold text-sm truncate">${user.name}</span>
+                          </div>
+                          <div class="flex justify-between items-center gap-1.5 mt-1">
+                              <button class="flex-1 bg-white/10 hover:bg-[#ff004c] backdrop-blur-sm rounded-xl py-2 flex items-center justify-center transition-all shadow-md" onclick="openChatWith('${user.name}', '${user.avatar}')">
+                                  <span class="material-symbols-outlined text-white text-[16px]">chat</span>
+                              </button>
+                              <button class="flex-1 bg-white/10 hover:bg-[#ff004c] backdrop-blur-sm rounded-xl py-2 flex items-center justify-center transition-all shadow-md" onclick="initiateCall('${user.name}', false, '${user.avatar}')">
+                                  <span class="material-symbols-outlined text-white text-[16px]">call</span>
+                              </button>
+                              <button class="flex-1 bg-[#ff004c] hover:bg-[#ff3b6b] rounded-xl py-2 flex items-center justify-center shadow-[0_0_10px_rgba(255,0,76,0.5)] transition-all" onclick="initiateCall('${user.name}', true, '${user.avatar}')">
+                                  <span class="material-symbols-outlined text-white text-[16px]">videocam</span>
+                              </button>
+                          </div>
+                      </div>
+                  </div>`;
+                  seeAllGridContainer.insertAdjacentHTML('beforeend', gridCardHtml);
               }
           });
           attachModelBtnEvents();
       } else {
           usersListContainer.innerHTML = '<span class="text-white/50 text-sm p-4 w-full text-center">No users online right now.</span>';
+          seeAllGridContainer.innerHTML = '<span class="text-white/50 text-sm p-4 w-full text-center col-span-2">No users online.</span>';
       }
   });
 
   function attachModelBtnEvents() {
       const modelBtns = document.querySelectorAll('.model-btn');
       modelBtns.forEach(btn => {
-          btn.addEventListener('click', (e) => {
+          // Remove old listeners to avoid duplicates
+          const newBtn = btn.cloneNode(true);
+          btn.parentNode.replaceChild(newBtn, btn);
+          
+          newBtn.addEventListener('click', (e) => {
               const name = e.currentTarget.getAttribute('data-name');
               const avatar = e.currentTarget.getAttribute('data-avatar');
               
-              document.getElementById('video-partner-name').innerText = name;
-              document.getElementById('audio-partner-name').innerText = name;
-              document.getElementById('audio-partner-img').src = avatar;
-              
-              // Ask user how they want to call
               if(confirm(`Do you want to video call ${name}? (Cancel for Audio)`)){
-                  initiateCall(name, avatar, true);
+                  initiateCall(name, true, avatar);
               } else {
-                  initiateCall(name, avatar, false);
+                  initiateCall(name, false, avatar);
               }
           });
       });
   }
-
-  // --- NAVIGATION LOGIC ---
-  const navBtns = document.querySelectorAll('.bottom-nav-btn');
-  navBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-          navBtns.forEach(b => {
-              b.classList.remove('nav-item-active');
-              b.classList.add('text-white/50');
-              b.querySelector('.active-dot').classList.add('hidden');
-              b.querySelector('.active-dot').classList.remove('bg-[#ff004c]');
-          });
-          btn.classList.add('nav-item-active');
-          btn.classList.remove('text-white/50');
-          btn.querySelector('.active-dot').classList.remove('hidden');
-          btn.querySelector('.active-dot').classList.add('bg-[#ff004c]');
-      });
-  });
 
   // --- 2. WEBRTC VIDEO & AUDIO SIGNALING (FIXED WITH CALLER/RECEIVER LOGIC) ---
   let localStream = null;
@@ -899,31 +1007,36 @@
       ]
   };
 
-  // Listen for incoming calls
   function listenForIncomingCalls() {
       if(!currentUser) return;
       onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
           const data = snapshot.val();
           if (data && data.offer && !peerConnection) {
-              // Incoming call detected
               incomingCallData = data;
               document.getElementById('incoming-caller-name').innerText = data.caller;
               document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
               document.getElementById('incoming-call-overlay').style.display = 'flex';
           } else if (!data && peerConnection) {
-              // Remote hung up
               stopWebRTC();
           } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
-              // Remote cancelled before answer
               document.getElementById('incoming-call-overlay').style.display = 'none';
               incomingCallData = null;
           }
       });
   }
 
-  // Caller side: Start the call
-  async function initiateCall(targetUser, isVideo) {
+  async function initiateCall(targetUser, isVideo, targetAvatar) {
       if(peerConnection) return;
+      
+      // Update UI texts immediately
+      document.getElementById('video-partner-name').innerText = targetUser;
+      document.getElementById('audio-partner-name').innerText = targetUser;
+      if(targetAvatar) document.getElementById('audio-partner-img').src = targetAvatar;
+      
+      // Hide See All Overlay if open
+      document.getElementById('see-all-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+
       currentCallPath = `calls/${targetUser}`;
       
       if(isVideo) document.getElementById("video-overlay").style.display = "flex";
@@ -955,7 +1068,6 @@
           const offer = await peerConnection.createOffer();
           await peerConnection.setLocalDescription(offer);
           
-          // Write offer to receiver's node
           set(ref(db, currentCallPath), {
               caller: currentUser,
               callerAvatar: currentAvatar,
@@ -963,7 +1075,6 @@
               isVideo: isVideo
           });
 
-          // Listen for answer from receiver
           onValue(ref(db, `${currentCallPath}/answer`), (snapshot) => {
               const data = snapshot.val();
               if (!peerConnection.currentRemoteDescription && data) {
@@ -971,7 +1082,6 @@
               }
           });
 
-          // Listen for ICE candidates from receiver
           onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snapshot) => {
               const data = snapshot.val();
               if (data) {
@@ -985,7 +1095,6 @@
       }
   }
 
-  // Receiver side: Answer the call
   async function answerCall() {
       if(!incomingCallData) return;
       const isVideo = incomingCallData.isVideo;
@@ -993,6 +1102,11 @@
       
       document.getElementById('incoming-call-overlay').style.display = 'none';
       
+      // Update UI with caller name
+      document.getElementById('video-partner-name').innerText = incomingCallData.caller;
+      document.getElementById('audio-partner-name').innerText = incomingCallData.caller;
+      document.getElementById('audio-partner-img').src = incomingCallData.callerAvatar;
+
       if(isVideo) document.getElementById("video-overlay").style.display = "flex";
       else document.getElementById("audio-overlay").style.display = "flex";
       
@@ -1023,10 +1137,8 @@
           const answer = await peerConnection.createAnswer();
           await peerConnection.setLocalDescription(answer);
           
-          // Write answer back to node
           set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
 
-          // Listen for ICE candidates from caller
           onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snapshot) => {
               const data = snapshot.val();
               if (data) {
@@ -1060,7 +1172,6 @@
       incomingCallData = null;
   }
 
-  // UI Event Listeners for Calls
   document.getElementById("btn-accept-call").addEventListener("click", answerCall);
   document.getElementById("btn-decline-call").addEventListener("click", () => {
       if(currentUser) remove(ref(db, `calls/${currentUser}`));
@@ -1078,6 +1189,7 @@
 
   document.getElementById("btn-private-chat").addEventListener("click", () => {
       chatOverlay.style.display = "flex";
+      document.getElementById("chat-header-name").innerText = "Zingoo Room";
       document.getElementById("chat-header-img").src = currentAvatar;
       chatMessages.scrollTop = chatMessages.scrollHeight;
   });
@@ -1134,4 +1246,4 @@
 </script>
 
 </body>
-</html>,
+</html>
