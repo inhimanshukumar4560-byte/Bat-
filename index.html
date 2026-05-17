@@ -283,10 +283,10 @@
 
 <!-- ================= TOP HEADER ================= -->
 <header class="sticky top-0 w-full z-50 glass-panel-heavy px-4 py-3 flex justify-between items-center shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-white/5">
-    <!-- User Profile & Status -->
-    <div class="flex items-center gap-3 cursor-pointer group">
+    <!-- User Profile & Status (Added ID for click event) -->
+    <div class="flex items-center gap-3 cursor-pointer group" id="header-profile-btn">
         <div class="relative transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-10 h-10 rounded-full object-cover border-2 border-[#ff004c] shadow-[0_0_10px_rgba(255,0,76,0.4)]" alt="Profile">
+            <img id="top-user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-10 h-10 rounded-full object-cover border-2 border-[#ff004c] shadow-[0_0_10px_rgba(255,0,76,0.4)]" alt="Profile">
             <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#131313] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
         </div>
         <div class="flex flex-col">
@@ -317,52 +317,16 @@
 <!-- ================= MAIN CONTENT ================= -->
 <main class="relative z-20 w-full max-w-container-max mx-auto flex flex-col gap-6 mt-5 px-3 md:px-margin-desktop" id="main-dashboard">
 
-    <!-- HORIZONTAL SCROLL: Hot / Live Models -->
+    <!-- HORIZONTAL SCROLL: Hot / Live Models (Dynamic Real Users Only) -->
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-end px-1 mb-4">
             <h2 class="text-[18px] font-display-lg text-white text-glow-white tracking-wide">Hot Right Now 🔥</h2>
             <span class="text-[12px] font-bold text-[#ff8fa3] cursor-pointer hover:text-white transition-colors hover:underline hover:drop-shadow-[0_0_8px_rgba(255,143,163,0.8)]">See All</span>
         </div>
-        <div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar px-1">
-            <!-- Story 1 (Live) -->
-            <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="Sophia">
-                <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
-                    <div class="live-pulse"></div>
-                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=150&auto=format&fit=crop" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
-                    <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 bg-[#ff004c] text-white text-[9px] font-extrabold px-2.5 py-[2px] rounded-sm uppercase tracking-widest shadow-[0_4px_10px_rgba(255,0,76,0.8)] ring-1 ring-white/20">LIVE</div>
-                </div>
-                <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">Sophia</span>
-            </div>
-            <!-- Story 2 -->
-            <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="Emma">
-                <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] to-[#ff8fa3] opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
-                </div>
-                <span class="text-[12px] font-medium text-white/80 mt-1 group-hover:text-white transition-all">Emma</span>
-            </div>
-            <!-- Story 3 -->
-            <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="Mia">
-                <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] to-[#ff8fa3] opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=150&auto=format&fit=crop" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
-                </div>
-                <span class="text-[12px] font-medium text-white/80 mt-1 group-hover:text-white transition-all">Mia</span>
-            </div>
-            <!-- Story 4 (Live) -->
-            <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="Chloe">
-                <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
-                    <div class="live-pulse"></div>
-                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=150&auto=format&fit=crop" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
-                    <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 bg-[#ff004c] text-white text-[9px] font-extrabold px-2.5 py-[2px] rounded-sm uppercase tracking-widest shadow-[0_4px_10px_rgba(255,0,76,0.8)] ring-1 ring-white/20">LIVE</div>
-                </div>
-                <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">Chloe</span>
-            </div>
-            <!-- Story 5 -->
-            <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="Isabella">
-                <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#555] to-[#333] group-hover:from-[#777] group-hover:to-[#444] transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=150&auto=format&fit=crop" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="Model">
-                </div>
-                <span class="text-[12px] font-medium text-white/50 mt-1 group-hover:text-white/80 transition-all">Isabella</span>
-            </div>
+        
+        <!-- Real users list fetched from Firebase -->
+        <div id="real-users-list" class="flex overflow-x-auto gap-4 pb-4 no-scrollbar px-1">
+            <!-- Dynamic users will be injected here via JavaScript -->
         </div>
     </section>
 
@@ -495,8 +459,8 @@
         <div class="absolute top-0 right-0 w-3 h-3 bg-[#ff004c] rounded-full border-2 border-[#0a0a0a] shadow-[0_0_8px_rgba(255,0,76,0.8)] animate-pulse"></div>
     </div>
 
-    <!-- Profile -->
-    <div class="flex flex-col items-center gap-1.5 cursor-pointer text-white/50 nav-item-hover transition-all duration-300 bottom-nav-btn">
+    <!-- Profile (Also links to manage profile) -->
+    <div class="flex flex-col items-center gap-1.5 cursor-pointer text-white/50 nav-item-hover transition-all duration-300 bottom-nav-btn" onclick="document.getElementById('header-profile-btn').click()">
         <span class="material-symbols-outlined text-[28px]">person</span>
         <span class="text-[11px] font-medium tracking-wide">Profile</span>
         <div class="w-1.5 h-1.5 bg-transparent rounded-full mt-0.5 active-dot hidden"></div>
@@ -506,39 +470,92 @@
 
 <!-- ================= FUNCTIONAL OVERLAYS ================= -->
 
-<!-- 1. Profile Creation Guard Overlay (Enhanced Version) -->
+<!-- 1. Profile Creation/Edit Guard Overlay (Enhanced Version with all new fields) -->
 <div id="auth-overlay" class="fixed inset-0 overlay-glass flex flex-col items-center justify-center hidden z-[9999]">
-    <div class="glass-panel p-8 rounded-[30px] w-[90%] max-w-md text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] transform transition-all duration-500 scale-100 relative overflow-hidden">
+    <div class="glass-panel p-6 md:p-8 rounded-[30px] w-[90%] max-w-md text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] transform transition-all duration-500 scale-100 relative overflow-y-auto max-h-[90vh] no-scrollbar">
         
         <!-- Ambient glow behind modal -->
         <div class="absolute top-[-50px] left-1/2 transform -translate-x-1/2 w-[200px] h-[200px] bg-[#ff004c]/20 rounded-full blur-[60px] pointer-events-none"></div>
 
         <div class="text-glow-white tracking-[0.1em] font-light text-[28px] mb-1 relative z-10" style="font-family: 'Times New Roman', serif;">PRIVATE<span class="text-[#ff004c] font-black text-glow-red ml-1">X</span></div>
-        <p class="text-white/60 text-[13px] mb-6 font-medium relative z-10 tracking-wide">Create your secret identity to enter.</p>
+        <p class="text-white/60 text-[13px] mb-4 font-medium relative z-10 tracking-wide">Setup your secret identity to enter.</p>
         
-        <!-- Avatar Preview using the provided seed -->
-        <div class="relative w-24 h-24 mx-auto mb-6 z-10 group">
+        <!-- File Input for Image Upload -->
+        <input type="file" id="profile-image-upload" accept="image/*" class="hidden">
+        
+        <!-- Avatar Preview and Clickable Area -->
+        <div class="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-5 z-10 group cursor-pointer" onclick="document.getElementById('profile-image-upload').click()">
             <div class="absolute inset-0 bg-gradient-to-tr from-[#ff004c] to-[#ff8fa3] rounded-full animate-spin-slow blur-[8px] opacity-70 group-hover:opacity-100 transition-opacity"></div>
             <div class="relative w-full h-full bg-[#131313] rounded-full border-[3px] border-[#ff004c]/50 overflow-hidden shadow-[0_0_20px_rgba(255,0,76,0.4)] p-1">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full rounded-full object-cover" alt="Secret Avatar">
+                <img id="auth-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full rounded-full object-cover" alt="Secret Avatar">
             </div>
-            <div class="absolute bottom-0 right-0 bg-[#ff004c] rounded-full w-7 h-7 flex items-center justify-center border-2 border-[#131313] shadow-lg cursor-pointer hover:scale-110 transition-transform">
+            <div class="absolute bottom-0 right-0 bg-[#ff004c] rounded-full w-7 h-7 flex items-center justify-center border-2 border-[#131313] shadow-lg hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined text-white text-[14px]">edit</span>
             </div>
         </div>
 
-        <div class="relative w-full mb-4 z-10 group">
+        <div class="relative w-full mb-3 z-10 group">
             <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 group-focus-within:text-[#ff004c] transition-colors">person</span>
-            <input type="text" id="auth-name" placeholder="Enter Nickname" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
+            <input type="text" id="auth-name" placeholder="Enter Nickname" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
         </div>
 
-        <div class="relative w-full mb-8 z-10 group">
+        <div class="relative w-full mb-3 z-10 group">
             <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 group-focus-within:text-[#ff004c] transition-colors">cake</span>
-            <input type="number" id="auth-age" placeholder="Age (18+)" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
+            <input type="number" id="auth-age" placeholder="Age (18+)" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
+        </div>
+
+        <!-- NEW FIELDS ADDED: Phone, Address, State -->
+        <div class="relative w-full mb-3 z-10 group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 group-focus-within:text-[#ff004c] transition-colors">call</span>
+            <input type="number" id="auth-phone" placeholder="Phone Number" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
+        </div>
+
+        <div class="relative w-full mb-3 z-10 group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 group-focus-within:text-[#ff004c] transition-colors">home</span>
+            <input type="text" id="auth-address" placeholder="Full Address" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left placeholder-white/30 transition-all shadow-inner font-medium tracking-wide">
+        </div>
+
+        <div class="relative w-full mb-6 z-10 group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 group-focus-within:text-[#ff004c] transition-colors">map</span>
+            <select id="auth-state" class="w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#ff004c] focus:ring-1 focus:ring-[#ff004c] text-left transition-all shadow-inner font-medium tracking-wide appearance-none">
+                <option value="" disabled selected class="text-white/30">Select Indian State</option>
+                <option value="Andhra Pradesh" class="bg-[#131313] text-white">Andhra Pradesh</option>
+                <option value="Arunachal Pradesh" class="bg-[#131313] text-white">Arunachal Pradesh</option>
+                <option value="Assam" class="bg-[#131313] text-white">Assam</option>
+                <option value="Bihar" class="bg-[#131313] text-white">Bihar</option>
+                <option value="Chhattisgarh" class="bg-[#131313] text-white">Chhattisgarh</option>
+                <option value="Goa" class="bg-[#131313] text-white">Goa</option>
+                <option value="Gujarat" class="bg-[#131313] text-white">Gujarat</option>
+                <option value="Haryana" class="bg-[#131313] text-white">Haryana</option>
+                <option value="Himachal Pradesh" class="bg-[#131313] text-white">Himachal Pradesh</option>
+                <option value="Jharkhand" class="bg-[#131313] text-white">Jharkhand</option>
+                <option value="Karnataka" class="bg-[#131313] text-white">Karnataka</option>
+                <option value="Kerala" class="bg-[#131313] text-white">Kerala</option>
+                <option value="Madhya Pradesh" class="bg-[#131313] text-white">Madhya Pradesh</option>
+                <option value="Maharashtra" class="bg-[#131313] text-white">Maharashtra</option>
+                <option value="Manipur" class="bg-[#131313] text-white">Manipur</option>
+                <option value="Meghalaya" class="bg-[#131313] text-white">Meghalaya</option>
+                <option value="Mizoram" class="bg-[#131313] text-white">Mizoram</option>
+                <option value="Nagaland" class="bg-[#131313] text-white">Nagaland</option>
+                <option value="Odisha" class="bg-[#131313] text-white">Odisha</option>
+                <option value="Punjab" class="bg-[#131313] text-white">Punjab</option>
+                <option value="Rajasthan" class="bg-[#131313] text-white">Rajasthan</option>
+                <option value="Sikkim" class="bg-[#131313] text-white">Sikkim</option>
+                <option value="Tamil Nadu" class="bg-[#131313] text-white">Tamil Nadu</option>
+                <option value="Telangana" class="bg-[#131313] text-white">Telangana</option>
+                <option value="Tripura" class="bg-[#131313] text-white">Tripura</option>
+                <option value="Uttar Pradesh" class="bg-[#131313] text-white">Uttar Pradesh</option>
+                <option value="Uttarakhand" class="bg-[#131313] text-white">Uttarakhand</option>
+                <option value="West Bengal" class="bg-[#131313] text-white">West Bengal</option>
+                <option value="Delhi" class="bg-[#131313] text-white">Delhi (UT)</option>
+                <option value="Jammu and Kashmir" class="bg-[#131313] text-white">Jammu & Kashmir (UT)</option>
+                <option value="Other UTs" class="bg-[#131313] text-white">Other Union Territories</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 text-white/40 pointer-events-none">arrow_drop_down</span>
         </div>
         
         <button id="btn-create-profile" class="relative z-10 w-full py-4 rounded-full btn-hot-pink-gradient text-white font-extrabold tracking-[0.15em] uppercase text-[14px] btn-3d-effect ring-2 ring-white/10 shadow-[0_10px_30px_rgba(255,0,76,0.5)]">
-            Enter The Club
+            <span id="btn-create-text">Enter The Club</span>
             <span class="material-symbols-outlined absolute right-6 top-1/2 transform -translate-y-1/2 animate-pulse">login</span>
         </button>
     </div>
@@ -575,7 +592,7 @@
     <div class="text-center flex flex-col items-center justify-center h-full w-full p-6 relative">
         <div class="w-32 h-32 rounded-full border-4 border-[#ff004c] p-1 shadow-[0_0_30px_rgba(255,0,76,0.5)] relative mb-6">
             <div class="live-pulse"></div>
-            <img id="audio-partner-img" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=150&auto=format&fit=crop" class="w-full h-full rounded-full object-cover">
+            <img id="audio-partner-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full rounded-full object-cover">
         </div>
         <h2 class="text-white text-2xl font-bold mb-1" id="audio-partner-name">Random Partner</h2>
         <p class="text-[#ff8fa3] text-sm mb-12 animate-pulse" id="audio-status">Connecting audio stream...</p>
@@ -595,7 +612,7 @@
     <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-white/10">
         <div class="flex items-center gap-3">
             <button id="btn-close-chat" class="text-white/70 hover:text-white"><span class="material-symbols-outlined">arrow_back</span></button>
-            <div class="w-10 h-10 rounded-full border border-[#ff004c] overflow-hidden"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=150&auto=format&fit=crop" class="w-full h-full object-cover"></div>
+            <div class="w-10 h-10 rounded-full border border-[#ff004c] overflow-hidden"><img id="chat-header-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full object-cover"></div>
             <div>
                 <h3 class="text-white font-bold text-sm">Secret Chat Room</h3>
                 <p class="text-green-400 text-[10px]">Connected via Firebase</p>
@@ -613,6 +630,30 @@
         <button id="btn-send-msg" class="w-10 h-10 rounded-full btn-hot-pink-gradient flex items-center justify-center text-white shadow-lg">
             <span class="material-symbols-outlined text-[20px] ml-1">send</span>
         </button>
+    </div>
+</div>
+
+<!-- 5. Profile View/Manage Overlay (NEW ADDITION) -->
+<div id="manage-profile-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[9999]">
+    <div class="glass-panel p-8 rounded-[30px] w-[90%] max-w-sm text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] relative overflow-hidden">
+        <button id="btn-close-manage" class="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"><span class="material-symbols-outlined">close</span></button>
+        
+        <div class="w-24 h-24 mx-auto mb-4 relative">
+            <img id="manage-avatar" src="" class="w-full h-full rounded-full border-4 border-[#ff004c] object-cover shadow-[0_0_20px_rgba(255,0,76,0.5)]">
+        </div>
+        
+        <h2 id="manage-name" class="text-white text-2xl font-bold mb-1 tracking-wide">Name</h2>
+        <p id="manage-details" class="text-[#ff8fa3] text-sm mb-2 opacity-90">Phone • State</p>
+        <p id="manage-address" class="text-white/50 text-xs mb-8 px-2">Address goes here...</p>
+        
+        <div class="flex flex-col gap-3">
+            <button id="btn-edit-profile" class="w-full py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all shadow-md flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">edit</span> Edit Profile
+            </button>
+            <button id="btn-logout" class="w-full py-3.5 rounded-2xl bg-red-600/10 hover:bg-red-600/20 border border-red-500/30 text-red-400 hover:text-red-300 font-bold transition-all shadow-md flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">logout</span> Log Out
+            </button>
+        </div>
     </div>
 </div>
 
@@ -637,44 +678,177 @@
   const analytics = getAnalytics(app);
   const db = getDatabase(app);
 
-  // --- 1. PROFILE CREATION GUARD LOGIC ---
+  // --- 1. PROFILE CREATION, IMAGE UPLOAD & LOCALSTORAGE LOGIC ---
   let currentUser = localStorage.getItem("privateX_user");
+  let currentAge = localStorage.getItem("privateX_age") || "";
+  let currentPhone = localStorage.getItem("privateX_phone") || "";
+  let currentAddress = localStorage.getItem("privateX_address") || "";
+  let currentState = localStorage.getItem("privateX_state") || "";
+  let currentAvatar = localStorage.getItem("privateX_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
+  let uploadedAvatarBase64 = currentAvatar;
+
   const authOverlay = document.getElementById("auth-overlay");
   const topGreeting = document.getElementById("top-user-greeting");
+  const topAvatar = document.getElementById("top-user-avatar");
   
   if (!currentUser) {
       authOverlay.style.display = "flex";
       document.body.style.overflow = "hidden";
   } else {
       topGreeting.innerText = "Hi, " + currentUser;
+      topAvatar.src = currentAvatar;
   }
 
-  document.getElementById("btn-create-profile").addEventListener("click", () => {
-      const name = document.getElementById("auth-name").value.trim();
-      const age = document.getElementById("auth-age").value.trim();
-      if (name !== "" && age >= 18) {
-          localStorage.setItem("privateX_user", name);
-          currentUser = name;
-          topGreeting.innerText = "Hi, " + name;
-          authOverlay.style.display = "none";
-          document.body.style.overflow = "auto";
-      } else {
-          alert("You must enter a valid name and be 18+ to enter Private X.");
+  // Handle Image Upload Selection
+  document.getElementById("profile-image-upload").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if(file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+              uploadedAvatarBase64 = event.target.result;
+              document.getElementById("auth-avatar-preview").src = uploadedAvatarBase64;
+          };
+          reader.readAsDataURL(file);
       }
   });
 
-  // --- UI DYNAMIC EVENTS (Removing Mock feels) ---
-  const modelBtns = document.querySelectorAll('.model-btn');
-  modelBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-          const name = e.currentTarget.getAttribute('data-name');
-          document.getElementById('video-partner-name').innerText = name;
-          document.getElementById('audio-partner-name').innerText = name;
-          document.getElementById('btn-video-call').click();
-      });
+  // Save/Edit Profile to Firebase and LocalStorage
+  document.getElementById("btn-create-profile").addEventListener("click", () => {
+      const name = document.getElementById("auth-name").value.trim();
+      const age = document.getElementById("auth-age").value.trim();
+      const phone = document.getElementById("auth-phone").value.trim();
+      const address = document.getElementById("auth-address").value.trim();
+      const state = document.getElementById("auth-state").value;
+
+      if (name !== "" && age >= 18 && phone !== "" && state !== "") {
+          
+          // Save actual real user to Firebase
+          set(ref(db, 'users/' + name), {
+              name: name,
+              age: age,
+              phone: phone,
+              address: address,
+              state: state,
+              avatar: uploadedAvatarBase64,
+              status: 'online',
+              timestamp: serverTimestamp()
+          });
+
+          localStorage.setItem("privateX_user", name);
+          localStorage.setItem("privateX_age", age);
+          localStorage.setItem("privateX_phone", phone);
+          localStorage.setItem("privateX_address", address);
+          localStorage.setItem("privateX_state", state);
+          localStorage.setItem("privateX_avatar", uploadedAvatarBase64);
+          
+          currentUser = name;
+          currentAge = age;
+          currentPhone = phone;
+          currentAddress = address;
+          currentState = state;
+          currentAvatar = uploadedAvatarBase64;
+          
+          topGreeting.innerText = "Hi, " + name;
+          topAvatar.src = uploadedAvatarBase64;
+          
+          authOverlay.style.display = "none";
+          document.body.style.overflow = "auto";
+      } else {
+          alert("Please fill all required fields correctly (Age must be 18+).");
+      }
   });
 
-  // Navigation Logic
+  // --- PROFILE MANAGEMENT OVERLAY (VIEW/EDIT/LOGOUT) ---
+  const manageOverlay = document.getElementById("manage-profile-overlay");
+
+  // Open Manage Profile
+  document.getElementById("header-profile-btn").addEventListener("click", () => {
+      if(currentUser) {
+          document.getElementById("manage-avatar").src = currentAvatar;
+          document.getElementById("manage-name").innerText = currentUser;
+          document.getElementById("manage-details").innerText = `${currentPhone} • ${currentState}`;
+          document.getElementById("manage-address").innerText = currentAddress || "Address not provided";
+          manageOverlay.style.display = "flex";
+      }
+  });
+
+  // Close Manage Profile
+  document.getElementById("btn-close-manage").addEventListener("click", () => {
+      manageOverlay.style.display = "none";
+  });
+
+  // Log Out Function
+  document.getElementById("btn-logout").addEventListener("click", () => {
+      if(confirm("Are you sure you want to log out of your secret identity?")) {
+          // Remove from Firebase (optional, or just set status offline)
+          if(currentUser) remove(ref(db, 'users/' + currentUser));
+          localStorage.clear();
+          location.reload();
+      }
+  });
+
+  // Edit Profile Function
+  document.getElementById("btn-edit-profile").addEventListener("click", () => {
+      manageOverlay.style.display = "none";
+      
+      // Populate auth overlay fields
+      document.getElementById("auth-name").value = currentUser;
+      document.getElementById("auth-age").value = currentAge;
+      document.getElementById("auth-phone").value = currentPhone;
+      document.getElementById("auth-address").value = currentAddress;
+      document.getElementById("auth-state").value = currentState;
+      document.getElementById("auth-avatar-preview").src = currentAvatar;
+      document.getElementById("btn-create-text").innerText = "Save Changes";
+      
+      authOverlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+  });
+
+
+  // --- DYNAMIC REAL USERS FETCHING ---
+  const usersListContainer = document.getElementById("real-users-list");
+  
+  onValue(ref(db, 'users'), (snapshot) => {
+      usersListContainer.innerHTML = '';
+      const data = snapshot.val();
+      
+      if(data) {
+          Object.values(data).forEach(user => {
+              // Exclude self from Hot Right Now if desired, but for now showing everyone
+              const userHtml = `
+              <div class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+                  <div class="relative p-[3px] rounded-full bg-gradient-to-br from-[#ff004c] via-[#ff3b6b] to-[#ff8fa3] shadow-[0_0_15px_rgba(255,0,76,0.4)] group-hover:scale-105 transition-transform duration-300">
+                      <div class="live-pulse"></div>
+                      <img src="${user.avatar}" class="w-16 h-16 rounded-full border-[3px] border-[#131313] object-cover" alt="Model">
+                      <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 bg-[#ff004c] text-white text-[9px] font-extrabold px-2.5 py-[2px] rounded-sm uppercase tracking-widest shadow-[0_4px_10px_rgba(255,0,76,0.8)] ring-1 ring-white/20">LIVE</div>
+                  </div>
+                  <span class="text-[12px] font-medium text-white/90 mt-2 group-hover:text-white group-hover:text-glow-white transition-all">${user.name}</span>
+              </div>`;
+              usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+          });
+          attachModelBtnEvents();
+      } else {
+          usersListContainer.innerHTML = '<span class="text-white/50 text-sm p-4 w-full text-center">No users online right now.</span>';
+      }
+  });
+
+  function attachModelBtnEvents() {
+      const modelBtns = document.querySelectorAll('.model-btn');
+      modelBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+              const name = e.currentTarget.getAttribute('data-name');
+              const avatar = e.currentTarget.getAttribute('data-avatar');
+              
+              document.getElementById('video-partner-name').innerText = name;
+              document.getElementById('audio-partner-name').innerText = name;
+              document.getElementById('audio-partner-img').src = avatar;
+              
+              document.getElementById('btn-video-call').click();
+          });
+      });
+  }
+
+  // --- NAVIGATION LOGIC ---
   const navBtns = document.querySelectorAll('.bottom-nav-btn');
   navBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -704,15 +878,12 @@
       peerConnection = new RTCPeerConnection(servers);
       const callRef = ref(db, 'webrtc_global_room');
       
-      // Get Local Stream
       localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
       if(isVideo) document.getElementById("local-video").srcObject = localStream;
       else document.getElementById("local-audio").srcObject = localStream;
 
-      // Add local tracks to PeerConnection
       localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-      // Listen for remote track
       peerConnection.ontrack = event => {
           if(isVideo) document.getElementById("remote-video").srcObject = event.streams[0];
           else document.getElementById("remote-audio").srcObject = event.streams[0];
@@ -720,7 +891,6 @@
           document.getElementById("audio-status").innerText = "Call Connected";
       };
 
-      // Very Basic Signaling (Offer/Answer model through Realtime Database)
       peerConnection.onicecandidate = event => {
           if (event.candidate) {
               push(ref(db, 'webrtc_global_room/candidates'), event.candidate.toJSON());
@@ -736,7 +906,6 @@
       };
       await set(ref(db, 'webrtc_global_room/offer'), offer);
 
-      // Listen for answer
       onValue(ref(db, 'webrtc_global_room/answer'), (snapshot) => {
           const data = snapshot.val();
           if (!peerConnection.currentRemoteDescription && data) {
@@ -745,7 +914,6 @@
           }
       });
 
-      // Listen for ICE candidates
       onChildAdded(ref(db, 'webrtc_global_room/candidates'), (snapshot) => {
           const data = snapshot.val();
           if (data) {
@@ -759,7 +927,7 @@
       if(localStream) localStream.getTracks().forEach(track => track.stop());
       if(peerConnection) peerConnection.close();
       if(document.getElementById("remote-video").srcObject) document.getElementById("remote-video").srcObject = null;
-      remove(ref(db, 'webrtc_global_room')); // clean room
+      remove(ref(db, 'webrtc_global_room')); 
   }
 
   document.getElementById("btn-video-call").addEventListener("click", async () => {
@@ -793,6 +961,7 @@
 
   document.getElementById("btn-private-chat").addEventListener("click", () => {
       chatOverlay.style.display = "flex";
+      document.getElementById("chat-header-img").src = currentAvatar;
       chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 
