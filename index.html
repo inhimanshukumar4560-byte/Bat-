@@ -1,3 +1,5 @@
+:
+
 <!DOCTYPE html>
 <html class="dark scroll-smooth" lang="en">
 <head>
@@ -377,8 +379,8 @@
                 </div>
             </div>
 
-            <!-- Audio Room -->
-            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" onclick="alert('Feature unlocking soon!')">
+            <!-- Audio Room (NEW UPDATED ONCLICK) -->
+            <div class="glass-panel p-5 rounded-[20px] flex flex-col items-center justify-center gap-3 feature-card-3d cursor-pointer group" onclick="openAudioRoomLobby()">
                 <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#ff004c]/20 to-[#ff8fa3]/10 flex items-center justify-center text-[#ff004c] shadow-[0_0_20px_rgba(255,0,76,0.2)] group-hover:shadow-[0_0_30px_rgba(255,0,76,0.5)] transition-all">
                     <span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">headphones</span>
                 </div>
@@ -461,6 +463,55 @@
     </div>
 
 </nav>
+
+<!-- ================= NEW: AUDIO ROOM LOBBY OVERLAY ================= -->
+<div id="audio-room-lobby-overlay" class="fixed inset-0 bg-[#0a0a0a] z-[8000] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-[#ff004c]/20 sticky top-0 z-50 shadow-lg">
+        <div class="flex items-center gap-3">
+            <button class="text-white hover:text-[#ff004c] transition-colors" onclick="closeAudioRoomLobby()"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-white font-bold text-lg text-glow-white tracking-wider">Live Audio Rooms</h3>
+        </div>
+        <button class="bg-[#ff004c] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-[0_0_10px_rgba(255,0,76,0.5)] hover:bg-[#ff3b6b] transition-colors flex items-center gap-1" onclick="createNewAudioRoom()">
+            <span class="material-symbols-outlined text-[16px]">add</span> Create
+        </button>
+    </div>
+    
+    <div id="audio-rooms-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-24 no-scrollbar bg-[#0a0a0a]">
+        <!-- Active Rooms will be injected here via JS -->
+        <p class="text-white/50 text-center w-full mt-10 text-sm font-medium">Fetching active rooms...</p>
+    </div>
+</div>
+
+<!-- ================= NEW: ACTIVE AUDIO ROOM 10-SEAT INTERFACE ================= -->
+<div id="audio-room-active-overlay" class="fixed inset-0 bg-[#040404] z-[8500] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="glass-panel-heavy px-4 py-4 flex items-center justify-between border-b border-[#ff004c]/20 sticky top-0 z-50 shadow-lg">
+        <div class="flex flex-col">
+            <h3 id="active-room-name" class="text-white font-bold text-lg text-glow-white tracking-wider flex items-center gap-2">Room Name <div class="live-pulse relative w-2 h-2 ml-1"></div></h3>
+            <p class="text-[#ff004c] text-[10px] font-extrabold uppercase tracking-widest mt-0.5">Live Audio Session</p>
+        </div>
+        <button class="bg-red-600/20 text-red-500 border border-red-500/50 px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition-colors" onclick="leaveActiveAudioRoom()">
+            Leave
+        </button>
+    </div>
+    
+    <!-- 10 Seats Grid (9:16 Aspect Ratio) -->
+    <div id="audio-room-seats-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pb-24 no-scrollbar">
+        <!-- 10 Seats injected dynamically -->
+    </div>
+    
+    <!-- Bottom Room Controls -->
+    <div class="glass-panel-heavy fixed bottom-0 w-full p-4 flex justify-around items-center border-t border-white/10 z-50 pb-8">
+        <button class="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#ff004c] transition-colors shadow-lg" onclick="alert('Chat functionality inside room')">
+            <span class="material-symbols-outlined">chat</span>
+        </button>
+        <button class="w-16 h-16 rounded-full btn-hot-pink-gradient text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,0,76,0.6)] transform hover:scale-105 transition-transform border-[3px] border-[#131313]">
+            <span class="material-symbols-outlined text-[32px]">mic</span>
+        </button>
+        <button class="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors shadow-lg" onclick="alert('Share room link')">
+            <span class="material-symbols-outlined">share</span>
+        </button>
+    </div>
+</div>
 
 <!-- ================= NEW: FULL SCREEN VIDEO PLAYER OVERLAY ================= -->
 <div id="video-player-overlay" class="fixed inset-0 bg-[#000000] z-[9500] flex-col hidden overflow-hidden transition-all duration-300">
@@ -808,8 +859,8 @@
   let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313";
 
   // --- CLOUDINARY CONFIGURATION (REPLACE WITH YOUR DETAILS) ---
-  const CLOUD_NAME = "dotjw6tep"; // <--- PUT YOUR CLOUDINARY CLOUD NAME HERE
-  const UPLOAD_PRESET = "Zingoo"; // <--- PUT YOUR UNSIGNED UPLOAD PRESET HERE
+  const CLOUD_NAME = "dotjw6tep"; 
+  const UPLOAD_PRESET = "Zingoo"; 
 
   // --- FULL SCREEN VIDEO PLAYER LOGIC ---
   window.playVideo = function(url, type, isYouTube) {
@@ -896,7 +947,7 @@
           else throw new Error("Upload Failed");
       } catch (err) {
           console.error("Cloudinary Upload Error:", err);
-          return null; // Fallback will be handled
+          return null; 
       }
   }
 
@@ -909,7 +960,7 @@
       });
   }
 
-  // --- FIXED: Submit Video with Cloudinary & Firebase DB Persistence ---
+  // Submit Video with Cloudinary & Firebase DB Persistence
   window.submitVideoUpload = async function() {
       const title = document.getElementById('upload-title').value;
       const type = document.getElementById('upload-type').value;
@@ -927,7 +978,7 @@
           mediaUrl = await uploadToCloudinary(videoFile, "video");
           if(!mediaUrl) {
               alert("Cloudinary Upload failed! Ensure CLOUD_NAME and UPLOAD_PRESET are set correctly in code.");
-              mediaUrl = URL.createObjectURL(videoFile); // Fallback to local URL for demo purposes
+              mediaUrl = URL.createObjectURL(videoFile); 
           }
       } else {
           const ytLink = document.getElementById('upload-yt-link').value;
@@ -939,10 +990,10 @@
       let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop"; 
       if (thumbFile) {
           thumbUrl = await uploadToCloudinary(thumbFile, "image");
-          if(!thumbUrl) thumbUrl = await readFileAsBase64(thumbFile); // Fallback base64 to Firebase
+          if(!thumbUrl) thumbUrl = await readFileAsBase64(thumbFile);
       }
 
-      // Save Permanently to Firebase DB so it never disappears!
+      // Save Permanently to Firebase DB 
       try {
           const newVideoRef = push(ref(db, 'videos'));
           await set(newVideoRef, {
@@ -1167,7 +1218,6 @@
       const data = snapshot.val();
       
       if(data) {
-          // Sort by timestamp
           const chatsArray = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
           
           chatsArray.forEach(([partner, details]) => {
@@ -1198,7 +1248,7 @@
       document.body.style.overflow = 'auto';
       
       currentChatPartnerName = name;
-      currentActiveChatId = [currentUser, name].sort().join('_'); // Unique ID for these two users
+      currentActiveChatId = [currentUser, name].sort().join('_'); 
 
       const chatOverlay = document.getElementById("chat-overlay");
       document.getElementById("chat-header-name").innerText = `${name}`;
@@ -1208,13 +1258,6 @@
       const chatMessages = document.getElementById("chat-messages");
       chatMessages.innerHTML = '<div class="text-center text-white/40 text-xs my-2">Messages are end-to-end encrypted</div>';
 
-      // Disconnect previous chat listener if exists
-      if(chatUnsubscribe) {
-          // For Firebase modular SDK, turning off is tricky without unsub method,
-          // so we use onValue and let it override via a scoped approach.
-      }
-
-      // Attach new listener for this specific 1-on-1 chat
       onValue(ref(db, 'chats/' + currentActiveChatId), (snapshot) => {
           chatMessages.innerHTML = '<div class="text-center text-white/40 text-xs my-2">Messages are end-to-end encrypted</div>';
           const msgs = snapshot.val();
@@ -1237,27 +1280,24 @@
   document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendMessage(); });
 
   function sendMessage() {
-      if(!currentActiveChatId) return; // Prevent sending if no chat open
+      if(!currentActiveChatId) return; 
       const chatInput = document.getElementById("chat-input");
       const msg = chatInput.value.trim();
       
       if(msg !== "") {
           try {
-              // 1. Push message to specific chat thread
               push(ref(db, 'chats/' + currentActiveChatId), {
                   user: currentUser,
                   text: msg,
                   timestamp: serverTimestamp()
               });
 
-              // 2. Update Recent Chats list for Current User
               set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), {
                   avatar: document.getElementById("chat-header-img").src,
                   lastMessage: "You: " + msg,
                   timestamp: serverTimestamp()
               });
 
-              // 3. Update Recent Chats list for Partner
               set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), {
                   avatar: currentAvatar,
                   lastMessage: msg,
@@ -1553,6 +1593,151 @@
   
   document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
   document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
+
+  // ==========================================
+  // NEW FEATURE: AUDIO ROOM MULTI-SEAT LOGIC
+  // ==========================================
+  
+  let currentActiveAudioRoomId = null;
+  let myAudioSeatIndex = null;
+
+  window.openAudioRoomLobby = function() {
+      document.getElementById('audio-room-lobby-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      listenToAudioRooms();
+  };
+
+  window.closeAudioRoomLobby = function() {
+      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
+      document.body.style.overflow = 'auto';
+  };
+
+  function listenToAudioRooms() {
+      onValue(ref(db, 'audio_rooms'), (snapshot) => {
+          const container = document.getElementById('audio-rooms-list');
+          container.innerHTML = '';
+          const data = snapshot.val();
+          
+          if(data) {
+              Object.entries(data).forEach(([roomId, roomData]) => {
+                  let occupied = 0;
+                  if(roomData.seats) {
+                      occupied = Object.values(roomData.seats).filter(s => s).length;
+                  }
+                  
+                  const roomHtml = `
+                  <div class="glass-panel p-4 rounded-2xl flex justify-between items-center cursor-pointer hover:border-[#ff004c]/50 transition-colors" onclick="joinAudioRoom('${roomId}', '${roomData.name}')">
+                      <div>
+                          <h4 class="text-white font-bold text-[15px] flex items-center gap-2">${roomData.name} <div class="live-pulse relative w-1.5 h-1.5"></div></h4>
+                          <p class="text-white/50 text-xs mt-1">Host: ${roomData.host}</p>
+                      </div>
+                      <div class="flex flex-col items-center">
+                          <span class="text-[#ff004c] font-black text-sm">${occupied}/10</span>
+                          <span class="text-white/40 text-[10px] uppercase">Seats</span>
+                      </div>
+                  </div>`;
+                  container.insertAdjacentHTML('beforeend', roomHtml);
+              });
+          } else {
+              container.innerHTML = '<p class="text-white/50 text-center w-full mt-10 text-sm font-medium">No active rooms. Create your own party!</p>';
+          }
+      });
+  }
+
+  window.createNewAudioRoom = function() {
+      const roomName = prompt("Enter a name for your Audio Room:");
+      if(!roomName) return;
+      
+      const newRoomRef = push(ref(db, 'audio_rooms'));
+      const roomId = newRoomRef.key;
+      
+      set(newRoomRef, {
+          name: roomName,
+          host: currentUser,
+          createdAt: serverTimestamp(),
+          seats: {} 
+      }).then(() => {
+          joinAudioRoom(roomId, roomName);
+      });
+  };
+
+  window.joinAudioRoom = function(roomId, roomName) {
+      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
+      document.getElementById('audio-room-active-overlay').style.display = 'flex';
+      document.getElementById('active-room-name').innerText = roomName;
+      
+      currentActiveAudioRoomId = roomId;
+
+      onValue(ref(db, `audio_rooms/${roomId}/seats`), (snapshot) => {
+          const seatsData = snapshot.val() || {};
+          renderAudioSeats(seatsData);
+      });
+  };
+
+  function renderAudioSeats(seatsData) {
+      const grid = document.getElementById('audio-room-seats-grid');
+      grid.innerHTML = '';
+      
+      myAudioSeatIndex = -1;
+      for(let i = 0; i < 10; i++) {
+          if(seatsData[i] && seatsData[i].user === currentUser) {
+              myAudioSeatIndex = i;
+          }
+      }
+
+      for(let i = 0; i < 10; i++) {
+          const seat = seatsData[i];
+          if(seat) {
+              grid.innerHTML += `
+              <div class="relative rounded-2xl overflow-hidden aspect-[9/16] bg-[#1a1a1a] shadow-[0_5px_15px_rgba(255,0,76,0.3)] border border-[#ff004c]/50 flex flex-col items-center justify-center">
+                  <img src="${seat.avatar}" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-[4px]">
+                  <div class="relative z-10 w-16 h-16 rounded-full border-[3px] border-[#ff004c] shadow-[0_0_20px_rgba(255,0,76,0.6)] overflow-hidden mb-2">
+                      <div class="absolute inset-0 bg-[#ff004c]/20 animate-pulse mix-blend-overlay"></div>
+                      <img src="${seat.avatar}" class="w-full h-full object-cover">
+                  </div>
+                  <span class="relative z-10 text-white font-bold text-xs drop-shadow-md truncate w-full text-center px-2">${seat.user}</span>
+                  ${seat.user === currentUser ? `<button class="relative z-10 mt-3 bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1.5 rounded-full font-bold transition-colors shadow-lg" onclick="leaveMyAudioSeat(${i})">Leave Seat</button>` : ''}
+              </div>`;
+          } else {
+              grid.innerHTML += `
+              <div class="relative rounded-2xl overflow-hidden aspect-[9/16] bg-[#0a0a0a] border border-white/10 hover:border-[#ff004c]/50 transition-colors flex flex-col items-center justify-center cursor-pointer group shadow-inner" onclick="takeAudioSeat(${i}, ${myAudioSeatIndex !== -1})">
+                  <div class="w-12 h-12 rounded-full bg-white/5 group-hover:bg-[#ff004c]/20 flex items-center justify-center transition-colors border border-white/10 group-hover:border-[#ff004c]/50 mb-2">
+                      <span class="material-symbols-outlined text-white/30 group-hover:text-[#ff004c] text-[24px]">add</span>
+                  </div>
+                  <span class="text-white/30 group-hover:text-white/80 font-bold text-[10px] uppercase tracking-wider">Vacant</span>
+              </div>`;
+          }
+      }
+  }
+
+  window.takeAudioSeat = function(index, alreadySeated) {
+      if(alreadySeated) {
+          alert("You are already occupying a seat!");
+          return;
+      }
+      if(!currentActiveAudioRoomId) return;
+      
+      set(ref(db, `audio_rooms/${currentActiveAudioRoomId}/seats/${index}`), {
+          user: currentUser,
+          avatar: currentAvatar,
+          timestamp: serverTimestamp()
+      });
+  };
+
+  window.leaveMyAudioSeat = function(index) {
+      if(!currentActiveAudioRoomId) return;
+      remove(ref(db, `audio_rooms/${currentActiveAudioRoomId}/seats/${index}`));
+      myAudioSeatIndex = -1;
+  };
+
+  window.leaveActiveAudioRoom = function() {
+      if(myAudioSeatIndex !== -1 && myAudioSeatIndex !== null) {
+          leaveMyAudioSeat(myAudioSeatIndex);
+      }
+      document.getElementById('audio-room-active-overlay').style.display = 'none';
+      document.getElementById('audio-room-lobby-overlay').style.display = 'flex';
+      currentActiveAudioRoomId = null;
+  };
 
 </script>
 
