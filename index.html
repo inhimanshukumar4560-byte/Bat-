@@ -9,6 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Razorpay Checkout Script for Diamond Purchases -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -294,10 +296,10 @@
         <span class="text-[#ff004c] font-black text-[24px] text-glow-red ml-1 transform scale-y-125 -rotate-6">GOO</span>
     </div>
 
-    <!-- CENTER: Coins -->
-    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 shadow-inner hover:bg-white/20 transition-all cursor-pointer">
+    <!-- CENTER: Coins (Clickable to open purchase modal) -->
+    <div id="buy-diamonds-trigger" class="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full border border-white/20 shadow-inner hover:bg-white/20 transition-all cursor-pointer">
         <span class="material-symbols-outlined text-[#ffd700] text-[16px] drop-shadow-[0_0_5px_rgba(255,215,0,0.8)]">diamond</span>
-        <span class="text-[12px] font-bold text-white drop-shadow-md">1,250</span>
+        <span id="diamond-balance-display" class="text-[12px] font-bold text-white drop-shadow-md">0</span>
     </div>
 
     <!-- RIGHT: 3-Line Menu -->
@@ -686,6 +688,41 @@
     </div>
 </div>
 
+<!-- ================= NEW: BUY DIAMONDS OVERLAY ================= -->
+<div id="buy-diamonds-overlay" class="fixed inset-0 overlay-glass flex-col items-center justify-center hidden z-[9999]">
+    <div class="glass-panel p-6 md:p-8 rounded-[30px] w-[90%] max-w-sm text-center border border-[#ff004c]/30 shadow-[0_20px_60px_rgba(255,0,76,0.3)] transform transition-all duration-500 relative">
+        <button class="absolute top-4 right-4 text-white/50 hover:text-[#ff004c] transition-colors" onclick="document.getElementById('buy-diamonds-overlay').style.display='none'"><span class="material-symbols-outlined">close</span></button>
+        <h2 class="text-white text-2xl font-black mb-2 text-glow-white mt-2 flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[#ffd700]">diamond</span> Buy Diamonds</h2>
+        <p class="text-white/60 text-xs mb-6 font-medium">Recharge your balance to connect with users.</p>
+        <div class="space-y-3">
+            <!-- Diamond Packages (1 Rupee = 5 Diamonds) -->
+            <button class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex justify-between items-center transition-all" onclick="buyDiamonds(20, 100)">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-2xl text-[#ffd700]">diamond</span>
+                    <span class="text-white font-bold text-lg">100 Diamonds</span>
+                </div>
+                <span class="px-4 py-1.5 bg-green-500/20 text-green-300 text-sm font-bold rounded-lg border border-green-400/50">₹20</span>
+            </button>
+            <button class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex justify-between items-center transition-all" onclick="buyDiamonds(100, 500)">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-2xl text-[#ffd700]">diamond</span>
+                    <span class="text-white font-bold text-lg">500 Diamonds</span>
+                </div>
+                <span class="px-4 py-1.5 bg-green-500/20 text-green-300 text-sm font-bold rounded-lg border border-green-400/50">₹100</span>
+            </button>
+            <button class="w-full bg-gradient-to-r from-[#ff004c]/10 to-[#ffd700]/10 hover:from-[#ff004c]/20 border border-[#ffd700]/30 rounded-2xl p-4 flex justify-between items-center transition-all relative overflow-hidden" onclick="buyDiamonds(500, 2500)">
+                <span class="absolute top-0 right-0 bg-[#ffd700] text-black text-[9px] font-extrabold px-2 py-0.5 rounded-bl-lg shadow-md uppercase">Popular</span>
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-2xl text-[#ffd700]">diamond</span>
+                    <span class="text-white font-bold text-lg">2,500 Diamonds</span>
+                </div>
+                <span class="px-4 py-1.5 bg-green-500/20 text-green-300 text-sm font-bold rounded-lg border border-green-400/50">₹500</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <!-- ================= FUNCTIONAL OVERLAYS (EXISTING) ================= -->
 
 <!-- 1. Profile Creation/Edit Guard Overlay -->
@@ -896,6 +933,84 @@
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
 
+  // --- NEW: DIAMOND & PAYMENT SYSTEM ---
+  function updateDiamondDisplay() {
+      const balance = localStorage.getItem('zingoo_diamonds') || '0';
+      const displayEl = document.getElementById('diamond-balance-display');
+      if(displayEl) displayEl.innerText = parseInt(balance).toLocaleString();
+  }
+
+  window.buyDiamonds = async function(amountInRupees, diamondsToGet) {
+      if (!currentUser) {
+          alert("Please create your profile first to buy diamonds!");
+          return;
+      }
+
+      const finalAmount = amountInRupees;
+      if (!finalAmount || finalAmount <= 0) {
+          alert("Invalid purchase amount selected.");
+          return;
+      }
+      
+      const overlay = document.getElementById('buy-diamonds-overlay');
+      overlay.insertAdjacentHTML('beforeend', `<div id="payment-spinner" class="absolute inset-0 bg-black/80 z-[10000] flex-col items-center justify-center backdrop-blur-sm"><div class="w-12 h-12 border-4 border-[#ff004c]/30 border-t-[#ff004c] rounded-full animate-spin"></div><p class="text-white/80 mt-4 text-sm font-medium">Preparing secure payment...</p></div>`);
+
+      try {
+          // This endpoint MUST be live and accessible. It is taken from the Iccha project.
+          const response = await fetch('https://iccha.onrender.com/create-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount: finalAmount })
+          });
+          if (!response.ok) throw new Error("Could not connect to the payment server. Please try again later.");
+          const order = await response.json();
+
+          const options = {
+              "key": "rzp_live_SLt76BnauOx2Cb", // Using the LIVE key from Iccha project
+              "amount": order.amount,
+              "currency": "INR",
+              "name": "Zingoo Diamonds",
+              "description": `Purchase of ${diamondsToGet.toLocaleString()} diamonds`,
+              "order_id": order.id,
+              "handler": function (response) {
+                  // Payment Successful
+                  let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || 0);
+                  let newBalance = currentDiamonds + diamondsToGet;
+                  localStorage.setItem('zingoo_diamonds', newBalance);
+                  
+                  updateDiamondDisplay();
+                  document.getElementById('buy-diamonds-overlay').style.display = 'none';
+                  alert(`Payment Successful! ${diamondsToGet.toLocaleString()} diamonds have been added to your account.`);
+              },
+              "prefill": {
+                  "name": currentUser || "",
+                  "contact": currentPhone || "" 
+              },
+              "theme": { "color": "#ff004c" }
+          };
+
+          const spinner = document.getElementById('payment-spinner');
+          if (spinner) spinner.remove();
+          
+          const rzp1 = new Razorpay(options);
+          rzp1.on('payment.failed', function (response) {
+              alert("Payment Failed. Please try again. Reason: " + response.error.description);
+          });
+          rzp1.open();
+
+      } catch (error) {
+          console.error("Payment Initialization Error:", error);
+          alert("Something went wrong while setting up the payment. Please check your internet connection and try again.");
+      } finally {
+          const spinner = document.getElementById('payment-spinner');
+          if (spinner) spinner.remove();
+      }
+  };
+  
+  document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
+      document.getElementById('buy-diamonds-overlay').style.display = 'flex';
+  });
+  
   // --- FULL SCREEN VIDEO PLAYER LOGIC ---
   window.playVideo = function(url, type, isYouTube) {
       const overlay = document.getElementById('video-player-overlay');
@@ -1138,6 +1253,10 @@
       authOverlay.style.display = "flex";
       document.body.style.overflow = "hidden";
   } else {
+      if (localStorage.getItem('zingoo_diamonds') === null) {
+          localStorage.setItem('zingoo_diamonds', '0');
+      }
+      updateDiamondDisplay();
       listenForIncomingCalls(); 
   }
 
@@ -1179,6 +1298,7 @@
           localStorage.setItem("zingoo_address", address);
           localStorage.setItem("zingoo_state", state);
           localStorage.setItem("zingoo_avatar", uploadedAvatarBase64);
+          localStorage.setItem("zingoo_diamonds", "0"); // Start new users with 0 diamonds
           
           currentUser = name;
           currentAge = age;
@@ -1187,6 +1307,7 @@
           currentState = state;
           currentAvatar = uploadedAvatarBase64;
           
+          updateDiamondDisplay();
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
           listenForIncomingCalls();
@@ -1791,4 +1912,3 @@
 
 </body>
 </html>
---- END OF FILE ---
