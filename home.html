@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Zingoo - Home Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          theme: {
+            extend: {
+              "colors": {
+                 "zingoo-red": "#ff004c",
+                 "zingoo-light-red": "#ff3b6b",
+                 "zingoo-bg": "#f8f9fa",
+                 "dia-red": "#da1c22",
+              },
+              "fontFamily": {
+                 "body-md": ["Outfit", "sans-serif"],
+                 "display-lg": ["Syne", "sans-serif"],
+              }
+            }
+          }
+        }
+      </script>
+<style>
+          .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          }
+          /* Custom Scrollbar hide */
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+          /* Light Theme Enhancements */
+          .glass-panel-light {
+              background: rgba(255, 255, 255, 0.95);
+              backdrop-filter: blur(20px);
+              -webkit-backdrop-filter: blur(20px);
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+              border: 1px solid rgba(0, 0, 0, 0.05);
+          }
+
+          .btn-red-gradient {
+              background: linear-gradient(135deg, #ff004c 0%, #ff3b6b 100%);
+              box-shadow: 0 4px 15px rgba(255, 0, 76, 0.3);
+          }
+
+          /* Animations */
+          .live-pulse {
+              position: absolute; border-radius: 50%; border: 2px solid #ff004c;
+              animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+          }
+          @keyframes pulse-ring {
+              0% { transform: scale(0.8); opacity: 1; }
+              100% { transform: scale(1.5); opacity: 0; }
+          }
+          
+          @keyframes fadeInUp {
+              0% { opacity: 0; transform: translateY(15px); }
+              100% { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+
+          /* Bottom Nav styling */
+          .nav-item-active { color: #ff004c; transform: scale(1.1); transition: all 0.3s ease; font-weight: bold; }
+          .nav-item-hover:hover { color: #ff004c; transform: translateY(-2px); cursor: pointer; }
+
+          /* Chat bubbles for light theme */
+          .chat-bubble { background: #f1f3f5; color: #111; border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; max-width: 80%; word-wrap: break-word; }
+          .chat-bubble.self { background: #ff004c; color: #fff; margin-left: auto; }
+          
+          /* Diamond Store Specific Styles */
+          .ds-gradient-red { background: linear-gradient(135deg, #e6232b 0%, #b81016 100%); }
+          .ds-pack-card { transition: transform 0.2s; }
+          .ds-pack-card:active { transform: scale(0.96); }
+      </style>
+</head>
+<body class="bg-zingoo-bg text-gray-900 relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
+
+<!-- Hidden Profile Trigger Button -->
+<div id="header-profile-btn" class="hidden"></div>
+
+<!-- ================= TOP HEADER (LIGHT THEME) ================= -->
+<header class="sticky top-0 w-full z-50 bg-white px-4 pt-4 pb-2 shadow-sm flex justify-between items-center">
+    
+    <!-- LEFT: Zingoo Logo -->
+    <div class="flex items-center cursor-pointer">
+        <svg viewBox="0 0 100 100" class="w-8 h-8 text-zingoo-red fill-current mr-1"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
+        <span class="text-black font-black text-xl tracking-wide">ZINGOO</span>
+    </div>
+
+    <!-- RIGHT: Search, Notifications, Diamonds -->
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-gray-700 text-[24px] cursor-pointer">search</span>
+        <div class="relative cursor-pointer">
+            <span class="material-symbols-outlined text-gray-700 text-[24px]">notifications</span>
+            <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">4</div>
+        </div>
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2.5 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors">
+            <span class="material-symbols-outlined text-purple-600 text-[16px]">diamond</span>
+            <span id="diamond-balance-display" class="text-xs font-bold text-purple-800">0</span>
+            <span class="material-symbols-outlined text-red-500 text-[14px]">add_circle</span>
+        </div>
+        <!-- 3-Line Menu Trigger -->
+        <div class="cursor-pointer" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
+            <span class="material-symbols-outlined text-gray-700 text-[28px]">menu</span>
+        </div>
+    </div>
+</header>
+
+<!-- TOP TABS -->
+<div class="sticky top-[60px] z-40 bg-white w-full border-b border-gray-100 flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 text-sm font-semibold text-gray-500">
+    <div class="pb-3 border-b-2 border-red-500 text-red-500 whitespace-nowrap cursor-pointer">For You</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">Live</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openAudioRoomLobby()">Rooms</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">Reels</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer">Following</div>
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="relative z-20 w-full max-w-[1200px] mx-auto flex flex-col gap-6 mt-4 px-4" id="main-dashboard">
+
+    <!-- PROMO BANNER (Late Night Talks Style) -->
+    <section class="w-full relative rounded-2xl overflow-hidden bg-gradient-to-br from-red-500 to-red-600 shadow-md p-5 text-white animate-fade-up">
+        <div class="flex justify-between items-start">
+            <div>
+                <div class="bg-white/20 inline-flex px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase mb-2 flex items-center gap-1">
+                    <span class="text-yellow-300">🔥</span> Trending Room
+                </div>
+                <h3 class="text-2xl font-bold leading-tight mb-1">Late Night<br>Talks 🌙</h3>
+                <p class="text-white/80 text-xs mb-4 max-w-[60%]">Let's talk about anything and everything!</p>
+                <div class="flex items-center gap-1">
+                    <div class="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/100?img=1" class="w-6 h-6 rounded-full border-2 border-red-500">
+                        <img src="https://i.pravatar.cc/100?img=2" class="w-6 h-6 rounded-full border-2 border-red-500">
+                        <img src="https://i.pravatar.cc/100?img=3" class="w-6 h-6 rounded-full border-2 border-red-500">
+                    </div>
+                    <span class="text-[10px] ml-1">+28</span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-end h-full justify-between">
+                <div class="bg-black/30 rounded-full px-2 py-1 text-[10px] flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">person</span> 10/10
+                </div>
+                <button class="bg-white text-red-600 font-bold px-6 py-1.5 rounded-full text-sm mt-10 shadow-sm" onclick="openAudioRoomLobby()">Join</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE NOW SECTION (Vertical Portrait Cards) -->
+    <section class="w-full animate-fade-up">
+        <div class="flex justify-between items-center mb-3">
+            <h2 class="text-lg font-bold text-gray-900">Live Now</h2>
+            <span id="see-all-trigger" class="text-xs font-bold text-red-500 cursor-pointer hover:underline">View All</span>
+        </div>
+        
+        <!-- Real users injected dynamically here -->
+        <div id="real-users-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
+            <p class="text-gray-400 text-sm">Loading amazing creators...</p>
+        </div>
+    </section>
+
+    <!-- TRENDING REELS SECTION (Dynamic Firebase Feed) -->
+    <section class="w-full animate-fade-up">
+        <div class="flex justify-between items-center mb-3">
+            <h2 class="text-lg font-bold text-gray-900">Trending Reels</h2>
+            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">View All</span>
+        </div>
+        
+        <!-- Real Shorts injected dynamically here -->
+        <div id="home-reels-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
+            <p class="text-gray-400 text-sm">Loading reels...</p>
+        </div>
+    </section>
+
+</main>
+
+<!-- ================= BOTTOM NAVIGATION BAR (Z-[9999] High Priority) ================= -->
+<nav class="fixed bottom-0 w-full z-[9999] bg-white pb-6 pt-3 px-6 flex justify-between items-center border-t border-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
+    
+    <div id="nav-home" class="flex flex-col items-center gap-1 cursor-pointer nav-item-active text-zingoo-red" onclick="closeAllMainTabs()">
+        <span class="material-symbols-outlined text-[26px]">home</span>
+        <span class="text-[10px]">Home</span>
+    </div>
+
+    <div id="nav-rooms" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="openAudioRoomLobby()">
+        <span class="material-symbols-outlined text-[26px]">mic</span>
+        <span class="text-[10px]">Rooms</span>
+    </div>
+
+    <!-- Center Add Button -->
+    <div class="relative -top-5 group" onclick="document.getElementById('upload-video-overlay').style.display='flex';">
+        <button class="w-14 h-14 rounded-full btn-red-gradient flex items-center justify-center border-4 border-white shadow-md group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-white text-[32px] font-bold">add</span>
+        </button>
+    </div>
+
+    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
+        <span class="material-symbols-outlined text-[26px]">smart_display</span>
+        <span class="text-[10px]">Reels</span>
+    </div>
+
+    <div id="nav-profile" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="document.getElementById('header-profile-btn').click()">
+        <span class="material-symbols-outlined text-[26px]">person</span>
+        <span class="text-[10px]">Profile</span>
+    </div>
+
+</nav>
+
+<!-- ================= MENU OVERLAY (3-LINE GRID AS REQUESTED) ================= -->
+<div id="menu-overlay" class="fixed inset-0 bg-white z-[9995] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <h3 class="text-black font-bold text-lg">Menu</h3>
+        <button class="text-gray-500 hover:text-black transition-colors" onclick="document.getElementById('menu-overlay').style.display='none'; document.body.style.overflow='auto';">
+            <span class="material-symbols-outlined text-[28px]">close</span>
+        </button>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
+        <div class="grid grid-cols-2 gap-4">
+            
+            <!-- Video Call Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('see-all-trigger').click();">
+                <img src="https://i.ibb.co/bjXpKrTY/file-000000005f18720889262bf7fd7fde64.png" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Audio Call Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('see-all-trigger').click();">
+                <img src="https://i.ibb.co/KjrXqrKQ/file-0000000081f07208a28d0e94964e6d55.png" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Chat Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('chat-list-overlay').style.display='flex';">
+                <img src="https://i.ibb.co/DfCP8FY1/file-00000000cf247208a9d91c9ee35cc94f.png" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Audio Room Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; openAudioRoomLobby();">
+                <img src="https://i.ibb.co/x9hx6Nc/file-000000008e8472088c194f9ef04e4bf1.png" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Live Shows Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">
+                <img src="https://i.ibb.co/PZvGtbNk/file-00000000a2e07208bc2307d7a0fe24f1.png" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Secret Gallery Image -->
+            <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
+                <img src="https://i.ibb.co/84xpBDH1/file-00000000ca047208b27d596686e3776f.png" class="w-full h-full object-cover">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= REDESIGNED PROFILE VIEW OVERLAY ================= -->
+<div id="manage-profile-overlay" class="fixed inset-0 bg-zingoo-bg z-[9000] flex-col hidden overflow-y-auto no-scrollbar pb-32">
+    <!-- Header -->
+    <div class="bg-white px-4 pt-4 pb-2 sticky top-0 z-50 flex justify-between items-center shadow-sm">
+        <div></div> <!-- Empty div to replace back button and keep flex spacing -->
+        <div class="flex gap-4">
+            <span class="material-symbols-outlined text-gray-700">notifications</span>
+            <span class="material-symbols-outlined text-gray-700" onclick="alert('Settings menu')">settings</span>
+        </div>
+    </div>
+
+    <div class="p-4">
+        <!-- Greetings -->
+        <h2 class="text-2xl font-bold text-gray-900 mb-0.5">Hello, <span id="profile-header-name">User</span> ❤️</h2>
+        <p class="text-gray-500 text-sm mb-4">Welcome back to Zingoo!</p>
+
+        <!-- Red Identity Card -->
+        <div class="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl p-4 flex items-center justify-between shadow-md mb-4 text-white relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+            
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="relative w-14 h-14">
+                    <img id="profile-header-avatar" src="" class="w-full h-full rounded-full object-cover border-2 border-white">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg flex items-center gap-1" id="profile-header-name-2">User <span class="material-symbols-outlined text-[14px] bg-white text-red-500 rounded-full p-[1px]">check</span></h3>
+                    <p class="text-xs text-white/80 flex items-center gap-1"><span id="profile-header-id">ID: 00000000</span> <span class="material-symbols-outlined text-[12px] cursor-pointer" onclick="alert('ID Copied')">content_copy</span></p>
+                </div>
+            </div>
+            
+            <button class="bg-white text-red-600 font-bold text-xs px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm relative z-10" id="btn-edit-profile">
+                <span class="material-symbols-outlined text-[14px]">edit</span> Edit Profile
+            </button>
+        </div>
+
+        <!-- Wallet & Diamonds Box -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex p-4 mb-6">
+            <div class="flex-1 flex flex-col justify-center border-r border-gray-100 px-2">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined text-red-500 text-xl">account_balance_wallet</span>
+                    <span class="text-gray-500 text-xs">Wallet Balance</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <h3 class="text-xl font-bold text-gray-900">₹ 0.00</h3>
+                    <span class="material-symbols-outlined text-red-500 text-[16px] cursor-pointer">add_circle</span>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col justify-center pl-4 pr-2 relative cursor-pointer" onclick="document.getElementById('buy-diamonds-trigger').click()">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined text-purple-500 text-xl">diamond</span>
+                    <span class="text-gray-500 text-xs">Diamonds</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900" id="profile-diamonds-display">0</h3>
+                <span class="material-symbols-outlined absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">chevron_right</span>
+            </div>
+        </div>
+
+        <!-- Product Center -->
+        <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-900">Product Center</h3>
+            <span class="text-red-500 text-xs cursor-pointer">View All ></span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="alert('Games coming soon')">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">sports_esports</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Games</h4>
+                    <p class="text-xs text-gray-500">Play & Win</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="alert('Arena coming soon')">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold font-display-lg">
+                    CA
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">CA</h4>
+                    <p class="text-xs text-gray-500">Challenges Arena</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explore Grid -->
+        <h3 class="font-bold text-gray-900 mb-3">Explore</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('chat-list-overlay').style.display='flex';">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-full flex items-center justify-center relative">
+                    <span class="material-symbols-outlined">chat</span>
+                    <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Messages</h4>
+                    <p class="text-[10px] text-gray-500">Your chats</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-blue-50 text-blue-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">stars</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Level</h4>
+                    <p class="text-[10px] text-gray-500">Keep growing!</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="document.getElementById('buy-diamonds-trigger').click()">
+                <div class="bg-purple-50 text-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">diamond</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Diamonds</h4>
+                    <p class="text-[10px] text-gray-500">Your balance</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-green-50 text-green-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Earnings</h4>
+                    <p class="text-[10px] text-gray-500">Total Earnings</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">badge</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Vcards</h4>
+                    <p class="text-[10px] text-gray-500">Your Vcards</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-yellow-50 text-yellow-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Creator</h4>
+                    <p class="text-[10px] text-gray-500">Start journey</p>
+                </div>
+            </div>
+        </div>
+        
+        <button id="btn-logout" class="w-full mt-6 py-3 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors">
+            <span class="material-symbols-outlined">logout</span> Logout
+        </button>
+    </div>
+</div>
+
+<!-- ================= DIAMOND STORE OVERLAY (INTEGRATED & REVISED) ================= -->
+<div id="diamond-store-overlay" class="fixed inset-0 bg-[#f0f0f0] z-[9500] hidden flex-col items-center overflow-y-auto no-scrollbar pb-32">
+    <div class="w-full max-w-[414px] bg-white min-h-screen px-4 py-4 shadow-xl">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 pt-2">
+            <a href="javascript:void(0)" class="text-2xl text-gray-900 font-bold no-underline" onclick="document.getElementById('diamond-store-overlay').style.display='none'">&#8592;</a>
+            <div class="text-[20px] font-semibold text-gray-900">Diamonds</div>
+            <div class="bg-[#fff0f0] px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold text-dia-red text-sm">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
+                <span id="diamond-store-balance">0</span>
+                <span class="bg-dia-red text-white rounded-full w-4 h-4 flex items-center justify-center text-[12px] ml-1">+</span>
+            </div>
+        </div>
+
+        <!-- Hero Banner -->
+        <div class="ds-gradient-red rounded-[16px] p-5 text-white flex justify-between items-center mb-6 shadow-[0_8px_15px_rgba(218,28,34,0.2)] relative overflow-hidden">
+            <div class="z-10 relative">
+                <div class="text-[13px] opacity-90 mb-1">Your Diamonds</div>
+                <div class="text-[36px] font-bold flex items-center gap-2 mb-2">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
+                    <span id="diamond-store-balance-2">0</span>
+                </div>
+                <div class="text-[11px] opacity-80 max-w-[180px] leading-snug">Diamonds can be used to unlock premium features and exciting rewards.</div>
+            </div>
+            <div class="text-[80px] absolute right-[-10px] top-1/2 transform -translate-y-1/2 z-0 drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]">💎</div>
+        </div>
+
+        <!-- Packages Section -->
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-[16px] font-semibold text-gray-900">Choose a Pack</div>
+            <a href="javascript:void(0)" class="text-[12px] text-dia-red font-semibold no-underline flex items-center gap-1">★ Best Value</a>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2.5 mb-6">
+            <!-- Pack 1 (Min 50 Rs = 150 D) -->
+            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    150 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">🔮</div>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(50, 150)">₹ 50.00</button>
+            </div>
+
+            <!-- Pack 2 (Popular) (100 Rs = 300 D) -->
+            <div class="bg-[#fff9f9] border-[1.5px] border-dia-red rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="absolute -top-[1px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">🔥 Popular</div>
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    300 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">💰</div>
+                <button class="bg-dia-red border-none text-white py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(100, 300)">₹ 100.00</button>
+            </div>
+
+            <!-- Pack 3 (200 Rs = 600 D) -->
+            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    600 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">📦</div>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(200, 600)">₹ 200.00</button>
+            </div>
+
+            <!-- Pack 4 (500 Rs = 1500 D) -->
+            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    1500 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">🛍️</div>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(500, 1500)">₹ 500.00</button>
+            </div>
+
+            <!-- Pack 5 (1000 Rs = 3000 D) -->
+            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    3000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">🧰</div>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(1000, 3000)">₹ 1000.00</button>
+            </div>
+
+            <!-- Pack 6 (Best Value) (2000 Rs = 6000 D) -->
+            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
+                <div class="absolute -top-[10px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-t-lg whitespace-nowrap z-10">👑 Best Value</div>
+                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
+                    6000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                </div>
+                <div class="text-[30px] my-2 drop-shadow-sm">🪙</div>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(2000, 6000)">₹ 2000.00</button>
+            </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="flex justify-between bg-[#fff5f5] rounded-xl p-3.5 mb-6">
+            <div class="flex items-center gap-2">
+                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">⚡</div>
+                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">Instant Delivery</strong>Diamonds will be<br>added instantly</div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">🛡️</div>
+                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">100% Secure</strong>Safe & secure<br>payments</div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">🎧</div>
+                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">24/7 Support</strong>We are here to<br>help you</div>
+            </div>
+        </div>
+
+        <!-- Secure Footer Terms -->
+        <div class="flex items-center gap-1 text-[11px] text-gray-500 mb-3 justify-center">
+            <span class="text-green-500 text-[14px]">🛡️</span> Secure Payments
+        </div>
+        <div class="flex items-start gap-2.5 px-1.5 pb-5">
+            <div class="w-4 h-4 bg-dia-red rounded flex items-center justify-center text-white text-[10px] shrink-0 mt-0.5">✔</div>
+            <div class="text-[11px] text-gray-500">
+                By proceeding, you agree to our <a href="#" class="text-dia-red font-semibold no-underline">Terms of Service</a> and <a href="#" class="text-dia-red font-semibold no-underline">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FUNCTIONAL OVERLAYS (Light Theme Adjusted) ================= -->
+
+<!-- Profile Creation Overlay -->
+<div id="auth-overlay" class="fixed inset-0 bg-white/95 backdrop-blur flex flex-col items-center justify-center hidden z-[10000]">
+    <div class="bg-white p-6 md:p-8 rounded-[30px] w-[90%] max-w-md text-center shadow-xl border border-gray-100 relative overflow-y-auto max-h-[90vh] no-scrollbar">
+        <h2 class="text-gray-900 font-black text-2xl mb-1">ZINGOO</h2>
+        <p class="text-gray-500 text-[13px] mb-4 font-medium">Create your identity</p>
+        
+        <input type="file" id="profile-image-upload" accept="image/*" class="hidden">
+        
+        <div class="relative w-24 h-24 mx-auto mb-5 z-10 cursor-pointer" onclick="document.getElementById('profile-image-upload').click()">
+            <img id="auth-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa" class="w-full h-full rounded-full object-cover border-4 border-red-100 shadow-sm" alt="Avatar">
+            <div class="absolute bottom-0 right-0 bg-red-500 rounded-full w-7 h-7 flex items-center justify-center border-2 border-white shadow-sm">
+                <span class="material-symbols-outlined text-white text-[14px]">edit</span>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">person</span>
+                <input type="text" id="auth-name" placeholder="Enter Nickname" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
+            </div>
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">cake</span>
+                <input type="number" id="auth-age" placeholder="Age (18+)" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
+            </div>
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">call</span>
+                <input type="number" id="auth-phone" placeholder="Phone Number" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
+            </div>
+            <div class="relative w-full mb-6">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">map</span>
+                <select id="auth-state" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
+                    <option value="" disabled selected class="text-gray-400">Select State</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Delhi">Delhi (UT)</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+        <button id="btn-create-profile" class="w-full mt-4 py-4 rounded-full btn-red-gradient text-white font-bold tracking-wider shadow-lg">
+            <span id="btn-create-text">Enter Zingoo</span>
+        </button>
+    </div>
+</div>
+
+<!-- CHAT LIST OVERLAY -->
+<div id="chat-list-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button class="text-gray-700 hover:text-black" onclick="document.getElementById('chat-list-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">Messages</h3>
+        </div>
+    </div>
+    <div id="recent-chats-container" class="flex-1 overflow-y-auto p-2 no-scrollbar bg-gray-50"></div>
+</div>
+
+<!-- PRIVATE CHAT OVERLAY -->
+<div id="chat-overlay" class="fixed inset-0 bg-white flex-col hidden z-[9900]">
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-200 shadow-sm">
+        <div class="flex items-center gap-3">
+            <button id="btn-close-chat" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
+            <div class="w-10 h-10 rounded-full overflow-hidden"><img id="chat-header-img" src="" class="w-full h-full object-cover"></div>
+            <div>
+                <h3 class="text-gray-900 font-bold text-sm" id="chat-header-name">User</h3>
+                <p class="text-green-500 text-[10px]">Online</p>
+            </div>
+        </div>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col no-scrollbar bg-gray-50"></div>
+    <div class="p-4 bg-white border-t border-gray-200 flex gap-2 pb-8">
+        <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500">
+        <button id="btn-send-msg" class="w-10 h-10 rounded-full btn-red-gradient flex items-center justify-center text-white shadow-md">
+            <span class="material-symbols-outlined text-[20px] ml-1">send</span>
+        </button>
+    </div>
+</div>
+
+<!-- QUICK PROFILE POPUP -->
+<div id="quick-profile-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9000] flex-col items-center justify-center hidden">
+    <div class="relative w-[85%] max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-white">
+        <img id="quick-profile-img" src="" class="absolute inset-0 w-full h-full object-cover z-0">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
+        <button class="absolute top-4 right-4 z-20 text-white hover:bg-white/20 bg-black/40 rounded-full p-2" onclick="document.getElementById('quick-profile-overlay').style.display='none'">
+            <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+        <div class="absolute bottom-0 w-full p-6 flex flex-col gap-4 z-20">
+            <h2 id="quick-profile-name" class="text-white font-bold text-2xl">Name</h2>
+            <div class="flex justify-between items-center gap-3 mt-2">
+                <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                    <span class="material-symbols-outlined mb-1">chat</span><span class="text-[10px] font-bold">Chat</span>
+                </button>
+                <button id="quick-btn-audio" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                    <span class="material-symbols-outlined mb-1">call</span><span class="text-[10px] font-bold">Audio</span>
+                </button>
+                <button id="quick-btn-video" class="flex-1 btn-red-gradient border border-red-500 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                    <span class="material-symbols-outlined mb-1">videocam</span><span class="text-[10px] font-bold">Video</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ALL USERS GRID -->
+<div id="see-all-overlay" class="fixed inset-0 bg-white z-[8000] flex-col hidden overflow-hidden">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button id="btn-close-see-all" class="text-gray-700"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">All Creators</h3>
+        </div>
+    </div>
+    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
+</div>
+
+<!-- AUDIO ROOM LOBBY -->
+<div id="audio-room-lobby-overlay" class="fixed inset-0 bg-white z-[9000] flex-col hidden overflow-hidden">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button class="text-gray-700" onclick="closeAllMainTabs()"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">Live Audio Rooms</h3>
+        </div>
+        <button class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold" onclick="createNewAudioRoom()">Create</button>
+    </div>
+    <div id="audio-rooms-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-32 bg-gray-50 no-scrollbar"></div>
+</div>
+
+<!-- ACTIVE AUDIO ROOM -->
+<div id="audio-room-active-overlay" class="fixed inset-0 bg-gray-900 z-[8500] flex-col hidden overflow-hidden">
+    <div class="bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-700 sticky top-0 z-50">
+        <h3 id="active-room-name" class="text-white font-bold text-lg flex items-center gap-2">Room Name <div class="live-pulse relative w-2 h-2 ml-1"></div></h3>
+        <button class="bg-red-600/30 text-red-500 border border-red-500/50 px-4 py-1.5 rounded-lg text-xs font-bold" onclick="leaveActiveAudioRoom()">Leave</button>
+    </div>
+    <div id="audio-room-seats-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-3 md:grid-cols-4 gap-4 pb-24 no-scrollbar"></div>
+</div>
+
+<!-- VIDEO FEED (Reels & Longs) -->
+<div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
+    <div class="bg-black/80 backdrop-blur px-4 py-4 flex justify-between border-b border-white/10 sticky top-0 z-50">
+        <button class="text-white" onclick="closeAllMainTabs()"><span class="material-symbols-outlined">arrow_back</span></button>
+        <div class="flex gap-4">
+            <button id="tab-shorts-btn" class="text-red-500 font-bold" onclick="switchVideoTab('shorts')">Reels</button>
+            <button id="tab-longs-btn" class="text-white/50 font-bold" onclick="switchVideoTab('longs')">Live/Vods</button>
+        </div>
+    </div>
+    <!-- Shorts container with snap-scroll for YouTube style -->
+    <div id="shorts-feed-container" class="flex flex-col w-full h-[calc(100vh-60px)] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black pb-24"></div>
+    <!-- Longs container standard flow -->
+    <div class="flex-1 overflow-y-auto pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
+        <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
+    </div>
+</div>
+
+<!-- VIDEO PLAYER -->
+<div id="video-player-overlay" class="fixed inset-0 bg-black z-[10000] flex-col hidden overflow-hidden">
+    <div class="p-4 absolute top-0 w-full z-50">
+        <button class="text-white bg-black/50 rounded-full p-2" onclick="closeVideoPlayer()"><span class="material-symbols-outlined">arrow_back</span></button>
+    </div>
+    <div id="video-player-container" class="w-full h-full flex items-center justify-center bg-black"></div>
+</div>
+
+<!-- UPLOAD VIDEO -->
+<div id="upload-video-overlay" class="fixed inset-0 bg-black/80 backdrop-blur z-[10000] flex-col items-center justify-center hidden">
+    <div id="upload-spinner" class="absolute inset-0 bg-black/80 z-[10000] flex-col items-center justify-center hidden text-white">
+        Loading...
+    </div>
+    <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md relative">
+        <button class="absolute top-4 right-4 text-gray-500" onclick="document.getElementById('upload-video-overlay').style.display='none';"><span class="material-symbols-outlined">close</span></button>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Upload Video</h2>
+        <input type="text" id="upload-title" placeholder="Video Title" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
+        <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
+            <option value="short">Reel (9:16)</option>
+            <option value="long">Video (16:9)</option>
+        </select>
+        <div class="flex gap-2 mb-3">
+            <button id="src-btn-upload" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm" onclick="toggleUploadSource('upload')">File</button>
+            <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm" onclick="toggleUploadSource('link')">YouTube Link</button>
+        </div>
+        <div id="source-file-container" class="mb-3 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer" onclick="document.getElementById('video-file-input').click()">
+            Select Video File
+            <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="document.getElementById('video-file-name').innerText = this.files[0].name">
+            <p id="video-file-name" class="text-xs text-green-600 mt-1"></p>
+        </div>
+        <div id="source-link-container" class="mb-3 hidden">
+            <input type="url" id="upload-yt-link" placeholder="YouTube URL" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+        </div>
+        <div class="mb-4 border border-gray-200 rounded-xl p-3 cursor-pointer text-center" onclick="document.getElementById('thumb-file-input').click()">
+            Upload Thumbnail (Image)
+            <input type="file" id="thumb-file-input" accept="image/*" class="hidden" onchange="document.getElementById('thumb-file-name').innerText = this.files[0].name; document.getElementById('thumb-file-name').style.display='block';">
+            <p id="thumb-file-name" class="text-xs text-green-600 mt-1 hidden"></p>
+        </div>
+        <button class="w-full bg-red-500 text-white font-bold py-3 rounded-xl" onclick="submitVideoUpload()">Publish</button>
+    </div>
+</div>
+
+<!-- INCOMING / WEBRTC CALL OVERLAYS -->
+<div id="incoming-call-overlay" class="fixed inset-0 bg-black/90 z-[10000] flex-col items-center justify-center hidden">
+    <img id="incoming-caller-avatar" src="" class="w-32 h-32 rounded-full border-4 border-red-500 mb-4 object-cover">
+    <h2 id="incoming-caller-name" class="text-white text-3xl font-bold mb-2">Caller Name</h2>
+    <p class="text-red-400 text-sm mb-8 animate-pulse">Incoming Call...</p>
+    <div class="flex gap-6">
+        <button id="btn-decline-call" class="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center"><span class="material-symbols-outlined text-[32px]">call_end</span></button>
+        <button id="btn-accept-call" class="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center"><span class="material-symbols-outlined text-[32px]">call</span></button>
+    </div>
+</div>
+
+<div id="video-overlay" class="fixed inset-0 bg-black z-[10000] hidden">
+    <video id="remote-video" class="w-full h-full object-cover" autoplay playsinline></video>
+    <div class="absolute inset-0 flex flex-col justify-between p-6">
+        <div class="bg-black/50 text-white px-4 py-2 rounded-full self-start" id="video-partner-name">Waiting...</div>
+        <div class="flex justify-between items-end mb-10">
+            <video id="local-video" class="w-24 h-36 rounded-xl object-cover border-2 border-red-500" autoplay playsinline muted></video>
+            <button id="btn-end-video" class="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center"><span class="material-symbols-outlined text-[32px]">call_end</span></button>
+        </div>
+    </div>
+</div>
+
+<div id="audio-overlay" class="fixed inset-0 bg-gray-900 z-[10000] flex-col items-center justify-center hidden">
+    <img id="audio-partner-img" src="" class="w-32 h-32 rounded-full border-4 border-red-500 mb-4 object-cover">
+    <h2 class="text-white text-2xl font-bold" id="audio-partner-name">Partner</h2>
+    <p class="text-red-400 text-sm mb-12" id="audio-status">Connecting...</p>
+    <audio id="remote-audio" autoplay></audio>
+    <audio id="local-audio" autoplay muted></audio>
+    <button id="btn-end-audio" class="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center absolute bottom-20"><span class="material-symbols-outlined text-[32px]">call_end</span></button>
+</div>
+
+<!-- Firebase SDK & Functional Scripts Setup -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
+    authDomain: "benchtopinnovations12.firebaseapp.com",
+    databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
+    projectId: "benchtopinnovations12",
+    storageBucket: "benchtopinnovations12.firebasestorage.app",
+    messagingSenderId: "113274194106",
+    appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let currentUser = localStorage.getItem("zingoo_user");
+  let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
+  let currentId = localStorage.getItem("zingoo_id");
+
+  const CLOUD_NAME = "dotjw6tep"; 
+  const UPLOAD_PRESET = "Zingoo"; 
+
+  // --- Tab Navigation Handlers ---
+  window.resetNavHighlights = function() {
+      const navs = ['nav-home', 'nav-rooms', 'nav-reels', 'nav-profile'];
+      navs.forEach(id => {
+          const el = document.getElementById(id);
+          if(el) {
+              el.classList.remove('nav-item-active', 'text-zingoo-red');
+              el.classList.add('text-gray-400', 'nav-item-hover');
+          }
+      });
+  }
+
+  window.closeAllMainTabs = function() {
+      document.getElementById('manage-profile-overlay').style.display = 'none';
+      document.getElementById('video-feed-overlay').style.display = 'none';
+      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
+      document.getElementById('diamond-store-overlay').style.display = 'none';
+      
+      resetNavHighlights();
+      document.getElementById('nav-home').classList.add('nav-item-active', 'text-zingoo-red');
+      document.getElementById('nav-home').classList.remove('text-gray-400');
+  }
+
+  function updateDiamondDisplay() {
+      const balance = localStorage.getItem('zingoo_diamonds') || '0';
+      const displayEl = document.getElementById('diamond-balance-display');
+      const profileDisplayEl = document.getElementById('profile-diamonds-display');
+      const storeDisplayEl = document.getElementById('diamond-store-balance');
+      const storeDisplayEl2 = document.getElementById('diamond-store-balance-2');
+      if(displayEl) displayEl.innerText = parseInt(balance).toLocaleString();
+      if(profileDisplayEl) profileDisplayEl.innerText = parseInt(balance).toLocaleString();
+      if(storeDisplayEl) storeDisplayEl.innerText = parseInt(balance).toLocaleString();
+      if(storeDisplayEl2) storeDisplayEl2.innerText = parseInt(balance).toLocaleString();
+  }
+
+  function listenToUserDiamonds() {
+      if (!currentUser) return;
+      onValue(ref(db, `users/${currentUser}/diamonds`), (snapshot) => {
+          const diamonds = snapshot.val() || 0;
+          localStorage.setItem('zingoo_diamonds', diamonds);
+          updateDiamondDisplay();
+      });
+  }
+
+  // --- Diamond Purchase Triggers ---
+  document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
+      if(!currentUser) { alert("Create profile first!"); return; }
+      document.getElementById('diamond-store-overlay').style.display = 'flex';
+  });
+
+  window.buyDiamondPack = function(amount, diamonds) {
+      if(!currentUser) { alert("Create profile first!"); return; }
+      const icchaPaymentDomain = "https://shubhzone.shop"; 
+      window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
+  };
+  
+  // --- Video Player ---
+  window.playVideo = function(url, type, isYouTube) {
+      const overlay = document.getElementById('video-player-overlay');
+      const container = document.getElementById('video-player-container');
+      overlay.style.display = 'flex';
+      if(isYouTube) {
+          let embedUrl = url;
+          if (url.includes('watch?v=')) embedUrl = url.replace('watch?v=', 'embed/');
+          else if (url.includes('youtu.be/')) embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
+          container.innerHTML = `<iframe class="w-full ${type === 'short' ? 'h-[85vh] aspect-[9/16]' : 'aspect-video'}" src="${embedUrl}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+      } else {
+          container.innerHTML = `<video class="w-full ${type === 'short' ? 'h-[85vh] object-contain' : 'aspect-video'}" controls autoplay playsinline><source src="${url}" type="video/mp4"></video>`;
+      }
+  };
+
+  window.closeVideoPlayer = function() {
+      document.getElementById('video-player-overlay').style.display = 'none';
+      document.getElementById('video-player-container').innerHTML = ''; 
+  };
+
+  // --- Upload UI Toggles ---
+  window.toggleUploadSource = function(type) {
+      const btnUpload = document.getElementById('src-btn-upload');
+      const btnLink = document.getElementById('src-btn-link');
+      if(type === 'upload') {
+          btnUpload.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm";
+          btnLink.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm";
+          document.getElementById('source-file-container').style.display = 'block';
+          document.getElementById('source-link-container').style.display = 'none';
+      } else {
+          btnLink.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm";
+          btnUpload.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm";
+          document.getElementById('source-file-container').style.display = 'none';
+          document.getElementById('source-link-container').style.display = 'block';
+      }
+  };
+
+  window.switchVideoTab = function(tab) {
+      resetNavHighlights();
+      document.getElementById('nav-reels').classList.add('nav-item-active', 'text-zingoo-red');
+      document.getElementById('nav-reels').classList.remove('text-gray-400');
+      
+      const shortsBtn = document.getElementById('tab-shorts-btn');
+      const longsBtn = document.getElementById('tab-longs-btn');
+      if(tab === 'shorts') {
+          shortsBtn.className = "text-red-500 font-bold";
+          longsBtn.className = "text-white/50 font-bold";
+          document.getElementById('shorts-feed-container').style.display = 'flex';
+          document.getElementById('longs-feed-wrap').style.display = 'none';
+      } else {
+          longsBtn.className = "text-red-500 font-bold";
+          shortsBtn.className = "text-white/50 font-bold";
+          document.getElementById('shorts-feed-container').style.display = 'none';
+          document.getElementById('longs-feed-wrap').style.display = 'block';
+      }
+  };
+
+  // Upload Logic
+  async function uploadToCloudinary(file, resourceType="video") {
+      try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('upload_preset', UPLOAD_PRESET); 
+          formData.append('cloud_name', CLOUD_NAME);
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, { method: 'POST', body: formData });
+          const data = await res.json();
+          return data.secure_url || null;
+      } catch (err) { return null; }
+  }
+
+  function readFileAsBase64(file) {
+      return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(file);
+      });
+  }
+
+  window.submitVideoUpload = async function() {
+      const title = document.getElementById('upload-title').value;
+      const type = document.getElementById('upload-type').value;
+      const isUpload = document.getElementById('source-file-container').style.display !== 'none';
+      
+      if(!title) { alert('Please enter title'); return; }
+      document.getElementById('upload-spinner').style.display = 'flex';
+
+      let mediaUrl = "";
+      if (isUpload) {
+          const videoFile = document.getElementById('video-file-input').files[0];
+          if(!videoFile) { alert('Select video!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
+          mediaUrl = await uploadToCloudinary(videoFile, "video");
+          if(!mediaUrl) mediaUrl = URL.createObjectURL(videoFile); 
+      } else {
+          mediaUrl = document.getElementById('upload-yt-link').value;
+      }
+
+      const thumbFile = document.getElementById('thumb-file-input').files[0];
+      let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop"; 
+      if (thumbFile) {
+          thumbUrl = await uploadToCloudinary(thumbFile, "image");
+          if(!thumbUrl) thumbUrl = await readFileAsBase64(thumbFile);
+      }
+
+      push(ref(db, 'videos'), {
+          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp()
+      }).then(() => {
+          document.getElementById('upload-spinner').style.display = 'none';
+          document.getElementById('upload-video-overlay').style.display='none';
+          alert('Uploaded!');
+      });
+  };
+  
+  // Real-time Videos (Populates Home Feed & Overlay Feeds)
+  onValue(ref(db, 'videos'), (snapshot) => {
+      const shortsContainer = document.getElementById('shorts-feed-container');
+      const longsContainer = document.getElementById('longs-feed-container');
+      const homeReelsContainer = document.getElementById('home-reels-list');
+      
+      shortsContainer.innerHTML = ''; longsContainer.innerHTML = ''; homeReelsContainer.innerHTML = '';
+      const data = snapshot.val();
+      
+      if(data) {
+          const vids = Object.values(data).reverse();
+          vids.forEach(vid => {
+              const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
+              if (vid.type === 'short') {
+                  // YouTube-Style Snap Scroll Shorts Feed
+                  shortsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="relative w-full h-full snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center">
+                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                      <div class="absolute inset-0 flex flex-col justify-end p-4 pb-8 z-10 pointer-events-none bg-gradient-to-t from-black/80 to-transparent">
+                          <h3 class="text-white font-bold text-lg mb-1">${vid.title}</h3>
+                          <div class="flex items-center gap-2 pointer-events-auto">
+                              <img src="${vid.authorAvatar || currentAvatar}" class="w-8 h-8 rounded-full border border-white">
+                              <span class="text-white text-sm font-medium">${vid.author || 'Creator'}</span>
+                          </div>
+                      </div>
+                      <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-4 shadow-lg flex items-center justify-center z-20 hover:scale-110 transition-transform cursor-pointer" onclick="${clickHandler}">
+                          <span class="material-symbols-outlined text-[40px]">play_arrow</span>
+                      </button>
+                  </div>`);
+                  
+                  // Home Horizontal list view
+                  homeReelsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="${clickHandler}">
+                      <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
+                      <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[30px]">play_arrow</span>
+                      <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <p class="text-white text-[10px] font-bold line-clamp-1">${vid.title}</p>
+                      </div>
+                  </div>`);
+              } else {
+                  longsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="w-full cursor-pointer mb-2" onclick="${clickHandler}">
+                      <div class="relative w-full rounded-xl overflow-hidden aspect-video shadow-sm mb-2"><img src="${vid.thumbUrl}" class="w-full h-full object-cover"></div>
+                      <div class="flex gap-2 px-1">
+                          <img src="${vid.authorAvatar || currentAvatar}" class="w-8 h-8 rounded-full border border-gray-200">
+                          <div><h4 class="text-white font-bold text-sm">${vid.title}</h4></div>
+                      </div>
+                  </div>`);
+              }
+          });
+      }
+  });
+
+  // --- Auth & Identity ---
+  const authOverlay = document.getElementById("auth-overlay");
+  
+  if (!currentUser) {
+      authOverlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+  } else {
+      listenToUserDiamonds();
+      updateDiamondDisplay();
+      listenForIncomingCalls(); 
+  }
+
+  document.getElementById("profile-image-upload").addEventListener("change", function(e) {
+      if(e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+              currentAvatar = event.target.result;
+              document.getElementById("auth-avatar-preview").src = currentAvatar;
+          };
+          reader.readAsDataURL(e.target.files[0]);
+      }
+  });
+
+  document.getElementById("btn-create-profile").addEventListener("click", () => {
+      const name = document.getElementById("auth-name").value.trim();
+      const age = document.getElementById("auth-age").value.trim();
+      const phone = document.getElementById("auth-phone").value.trim();
+      
+      if (name && age >= 18 && phone) {
+          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+          
+          set(ref(db, 'users/' + name), {
+              name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
+          });
+
+          localStorage.setItem("zingoo_user", name);
+          localStorage.setItem("zingoo_id", newId);
+          localStorage.setItem("zingoo_avatar", currentAvatar);
+          localStorage.setItem("zingoo_diamonds", "0"); 
+          
+          currentUser = name; currentId = newId;
+          
+          listenToUserDiamonds(); 
+          authOverlay.style.display = "none";
+          document.body.style.overflow = "auto";
+          listenForIncomingCalls();
+      } else {
+          alert("Fill all fields. Age must be 18+.");
+      }
+  });
+
+  // Profile View Logic
+  document.getElementById("header-profile-btn").addEventListener("click", () => {
+      if(currentUser) {
+          document.getElementById("profile-header-name").innerText = currentUser;
+          document.getElementById("profile-header-name-2").innerText = currentUser;
+          document.getElementById("profile-header-id").innerText = "ID: " + (currentId || "00000000");
+          document.getElementById("profile-header-avatar").src = currentAvatar;
+          document.getElementById('manage-profile-overlay').style.display = 'block';
+          
+          resetNavHighlights();
+          document.getElementById('nav-profile').classList.add('nav-item-active', 'text-zingoo-red');
+          document.getElementById('nav-profile').classList.remove('text-gray-400');
+      }
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", () => {
+      if(confirm("Log out?")) {
+          localStorage.clear(); location.reload();
+      }
+  });
+
+  document.getElementById("btn-edit-profile").addEventListener("click", () => {
+      document.getElementById('manage-profile-overlay').style.display = 'none';
+      document.getElementById("auth-name").value = currentUser;
+      document.getElementById("auth-avatar-preview").src = currentAvatar;
+      authOverlay.style.display = "flex";
+  });
+
+
+  // --- Chats ---
+  let currentActiveChatId = null; let currentChatPartnerName = null;
+
+  onValue(ref(db, 'recent_chats/' + currentUser), (snapshot) => {
+      const container = document.getElementById('recent-chats-container');
+      container.innerHTML = '';
+      const data = snapshot.val();
+      if(data) {
+          Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([partner, details]) => {
+              container.insertAdjacentHTML('beforeend', `
+              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100" onclick="openChatWith('${partner}', '${details.avatar}')">
+                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover">
+                  <div class="flex-1"><h4 class="text-gray-900 font-bold text-[15px]">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
+              </div>`);
+          });
+      }
+  });
+
+  window.openChatWith = function(name, avatar) {
+      document.getElementById('see-all-overlay').style.display = 'none'; 
+      document.getElementById('chat-list-overlay').style.display = 'none'; 
+      document.body.style.overflow = 'auto';
+      currentChatPartnerName = name; currentActiveChatId = [currentUser, name].sort().join('_'); 
+      document.getElementById("chat-header-name").innerText = name;
+      document.getElementById("chat-header-img").src = avatar;
+      document.getElementById("chat-overlay").style.display = "flex";
+      
+      const chatMessages = document.getElementById("chat-messages");
+      onValue(ref(db, 'chats/' + currentActiveChatId), (snapshot) => {
+          chatMessages.innerHTML = '';
+          const msgs = snapshot.val();
+          if(msgs) {
+              Object.values(msgs).forEach(msgData => {
+                  const isSelf = msgData.user === currentUser;
+                  chatMessages.innerHTML += `<div class="chat-bubble ${isSelf ? 'self' : ''}">${msgData.text}</div>`;
+              });
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+      });
+  };
+
+  document.getElementById("btn-close-chat").addEventListener("click", () => { document.getElementById("chat-overlay").style.display = "none"; });
+  document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
+  
+  function sendMessage() {
+      const msg = document.getElementById("chat-input").value.trim();
+      if(msg && currentActiveChatId) {
+          push(ref(db, 'chats/' + currentActiveChatId), { user: currentUser, text: msg, timestamp: serverTimestamp() });
+          set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), { avatar: document.getElementById("chat-header-img").src, lastMessage: "You: " + msg, timestamp: serverTimestamp() });
+          set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), { avatar: currentAvatar, lastMessage: msg, timestamp: serverTimestamp() });
+          document.getElementById("chat-input").value = "";
+      }
+  }
+
+  // --- Home Users List & See All Grid ---
+  document.getElementById('see-all-trigger').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'flex'; });
+  document.getElementById('btn-close-see-all').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'none'; });
+
+  onValue(ref(db, 'users'), (snapshot) => {
+      const usersListContainer = document.getElementById("real-users-list");
+      const seeAllGridContainer = document.getElementById("see-all-grid");
+      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
+      
+      const data = snapshot.val();
+      if(data) {
+          Object.values(data).forEach(user => {
+              if (user.name !== currentUser) { 
+                  // Vertical Portrait Card for Home Page "Live Now"
+                  const userHtml = `
+                  <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+                      <img src="${user.avatar}" class="w-full h-full object-cover">
+                      <div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">LIVE</div>
+                      <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <h4 class="text-white text-xs font-bold truncate">${user.name}</h4>
+                      </div>
+                  </div>`;
+                  usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+
+                  // Standard Grid for See All Overlay
+                  seeAllGridContainer.insertAdjacentHTML('beforeend', `
+                  <div class="relative rounded-xl overflow-hidden aspect-[3/4] shadow-sm bg-white border border-gray-200">
+                      <img src="${user.avatar}" class="absolute inset-0 w-full h-4/5 object-cover z-0">
+                      <div class="absolute bottom-0 w-full p-2 bg-white z-20">
+                          <span class="text-gray-900 font-bold text-xs truncate block">${user.name}</span>
+                          <div class="flex gap-1 mt-1">
+                              <button class="flex-1 bg-gray-100 py-1 rounded text-gray-700" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
+                              <button class="flex-1 bg-red-50 py-1 rounded text-red-500" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
+                              <button class="flex-1 bg-red-500 py-1 rounded text-white" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
+                          </div>
+                      </div>
+                  </div>`);
+              }
+          });
+          
+          document.querySelectorAll('.model-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                  const name = e.currentTarget.getAttribute('data-name');
+                  const avatar = e.currentTarget.getAttribute('data-avatar');
+                  document.getElementById('quick-profile-name').innerText = name;
+                  document.getElementById('quick-profile-img').src = avatar;
+                  document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
+                  document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
+                  document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
+                  document.getElementById('quick-profile-overlay').style.display = 'flex';
+              });
+          });
+      }
+  });
+
+  // --- WEBRTC Calls ---
+  let localStream = null; let peerConnection = null; let currentCallPath = null; let incomingCallData = null;
+  const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+
+  function listenForIncomingCalls() {
+      if(!currentUser) return;
+      onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
+          const data = snapshot.val();
+          if (data && data.offer && !peerConnection) {
+              incomingCallData = data;
+              document.getElementById('incoming-caller-name').innerText = data.caller;
+              document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
+              document.getElementById('incoming-call-overlay').style.display = 'flex';
+          } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
+              document.getElementById('incoming-call-overlay').style.display = 'none'; incomingCallData = null; stopWebRTC();
+          }
+      });
+  }
+
+  window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
+      if(peerConnection) return;
+      currentCallPath = `calls/${targetUser}`;
+      document.getElementById('video-partner-name').innerText = targetUser;
+      document.getElementById('audio-partner-name').innerText = targetUser;
+      if(targetAvatar) document.getElementById('audio-partner-img').src = targetAvatar;
+      document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+      
+      try {
+          peerConnection = new RTCPeerConnection(servers);
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+          document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+          localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+          peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
+
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          set(ref(db, currentCallPath), { caller: currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
+
+          onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
+          onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
+      } catch(e) { stopWebRTC(); }
+  };
+
+  document.getElementById("btn-accept-call").addEventListener("click", async () => {
+      document.getElementById('incoming-call-overlay').style.display = 'none';
+      const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${currentUser}`;
+      document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+      
+      try {
+          peerConnection = new RTCPeerConnection(servers);
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+          document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+          localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+          peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
+
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+          set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
+          onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
+      } catch(e) { stopWebRTC(); }
+  });
+
+  function stopWebRTC() {
+      if(localStream) localStream.getTracks().forEach(t => t.stop());
+      if(peerConnection) peerConnection.close();
+      document.getElementById("video-overlay").style.display = "none";
+      document.getElementById("audio-overlay").style.display = "none";
+      document.getElementById("incoming-call-overlay").style.display = "none";
+      if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
+      peerConnection = null; incomingCallData = null;
+  }
+  document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
+  document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
+  document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
+
+  // --- Audio Rooms ---
+  let currentRoomId = null;
+  window.openAudioRoomLobby = function() {
+      document.getElementById('audio-room-lobby-overlay').style.display = 'flex';
+      resetNavHighlights();
+      document.getElementById('nav-rooms').classList.add('nav-item-active', 'text-zingoo-red');
+      document.getElementById('nav-rooms').classList.remove('text-gray-400');
+      
+      onValue(ref(db, 'audio_rooms'), (snapshot) => {
+          const container = document.getElementById('audio-rooms-list'); container.innerHTML = '';
+          const data = snapshot.val();
+          if(data) {
+              Object.entries(data).forEach(([id, room]) => {
+                  container.insertAdjacentHTML('beforeend', `
+                  <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer" onclick="joinAudioRoom('${id}', '${room.name}')">
+                      <div><h4 class="font-bold">${room.name}</h4><p class="text-xs text-gray-500">Host: ${room.host}</p></div>
+                  </div>`);
+              });
+          }
+      });
+  };
+  window.createNewAudioRoom = function() {
+      const n = prompt("Room Name:"); if(!n) return;
+      const refNew = push(ref(db, 'audio_rooms'));
+      set(refNew, { name: n, host: currentUser, createdAt: serverTimestamp(), seats: {} }).then(() => joinAudioRoom(refNew.key, n));
+  };
+  window.joinAudioRoom = function(id, name) {
+      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
+      document.getElementById('audio-room-active-overlay').style.display = 'flex';
+      document.getElementById('active-room-name').innerText = name;
+      currentRoomId = id;
+      onValue(ref(db, `audio_rooms/${id}/seats`), (snap) => {
+          const grid = document.getElementById('audio-room-seats-grid'); grid.innerHTML = '';
+          const seats = snap.val() || {};
+          for(let i=0; i<10; i++) {
+              if(seats[i]) {
+                  grid.innerHTML += `<div class="bg-gray-800 rounded-xl aspect-[3/4] flex flex-col items-center justify-center relative"><img src="${seats[i].avatar}" class="w-12 h-12 rounded-full mb-2"><span class="text-white text-xs truncate w-full text-center">${seats[i].user}</span>${seats[i].user === currentUser ? `<button class="absolute bottom-2 text-[10px] bg-red-500 px-2 rounded" onclick="remove(ref(db, 'audio_rooms/${currentRoomId}/seats/${i}'))">Leave</button>` : ''}</div>`;
+              } else {
+                  grid.innerHTML += `<div class="border border-gray-700 rounded-xl aspect-[3/4] flex flex-col items-center justify-center cursor-pointer" onclick="set(ref(db, 'audio_rooms/${currentRoomId}/seats/${i}'), {user: '${currentUser}', avatar: '${currentAvatar}'})"><span class="material-symbols-outlined text-gray-600">add</span></div>`;
+              }
+          }
+      });
+  };
+  window.leaveActiveAudioRoom = function() { document.getElementById('audio-room-active-overlay').style.display = 'none'; currentRoomId = null; };
+</script>
+</body>
+</html>
