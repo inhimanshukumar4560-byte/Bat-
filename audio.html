@@ -41,18 +41,18 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-white);
-            overflow: hidden;
         }
 
         .main-container {
             max-width: 500px;
             margin: 0 auto;
-            height: 100vh;
+            height: 100dvh; /* Changed to 100dvh for better mobile scrolling */
             position: relative;
             background-color: #ffffff;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* Contains the scroll inside */
         }
 
         /* --- Toast Notification --- */
@@ -117,12 +117,12 @@
 
         #id-login-screen .login-card h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
         #id-login-screen .login-card p { font-size: 13px; color: #666; margin-bottom: 25px; }
-        #id-login-screen input {
+        #id-login-screen input[type="number"] {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
             background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
             outline: none; transition: border 0.3s;
         }
-        #id-login-screen input:focus { border-color: var(--hot-pink); background: #fff; }
+        #id-login-screen input[type="number"]:focus { border-color: var(--hot-pink); background: #fff; }
         #id-login-screen button {
             width: 100%; padding: 15px; border-radius: 12px; border: none;
             background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
@@ -130,7 +130,7 @@
         }
         #id-login-screen button:hover { transform: translateY(-2px); }
 
-        /* ---- LOBBY SCREEN STYLES (MATCHING SCREENSHOT) ---- */
+        /* ---- LOBBY SCREEN STYLES ---- */
         #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; }
         
         /* Top Header */
@@ -149,31 +149,11 @@
         .lobby-search-box input:focus { outline: none; }
         .filter-btn { color: var(--hot-pink); background: none; border: none; font-size: 1.1em; cursor: pointer; }
 
-        /* Tabs */
-        .lobby-tabs { display: flex; overflow-x: auto; padding: 0 20px; gap: 20px; border-bottom: 1px solid #eee; margin-bottom: 15px;}
-        .lobby-tabs::-webkit-scrollbar { display: none; }
-        .tab-item { padding: 10px 0; font-size: 0.9em; font-weight: 600; color: #888; white-space: nowrap; cursor: pointer;}
-        .tab-item.active { color: var(--hot-pink); border-bottom: 2px solid var(--hot-pink); }
-
-        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 80px 20px; }
+        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; } /* Adjusted padding to fix scroll and remove bottom-nav gap */
         .lobby-body::-webkit-scrollbar { display: none; }
 
-        /* Promo Banner */
-        .promo-banner { background: var(--gradient-main); border-radius: 16px; padding: 20px; color: white; display: flex; justify-content: space-between; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(255,0,76,0.15);}
-        .promo-left { flex: 1; }
-        .promo-tag { background: rgba(255,255,255,0.2); display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 0.7em; font-weight: 700; margin-bottom: 10px; }
-        .promo-left h3 { font-size: 1.5em; font-weight: 800; line-height: 1.2; margin-bottom: 5px; }
-        .promo-left p { font-size: 0.8em; opacity: 0.9; margin-bottom: 15px; }
-        .promo-avatars { display: flex; align-items: center; }
-        .promo-avatars img { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--hot-pink); margin-left: -8px; }
-        .promo-avatars img:first-child { margin-left: 0; }
-        .promo-avatars span { font-size: 0.7em; margin-left: 5px; font-weight: bold; }
-        .promo-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
-        .promo-count { background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; display: flex; align-items: center; gap: 4px;}
-        .join-now-btn { background: white; color: var(--hot-pink); font-weight: 700; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8em; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
         /* Section Title */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 10px;}
         .section-title { font-size: 1.1em; font-weight: 800; color: #111; }
         .view-all { font-size: 0.8em; color: var(--hot-pink); font-weight: 600; cursor: pointer; }
 
@@ -197,20 +177,12 @@
         .join-btn-outline:hover { background: var(--hot-pink); color: white; }
 
         /* Floating Action Button (Create Room) */
-        .fab-create { position: fixed; bottom: 80px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
+        .fab-create { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
         .fab-create:hover { transform: scale(1.1); }
-
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: #ffffff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px 0 20px 0; z-index: 90; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #888; font-size: 0.65em; font-weight: 600; cursor: pointer; }
-        .nav-item i { font-size: 1.6em; }
-        .nav-item.active { color: var(--hot-pink); }
-        .nav-item-center { position: relative; top: -20px; background: red; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; border: 4px solid white; box-shadow: 0 5px 10px rgba(255,0,0,0.2); }
-        .nav-item-center i { font-size: 1.5em; }
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
         #live-room-screen { display: none; }
-        .live-room-container { display: flex; flex-direction: column; height: 100vh; position: relative; background: #fdfdfd; }
+        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: #fdfdfd; }
         .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eee; background: #fff;}
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
@@ -361,7 +333,7 @@
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
 
-        <!-- NEW: ID LOGIN OVERLAY (Enforces ID check before entering) -->
+        <!-- NEW: ID LOGIN OVERLAY (Enforces ID check and ImgBB Upload before entering) -->
         <div id="id-login-screen">
             <div class="logo-container">
                 <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
@@ -369,7 +341,14 @@
             </div>
             <div class="login-card">
                 <h2>Welcome Back!</h2>
-                <p>Please enter your unique Zingoo ID to access live audio rooms.</p>
+                <p>Please enter your unique Zingoo ID and set a profile picture to access live rooms.</p>
+                
+                <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+                <div style="cursor:pointer; margin-bottom:20px; display:inline-block;" onclick="document.getElementById('login-profile-upload').click()">
+                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--hot-pink); box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <p style="font-size:11px; color:var(--hot-pink); margin-top:8px; font-weight:bold;">Tap to upload picture</p>
+                </div>
+
                 <input type="number" id="login-zingoo-id" placeholder="e.g. 14873198">
                 <button id="btn-login-id">Enter Rooms</button>
             </div>
@@ -398,37 +377,8 @@
                 </div>
             </div>
 
-            <div class="lobby-tabs">
-                <div class="tab-item">For You</div>
-                <div class="tab-item">Live</div>
-                <div class="tab-item active">Rooms</div>
-                <div class="tab-item">Games</div>
-                <div class="tab-item">Reels</div>
-                <div class="tab-item">Following</div>
-            </div>
-
             <main class="lobby-body">
                 
-                <!-- Promo Banner -->
-                <div class="promo-banner">
-                    <div class="promo-left">
-                        <span class="promo-tag">🔥 Trending Room</span>
-                        <h3>Late Night<br>Talks 🌙</h3>
-                        <p>Let's talk about anything<br>and everything!</p>
-                        <div class="promo-avatars">
-                            <img src="https://i.pravatar.cc/150?img=1">
-                            <img src="https://i.pravatar.cc/150?img=2">
-                            <img src="https://i.pravatar.cc/150?img=3">
-                            <img src="https://i.pravatar.cc/150?img=4">
-                            <span>+25</span>
-                        </div>
-                    </div>
-                    <div class="promo-right">
-                        <span class="promo-count"><i class="fas fa-user"></i> 10/10</span>
-                        <button class="join-now-btn" onclick="document.getElementById('open-create-room-btn').click()">Join Now</button>
-                    </div>
-                </div>
-
                 <div class="section-header">
                     <h2 class="section-title">Live Rooms</h2>
                     <span class="view-all">View All</span>
@@ -440,30 +390,11 @@
                 </div>
                 
             </main>
-
-            <!-- Bottom Navigation -->
-            <nav class="bottom-nav">
-                <div class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </div>
-                <div class="nav-item active">
-                    <i class="fas fa-microphone"></i>
-                    <span>Rooms</span>
-                </div>
-                <div class="nav-item-center" id="open-create-room-btn" style="cursor:pointer;">
-                    <i class="fas fa-plus"></i>
-                </div>
-                <div class="nav-item">
-                    <i class="fas fa-play-circle"></i>
-                    <span>Reels</span>
-                </div>
-                <div class="nav-item">
-                    <i class="far fa-user"></i>
-                    <span>Profile</span>
-                </div>
-            </nav>
-
+            
+            <!-- Create Room Floating Action Button -->
+            <button class="fab-create" id="open-create-room-btn">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
 
         <!-- LIVE ROOM SCREEN (Maintained layout, adjusted to Light Theme colors) -->
@@ -548,6 +479,38 @@
                 </div>
             </div>
         </div>
+
+        <!-- INCOMING / WEBRTC CALL OVERLAYS -->
+        <div id="incoming-call-overlay" class="modal-overlay" style="z-index:10000; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.9);">
+            <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <h2 id="incoming-caller-name" style="color:white; font-size:24px; font-weight:bold; margin-bottom:10px;">Caller Name</h2>
+            <p style="color:#ff3b6b; font-size:14px; margin-bottom:30px; animation:pulse-green 1s infinite;">Incoming Call...</p>
+            <div style="display:flex; gap:20px;">
+                <button id="btn-decline-call" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
+                <button id="btn-accept-call" style="width:60px; height:60px; border-radius:50%; background:#25D366; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone"></i></button>
+            </div>
+        </div>
+
+        <div id="video-overlay" style="position:fixed; inset:0; background:black; z-index:10000; display:none;">
+            <video id="remote-video" style="width:100%; height:100%; object-fit:cover;" autoplay playsinline></video>
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
+                <div style="background:rgba(0,0,0,0.5); color:white; padding:10px 20px; border-radius:30px; align-self:flex-start;" id="video-partner-name">Waiting...</div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
+                    <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink);" autoplay playsinline muted></video>
+                    <button id="btn-end-video" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="audio-overlay" style="position:fixed; inset:0; background:#111; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+            <img id="audio-partner-img" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <h2 style="color:white; font-size:24px; font-weight:bold;" id="audio-partner-name">Partner</h2>
+            <p style="color:#ff3b6b; font-size:14px; margin-bottom:50px;" id="audio-status">Connecting...</p>
+            <audio id="remote-audio" autoplay></audio>
+            <audio id="local-audio" autoplay muted></audio>
+            <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
+        </div>
+
     </div>
     
     <!-- MODALS (Updated to Light Theme) -->
@@ -598,9 +561,10 @@
                 <img id="popup-profile-img" src="" alt="User Profile">
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
-                <div class="profile-actions">
-                    <button class="action-btn secondary"><i class="fas fa-plus"></i> Follow</button>
-                    <button class="action-btn"><i class="fas fa-envelope"></i> Message</button>
+                <div class="profile-actions" style="margin-top: 10px;">
+                    <!-- Updated Buttons for WebRTC Implementation -->
+                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
+                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
                     <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
                 </div>
             </div>
@@ -609,7 +573,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // --- ROBUST FIREBASE INITIALIZATION ---
         let app;
@@ -636,20 +600,24 @@
         // --- SCRIPT START ---
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- ID LOGIN LOGIC ---
+            // --- ID LOGIN & IMGBB LOGIC ---
+            const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c"; // Global Public ImgBB Upload API Key
             const idLoginScreen = document.getElementById('id-login-screen');
             const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
             const loginInput = document.getElementById('login-zingoo-id');
             const globalToast = document.getElementById('global-toast');
+            let selectedAvatarFile = null;
 
             let currentUser = null;
-            let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
+            let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             
             // Pre-fill if exists in local storage from main app
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
                 loginInput.value = storedId;
+                const storedAv = localStorage.getItem("zingoo_avatar");
+                if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             }
 
             const showToast = (message) => {
@@ -658,30 +626,59 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
+            // Capture Image for ImgBB
+            document.getElementById('login-profile-upload').addEventListener('change', function(e) {
+                if(e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        document.getElementById('login-avatar-preview').src = event.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                    selectedAvatarFile = e.target.files[0];
+                }
+            });
+
             loginBtn.addEventListener('click', () => {
                 const enteredId = loginInput.value.trim();
                 if (!enteredId) { showToast("Please enter your Zingoo ID"); return; }
                 
+                loginBtn.innerText = "Please wait...";
+
+                // If user uploaded an image, upload to ImgBB first
+                if (selectedAvatarFile) {
+                    showToast("Uploading profile image to server...");
+                    const formData = new FormData();
+                    formData.append("image", selectedAvatarFile);
+
+                    fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: "POST",
+                        body: formData
+                    }).then(res => res.json()).then(data => {
+                        if (data.success) {
+                            currentAvatar = data.data.url;
+                        }
+                        processDatabaseLogin(enteredId);
+                    }).catch(err => {
+                        showToast("Image upload failed, using default.");
+                        processDatabaseLogin(enteredId);
+                    });
+                } else {
+                    processDatabaseLogin(enteredId);
+                }
+            });
+
+            function processDatabaseLogin(enteredId) {
                 // Fetch User from Firebase based on ID
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
+                    let userKey = null;
                     
                     if (allUsers) {
                         for (let key in allUsers) {
                             if (allUsers[key].id === enteredId) {
                                 currentUser = allUsers[key].name;
-                                currentAvatar = allUsers[key].avatar;
-                                localStorage.setItem("zingoo_user", currentUser);
-                                localStorage.setItem("zingoo_avatar", currentAvatar);
-                                localStorage.setItem("zingoo_id", enteredId);
-                                
-                                // Update diamond balance if it exists
-                                if(allUsers[key].diamonds !== undefined) {
-                                    document.getElementById('lobby-diamond-balance').innerText = allUsers[key].diamonds;
-                                    localStorage.setItem("zingoo_diamonds", allUsers[key].diamonds);
-                                }
-                                
+                                userKey = key;
                                 userFound = true;
                                 break;
                             }
@@ -689,22 +686,50 @@
                     }
                     
                     if (userFound) {
+                        // Update avatar if a new one was uploaded
+                        if (selectedAvatarFile) {
+                            set(ref(db, `users/${userKey}/avatar`), currentAvatar);
+                        } else {
+                            currentAvatar = allUsers[userKey].avatar || currentAvatar;
+                        }
+
+                        localStorage.setItem("zingoo_user", currentUser);
+                        localStorage.setItem("zingoo_avatar", currentAvatar);
+                        localStorage.setItem("zingoo_id", enteredId);
+                        
+                        // Update diamond balance if it exists
+                        if(allUsers[userKey].diamonds !== undefined) {
+                            document.getElementById('lobby-diamond-balance').innerText = allUsers[userKey].diamonds;
+                            localStorage.setItem("zingoo_diamonds", allUsers[userKey].diamonds);
+                        }
+                        
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
                         listenForAudioRooms(); // Initialize lobby rooms
+                        listenForIncomingCalls(); // Initialize WebRTC Caller listener
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
+                        loginBtn.innerText = "Enter Rooms";
                     }
                 }).catch(err => {
                     showToast("Error connecting to database.");
+                    loginBtn.innerText = "Enter Rooms";
                 });
-            });
+            }
 
             // --- App State ---
             let currentActiveRoomId = null;
             let mySeatIndex = -1;
             let roomListener = null;
+            let unsubscribeChat = null;
+
+            // --- WEBRTC CALLING LOGIC & STATE ---
+            let localStream = null;
+            let peerConnection = null;
+            let currentCallPath = null;
+            let incomingCallData = null;
+            const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
             // --- UI Elements ---
             const liveRoomScreen = document.getElementById('live-room-screen');
@@ -723,7 +748,101 @@
                 modals.forEach(modal => modal.style.display = 'none');
             };
 
-            // --- Firebase Listeners and Functions ---
+            // --- WebRTC Functions ---
+            function listenForIncomingCalls() {
+                if(!currentUser) return;
+                onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.offer && !peerConnection) {
+                        incomingCallData = data;
+                        document.getElementById('incoming-caller-name').innerText = data.caller;
+                        document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
+                        document.getElementById('incoming-call-overlay').style.display = 'flex';
+                    } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
+                        document.getElementById('incoming-call-overlay').style.display = 'none'; 
+                        incomingCallData = null; 
+                        stopWebRTC();
+                    }
+                });
+            }
+
+            window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
+                if(peerConnection) return;
+                if(targetUser === currentUser) { showToast("You cannot call yourself!"); return; }
+                
+                currentCallPath = `calls/${targetUser}`;
+                document.getElementById('video-partner-name').innerText = targetUser;
+                document.getElementById('audio-partner-name').innerText = targetUser;
+                if(targetAvatar) document.getElementById('audio-partner-img').src = targetAvatar;
+                document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                
+                try {
+                    peerConnection = new RTCPeerConnection(servers);
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+                    peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+                    peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
+
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    set(ref(db, currentCallPath), { caller: currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
+
+                    onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
+                    onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
+                } catch(e) { stopWebRTC(); showToast("Call Failed: Camera/Mic Access Denied."); }
+            };
+
+            document.getElementById("btn-accept-call").addEventListener("click", async () => {
+                document.getElementById('incoming-call-overlay').style.display = 'none';
+                const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${currentUser}`;
+                document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                
+                try {
+                    peerConnection = new RTCPeerConnection(servers);
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+                    peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+                    peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
+
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
+                    onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
+                } catch(e) { stopWebRTC(); showToast("Call Accept Failed."); }
+            });
+
+            function stopWebRTC() {
+                if(localStream) localStream.getTracks().forEach(t => t.stop());
+                if(peerConnection) peerConnection.close();
+                document.getElementById("video-overlay").style.display = "none";
+                document.getElementById("audio-overlay").style.display = "none";
+                document.getElementById("incoming-call-overlay").style.display = "none";
+                if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
+                peerConnection = null; incomingCallData = null;
+            }
+            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
+            document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
+            document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
+
+
+            // --- Audio Rooms Functions ---
+            window.openUserProfile = function(username, avatar) {
+                document.getElementById('popup-username').innerText = username;
+                document.getElementById('popup-profile-img').src = avatar;
+                document.getElementById('popup-userid').innerText = "ID: " + username;
+                
+                // Bind WebRTC Call Buttons dynamically to the selected user
+                document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
+                document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
+                
+                openModal('profile-popup');
+            };
+
             function listenForAudioRooms() {
                 const roomsRef = ref(db, 'audio_rooms');
                 onValue(roomsRef, (snapshot) => {
@@ -735,7 +854,6 @@
                             const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
                             const vacantSeats = 10 - seatCount;
                             
-                            // Replicating screenshot room row layout
                             const roomCard = document.createElement('div');
                             roomCard.className = `room-list-row`;
                             roomCard.dataset.roomId = roomId;
@@ -784,13 +902,34 @@
                     roomListener = onValue(roomSeatsRef, (snapshot) => {
                         renderSeats(snapshot.val() || {});
                     });
+
+                    // Setup Chat Listener
+                    const chatContainer = document.getElementById('chat-messages');
+                    chatContainer.innerHTML = '<div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>';
+                    
+                    if (unsubscribeChat) unsubscribeChat();
+                    const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
+                    
+                    unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
+                        const msgData = snapshot.val();
+                        if(msgData) {
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = 'chat-msg';
+                            if(msgData.user === currentUser) {
+                                msgDiv.style.alignSelf = 'flex-end';
+                                msgDiv.style.backgroundColor = '#ffe4e8';
+                            }
+                            msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+                            chatContainer.appendChild(msgDiv);
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                        }
+                    });
                 };
 
                 if (fee > 0) {
                     let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
                     if (currentDiamonds >= fee) {
                         if (confirm(`This room costs ${fee} diamonds. Your balance: ${currentDiamonds}. Join?`)) {
-                            // Logic to deduct diamond inside Real DB
                             const newBal = currentDiamonds - fee;
                             set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
                                 localStorage.setItem("zingoo_diamonds", newBal);
@@ -828,14 +967,14 @@
                         seatDiv.dataset.username = seatInfo.user;
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
                         seatDiv.innerHTML = `
-                            <div class="avatar-container">
+                            <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
                                 <img src="${seatInfo.avatar}" alt="Speaker">
                                 <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
                                 </div>
                             </div>
                             <p>${seatInfo.user}</p>
-                            ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="window.audioRoomAPI.leaveSeat()">Leave</button>` : `<span class="admin-tag">User</span>`}
+                            ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : `<span class="admin-tag">User</span>`}
                         `;
                     } else {
                         seatDiv.classList.add('empty');
@@ -873,11 +1012,33 @@
                     window.audioRoomAPI.leaveSeat();
                 }
                 if (roomListener) roomListener();
+                if (unsubscribeChat) {
+                    unsubscribeChat();
+                    unsubscribeChat = null;
+                }
                 currentActiveRoomId = null;
                 mySeatIndex = -1;
                 liveRoomScreen.style.display = 'none';
                 lobbyScreen.style.display = 'flex';
             }
+
+            // Room Chat Functionality
+            function sendRoomMessage() {
+                const input = document.getElementById('live-chat-input');
+                const text = input.value.trim();
+                if(!text || !currentActiveRoomId) return;
+                
+                push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                    user: currentUser,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+                input.value = '';
+            }
+            document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
+            document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') sendRoomMessage();
+            });
 
             closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
             modals.forEach(modal => {
