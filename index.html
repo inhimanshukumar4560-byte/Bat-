@@ -163,7 +163,7 @@
         </div>
         
         <div id="live-streams-list" class="flex overflow-x-auto gap-4 pb-2 no-scrollbar">
-            <p class="text-gray-400 text-sm">Finding live creators...</p>
+            <p class="text-gray-400 text-sm">No creators are live right now.</p>
         </div>
     </section>
 
@@ -194,6 +194,11 @@
     </section>
 
 </main>
+
+<!-- ================= FLOATING AI BOT CARD (1:1 Ratio) ================= -->
+<a href="https://komal-ai-assistant-gf.vercel.app/" target="_blank" class="fixed bottom-[85px] right-4 w-[60px] h-[60px] z-40 rounded-full shadow-2xl overflow-hidden border-2 border-white hover:scale-105 transition-transform animate-bounce bg-white flex items-center justify-center">
+    <img src="https://i.ibb.co/zVjJVPjT/file-000000003d4072079654ea5396f975b4.png" class="w-full h-full object-cover">
+</a>
 
 <!-- ================= BOTTOM NAVIGATION BAR (Z-[9999] High Priority) ================= -->
 <nav class="fixed bottom-0 w-full z-[9999] bg-white pb-6 pt-3 px-6 flex justify-between items-center border-t border-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
@@ -268,12 +273,10 @@
 
 <!-- ================= REDESIGNED PROFILE VIEW OVERLAY ================= -->
 <div id="manage-profile-overlay" class="fixed inset-0 bg-zingoo-bg z-[9000] flex-col hidden overflow-y-auto no-scrollbar pb-32">
-    <!-- Header with Upload Option -->
+    <!-- Header without Upload Icon -->
     <div class="bg-white px-4 pt-4 pb-2 sticky top-0 z-50 flex justify-between items-center shadow-sm">
         <div></div> <!-- Empty div to replace back button and keep flex spacing -->
         <div class="flex gap-4">
-            <!-- Upload Icon Added Here -->
-            <span class="material-symbols-outlined text-gray-700 cursor-pointer" onclick="document.getElementById('upload-video-overlay').style.display='flex';">add_box</span>
             <span class="material-symbols-outlined text-gray-700">notifications</span>
             <span class="material-symbols-outlined text-gray-700" onclick="alert('Settings menu')">settings</span>
         </div>
@@ -321,6 +324,20 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900" id="profile-diamonds-display">0</h3>
                 <span class="material-symbols-outlined absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">chevron_right</span>
+            </div>
+        </div>
+
+        <!-- NEW BIG UPLOAD BUTTON -->
+        <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-4 flex items-center gap-4 shadow-md mb-6 cursor-pointer transform hover:scale-[1.02] transition-transform" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('upload-video-overlay').style.display='flex';">
+            <div class="bg-white/20 p-3 rounded-full flex items-center justify-center text-white">
+                <span class="material-symbols-outlined text-[32px]">upload</span>
+            </div>
+            <div class="text-white">
+                <h3 class="font-bold text-lg leading-tight">Upload Video</h3>
+                <p class="text-white/80 text-xs mt-0.5">Share your moments as Reels or Vods</p>
+            </div>
+            <div class="ml-auto bg-white/20 rounded-full w-8 h-8 flex items-center justify-center text-white">
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
             </div>
         </div>
 
@@ -598,8 +615,9 @@
     <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-3 gap-3 pb-24 bg-gray-50 no-scrollbar"></div>
 </div>
 
-<!-- GO LIVE / WATCH LIVE OVERLAY (New Feature as requested) -->
+<!-- GO LIVE / WATCH LIVE OVERLAY -->
 <div id="go-live-overlay" class="fixed inset-0 bg-gray-900 z-[10500] flex-col hidden overflow-hidden">
+    <!-- Camera view with standard object cover -->
     <video id="live-video-element" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline muted></video>
     <div class="absolute top-0 w-full p-4 flex justify-between items-start bg-gradient-to-b from-black/70 to-transparent z-10">
         <div class="flex items-center gap-2 bg-black/40 rounded-full pr-3 pl-1 py-1 border border-white/10">
@@ -802,23 +820,36 @@
       document.getElementById('nav-home').classList.remove('text-gray-400');
   }
 
-  // --- LIVE UI HANDLERS (NEW) ---
+  // --- LIVE UI HANDLERS (NEW - FIXED MIRROR & DB TRACKING) ---
   let liveLocalStream = null;
   window.openGoLiveUI = async function(hostName = null, hostAvatar = null) {
       document.getElementById('go-live-overlay').style.display = 'flex';
       document.getElementById('live-host-name').innerText = hostName || currentUser || "Me";
       document.getElementById('live-host-avatar').src = hostAvatar || currentAvatar || "";
 
+      const videoElement = document.getElementById('live-video-element');
+
       if(!hostName || hostName === currentUser) {
           try {
+              videoElement.classList.add('-scale-x-100'); // Mirror effect fix for front camera
               liveLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-              document.getElementById('live-video-element').srcObject = liveLocalStream;
+              videoElement.srcObject = liveLocalStream;
+              
+              if(currentUser) {
+                  set(ref(db, `live_streams/${currentUser}`), {
+                      host: currentUser,
+                      avatar: currentAvatar,
+                      startedAt: serverTimestamp()
+                  });
+              }
           } catch(e) {
               console.error(e);
+              alert("Camera/Mic permission needed to go live.");
           }
       } else {
-          document.getElementById('live-video-element').srcObject = null;
-          document.getElementById('live-video-element').poster = hostAvatar; 
+          videoElement.classList.remove('-scale-x-100'); // Normal view for watching someone else
+          videoElement.srcObject = null;
+          videoElement.poster = hostAvatar; 
       }
       
       resetNavHighlights();
@@ -831,9 +862,17 @@
       if(liveLocalStream) {
           liveLocalStream.getTracks().forEach(t => t.stop());
           liveLocalStream = null;
+          if(currentUser) remove(ref(db, `live_streams/${currentUser}`));
       }
       closeAllMainTabs();
   };
+
+  // Clean up live stream if app is closed unexpectedly
+  window.addEventListener('beforeunload', () => {
+      if(liveLocalStream && currentUser) {
+          remove(ref(db, `live_streams/${currentUser}`));
+      }
+  });
 
   window.openVideoFeed = function(tab) {
       document.getElementById('video-feed-overlay').style.display = 'flex';
@@ -1219,6 +1258,34 @@
       }
   }
 
+  // --- Real Live Streams List ---
+  onValue(ref(db, 'live_streams'), (snapshot) => {
+      const liveStreamsContainer = document.getElementById("live-streams-list");
+      liveStreamsContainer.innerHTML = '';
+      const data = snapshot.val();
+      if(data) {
+          let hasActive = false;
+          Object.values(data).forEach(stream => {
+              if (stream.host !== currentUser) { 
+                  hasActive = true;
+                  liveStreamsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="flex flex-col items-center gap-1 cursor-pointer min-w-[70px]" onclick="openGoLiveUI('${stream.host}', '${stream.avatar}')">
+                      <div class="relative">
+                          <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-red-500">
+                              <img src="${stream.avatar}" class="w-full h-full rounded-full border-2 border-white object-cover">
+                          </div>
+                          <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm border border-white">LIVE</span>
+                      </div>
+                      <span class="text-xs text-gray-800 font-medium truncate w-16 text-center mt-1">${stream.host}</span>
+                  </div>`);
+              }
+          });
+          if(!hasActive) liveStreamsContainer.innerHTML = '<p class="text-gray-400 text-sm">No creators are live right now.</p>';
+      } else {
+          liveStreamsContainer.innerHTML = '<p class="text-gray-400 text-sm">No creators are live right now.</p>';
+      }
+  });
+
   // --- Home Users List & See All Grid ---
   document.getElementById('see-all-trigger').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'flex'; });
   document.getElementById('btn-close-see-all').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'none'; });
@@ -1226,27 +1293,14 @@
   onValue(ref(db, 'users'), (snapshot) => {
       const usersListContainer = document.getElementById("real-users-list");
       const seeAllGridContainer = document.getElementById("see-all-grid");
-      const liveStreamsContainer = document.getElementById("live-streams-list");
       
-      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = ''; liveStreamsContainer.innerHTML = '';
+      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
       
       const data = snapshot.val();
       if(data) {
           Object.values(data).forEach(user => {
               if (user.name !== currentUser) { 
                   
-                  // Live Streams Horizontal (Avatars with Live Badge)
-                  liveStreamsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="flex flex-col items-center gap-1 cursor-pointer min-w-[70px]" onclick="openGoLiveUI('${user.name}', '${user.avatar}')">
-                      <div class="relative">
-                          <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-red-500">
-                              <img src="${user.avatar}" class="w-full h-full rounded-full border-2 border-white object-cover">
-                          </div>
-                          <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm border border-white">LIVE</span>
-                      </div>
-                      <span class="text-xs text-gray-800 font-medium truncate w-16 text-center mt-1">${user.name}</span>
-                  </div>`);
-
                   // Vertical Portrait Card for Home Page "Active Users"
                   const userHtml = `
                   <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
