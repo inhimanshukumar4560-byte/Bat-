@@ -113,9 +113,9 @@
 <!-- TOP TABS -->
 <div class="sticky top-[60px] z-40 bg-white w-full border-b border-gray-100 flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 text-sm font-semibold text-gray-500">
     <div class="pb-3 border-b-2 border-red-500 text-red-500 whitespace-nowrap cursor-pointer">For You</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">Live</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('longs');">Live</div>
     <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openAudioRoomLobby()">Rooms</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">Reels</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('shorts');">Reels</div>
     <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer">Following</div>
 </div>
 
@@ -167,7 +167,7 @@
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
             <h2 class="text-lg font-bold text-gray-900">Trending Reels</h2>
-            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">View All</span>
+            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openVideoFeed('shorts');">View All</span>
         </div>
         
         <!-- Real Shorts injected dynamically here -->
@@ -198,7 +198,7 @@
         </button>
     </div>
 
-    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
+    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="openVideoFeed('shorts');">
         <span class="material-symbols-outlined text-[26px]">smart_display</span>
         <span class="text-[10px]">Reels</span>
     </div>
@@ -248,13 +248,13 @@
 
             <!-- Live Shows Image -->
             <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
-                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">
+                 onclick="document.getElementById('menu-overlay').style.display='none'; openVideoFeed('longs');">
                 <img src="https://i.ibb.co/PZvGtbNk/file-00000000a2e07208bc2307d7a0fe24f1.png" class="w-full h-full object-cover">
             </div>
 
             <!-- Secret Gallery Image -->
             <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
-                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
+                 onclick="document.getElementById('menu-overlay').style.display='none'; openVideoFeed('shorts');">
                 <img src="https://i.ibb.co/84xpBDH1/file-00000000ca047208b27d596686e3776f.png" class="w-full h-full object-cover">
             </div>
 
@@ -648,7 +648,7 @@
     <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
 </div>
 
-<!-- AUDIO ROOM LOBBY -->
+<!-- AUDIO ROOM LOBBY (Kept for compatibility, but normally bypassed to audio.html) -->
 <div id="audio-room-lobby-overlay" class="fixed inset-0 bg-white z-[9000] flex-col hidden overflow-hidden">
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
         <div class="flex items-center gap-3">
@@ -660,7 +660,7 @@
     <div id="audio-rooms-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-32 bg-gray-50 no-scrollbar"></div>
 </div>
 
-<!-- ACTIVE AUDIO ROOM -->
+<!-- ACTIVE AUDIO ROOM (Kept for compatibility) -->
 <div id="audio-room-active-overlay" class="fixed inset-0 bg-gray-900 z-[8500] flex-col hidden overflow-hidden">
     <div class="bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-700 sticky top-0 z-50">
         <h3 id="active-room-name" class="text-white font-bold text-lg flex items-center gap-2">Room Name <div class="live-pulse relative w-2 h-2 ml-1"></div></h3>
@@ -669,19 +669,22 @@
     <div id="audio-room-seats-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-3 md:grid-cols-4 gap-4 pb-24 no-scrollbar"></div>
 </div>
 
-<!-- VIDEO FEED (Reels & Longs) -->
+<!-- VIDEO FEED (Reels & Longs) - Full Screen Snap Scroll -->
 <div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
-    <div class="bg-black/80 backdrop-blur px-4 py-4 flex justify-between border-b border-white/10 sticky top-0 z-50">
+    <!-- Floating Header over Video -->
+    <div class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent px-4 pt-6 pb-4 flex justify-between items-center pointer-events-auto border-none">
         <button class="text-white" onclick="closeAllMainTabs()"><span class="material-symbols-outlined">arrow_back</span></button>
         <div class="flex gap-4">
-            <button id="tab-shorts-btn" class="text-red-500 font-bold" onclick="switchVideoTab('shorts')">Reels</button>
-            <button id="tab-longs-btn" class="text-white/50 font-bold" onclick="switchVideoTab('longs')">Live/Vods</button>
+            <button id="tab-shorts-btn" class="text-red-500 font-bold drop-shadow-md" onclick="switchVideoTab('shorts')">Reels</button>
+            <button id="tab-longs-btn" class="text-white/70 font-bold drop-shadow-md" onclick="switchVideoTab('longs')">Live/Vods</button>
         </div>
     </div>
-    <!-- Shorts container with snap-scroll for YouTube style -->
-    <div id="shorts-feed-container" class="flex flex-col w-full h-[calc(100vh-60px)] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black pb-24"></div>
+    
+    <!-- Shorts container with snap-scroll for YouTube/TikTok style -->
+    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth"></div>
+    
     <!-- Longs container standard flow -->
-    <div class="flex-1 overflow-y-auto pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
+    <div class="w-full h-full overflow-y-auto pt-20 pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
         <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
     </div>
 </div>
@@ -799,13 +802,19 @@
   window.closeAllMainTabs = function() {
       document.getElementById('manage-profile-overlay').style.display = 'none';
       document.getElementById('video-feed-overlay').style.display = 'none';
-      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
       document.getElementById('diamond-store-overlay').style.display = 'none';
+      document.getElementById('bottom-nav').style.display = 'flex'; // Ensure bottom nav is visible on Home
       
       resetNavHighlights();
       document.getElementById('nav-home').classList.add('nav-item-active', 'text-zingoo-red');
       document.getElementById('nav-home').classList.remove('text-gray-400');
   }
+
+  window.openVideoFeed = function(tab) {
+      document.getElementById('video-feed-overlay').style.display = 'flex';
+      document.getElementById('bottom-nav').style.display = 'none'; // Hide nav on Video/Reels view
+      switchVideoTab(tab);
+  };
 
   function updateDiamondDisplay() {
       const balance = localStorage.getItem('zingoo_diamonds') || '0';
@@ -840,6 +849,31 @@
       window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
   };
   
+  window.giftDiamonds = function(authorName) {
+      if(!currentUser) { alert("Please create a profile first!"); return; }
+      if(currentUser === authorName) { alert("You cannot gift yourself!"); return; }
+      
+      let amount = prompt(`How many diamonds do you want to gift to ${authorName}?`, "1");
+      if(amount === null) return;
+      amount = parseInt(amount);
+      
+      if(isNaN(amount) || amount <= 0) {
+          alert("Enter a valid amount."); return;
+      }
+      
+      let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+      if(currentBal < amount) {
+          alert("Insufficient diamonds. Please buy more from the store!");
+          document.getElementById('diamond-store-overlay').style.display = 'flex';
+          return;
+      }
+      
+      // Deduct from local sender
+      let newBal = currentBal - amount;
+      set(ref(db, `users/${currentUser}/diamonds`), newBal);
+      alert(`Successfully gifted ${amount} diamond(s) to ${authorName}! 💎`);
+  };
+
   // --- Video Player ---
   window.playVideo = function(url, type, isYouTube) {
       const overlay = document.getElementById('video-player-overlay');
@@ -885,13 +919,13 @@
       const shortsBtn = document.getElementById('tab-shorts-btn');
       const longsBtn = document.getElementById('tab-longs-btn');
       if(tab === 'shorts') {
-          shortsBtn.className = "text-red-500 font-bold";
-          longsBtn.className = "text-white/50 font-bold";
-          document.getElementById('shorts-feed-container').style.display = 'flex';
+          shortsBtn.className = "text-red-500 font-bold drop-shadow-md";
+          longsBtn.className = "text-white/70 font-bold drop-shadow-md";
+          document.getElementById('shorts-feed-container').style.display = 'block';
           document.getElementById('longs-feed-wrap').style.display = 'none';
       } else {
-          longsBtn.className = "text-red-500 font-bold";
-          shortsBtn.className = "text-white/50 font-bold";
+          longsBtn.className = "text-red-500 font-bold drop-shadow-md";
+          shortsBtn.className = "text-white/70 font-bold drop-shadow-md";
           document.getElementById('shorts-feed-container').style.display = 'none';
           document.getElementById('longs-feed-wrap').style.display = 'block';
       }
@@ -966,25 +1000,51 @@
           vids.forEach(vid => {
               const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
               if (vid.type === 'short') {
-                  // YouTube-Style Snap Scroll Shorts Feed
+                  
+                  // Embedded TikTok-style Short Item in the Snap Container
+                  let embeddedMedia = vid.isYouTube 
+                        ? `<iframe class="relative z-10 w-full h-full pointer-events-auto" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
+                        : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto" src="${vid.mediaUrl}" loop controls playsinline></video>`;
+
                   shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-full h-full snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center">
-                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-60">
-                      <div class="absolute inset-0 flex flex-col justify-end p-4 pb-8 z-10 pointer-events-none bg-gradient-to-t from-black/80 to-transparent">
-                          <h3 class="text-white font-bold text-lg mb-1">${vid.title}</h3>
-                          <div class="flex items-center gap-2 pointer-events-auto">
-                              <img src="${vid.authorAvatar || currentAvatar}" class="w-8 h-8 rounded-full border border-white">
-                              <span class="text-white text-sm font-medium">${vid.author || 'Creator'}</span>
+                  <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden">
+                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm z-0 pointer-events-none">
+                      
+                      ${embeddedMedia}
+                      
+                      <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-end">
+                          <div class="flex justify-between items-end p-4 pb-8 h-full w-full bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                              <!-- Left Side info -->
+                              <div class="flex-col gap-2 max-w-[70%]">
+                                  <div class="flex items-center gap-2 mb-2 pointer-events-auto">
+                                      <img src="${vid.authorAvatar || currentAvatar}" class="w-10 h-10 rounded-full border-2 border-white object-cover">
+                                      <span class="text-white text-md font-bold drop-shadow-md">${vid.author || 'Creator'}</span>
+                                  </div>
+                                  <h3 class="text-white font-medium text-sm drop-shadow-md">${vid.title}</h3>
+                              </div>
+                              
+                              <!-- Right Side Actions -->
+                              <div class="flex flex-col items-center gap-6 pointer-events-auto pb-6">
+                                  <div class="flex flex-col items-center gap-1 cursor-pointer">
+                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-white text-[28px]">favorite</span></div>
+                                      <span class="text-white text-xs font-bold drop-shadow-md">Like</span>
+                                  </div>
+                                  <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}')">
+                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-purple-400 text-[28px]">diamond</span></div>
+                                      <span class="text-white text-xs font-bold drop-shadow-md">Gift</span>
+                                  </div>
+                                  <div class="flex flex-col items-center gap-1 cursor-pointer">
+                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-white text-[28px]">share</span></div>
+                                      <span class="text-white text-xs font-bold drop-shadow-md">Share</span>
+                                  </div>
+                              </div>
                           </div>
                       </div>
-                      <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-4 shadow-lg flex items-center justify-center z-20 hover:scale-110 transition-transform cursor-pointer" onclick="${clickHandler}">
-                          <span class="material-symbols-outlined text-[40px]">play_arrow</span>
-                      </button>
                   </div>`);
                   
                   // Home Horizontal list view
                   homeReelsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="${clickHandler}">
+                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="openVideoFeed('shorts');">
                       <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
                       <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[30px]">play_arrow</span>
                       <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -1277,24 +1337,11 @@
   // --- Audio Rooms ---
   let currentRoomId = null;
   window.openAudioRoomLobby = function() {
-      document.getElementById('audio-room-lobby-overlay').style.display = 'flex';
-      resetNavHighlights();
-      document.getElementById('nav-rooms').classList.add('nav-item-active', 'text-zingoo-red');
-      document.getElementById('nav-rooms').classList.remove('text-gray-400');
-      
-      onValue(ref(db, 'audio_rooms'), (snapshot) => {
-          const container = document.getElementById('audio-rooms-list'); container.innerHTML = '';
-          const data = snapshot.val();
-          if(data) {
-              Object.entries(data).forEach(([id, room]) => {
-                  container.insertAdjacentHTML('beforeend', `
-                  <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer" onclick="joinAudioRoom('${id}', '${room.name}')">
-                      <div><h4 class="font-bold">${room.name}</h4><p class="text-xs text-gray-500">Host: ${room.host}</p></div>
-                  </div>`);
-              });
-          }
-      });
+      // Directs seamlessly to audio.html as requested
+      window.location.href = 'audio.html';
   };
+  
+  // Audio functions below are preserved fully for backwards compatibility / just in case.
   window.createNewAudioRoom = function() {
       const n = prompt("Room Name:"); if(!n) return;
       const refNew = push(ref(db, 'audio_rooms'));
