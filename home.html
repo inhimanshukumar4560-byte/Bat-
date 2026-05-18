@@ -1,3 +1,5 @@
+--- START OF FILE text/plain ---
+
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
 <head>
@@ -1119,28 +1121,38 @@
       const name = document.getElementById("auth-name").value.trim();
       const age = document.getElementById("auth-age").value.trim();
       const phone = document.getElementById("auth-phone").value.trim();
+      const state = document.getElementById("auth-state").value;
       
-      if (name && age >= 18 && phone) {
-          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
-          
-          set(ref(db, 'users/' + name), {
-              name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
-          });
+      if (!name || !age || age < 18 || !phone) {
+          alert("Please fill all fields properly. Age must be 18+.");
+          return;
+      }
+      
+      const btnText = document.getElementById("btn-create-text");
+      const originalText = btnText.innerText;
+      btnText.innerText = "Loading...";
+      
+      const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+      const safeName = name.replace(/[.#$\[\]]/g, "");
 
-          localStorage.setItem("zingoo_user", name);
+      set(ref(db, 'users/' + safeName), {
+          name: safeName, id: newId, phone: phone, state: state || "Not Selected", avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
+      }).then(() => {
+          localStorage.setItem("zingoo_user", safeName);
           localStorage.setItem("zingoo_id", newId);
           localStorage.setItem("zingoo_avatar", currentAvatar);
           localStorage.setItem("zingoo_diamonds", "0"); 
           
-          currentUser = name; currentId = newId;
+          currentUser = safeName; currentId = newId;
           
           listenToUserDiamonds(); 
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
           listenForIncomingCalls();
-      } else {
-          alert("Fill all fields. Age must be 18+.");
-      }
+      }).catch(err => {
+          alert("Registration failed: " + err.message);
+          btnText.innerText = originalText;
+      });
   });
 
   // Profile View Logic
@@ -1251,14 +1263,16 @@
 
                   // Standard Grid for See All Overlay
                   seeAllGridContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative rounded-xl overflow-hidden aspect-[3/4] shadow-sm bg-white border border-gray-200">
-                      <img src="${user.avatar}" class="absolute inset-0 w-full h-4/5 object-cover z-0">
-                      <div class="absolute bottom-0 w-full p-2 bg-white z-20">
-                          <span class="text-gray-900 font-bold text-xs truncate block">${user.name}</span>
-                          <div class="flex gap-1 mt-1">
-                              <button class="flex-1 bg-gray-100 py-1 rounded text-gray-700" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
-                              <button class="flex-1 bg-red-50 py-1 rounded text-red-500" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
-                              <button class="flex-1 bg-red-500 py-1 rounded text-white" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
+                  <div class="flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 h-full min-h-[220px]">
+                      <div class="w-full h-32 relative flex-shrink-0">
+                          <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover z-0">
+                      </div>
+                      <div class="w-full p-2 bg-white z-20 flex-1 flex flex-col justify-between items-center">
+                          <span class="text-gray-900 font-bold text-sm truncate block mb-2 w-full text-center">${user.name}</span>
+                          <div class="flex gap-2 w-full mt-auto">
+                              <button class="flex-1 bg-gray-100 hover:bg-gray-200 py-1.5 rounded-lg text-gray-700 flex items-center justify-center transition-colors" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
+                              <button class="flex-1 bg-red-50 hover:bg-red-100 py-1.5 rounded-lg text-red-500 flex items-center justify-center transition-colors" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
+                              <button class="flex-1 bg-red-500 hover:bg-red-600 py-1.5 rounded-lg text-white flex items-center justify-center transition-colors shadow-sm" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
                           </div>
                       </div>
                   </div>`);
@@ -1282,7 +1296,7 @@
 
   // --- WEBRTC Calls ---
   let localStream = null; let peerConnection = null; let currentCallPath = null; let incomingCallData = null;
-  const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+  const servers = { iceServers: [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302', 'stun:stun3.l.google.com:19302'] }] };
 
   function listenForIncomingCalls() {
       if(!currentUser) return;
@@ -1309,11 +1323,20 @@
       
       try {
           peerConnection = new RTCPeerConnection(servers);
-          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-          document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo ? { facingMode: "user" } : false, audio: true });
+          
+          const locVid = document.getElementById(isVideo ? "local-video" : "local-audio");
+          locVid.srcObject = localStream;
+          locVid.play().catch(e => console.log("Local play error:", e));
+
           localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+          peerConnection.ontrack = e => { 
+              const remVid = document.getElementById(isVideo ? "remote-video" : "remote-audio");
+              remVid.srcObject = e.streams[0]; 
+              remVid.play().catch(err => console.log("Remote play error:", err));
+          };
+          
           peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
 
           const offer = await peerConnection.createOffer();
@@ -1336,11 +1359,20 @@
       
       try {
           peerConnection = new RTCPeerConnection(servers);
-          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-          document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo ? { facingMode: "user" } : false, audio: true });
+          
+          const locVid = document.getElementById(isVideo ? "local-video" : "local-audio");
+          locVid.srcObject = localStream;
+          locVid.play().catch(e => console.log("Local play error:", e));
+
           localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+          peerConnection.ontrack = e => { 
+              const remVid = document.getElementById(isVideo ? "remote-video" : "remote-audio");
+              remVid.srcObject = e.streams[0]; 
+              remVid.play().catch(err => console.log("Remote play error:", err));
+          };
+          
           peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
 
           await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
@@ -1402,3 +1434,4 @@
 </script>
 </body>
 </html>
+--- END OF FILE text/plain ---
