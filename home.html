@@ -153,7 +153,7 @@
     <!-- LIVE NOW SECTION (Vertical Portrait Cards) -->
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
-            <h2 class="text-lg font-bold text-gray-900">Live Now</h2>
+            <h2 class="text-lg font-bold text-gray-900">Active Users</h2>
             <span id="see-all-trigger" class="text-xs font-bold text-red-500 cursor-pointer hover:underline">View All</span>
         </div>
         
@@ -787,6 +787,32 @@
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
 
+  // --- Auto Reels Scroll Observer ---
+  let reelsObserver = null;
+  window.initReelsObserver = function() {
+      if (reelsObserver) reelsObserver.disconnect();
+      const container = document.getElementById('shorts-feed-container');
+      if (!container) return;
+
+      const options = { root: container, rootMargin: '0px', threshold: 0.5 };
+
+      reelsObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              const videoEl = entry.target.querySelector('.html5-video');
+              const iframeEl = entry.target.querySelector('.yt-iframe');
+              if (entry.isIntersecting) {
+                  if (videoEl) videoEl.play().catch(e => console.log('Autoplay issue:', e));
+                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*');
+              } else {
+                  if (videoEl) videoEl.pause();
+                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'pauseVideo', args: []}), '*');
+              }
+          });
+      }, options);
+
+      container.querySelectorAll('.snap-start').forEach(el => reelsObserver.observe(el));
+  };
+
   // --- Tab Navigation Handlers ---
   window.resetNavHighlights = function() {
       const navs = ['nav-home', 'nav-rooms', 'nav-reels', 'nav-profile'];
@@ -1003,8 +1029,8 @@
                   
                   // Embedded TikTok-style Short Item in the Snap Container
                   let embeddedMedia = vid.isYouTube 
-                        ? `<iframe class="relative z-10 w-full h-full pointer-events-auto" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
-                        : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto" src="${vid.mediaUrl}" loop controls playsinline></video>`;
+                        ? `<iframe class="relative z-10 w-full h-full pointer-events-auto yt-iframe" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
+                        : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto html5-video" src="${vid.mediaUrl}" loop controls playsinline></video>`;
 
                   shortsContainer.insertAdjacentHTML('beforeend', `
                   <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden">
@@ -1062,6 +1088,7 @@
                   </div>`);
               }
           });
+          setTimeout(() => { initReelsObserver(); }, 100);
       }
   });
 
@@ -1212,11 +1239,10 @@
       if(data) {
           Object.values(data).forEach(user => {
               if (user.name !== currentUser) { 
-                  // Vertical Portrait Card for Home Page "Live Now"
+                  // Vertical Portrait Card for Home Page "Active Users"
                   const userHtml = `
                   <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
                       <img src="${user.avatar}" class="w-full h-full object-cover">
-                      <div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">LIVE</div>
                       <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
                           <h4 class="text-white text-xs font-bold truncate">${user.name}</h4>
                       </div>
@@ -1296,7 +1322,11 @@
 
           onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
           onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-      } catch(e) { stopWebRTC(); }
+      } catch(e) { 
+          console.error("Call Init Error:", e);
+          alert("Microphone/Camera permission denied or not available.");
+          stopWebRTC(); 
+      }
   };
 
   document.getElementById("btn-accept-call").addEventListener("click", async () => {
@@ -1318,7 +1348,11 @@
           await peerConnection.setLocalDescription(answer);
           set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
           onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-      } catch(e) { stopWebRTC(); }
+      } catch(e) { 
+          console.error("Call Accept Error:", e);
+          alert("Microphone/Camera permission denied or not available.");
+          stopWebRTC(); 
+      }
   });
 
   function stopWebRTC() {
@@ -1328,7 +1362,7 @@
       document.getElementById("audio-overlay").style.display = "none";
       document.getElementById("incoming-call-overlay").style.display = "none";
       if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
-      peerConnection = null; incomingCallData = null;
+      peerConnection = null; incomingCallData = null; localStream = null;
   }
   document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
   document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
