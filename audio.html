@@ -195,9 +195,9 @@
         .zh-btn.gold { color: #d97706; }
         .zh-btn.green { color: var(--green-live); }
         
-        .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; }
+        .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
-        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; }
+        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; z-index: 5;}
         .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .avatar-container { position: relative; width: 55px; height: 55px; border-radius: 50%; margin-bottom: 5px; }
         .speaker-seat img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
@@ -221,13 +221,13 @@
         .speaker-seat.empty:hover .avatar-container { background-color: #ffe4e8; border-color: var(--hot-pink); }
         .speaker-seat.empty .avatar-container svg { width: 20px; height: 20px; fill: #ccc; }
         
-        .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; }
+        .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
         .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #111; margin-bottom: 10px; }
         .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #111; }
         .logo-sub { font-size: 0.7em; color: #888; display: flex; align-items: center; gap: 10px; margin-top: 5px;}
         .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: #ddd; }
         
-        .banners-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
         .warning-box { flex: 1.5; background: #fff7f7; border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
         .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
         .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
@@ -240,7 +240,7 @@
         .offer-sub { font-size: 0.6em; text-decoration: line-through; color: #888; }
         .buy-btn { background: var(--hot-pink); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700;}
         
-        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; }
+        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
         .quick-buy-100 { background: #f9f9f9; color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
         .quick-buy-100 i { color: #00BFFF; }
         .quick-buy-100 span { display: block; font-size: 0.8em; color: #888; font-weight: 400; text-decoration: line-through;}
@@ -252,7 +252,53 @@
         .s-gift-item p { font-size: 0.6em; color: #555; margin-top: 2px; font-weight: 600;}
         .s-gift-item p i { color: #00BFFF; }
         
-        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee;}
+        /* --- NEW FLOATING CHAT OVERLAY --- */
+        .floating-chat-container {
+            position: absolute;
+            bottom: 75px; 
+            left: 15px;
+            width: 80%;
+            height: 180px;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            z-index: 15;
+            pointer-events: none; /* Allows clicks to pass through to main content */
+        }
+        .floating-chat-msg {
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 6px;
+            width: max-content;
+            max-width: 100%;
+            word-wrap: break-word;
+            pointer-events: auto;
+            animation: slideInLeft 0.3s ease-out;
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+        }
+        .floating-chat-msg .username { color: #ffeb3b; font-weight: bold; margin-right: 5px; }
+        .floating-system-msg {
+            background: rgba(255, 0, 76, 0.6);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-top: 6px;
+            font-weight: bold;
+            width: max-content;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee; z-index: 20;}
         .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
@@ -262,7 +308,7 @@
         .zf-gift { background: #ffeb3b; color: #b45309; }
         .zf-mic { background: var(--hot-pink); }
 
-        /* --- CHAT PANEL OVERLAY --- */
+        /* --- CHAT PANEL OVERLAY (Hidden full chat) --- */
         #chat-panel-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: rgba(255, 255, 255, 0.98); border-top: 1px solid #eee; border-radius: 20px 20px 0 0; display: none; flex-direction: column; z-index: 50; animation: slideUpModal 0.3s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.05);}
         .chat-panel-header { padding: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
         .chat-panel-header h3 { font-size: 1em; color: #111; font-weight: 700;}
@@ -454,6 +500,12 @@
                         </div>
                     </div>
                 </main>
+                
+                <!-- NEW: FLOATING LIVE CHAT OVERLAY -->
+                <div id="floating-live-chat" class="floating-chat-container">
+                    <div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>
+                </div>
+
                 <footer class="zingoo-footer">
                     <button class="chat-open-btn" id="open-chat-btn"><i class="fas fa-comment-dots"></i> Chat</button>
                     <div class="footer-right-actions">
@@ -510,6 +562,9 @@
             <audio id="local-audio" autoplay muted></audio>
             <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
         </div>
+
+        <!-- Hidden container for Room WebRTC Mesh Audio -->
+        <div id="room-audio-container" style="display:none;"></div>
 
     </div>
     
@@ -601,7 +656,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             // --- ID LOGIN & IMGBB LOGIC ---
-            const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c"; // Global Public ImgBB Upload API Key
+            const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c"; 
             const idLoginScreen = document.getElementById('id-login-screen');
             const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
@@ -668,7 +723,6 @@
             });
 
             function processDatabaseLogin(enteredId) {
-                // Fetch User from Firebase based on ID
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
@@ -686,7 +740,6 @@
                     }
                     
                     if (userFound) {
-                        // Update avatar if a new one was uploaded
                         if (selectedAvatarFile) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
                         } else {
@@ -697,7 +750,6 @@
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
-                        // Update diamond balance if it exists
                         if(allUsers[userKey].diamonds !== undefined) {
                             document.getElementById('lobby-diamond-balance').innerText = allUsers[userKey].diamonds;
                             localStorage.setItem("zingoo_diamonds", allUsers[userKey].diamonds);
@@ -705,8 +757,8 @@
                         
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
-                        listenForAudioRooms(); // Initialize lobby rooms
-                        listenForIncomingCalls(); // Initialize WebRTC Caller listener
+                        listenForAudioRooms(); 
+                        listenForIncomingCalls(); 
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
@@ -724,12 +776,18 @@
             let roomListener = null;
             let unsubscribeChat = null;
 
-            // --- WEBRTC CALLING LOGIC & STATE ---
-            let localStream = null;
-            let peerConnection = null;
+            // --- WEBRTC CALLING LOGIC (1v1) ---
+            let localStream1v1 = null;
+            let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
+            let iceCandidateQueue1v1 = [];
             const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+
+            // --- WEBRTC ROOM AUDIO (Mesh) ---
+            let roomLocalStream = null;
+            let roomPeers = {}; // Object to hold peer connections for each user in room
+            let signalUnsubscribe = null;
 
             // --- UI Elements ---
             const liveRoomScreen = document.getElementById('live-room-screen');
@@ -748,12 +806,12 @@
                 modals.forEach(modal => modal.style.display = 'none');
             };
 
-            // --- WebRTC Functions ---
+            // --- WebRTC 1v1 Functions ---
             function listenForIncomingCalls() {
                 if(!currentUser) return;
                 onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
                     const data = snapshot.val();
-                    if (data && data.offer && !peerConnection) {
+                    if (data && data.offer && !peerConnection1v1) {
                         incomingCallData = data;
                         document.getElementById('incoming-caller-name').innerText = data.caller;
                         document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
@@ -761,82 +819,197 @@
                     } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
                         document.getElementById('incoming-call-overlay').style.display = 'none'; 
                         incomingCallData = null; 
-                        stopWebRTC();
+                        stopWebRTC1v1();
                     }
                 });
             }
 
             window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
-                if(peerConnection) return;
+                if(peerConnection1v1) return;
                 if(targetUser === currentUser) { showToast("You cannot call yourself!"); return; }
                 
                 currentCallPath = `calls/${targetUser}`;
                 document.getElementById('video-partner-name').innerText = targetUser;
                 document.getElementById('audio-partner-name').innerText = targetUser;
                 if(targetAvatar) document.getElementById('audio-partner-img').src = targetAvatar;
-                document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
                 
                 try {
-                    peerConnection = new RTCPeerConnection(servers);
-                    localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
-                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+                    localStream1v1 = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+                    document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream1v1;
+                    
+                    peerConnection1v1 = new RTCPeerConnection(servers);
+                    localStream1v1.getTracks().forEach(track => peerConnection1v1.addTrack(track, localStream1v1));
 
-                    peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
-                    peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
+                    peerConnection1v1.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+                    peerConnection1v1.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
 
-                    const offer = await peerConnection.createOffer();
-                    await peerConnection.setLocalDescription(offer);
+                    const offer = await peerConnection1v1.createOffer();
+                    await peerConnection1v1.setLocalDescription(offer);
                     set(ref(db, currentCallPath), { caller: currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
 
-                    onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
-                    onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-                } catch(e) { stopWebRTC(); showToast("Call Failed: Camera/Mic Access Denied."); }
+                    onValue(ref(db, `${currentCallPath}/answer`), async (snap) => { 
+                        if(snap.val() && peerConnection1v1.signalingState !== "closed") {
+                            await peerConnection1v1.setRemoteDescription(new RTCSessionDescription(snap.val())); 
+                        }
+                    });
+                    
+                    onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { 
+                        if(snap.val() && peerConnection1v1.remoteDescription) {
+                            peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                        }
+                    });
+                } catch(e) { stopWebRTC1v1(); showToast("Call Failed: Camera/Mic Access Denied."); }
             };
 
             document.getElementById("btn-accept-call").addEventListener("click", async () => {
                 document.getElementById('incoming-call-overlay').style.display = 'none';
                 const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${currentUser}`;
-                document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
                 
                 try {
-                    peerConnection = new RTCPeerConnection(servers);
-                    localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
-                    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+                    localStream1v1 = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
+                    document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                    document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream1v1;
+                    
+                    peerConnection1v1 = new RTCPeerConnection(servers);
+                    localStream1v1.getTracks().forEach(track => peerConnection1v1.addTrack(track, localStream1v1));
 
-                    peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
-                    peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
+                    peerConnection1v1.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
+                    peerConnection1v1.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
 
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
-                    const answer = await peerConnection.createAnswer();
-                    await peerConnection.setLocalDescription(answer);
+                    await peerConnection1v1.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
+                    const answer = await peerConnection1v1.createAnswer();
+                    await peerConnection1v1.setLocalDescription(answer);
                     set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
-                    onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-                } catch(e) { stopWebRTC(); showToast("Call Accept Failed."); }
+                    
+                    onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { 
+                        if(snap.val() && peerConnection1v1.remoteDescription) {
+                            peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                        }
+                    });
+                } catch(e) { stopWebRTC1v1(); showToast("Call Accept Failed. Allow Mic/Camera."); }
             });
 
-            function stopWebRTC() {
-                if(localStream) localStream.getTracks().forEach(t => t.stop());
-                if(peerConnection) peerConnection.close();
+            function stopWebRTC1v1() {
+                if(localStream1v1) localStream1v1.getTracks().forEach(t => t.stop());
+                if(peerConnection1v1) peerConnection1v1.close();
                 document.getElementById("video-overlay").style.display = "none";
                 document.getElementById("audio-overlay").style.display = "none";
                 document.getElementById("incoming-call-overlay").style.display = "none";
                 if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
-                peerConnection = null; incomingCallData = null;
+                peerConnection1v1 = null; incomingCallData = null;
             }
-            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
-            document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
-            document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
+            
+            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC1v1(); });
+            document.getElementById("btn-end-video").addEventListener("click", stopWebRTC1v1);
+            document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC1v1);
 
 
-            // --- Audio Rooms Functions ---
+            // --- ROOM WEBRTC MESH LOGIC ---
+            async function startRoomAudio() {
+                try {
+                    roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+                    
+                    // Start listening for WebRTC signals specifically for this room & this user
+                    const signalRef = ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`);
+                    signalUnsubscribe = onChildAdded(signalRef, async (snapshot) => {
+                        const data = snapshot.val();
+                        if(!data) return;
+                        
+                        const sender = data.sender;
+                        if (!roomPeers[sender]) createRoomPeerConnection(sender);
+
+                        if (data.type === 'offer') {
+                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            const answer = await roomPeers[sender].createAnswer();
+                            await roomPeers[sender].setLocalDescription(answer);
+                            push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
+                                sender: currentUser, type: 'answer', sdp: answer
+                            });
+                        } else if (data.type === 'answer') {
+                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                        } else if (data.type === 'candidate') {
+                            if(roomPeers[sender].remoteDescription) {
+                                roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                            }
+                        }
+                    });
+
+                    // Check who is already in the room and send them an offer
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(snap => {
+                        const seats = snap.val();
+                        if(seats) {
+                            Object.values(seats).forEach(async (seat) => {
+                                if(seat.user !== currentUser) {
+                                    const target = seat.user;
+                                    createRoomPeerConnection(target);
+                                    const offer = await roomPeers[target].createOffer();
+                                    await roomPeers[target].setLocalDescription(offer);
+                                    push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${target}`), {
+                                        sender: currentUser, type: 'offer', sdp: offer
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                } catch (e) {
+                    showToast("Microphone access denied! You can't speak.");
+                    if(mySeatIndex !== -1) window.audioRoomAPI.leaveSeat();
+                }
+            }
+
+            function createRoomPeerConnection(targetUser) {
+                const pc = new RTCPeerConnection(servers);
+                if(roomLocalStream) {
+                    roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
+                }
+
+                pc.onicecandidate = event => {
+                    if (event.candidate) {
+                        push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${targetUser}`), {
+                            sender: currentUser, type: 'candidate', candidate: event.candidate.toJSON()
+                        });
+                    }
+                };
+
+                pc.ontrack = event => {
+                    let audioEl = document.getElementById(`audio-${targetUser}`);
+                    if(!audioEl) {
+                        audioEl = document.createElement('audio');
+                        audioEl.id = `audio-${targetUser}`;
+                        audioEl.autoplay = true;
+                        document.getElementById('room-audio-container').appendChild(audioEl);
+                    }
+                    audioEl.srcObject = event.streams[0];
+                };
+                
+                roomPeers[targetUser] = pc;
+            }
+
+            function stopRoomAudio() {
+                if (roomLocalStream) {
+                    roomLocalStream.getTracks().forEach(track => track.stop());
+                    roomLocalStream = null;
+                }
+                Object.values(roomPeers).forEach(pc => pc.close());
+                roomPeers = {};
+                document.getElementById('room-audio-container').innerHTML = '';
+                if(signalUnsubscribe && currentActiveRoomId) {
+                    // Clean up node
+                    remove(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`));
+                    signalUnsubscribe();
+                    signalUnsubscribe = null;
+                }
+            }
+
+
+            // --- Audio Rooms UI Functions ---
             window.openUserProfile = function(username, avatar) {
                 document.getElementById('popup-username').innerText = username;
                 document.getElementById('popup-profile-img').src = avatar;
                 document.getElementById('popup-userid').innerText = "ID: " + username;
                 
-                // Bind WebRTC Call Buttons dynamically to the selected user
                 document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
                 document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
                 
@@ -903,9 +1076,12 @@
                         renderSeats(snapshot.val() || {});
                     });
 
-                    // Setup Chat Listener
+                    // Setup Chat Listeners
                     const chatContainer = document.getElementById('chat-messages');
+                    const floatingContainer = document.getElementById('floating-live-chat');
+                    
                     chatContainer.innerHTML = '<div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>';
+                    floatingContainer.innerHTML = '<div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>';
                     
                     if (unsubscribeChat) unsubscribeChat();
                     const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
@@ -913,6 +1089,7 @@
                     unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
                         const msgData = snapshot.val();
                         if(msgData) {
+                            // 1. Add to Panel Chat
                             const msgDiv = document.createElement('div');
                             msgDiv.className = 'chat-msg';
                             if(msgData.user === currentUser) {
@@ -922,6 +1099,16 @@
                             msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
                             chatContainer.appendChild(msgDiv);
                             chatContainer.scrollTop = chatContainer.scrollHeight;
+                            
+                            // 2. Add to Floating Live Chat
+                            const floatDiv = document.createElement('div');
+                            floatDiv.className = 'floating-chat-msg';
+                            floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+                            floatingContainer.appendChild(floatDiv);
+                            floatingContainer.scrollTop = floatingContainer.scrollHeight;
+                            
+                            // Auto remove from floating view after 10 seconds to keep it clean
+                            setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
                         }
                     });
                 };
@@ -948,6 +1135,8 @@
 
             function renderSeats(seatsData) {
                 speakerGrid.innerHTML = '';
+                
+                let wasInSeat = mySeatIndex !== -1;
                 mySeatIndex = -1;
 
                 Object.entries(seatsData).forEach(([index, seatInfo]) => {
@@ -956,6 +1145,13 @@
                     }
                 });
                 
+                // Start or stop audio based on seat state transition
+                if(!wasInSeat && mySeatIndex !== -1) {
+                    startRoomAudio();
+                } else if(wasInSeat && mySeatIndex === -1) {
+                    stopRoomAudio();
+                }
+
                 document.getElementById('listener-count-num').innerText = Object.keys(seatsData).length;
 
                 for (let i = 0; i < 10; i++) {
@@ -966,6 +1162,9 @@
                     if (seatInfo) {
                         seatDiv.dataset.username = seatInfo.user;
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
+                        // Add is-speaking class if not muted to show active ring
+                        if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
+
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
                                 <img src="${seatInfo.avatar}" alt="Speaker">
@@ -1011,11 +1210,11 @@
                 if (mySeatIndex !== -1) {
                     window.audioRoomAPI.leaveSeat();
                 }
-                if (roomListener) roomListener();
-                if (unsubscribeChat) {
-                    unsubscribeChat();
-                    unsubscribeChat = null;
-                }
+                if (roomListener) { roomListener(); roomListener = null; }
+                if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+                
+                stopRoomAudio();
+                
                 currentActiveRoomId = null;
                 mySeatIndex = -1;
                 liveRoomScreen.style.display = 'none';
@@ -1085,14 +1284,24 @@
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
             
+            // Mic Toggle functionality physically mutes the Local Stream Track
             document.getElementById('main-mic-btn').addEventListener('click', () => {
                  if(currentActiveRoomId && mySeatIndex !== -1) {
                      const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
                      get(seatRef).then(snapshot => {
                          if(snapshot.exists()){
                              const currentMuteState = snapshot.val().isMuted;
-                             set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), !currentMuteState);
-                             showToast(!currentMuteState ? "Mic Muted" : "Mic Unmuted");
+                             const newMuteState = !currentMuteState;
+                             
+                             // Update UI State in Firebase
+                             set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), newMuteState);
+                             
+                             // Mute the actual WebRTC Physical Microphone Track
+                             if(roomLocalStream && roomLocalStream.getAudioTracks().length > 0) {
+                                 roomLocalStream.getAudioTracks()[0].enabled = !newMuteState;
+                             }
+                             
+                             showToast(newMuteState ? "Mic Muted" : "Mic Unmuted");
                          }
                      });
                  } else {
