@@ -466,11 +466,14 @@
                     <div class="speaker-grid-zingoo" id="speaker-grid-container">
                         <!-- Speakers Injected Here -->
                     </div>
-                    <div class="center-logo-area">
+                    
+                    <!-- Center Logo / YouTube Area -->
+                    <div class="center-logo-area" id="room-center-display">
                         <div class="logo-z">Z</div>
                         <div class="logo-text">ZINGOO</div>
                         <div class="logo-sub">Audio Room</div>
                     </div>
+                    
                     <div class="banners-container">
                         <div class="warning-box">
                             <div class="warning-icon"><i class="fas fa-shield-alt"></i></div>
@@ -544,11 +547,13 @@
         </div>
 
         <div id="video-overlay" style="position:fixed; inset:0; background:black; z-index:10000; display:none;">
+            <!-- Remote Video Unmirrored, Local Video Mirrored -->
             <video id="remote-video" style="width:100%; height:100%; object-fit:cover;" autoplay playsinline></video>
             <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
                 <div style="background:rgba(0,0,0,0.5); color:white; padding:10px 20px; border-radius:30px; align-self:flex-start;" id="video-partner-name">Waiting...</div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
-                    <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink);" autoplay playsinline muted></video>
+                    <!-- Mirrored Local Video properly styled -->
+                    <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink); transform: scaleX(-1);" autoplay playsinline muted></video>
                     <button id="btn-end-video" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
                 </div>
             </div>
@@ -575,12 +580,17 @@
             <div class="create-room-inputs">
                 <input type="text" id="new-room-topic" class="custom-input" placeholder="Enter Room Topic (e.g., Chill Vibes)">
                 <input type="number" id="new-room-fee" class="custom-input diamond-input" placeholder="Entry Fee (Diamonds) - Leave blank for Free">
-                <input type="text" id="user-search-input" class="custom-input" placeholder="Search friends by Name or ID...">
+                
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="text" id="user-search-input" class="custom-input" placeholder="Search friends by Name or ID..." style="margin-bottom:0;">
+                    <button id="btn-search-users" style="background:var(--hot-pink); color:white; border:none; padding:0 20px; border-radius:12px; cursor:pointer; font-weight:700;"><i class="fas fa-search"></i></button>
+                </div>
             </div>
             <div class="invite-user-list" id="invite-user-list"></div>
             <button id="start-new-room-btn" class="start-room-btn">Start & Enter Room</button>
         </div>
     </div>
+    
     <div id="footer-action-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
@@ -593,13 +603,15 @@
             </div>
         </div>
     </div>
+    
     <div id="youtube-modal" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header"><h3>Share YouTube Audio</h3><button class="close-btn">&times;</button></div>
+            <div class="modal-header"><h3>Share YouTube Video</h3><button class="close-btn">&times;</button></div>
             <input type="text" id="youtube-link-input" class="custom-input" placeholder="Paste YouTube Link Here...">
-            <button id="play-youtube-btn" class="youtube-btn"><i class="fas fa-play"></i> Play Audio</button>
+            <button id="play-youtube-btn" class="youtube-btn"><i class="fas fa-play"></i> Play Video in Room</button>
         </div>
     </div>
+    
     <div id="gift-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
@@ -609,6 +621,7 @@
             </div>
         </div>
     </div>
+    
     <div id="profile-popup" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>User Profile</h3><button class="close-btn">&times;</button></div>
@@ -663,11 +676,11 @@
             const loginInput = document.getElementById('login-zingoo-id');
             const globalToast = document.getElementById('global-toast');
             let selectedAvatarFile = null;
+            let pendingInvites = []; // Used for room creation invites
 
             let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             
-            // Pre-fill if exists in local storage from main app
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
                 loginInput.value = storedId;
@@ -681,7 +694,6 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
-            // Capture Image for ImgBB
             document.getElementById('login-profile-upload').addEventListener('change', function(e) {
                 if(e.target.files[0]) {
                     const reader = new FileReader();
@@ -699,7 +711,6 @@
                 
                 loginBtn.innerText = "Please wait...";
 
-                // If user uploaded an image, upload to ImgBB first
                 if (selectedAvatarFile) {
                     showToast("Uploading profile image to server...");
                     const formData = new FormData();
@@ -759,6 +770,7 @@
                         lobbyScreen.style.display = 'flex';
                         listenForAudioRooms(); 
                         listenForIncomingCalls(); 
+                        listenForInvites(); // Start listening for invitations
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
@@ -770,23 +782,33 @@
                 });
             }
 
+            function listenForInvites() {
+                onChildAdded(ref(db, `invites/${currentUser}`), (snap) => {
+                    const data = snap.val();
+                    if(data) {
+                        showToast(`💌 ${data.sender} invited you to room: ${data.roomName}`);
+                        remove(ref(db, `invites/${currentUser}/${snap.key}`));
+                    }
+                });
+            }
+
             // --- App State ---
             let currentActiveRoomId = null;
             let mySeatIndex = -1;
             let roomListener = null;
             let unsubscribeChat = null;
+            let unsubscribeMedia = null;
 
             // --- WEBRTC CALLING LOGIC (1v1) ---
             let localStream1v1 = null;
             let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
-            let iceCandidateQueue1v1 = [];
             const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
             // --- WEBRTC ROOM AUDIO (Mesh) ---
             let roomLocalStream = null;
-            let roomPeers = {}; // Object to hold peer connections for each user in room
+            let roomPeers = {}; 
             let signalUnsubscribe = null;
 
             // --- UI Elements ---
@@ -910,7 +932,6 @@
                 try {
                     roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
                     
-                    // Start listening for WebRTC signals specifically for this room & this user
                     const signalRef = ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`);
                     signalUnsubscribe = onChildAdded(signalRef, async (snapshot) => {
                         const data = snapshot.val();
@@ -935,7 +956,6 @@
                         }
                     });
 
-                    // Check who is already in the room and send them an offer
                     get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(snap => {
                         const seats = snap.val();
                         if(seats) {
@@ -996,12 +1016,57 @@
                 roomPeers = {};
                 document.getElementById('room-audio-container').innerHTML = '';
                 if(signalUnsubscribe && currentActiveRoomId) {
-                    // Clean up node
                     remove(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`));
                     signalUnsubscribe();
                     signalUnsubscribe = null;
                 }
             }
+
+            // --- UI Search & Invite Functions ---
+            document.getElementById('btn-search-users').addEventListener('click', () => {
+                const query = document.getElementById('user-search-input').value.trim().toLowerCase();
+                if(!query) return;
+                
+                const list = document.getElementById('invite-user-list');
+                list.innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">Searching...</p>';
+                
+                get(ref(db, 'users')).then(snap => {
+                    list.innerHTML = '';
+                    const users = snap.val();
+                    let found = false;
+                    if(users) {
+                        Object.values(users).forEach(u => {
+                            if(u.name !== currentUser && (u.name.toLowerCase().includes(query) || u.id.includes(query))) {
+                                found = true;
+                                const isSent = pendingInvites.includes(u.name);
+                                list.innerHTML += `
+                                    <div class="user-card">
+                                        <img src="${u.avatar}">
+                                        <div class="user-info">
+                                            <h4>${u.name}</h4>
+                                            <p>ID: ${u.id}</p>
+                                        </div>
+                                        <button class="invite-action-btn ${isSent ? 'sent' : ''}" onclick="window.toggleInvite('${u.name}', this)">${isSent ? 'Selected' : 'Invite'}</button>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    if(!found) list.innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">No users found</p>';
+                });
+            });
+
+            window.toggleInvite = function(name, btn) {
+                if(!pendingInvites.includes(name)) {
+                    pendingInvites.push(name);
+                    btn.innerText = "Selected";
+                    btn.classList.add('sent');
+                } else {
+                    pendingInvites = pendingInvites.filter(n => n !== name);
+                    btn.innerText = "Invite";
+                    btn.classList.remove('sent');
+                }
+            };
 
 
             // --- Audio Rooms UI Functions ---
@@ -1027,11 +1092,20 @@
                             const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
                             const vacantSeats = 10 - seatCount;
                             
+                            let joinedHTML = '';
+                            if(seatCount > 0) {
+                                joinedHTML = `
+                                <div class="room-row-avatars">
+                                    <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150'}">
+                                    <span>+${seatCount} joined</span>
+                                </div>`;
+                            }
+
                             const roomCard = document.createElement('div');
                             roomCard.className = `room-list-row`;
                             roomCard.dataset.roomId = roomId;
                             roomCard.dataset.roomTitle = roomData.name;
-                            roomCard.dataset.fee = roomData.fee;
+                            roomCard.dataset.fee = roomData.fee || 0;
 
                             roomCard.innerHTML = `
                                 <div class="room-list-img">
@@ -1041,10 +1115,7 @@
                                 <div class="room-list-info">
                                     <h4>${roomData.name} ${roomData.fee > 0 ? `<i class="fas fa-gem" style="color:#d97706; font-size: 0.8em; margin-left: 5px;"></i>${roomData.fee}` : ''}</h4>
                                     <p>Host: ${roomData.host}</p>
-                                    <div class="room-row-avatars">
-                                        <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150'}">
-                                        <span>+${seatCount} joined</span>
-                                    </div>
+                                    ${joinedHTML}
                                 </div>
                                 <div class="room-list-action">
                                     <span class="room-list-viewers"><i class="far fa-user"></i> ${vacantSeats} left</span>
@@ -1071,7 +1142,7 @@
                     liveRoomScreen.style.display = 'flex';
 
                     const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
-                    if (roomListener) roomListener(); // Detach old listener if any
+                    if (roomListener) roomListener(); 
                     roomListener = onValue(roomSeatsRef, (snapshot) => {
                         renderSeats(snapshot.val() || {});
                     });
@@ -1089,7 +1160,6 @@
                     unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
                         const msgData = snapshot.val();
                         if(msgData) {
-                            // 1. Add to Panel Chat
                             const msgDiv = document.createElement('div');
                             msgDiv.className = 'chat-msg';
                             if(msgData.user === currentUser) {
@@ -1100,15 +1170,29 @@
                             chatContainer.appendChild(msgDiv);
                             chatContainer.scrollTop = chatContainer.scrollHeight;
                             
-                            // 2. Add to Floating Live Chat
                             const floatDiv = document.createElement('div');
                             floatDiv.className = 'floating-chat-msg';
                             floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
                             floatingContainer.appendChild(floatDiv);
                             floatingContainer.scrollTop = floatingContainer.scrollHeight;
                             
-                            // Auto remove from floating view after 10 seconds to keep it clean
                             setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
+                        }
+                    });
+
+                    // Setup Media (YouTube) Listener
+                    if (unsubscribeMedia) unsubscribeMedia();
+                    unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
+                        const videoId = snap.val();
+                        const display = document.getElementById('room-center-display');
+                        if(videoId) {
+                            display.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>`;
+                        } else {
+                            display.innerHTML = `
+                                <div class="logo-z">Z</div>
+                                <div class="logo-text">ZINGOO</div>
+                                <div class="logo-sub">Audio Room</div>
+                            `;
                         }
                     });
                 };
@@ -1145,7 +1229,6 @@
                     }
                 });
                 
-                // Start or stop audio based on seat state transition
                 if(!wasInSeat && mySeatIndex !== -1) {
                     startRoomAudio();
                 } else if(wasInSeat && mySeatIndex === -1) {
@@ -1162,7 +1245,6 @@
                     if (seatInfo) {
                         seatDiv.dataset.username = seatInfo.user;
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
-                        // Add is-speaking class if not muted to show active ring
                         if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
                         seatDiv.innerHTML = `
@@ -1212,6 +1294,7 @@
                 }
                 if (roomListener) { roomListener(); roomListener = null; }
                 if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+                if (unsubscribeMedia) { unsubscribeMedia(); unsubscribeMedia = null; }
                 
                 stopRoomAudio();
                 
@@ -1221,7 +1304,6 @@
                 lobbyScreen.style.display = 'flex';
             }
 
-            // Room Chat Functionality
             function sendRoomMessage() {
                 const input = document.getElementById('live-chat-input');
                 const text = input.value.trim();
@@ -1272,6 +1354,16 @@
                     createdAt: serverTimestamp(),
                     seats: {}
                 }).then(() => {
+                    // Send pending invites
+                    pendingInvites.forEach(user => {
+                        push(ref(db, `invites/${user}`), {
+                            sender: currentUser,
+                            roomName: topic,
+                            timestamp: serverTimestamp()
+                        });
+                    });
+                    pendingInvites = []; // Clear array
+                    
                     closeModal();
                     joinAudioRoom(newRoomRef.key, topic, 0);
                 });
@@ -1279,10 +1371,74 @@
 
             document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
             
-            // Other buttons
+            // --- Action Menu Buttons ---
             document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
+            
+            document.getElementById('menu-hand-btn').addEventListener('click', () => {
+                showToast("You raised your hand! ✋");
+                closeModal();
+            });
+
+            document.getElementById('menu-settings-btn').addEventListener('click', () => {
+                showToast("Opening settings...");
+                closeModal();
+            });
+
+            document.getElementById('menu-mute-all-btn').addEventListener('click', () => {
+                if(currentActiveRoomId) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
+                        if(snap.val() === currentUser) {
+                            get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
+                                const seats = seatSnap.val();
+                                if(seats) {
+                                    Object.keys(seats).forEach(key => {
+                                        if(seats[key].user !== currentUser) {
+                                            set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
+                                        }
+                                    });
+                                    showToast("Muted all users.");
+                                }
+                            });
+                        } else {
+                            showToast("Only the host can mute all!");
+                        }
+                    });
+                }
+                closeModal();
+            });
+
+            // YouTube Media Sync 
+            document.getElementById('menu-youtube-btn').addEventListener('click', () => {
+                closeModal();
+                if(currentActiveRoomId) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
+                        if(snap.val() === currentUser) {
+                            openModal('youtube-modal');
+                        } else {
+                            showToast("Only host can play media.");
+                        }
+                    });
+                }
+            });
+
+            function extractVideoID(url) {
+                let match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+                return (match && match[1]) ? match[1] : null;
+            }
+
+            document.getElementById('play-youtube-btn').addEventListener('click', () => {
+                const url = document.getElementById('youtube-link-input').value;
+                const vid = extractVideoID(url);
+                if(vid && currentActiveRoomId) {
+                    set(ref(db, `audio_rooms/${currentActiveRoomId}/media`), vid);
+                    showToast("Playing video for everyone!");
+                    closeModal();
+                } else {
+                    showToast("Invalid YouTube URL");
+                }
+            });
             
             // Mic Toggle functionality physically mutes the Local Stream Track
             document.getElementById('main-mic-btn').addEventListener('click', () => {
@@ -1293,10 +1449,8 @@
                              const currentMuteState = snapshot.val().isMuted;
                              const newMuteState = !currentMuteState;
                              
-                             // Update UI State in Firebase
                              set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), newMuteState);
                              
-                             // Mute the actual WebRTC Physical Microphone Track
                              if(roomLocalStream && roomLocalStream.getAudioTracks().length > 0) {
                                  roomLocalStream.getAudioTracks()[0].enabled = !newMuteState;
                              }
@@ -1307,6 +1461,12 @@
                  } else {
                      showToast("You must be in a seat to use the mic.");
                  }
+            });
+
+            // Re-use logic for the mic button inside the Action Menu
+            document.getElementById('menu-mic-btn').addEventListener('click', () => {
+                document.getElementById('main-mic-btn').click();
+                closeModal();
             });
 
             document.getElementById('open-chat-btn').addEventListener('click', () => document.getElementById('chat-panel-overlay').style.display = 'flex');
