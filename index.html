@@ -9,8 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Razorpay Checkout Script for Diamond Purchases (Kept for fallback, though payment routing to Iccha now) -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Razorpay Checkout Script REMOVED as it is no longer needed here -->
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -736,7 +735,7 @@
         
         <input type="file" id="profile-image-upload" accept="image/*" class="hidden">
         
-        <div class="relative w-20 h-20 md:w-24 h-24 mx-auto mb-5 z-10 group cursor-pointer" onclick="document.getElementById('profile-image-upload').click()">
+        <div class="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-5 z-10 group cursor-pointer" onclick="document.getElementById('profile-image-upload').click()">
             <div class="absolute inset-0 bg-gradient-to-tr from-[#ff004c] to-[#ff8fa3] rounded-full animate-spin-slow blur-[8px] opacity-70 group-hover:opacity-100 transition-opacity"></div>
             <div class="relative w-full h-full bg-[#131313] rounded-full border-[3px] border-[#ff004c]/50 overflow-hidden shadow-[0_0_20px_rgba(255,0,76,0.4)] p-1">
                 <img id="auth-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=131313" class="w-full h-full rounded-full object-cover" alt="Secret Avatar">
@@ -941,26 +940,34 @@
   }
 
   // --- NEW: FIREBASE DIAMOND SYNC LISTENER ---
+  // This function keeps the diamond count updated in real-time from Firebase.
   function listenToUserDiamonds() {
       if (!currentUser) return;
-      onValue(ref(db, 'users/' + currentUser + '/diamonds'), (snapshot) => {
+      onValue(ref(db, `users/${currentUser}/diamonds`), (snapshot) => {
           const diamonds = snapshot.val() || 0;
           localStorage.setItem('zingoo_diamonds', diamonds);
           updateDiamondDisplay();
       });
   }
 
+  // --- NEW PAYMENT REDIRECT FUNCTION ---
+  // This now sends the user to your dedicated payment page on Iccha's domain.
   window.buyDiamonds = function(amountInRupees, diamondsToGet) {
       if (!currentUser) {
           alert("Please create your profile first to buy diamonds!");
           return;
       }
       
-      // Redirecting to Iccha (Shubhzone) for secure payment routing
-      const icchaDomain = "https://shubhzone.shop"; 
-      const redirectUrl = `${icchaDomain}/?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amountInRupees}&diamonds=${diamondsToGet}`;
+      // The domain where you hosted the new `zingoo-pay.html` file.
+      const icchaPaymentDomain = "https://shubhzone.shop"; 
       
+      // Constructing the redirect URL with all necessary parameters.
+      const redirectUrl = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amountInRupees}&diamonds=${diamondsToGet}`;
+      
+      // Close the buy diamonds overlay before redirecting.
       document.getElementById('buy-diamonds-overlay').style.display = 'none';
+      
+      // Redirect the user to the payment page.
       window.location.href = redirectUrl;
   };
   
