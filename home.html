@@ -103,33 +103,61 @@
 <!-- Hidden Profile Trigger Button -->
 <div id="header-profile-btn" class="hidden"></div>
 
-<!-- ================= TOP HEADER (LIGHT THEME) ================= -->
+<!-- ================= TOP HEADER (LIGHT THEME & NEW FEATURES) ================= -->
 <header class="sticky top-0 w-full z-50 bg-white px-4 pt-4 pb-2 shadow-sm flex justify-between items-center">
     
     <!-- LEFT: Zingoo Logo -->
     <div class="flex items-center cursor-pointer">
         <svg viewBox="0 0 100 100" class="w-8 h-8 text-zingoo-red fill-current mr-1"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
-        <span class="text-black font-black text-xl tracking-wide">ZINGOO</span>
+        <span class="text-black font-black text-xl tracking-wide hidden sm:block">ZINGOO</span>
     </div>
 
-    <!-- RIGHT: Search, Notifications, Diamonds -->
-    <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined text-gray-700 text-[24px] cursor-pointer">search</span>
-        <div class="relative cursor-pointer">
-            <span class="material-symbols-outlined text-gray-700 text-[24px]">notifications</span>
-            <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">4</div>
+    <!-- RIGHT: Filter, Status, Notifications, Diamonds -->
+    <div class="flex items-center gap-3">
+        
+        <!-- Filter Replace Search -->
+        <select id="gender-filter" class="bg-gray-100 border-none rounded-full text-xs px-2 py-1.5 focus:ring-1 focus:ring-red-500 cursor-pointer font-bold text-gray-700 outline-none shadow-sm">
+            <option value="all">👥 All</option>
+            <option value="male">👨 Male</option>
+            <option value="female">👩 Female</option>
+        </select>
+
+        <!-- Active/Inactive Status Toggle -->
+        <div class="flex items-center gap-1 cursor-pointer bg-gray-50 px-2 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors" id="status-toggle-btn" onclick="toggleManualStatus()">
+            <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors"></div>
+            <span id="status-text" class="text-[10px] font-bold text-green-600 hidden md:block">Active</span>
         </div>
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2.5 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors">
+
+        <!-- Notification Bell -->
+        <div class="relative cursor-pointer" id="notification-trigger" onclick="document.getElementById('notification-dropdown').classList.toggle('hidden')">
+            <span class="material-symbols-outlined text-gray-700 text-[26px]">notifications</span>
+            <div id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full hidden items-center justify-center border border-white z-10">0</div>
+        </div>
+
+        <!-- Buy Diamonds -->
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors shrink-0">
             <span class="material-symbols-outlined text-purple-600 text-[16px]">diamond</span>
             <span id="diamond-balance-display" class="text-xs font-bold text-purple-800">0</span>
             <span class="material-symbols-outlined text-red-500 text-[14px]">add_circle</span>
         </div>
+
         <!-- 3-Line Menu Trigger -->
-        <div class="cursor-pointer" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
+        <div class="cursor-pointer shrink-0" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
             <span class="material-symbols-outlined text-gray-700 text-[28px]">menu</span>
         </div>
     </div>
 </header>
+
+<!-- NOTIFICATION DROPDOWN -->
+<div id="notification-dropdown" class="fixed top-[65px] right-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col z-[9999] max-h-96 overflow-y-auto no-scrollbar">
+    <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
+        <span class="font-bold text-gray-900">Notifications</span>
+        <span class="text-[10px] text-red-500 cursor-pointer font-semibold" onclick="markAllNotificationsRead()">Mark all read</span>
+    </div>
+    <div id="notification-list" class="flex flex-col">
+        <div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>
+    </div>
+</div>
 
 <!-- TOP TABS -->
 <div class="sticky top-[60px] z-40 bg-white w-full border-b border-gray-100 flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 text-sm font-semibold text-gray-500">
@@ -179,7 +207,7 @@
         </div>
         
         <!-- Real users injected dynamically here -->
-        <div id="real-users-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
+        <div id="real-users-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar items-stretch">
             <p class="text-gray-400 text-sm">Loading amazing creators...</p>
         </div>
     </section>
@@ -607,6 +635,17 @@
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">call</span>
                 <input type="number" id="auth-phone" placeholder="Phone Number" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
             </div>
+            
+            <!-- Gender Selection Field -->
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">wc</span>
+                <select id="auth-gender" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
+                    <option value="" disabled selected class="text-gray-400">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+
             <div class="relative w-full mb-6">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">map</span>
                 <select id="auth-state" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
@@ -640,10 +679,12 @@
     <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-200 shadow-sm">
         <div class="flex items-center gap-3">
             <button id="btn-close-chat" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
-            <div class="w-10 h-10 rounded-full overflow-hidden"><img id="chat-header-img" src="" class="w-full h-full object-cover"></div>
+            <div class="w-10 h-10 rounded-full overflow-hidden relative">
+                <img id="chat-header-img" src="" class="w-full h-full object-cover">
+            </div>
             <div>
                 <h3 class="text-gray-900 font-bold text-sm" id="chat-header-name">User</h3>
-                <p class="text-green-500 text-[10px]">Online</p>
+                <p class="text-green-500 text-[10px]">Active</p>
             </div>
         </div>
     </div>
@@ -665,15 +706,15 @@
             <span class="material-symbols-outlined text-[24px]">close</span>
         </button>
         <div class="absolute bottom-0 w-full p-6 flex flex-col gap-4 z-20">
-            <h2 id="quick-profile-name" class="text-white font-bold text-2xl">Name</h2>
+            <h2 id="quick-profile-name" class="text-white font-bold text-2xl flex items-center gap-2">Name</h2>
             <div class="flex justify-between items-center gap-3 mt-2">
-                <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
                     <span class="material-symbols-outlined mb-1">chat</span><span class="text-[10px] font-bold">Chat</span>
                 </button>
-                <button id="quick-btn-audio" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                <button id="quick-btn-audio" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
                     <span class="material-symbols-outlined mb-1">call</span><span class="text-[10px] font-bold">Audio</span>
                 </button>
-                <button id="quick-btn-video" class="flex-1 btn-red-gradient border border-red-500 rounded-xl py-3 flex flex-col items-center justify-center text-white">
+                <button id="quick-btn-video" class="flex-1 btn-red-gradient border border-red-500 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:opacity-90 transition-opacity">
                     <span class="material-symbols-outlined mb-1">videocam</span><span class="text-[10px] font-bold">Video</span>
                 </button>
             </div>
@@ -689,7 +730,8 @@
             <h3 class="text-gray-900 font-bold text-lg">All Creators</h3>
         </div>
     </div>
-    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
+    <!-- Adjusted Grid layout parameters strictly to prevent up-down misalignment -->
+    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 items-start pb-24 bg-gray-50 no-scrollbar"></div>
 </div>
 
 <!-- AUDIO ROOM LOBBY (Kept for compatibility, but normally bypassed to audio.html) -->
@@ -809,7 +851,7 @@
 <!-- Firebase SDK & Functional Scripts Setup -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -916,6 +958,118 @@
       });
   }
 
+  // --- STATUS (ONLINE / OFFLINE) & VISIBILITY TRACKING ---
+  function updateUserStatus(status) {
+      if(!currentUser) return;
+      set(ref(db, `users/${currentUser}/status`), status);
+      const ind = document.getElementById('status-indicator');
+      const txt = document.getElementById('status-text');
+      if(status === 'online') {
+          ind.className = "w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors";
+          txt.innerText = "Active";
+          txt.className = "text-[10px] font-bold text-green-600 hidden md:block";
+      } else {
+          ind.className = "w-2.5 h-2.5 rounded-full bg-gray-400 transition-colors";
+          txt.innerText = "Inactive";
+          txt.className = "text-[10px] font-bold text-gray-500 hidden md:block";
+      }
+  }
+
+  window.toggleManualStatus = function() {
+      const txt = document.getElementById('status-text').innerText;
+      if(txt === "Active") { updateUserStatus('offline'); } else { updateUserStatus('online'); }
+  };
+
+  document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
+      else { updateUserStatus('offline'); }
+  });
+
+  function initPresence() {
+      if(!currentUser) return;
+      const connectedRef = ref(db, ".info/connected");
+      onValue(connectedRef, (snap) => {
+          if (snap.val() === true) {
+              const userStatusRef = ref(db, `users/${currentUser}/status`);
+              onDisconnect(userStatusRef).set('offline');
+              updateUserStatus('online');
+          }
+      });
+  }
+
+  // --- NOTIFICATION SYSTEM (Chat, Video Call, Audio Call) ---
+  window.sendNotification = function(target, type, message) {
+      if(!currentUser || currentUser === target) return;
+      push(ref(db, `notifications/${target}`), {
+          from: currentUser,
+          avatar: currentAvatar,
+          type: type,
+          message: message,
+          timestamp: serverTimestamp(),
+          read: false
+      });
+  };
+
+  function listenForNotifications() {
+      if(!currentUser) return;
+      onValue(ref(db, `notifications/${currentUser}`), (snap) => {
+          const list = document.getElementById('notification-list');
+          const badge = document.getElementById('notification-badge');
+          list.innerHTML = '';
+          let unreadCount = 0;
+          const data = snap.val();
+          
+          if(data) {
+              const notifs = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
+              notifs.forEach(([key, n]) => {
+                  if(!n.read) unreadCount++;
+                  let icon = 'notifications';
+                  if(n.type === 'chat') icon = 'chat';
+                  if(n.type === 'video') icon = 'videocam';
+                  if(n.type === 'audio') icon = 'call';
+                  
+                  list.insertAdjacentHTML('beforeend', `
+                      <div class="p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors" onclick="handleNotificationClick('${key}', '${n.from}', '${n.avatar}', '${n.type}')">
+                          <div class="relative w-10 h-10 shrink-0">
+                              <img src="${n.avatar}" class="w-full h-full rounded-full object-cover border border-gray-200">
+                              <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] shadow-sm flex items-center justify-center">
+                                  <span class="material-symbols-outlined text-[10px] ${n.type==='chat'?'text-blue-500':(n.type==='video'?'text-red-500':'text-green-500')}">${icon}</span>
+                              </div>
+                          </div>
+                          <div class="flex-1">
+                              <p class="text-xs text-gray-800 leading-tight"><span class="font-bold text-gray-900">${n.from}</span> ${n.message}</p>
+                          </div>
+                          ${!n.read ? '<div class="w-2.5 h-2.5 bg-red-500 rounded-full shrink-0"></div>' : ''}
+                      </div>
+                  `);
+              });
+          } else {
+              list.innerHTML = `<div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>`;
+          }
+          
+          if(unreadCount > 0) {
+              badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
+          } else { badge.style.display = 'none'; }
+      });
+  }
+
+  window.handleNotificationClick = function(notifId, fromUser, avatar, type) {
+      update(ref(db, `notifications/${currentUser}/${notifId}`), { read: true });
+      document.getElementById('notification-dropdown').classList.add('hidden');
+      if(type === 'chat') { openChatWith(fromUser, avatar); }
+  };
+
+  window.markAllNotificationsRead = function() {
+      if(!currentUser) return;
+      get(ref(db, `notifications/${currentUser}`)).then((snap) => {
+          if(snap.exists()) {
+              let updates = {};
+              Object.keys(snap.val()).forEach(key => { updates[`${key}/read`] = true; });
+              update(ref(db, `notifications/${currentUser}`), updates);
+          }
+      });
+  };
+
   // --- Diamond Purchase Triggers ---
   document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
       if(!currentUser) { alert("Create profile first!"); return; }
@@ -928,7 +1082,7 @@
       window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
   };
   
-  // Revised Gift Diamonds (Subtracts from sender, adds to video and author)
+  // Gift Diamonds
   window.giftDiamonds = function(authorName, videoId) {
       if(!currentUser) { alert("Please create a profile first!"); return; }
       if(currentUser === authorName) { alert("You cannot gift yourself!"); return; }
@@ -948,17 +1102,14 @@
           return;
       }
       
-      // Deduct from local sender
       let newBal = currentBal - amount;
       set(ref(db, `users/${currentUser}/diamonds`), newBal);
 
-      // Add to author's profile
       get(ref(db, `users/${authorName}/diamonds`)).then((snap) => {
           let authorBal = snap.val() || 0;
           set(ref(db, `users/${authorName}/diamonds`), authorBal + amount);
       });
 
-      // Add to video's earnings
       if(videoId) {
           get(ref(db, `videos/${videoId}/diamondsEarned`)).then((snap) => {
               let vidEarned = snap.val() || 0;
@@ -967,6 +1118,7 @@
       }
 
       alert(`Successfully gifted ${amount} diamond(s) to ${authorName}! 💎`);
+      sendNotification(authorName, 'gift', `gifted you ${amount} diamond(s)! 💎`);
   };
 
   // Profile Overlay Open Actions
@@ -1117,7 +1269,6 @@
           vids.forEach(([vidId, vid]) => {
               const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
 
-              // Populate Video Earnings
               if(vid.author === currentUser && earningsContainer) {
                   let earned = vid.diamondsEarned || 0;
                   totalEarned += earned;
@@ -1136,8 +1287,6 @@
               }
 
               if (vid.type === 'short') {
-                  
-                  // Embedded TikTok-style Short Item in the Snap Container
                   let embeddedMedia = vid.isYouTube 
                         ? `<iframe class="relative z-10 w-full h-full pointer-events-auto yt-iframe" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
                         : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto html5-video" src="${vid.mediaUrl}" loop controls playsinline></video>`;
@@ -1145,12 +1294,9 @@
                   shortsContainer.insertAdjacentHTML('beforeend', `
                   <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden">
                       <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm z-0 pointer-events-none">
-                      
                       ${embeddedMedia}
-                      
                       <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-end">
                           <div class="flex justify-between items-end p-4 pb-8 h-full w-full bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                              <!-- Left Side info -->
                               <div class="flex-col gap-2 max-w-[70%]">
                                   <div class="flex items-center gap-2 mb-2 pointer-events-auto">
                                       <img src="${vid.authorAvatar || currentAvatar}" class="w-10 h-10 rounded-full border-2 border-white object-cover">
@@ -1158,8 +1304,6 @@
                                   </div>
                                   <h3 class="text-white font-medium text-sm drop-shadow-md">${vid.title}</h3>
                               </div>
-                              
-                              <!-- Right Side Actions -->
                               <div class="flex flex-col items-center gap-6 pointer-events-auto pb-6">
                                   <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}', '${vidId}')">
                                       <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-purple-400 text-[28px]">diamond</span></div>
@@ -1174,7 +1318,6 @@
                       </div>
                   </div>`);
                   
-                  // Home Horizontal list view
                   homeReelsContainer.insertAdjacentHTML('beforeend', `
                   <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="openVideoFeed('shorts');">
                       <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
@@ -1212,6 +1355,8 @@
       listenToUserDiamonds();
       updateDiamondDisplay();
       listenForIncomingCalls(); 
+      initPresence();
+      listenForNotifications();
   }
 
   document.getElementById("profile-image-upload").addEventListener("change", function(e) {
@@ -1229,12 +1374,13 @@
       const name = document.getElementById("auth-name").value.trim();
       const age = document.getElementById("auth-age").value.trim();
       const phone = document.getElementById("auth-phone").value.trim();
+      const gender = document.getElementById("auth-gender").value;
       
-      if (name && age >= 18 && phone) {
+      if (name && age >= 18 && phone && gender) {
           const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
           
           set(ref(db, 'users/' + name), {
-              name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
+              name: name, id: newId, phone: phone, gender: gender, avatar: currentAvatar, diamonds: 0, status: 'online', timestamp: serverTimestamp()
           });
 
           localStorage.setItem("zingoo_user", name);
@@ -1248,8 +1394,10 @@
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
           listenForIncomingCalls();
+          initPresence();
+          listenForNotifications();
       } else {
-          alert("Fill all fields. Age must be 18+.");
+          alert("Please fill all fields, including gender. Age must be 18+.");
       }
   });
 
@@ -1270,6 +1418,7 @@
 
   document.getElementById("btn-logout").addEventListener("click", () => {
       if(confirm("Log out?")) {
+          if(currentUser) set(ref(db, `users/${currentUser}/status`), 'offline');
           localStorage.clear(); location.reload();
       }
   });
@@ -1292,9 +1441,9 @@
       if(data) {
           Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([partner, details]) => {
               container.insertAdjacentHTML('beforeend', `
-              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100" onclick="openChatWith('${partner}', '${details.avatar}')">
-                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover">
-                  <div class="flex-1"><h4 class="text-gray-900 font-bold text-[15px]">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
+              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors" onclick="openChatWith('${partner}', '${details.avatar}')">
+                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
+                  <div class="flex-1 min-w-0"><h4 class="text-gray-900 font-bold text-[15px] truncate">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
               </div>`);
           });
       }
@@ -1333,62 +1482,85 @@
           set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), { avatar: document.getElementById("chat-header-img").src, lastMessage: "You: " + msg, timestamp: serverTimestamp() });
           set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), { avatar: currentAvatar, lastMessage: msg, timestamp: serverTimestamp() });
           document.getElementById("chat-input").value = "";
+          
+          // Send notification payload
+          sendNotification(currentChatPartnerName, 'chat', 'sent you a message');
       }
   }
 
-  // --- Home Users List & See All Grid ---
+  // --- Home Users List, Filter & See All Grid ---
   document.getElementById('see-all-trigger').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'flex'; });
   document.getElementById('btn-close-see-all').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'none'; });
 
-  onValue(ref(db, 'users'), (snapshot) => {
-      const usersListContainer = document.getElementById("real-users-list");
-      const seeAllGridContainer = document.getElementById("see-all-grid");
-      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
-      
-      const data = snapshot.val();
-      if(data) {
-          Object.values(data).forEach(user => {
-              if (user.name !== currentUser) { 
-                  // Vertical Portrait Card for Home Page "Active Users"
-                  const userHtml = `
-                  <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
-                      <img src="${user.avatar}" class="w-full h-full object-cover">
-                      <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
-                          <h4 class="text-white text-xs font-bold truncate">${user.name}</h4>
-                      </div>
-                  </div>`;
-                  usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+  let allUsersData = {};
+  
+  document.getElementById('gender-filter').addEventListener('change', () => { renderUsers(); });
 
-                  // Standard Grid for See All Overlay
-                  seeAllGridContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative rounded-xl overflow-hidden aspect-[3/4] shadow-sm bg-white border border-gray-200">
-                      <img src="${user.avatar}" class="absolute inset-0 w-full h-4/5 object-cover z-0">
-                      <div class="absolute bottom-0 w-full p-2 bg-white z-20">
-                          <span class="text-gray-900 font-bold text-xs truncate block">${user.name}</span>
-                          <div class="flex gap-1 mt-1">
-                              <button class="flex-1 bg-gray-100 py-1 rounded text-gray-700" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
-                              <button class="flex-1 bg-red-50 py-1 rounded text-red-500" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
-                              <button class="flex-1 bg-red-500 py-1 rounded text-white" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
-                          </div>
-                      </div>
-                  </div>`);
-              }
-          });
-          
-          document.querySelectorAll('.model-btn').forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                  const name = e.currentTarget.getAttribute('data-name');
-                  const avatar = e.currentTarget.getAttribute('data-avatar');
-                  document.getElementById('quick-profile-name').innerText = name;
-                  document.getElementById('quick-profile-img').src = avatar;
-                  document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
-                  document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
-                  document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
-                  document.getElementById('quick-profile-overlay').style.display = 'flex';
-              });
-          });
+  onValue(ref(db, 'users'), (snapshot) => {
+      if(snapshot.val()) {
+          allUsersData = snapshot.val();
+          renderUsers();
       }
   });
+
+  function renderUsers() {
+      const usersListContainer = document.getElementById("real-users-list");
+      const seeAllGridContainer = document.getElementById("see-all-grid");
+      const currentFilter = document.getElementById("gender-filter").value;
+      
+      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
+      
+      Object.values(allUsersData).forEach(user => {
+          if (user.name !== currentUser) {
+              // Apply Gender Filter
+              if(currentFilter !== 'all' && user.gender !== currentFilter) return;
+
+              const isOnline = user.status === 'online';
+              const dotColor = isOnline ? 'bg-green-500' : 'bg-gray-400';
+
+              // Vertical Portrait Card for Home Page "Active Users"
+              const userHtml = `
+              <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+                  <img src="${user.avatar}" class="w-full h-full object-cover">
+                  <div class="absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
+                  <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
+                      <h4 class="text-white text-xs font-bold truncate">${user.name}</h4>
+                  </div>
+              </div>`;
+              usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+
+              // Standard Grid for See All Overlay (Strictly structured to prevent grid breaking)
+              seeAllGridContainer.insertAdjacentHTML('beforeend', `
+              <div class="relative w-full h-[220px] rounded-xl overflow-hidden shadow-sm bg-white border border-gray-200 flex flex-col">
+                  <div class="relative h-[65%] w-full">
+                      <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
+                      <div class="absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
+                  </div>
+                  <div class="h-[35%] w-full p-2 bg-white flex flex-col justify-between shrink-0">
+                      <span class="text-gray-900 font-bold text-xs truncate block w-full">${user.name}</span>
+                      <div class="flex gap-1 mt-auto">
+                          <button class="flex-1 bg-gray-100 py-1.5 rounded-lg text-gray-700 hover:bg-gray-200 transition-colors flex items-center justify-center" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
+                          <button class="flex-1 bg-red-50 py-1.5 rounded-lg text-red-500 hover:bg-red-100 transition-colors flex items-center justify-center" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
+                          <button class="flex-1 bg-red-500 py-1.5 rounded-lg text-white hover:bg-red-600 transition-colors flex items-center justify-center" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
+                      </div>
+                  </div>
+              </div>`);
+          }
+      });
+      
+      document.querySelectorAll('.model-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+              const name = e.currentTarget.getAttribute('data-name');
+              const avatar = e.currentTarget.getAttribute('data-avatar');
+              document.getElementById('quick-profile-name').innerHTML = `${name} <div class="w-2.5 h-2.5 rounded-full inline-block ${allUsersData[name]?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} ml-1"></div>`;
+              document.getElementById('quick-profile-img').src = avatar;
+              document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
+              document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
+              document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
+              document.getElementById('quick-profile-overlay').style.display = 'flex';
+          });
+      });
+  }
 
   // --- WEBRTC Calls ---
   let localStream = null; let peerConnection = null; let currentCallPath = null; let incomingCallData = null;
@@ -1411,6 +1583,12 @@
 
   window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
       if(peerConnection) return;
+      
+      // Check if target is online
+      if(allUsersData[targetUser] && allUsersData[targetUser].status !== 'online') {
+          if(!confirm(`${targetUser} is currently inactive/away. Do you still want to call?`)) { return; }
+      }
+
       currentCallPath = `calls/${targetUser}`;
       document.getElementById('video-partner-name').innerText = targetUser;
       document.getElementById('audio-partner-name').innerText = targetUser;
@@ -1432,6 +1610,9 @@
 
           onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
           onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
+          
+          // Send Notification
+          sendNotification(targetUser, isVideo ? 'video' : 'audio', `is calling you`);
       } catch(e) { 
           console.error("Call Init Error:", e);
           alert("Microphone/Camera permission denied or not available.");
