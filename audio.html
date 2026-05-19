@@ -232,7 +232,7 @@
         .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
         .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
         .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
-        .offer-box { flex: 1; background: #fff; border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; }
+        .offer-box { flex: 1; background: #fff; border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
         .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#888;}
         .offer-title { font-size: 0.65em; color: var(--hot-pink); margin-bottom: 5px; font-weight: 700;}
         .offer-price { font-size: 1.2em; font-weight: 800; color: #111; display: flex; justify-content: center; align-items: center; gap: 5px;}
@@ -248,7 +248,7 @@
         .scrollable-gifts::-webkit-scrollbar { display: none; }
         .s-gift-item { text-align: center; flex-shrink: 0; cursor: pointer; transition: transform 0.2s ease; }
         .s-gift-item:hover { transform: scale(1.1); }
-        .s-gift-item img { width: 25px; height: 25px; }
+        .s-gift-item img { width: 25px; height: 25px; object-fit: contain; margin: 0 auto; }
         .s-gift-item p { font-size: 0.6em; color: #555; margin-top: 2px; font-weight: 600;}
         .s-gift-item p i { color: #00BFFF; }
         
@@ -337,10 +337,10 @@
         .action-item p { font-size: 0.75em; color: #555; font-weight: 600;}
         .action-item.mic-off-state .action-icon-circle { background: #eee; border-color: transparent; color: #888; }
         
-        #gift-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        #gift-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
         .gift-item { text-align: center; background: #f9f9f9; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #eee; transition: background-color 0.2s ease; }
         .gift-item:hover { background-color: #fff0f2; border-color: var(--hot-pink);}
-        .gift-item img { width: 45px; height: 45px; }
+        .gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
         .gift-item p { font-size: 0.8em; margin-top: 5px; color: #333; font-weight: 600;}
         .gift-item .price { font-size: 0.7em; color: #d97706; margin-top: 2px; font-weight: bold;}
         
@@ -409,8 +409,8 @@
                 </div>
                 <div class="actions">
                     <i class="far fa-bell"></i>
-                    <div class="diamond-badge">
-                        <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">25</span>
+                    <div class="diamond-badge" onclick="window.location.href='index.html?action=buy_diamonds'" style="cursor:pointer;">
+                        <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span>
                     </div>
                 </div>
             </header>
@@ -456,7 +456,7 @@
                         </div>
                     </div>
                     <div class="zh-right">
-                        <button class="zh-btn gold"><i class="fas fa-crown"></i></button>
+                        <button class="zh-btn gold" onclick="window.location.href='index.html?action=buy_diamonds'"><i class="fas fa-crown"></i></button>
                         <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
                         <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -483,23 +483,22 @@
                             </div>
                             <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#ccc; cursor:pointer;"></i>
                         </div>
-                        <div class="offer-box">
+                        <div class="offer-box" onclick="window.location.href='index.html?action=buy_diamonds'">
                             <i class="fas fa-times close-x"></i>
                             <div class="offer-title">+ Limited Offers +</div>
                             <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
                             <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn">Buy Now</button>
+                            <button class="buy-btn" onclick="window.location.href='index.html?action=buy_diamonds'">Buy Now</button>
                         </div>
                     </div>
                     <div class="gift-scroll-bar">
-                         <div class="quick-buy-100">
+                         <div class="quick-buy-100" onclick="window.location.href='index.html?action=buy_diamonds'">
                             <i class="fas fa-gem"></i> 100
                             <span>₹100 ₹33.05</span>
                         </div>
-                        <div class="scrollable-gifts">
-                            <div class="s-gift-item" data-gift="Diamond"><img src="https://cdn-icons-png.flaticon.com/512/2850/2850979.png" alt="G"><p><i class="fas fa-gem"></i> 89</p></div>
-                            <div class="s-gift-item" data-gift="Flower"><img src="https://cdn-icons-png.flaticon.com/512/1086/1086940.png" alt="G"><p><i class="fas fa-gem"></i> 10</p></div>
-                            <div class="s-gift-item" data-gift="Heart"><img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" alt="G"><p><i class="fas fa-gem"></i> 199</p></div>
+                        <div class="scrollable-gifts" id="bottom-scrollable-gifts">
+                            <!-- Dynamic Gifts Fetched from Admin will appear here -->
+                            <p style="font-size:10px; color:#888; padding-top:10px;">Loading gifts...</p>
                         </div>
                     </div>
                 </main>
@@ -615,9 +614,8 @@
     <div id="gift-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
-            <div class="gift-grid">
-                <div class="gift-item" data-gift-name="Diamond"><img src="https://cdn-icons-png.flaticon.com/512/2850/2850979.png" alt="Rose"><p>Diamond</p><p class="price"><i class="fas fa-coins"></i> 10</p></div>
-                <div class="gift-item" data-gift-name="Heart"><img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" alt="Heart"><p>Heart</p><p class="price"><i class="fas fa-coins"></i> 50</p></div>
+            <div class="gift-grid" id="modal-gift-grid">
+                <!-- Populated dynamically via Firebase (Admin upload) -->
             </div>
         </div>
     </div>
@@ -770,7 +768,8 @@
                         lobbyScreen.style.display = 'flex';
                         listenForAudioRooms(); 
                         listenForIncomingCalls(); 
-                        listenForInvites(); // Start listening for invitations
+                        listenForInvites(); 
+                        fetchAdminGifts(); // Fetch dynamically added gifts
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
@@ -794,10 +793,97 @@
 
             // --- App State ---
             let currentActiveRoomId = null;
+            let currentRoomHost = null; // Important for video controls
             let mySeatIndex = -1;
             let roomListener = null;
             let unsubscribeChat = null;
             let unsubscribeMedia = null;
+
+            // --- DYNAMIC GIFTS LOGIC (Admin Panel Integration) ---
+            let availableGifts = {};
+            function fetchAdminGifts() {
+                onValue(ref(db, 'gifts'), (snap) => {
+                    const scrollContainer = document.getElementById('bottom-scrollable-gifts');
+                    const modalGridContainer = document.getElementById('modal-gift-grid');
+                    scrollContainer.innerHTML = '';
+                    modalGridContainer.innerHTML = '';
+                    
+                    const data = snap.val();
+                    if(data) {
+                        availableGifts = data;
+                        Object.entries(data).forEach(([key, gift]) => {
+                            // Bottom Scrollable Bar item
+                            scrollContainer.innerHTML += `
+                                <div class="s-gift-item" onclick="sendRoomGift('${key}')">
+                                    <img src="${gift.imageUrl}" alt="${gift.name}">
+                                    <p><i class="fas fa-gem"></i> ${gift.cost}</p>
+                                </div>
+                            `;
+                            // Modal Grid item
+                            modalGridContainer.innerHTML += `
+                                <div class="gift-item" onclick="sendRoomGift('${key}')">
+                                    <img src="${gift.imageUrl}" alt="${gift.name}">
+                                    <p>${gift.name}</p>
+                                    <p class="price"><i class="fas fa-gem"></i> ${gift.cost}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        scrollContainer.innerHTML = '<p style="font-size:10px; color:#888;">No gifts uploaded yet.</p>';
+                        modalGridContainer.innerHTML = '<p style="font-size:12px; color:#888;">No gifts available from admin.</p>';
+                    }
+                });
+            }
+
+            window.sendRoomGift = function(giftKey) {
+                if(!currentActiveRoomId) return;
+                const gift = availableGifts[giftKey];
+                if(!gift) return;
+
+                get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
+                    const hostName = snap.val();
+                    if(hostName === currentUser) {
+                        showToast("You cannot send gifts to your own room!");
+                        return;
+                    }
+                    
+                    let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                    if(currentBal >= gift.cost) {
+                        // 1. Deduct from Sender
+                        let newBal = currentBal - gift.cost;
+                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                        localStorage.setItem('zingoo_diamonds', newBal);
+                        document.getElementById('lobby-diamond-balance').innerText = newBal;
+                        
+                        // 2. Add to Host Profile
+                        get(ref(db, `users/${hostName}/diamonds`)).then((hSnap) => {
+                            let hBal = hSnap.val() || 0;
+                            set(ref(db, `users/${hostName}/diamonds`), hBal + gift.cost);
+                        });
+
+                        // 3. Send visually appealing chat message
+                        push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                            user: currentUser,
+                            text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:25px; height:25px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
+                            timestamp: serverTimestamp()
+                        });
+                        
+                        showToast(`Successfully sent ${gift.name}!`);
+                        closeModal(); // Close modal if open
+                    } else {
+                        // REDIRECT IF INSUFFICIENT DIAMONDS
+                        if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store?`)) {
+                            window.location.href = 'index.html?action=buy_diamonds';
+                        }
+                    }
+                });
+            };
+
+            // Global removal for Admin/Host Video Control
+            window.removeRoomMedia = function(roomId) {
+                remove(ref(db, 'audio_rooms/' + roomId + '/media'));
+            };
+
 
             // --- WEBRTC CALLING LOGIC (1v1) ---
             let localStream1v1 = null;
@@ -1141,6 +1227,34 @@
                     lobbyScreen.style.display = 'none';
                     liveRoomScreen.style.display = 'flex';
 
+                    // Track host for YouTube control visibility
+                    get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
+                        currentRoomHost = hostSnap.val();
+
+                        // Render Youtube if exists (Host check applied)
+                        if (unsubscribeMedia) unsubscribeMedia();
+                        unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
+                            const videoId = snap.val();
+                            const display = document.getElementById('room-center-display');
+                            if(videoId) {
+                                let closeBtn = (currentRoomHost === currentUser) 
+                                    ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
+                                    : '';
+                                
+                                display.innerHTML = `<div style="position:relative; width:100%;">
+                                    ${closeBtn}
+                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
+                                </div>`;
+                            } else {
+                                display.innerHTML = `
+                                    <div class="logo-z">Z</div>
+                                    <div class="logo-text">ZINGOO</div>
+                                    <div class="logo-sub">Audio Room</div>
+                                `;
+                            }
+                        });
+                    });
+
                     const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
                     if (roomListener) roomListener(); 
                     roomListener = onValue(roomSeatsRef, (snapshot) => {
@@ -1179,22 +1293,6 @@
                             setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
                         }
                     });
-
-                    // Setup Media (YouTube) Listener
-                    if (unsubscribeMedia) unsubscribeMedia();
-                    unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
-                        const videoId = snap.val();
-                        const display = document.getElementById('room-center-display');
-                        if(videoId) {
-                            display.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>`;
-                        } else {
-                            display.innerHTML = `
-                                <div class="logo-z">Z</div>
-                                <div class="logo-text">ZINGOO</div>
-                                <div class="logo-sub">Audio Room</div>
-                            `;
-                        }
-                    });
                 };
 
                 if (fee > 0) {
@@ -1211,6 +1309,7 @@
                         }
                     } else {
                         alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
+                        window.location.href = 'index.html?action=buy_diamonds';
                     }
                 } else {
                     proceed();
@@ -1299,6 +1398,7 @@
                 stopRoomAudio();
                 
                 currentActiveRoomId = null;
+                currentRoomHost = null;
                 mySeatIndex = -1;
                 liveRoomScreen.style.display = 'none';
                 lobbyScreen.style.display = 'flex';
