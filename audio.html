@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,6 +57,24 @@
             overflow: hidden; 
         }
 
+        /* --- NEW: White Splash Screen Loading Overlay --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 999999; /* Highest priority */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease;
+        }
+        
+        #splash-screen .logo-z {
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 50px; font-weight: 900; font-style: italic; color: #111; margin-bottom: 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* --- Toast Notification --- */
         .toast-notification {
             position: fixed;
@@ -88,7 +108,7 @@
             inset: 0;
             background: #ffffff;
             z-index: 9999;
-            display: flex; /* Kept as flex but JS will override if logged in */
+            display: none; /* Initially hidden, splash screen handles the flow */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -201,7 +221,7 @@
         .speaker-seat p { font-size: 0.7em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
         .admin-tag { background: rgba(255,0,76,0.1); color: var(--hot-pink); font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
         
-        /* NEW: Custom Store Chair Frame Styling */
+        /* Custom Store Chair Frame Styling */
         .custom-chair-frame {
             position: absolute;
             top: -20px;
@@ -370,7 +390,7 @@
         .action-item .arrow { color: #ccc; font-size: 0.9em; }
         .action-item.mic-off-state .action-icon-circle { background: #eee; color: #888; }
         
-        #gift-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
+        #gift-modal .gift-grid, #room-settings-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
         .gift-item { text-align: center; background: #f9f9f9; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #eee; transition: background-color 0.2s ease; }
         .gift-item:hover { background-color: #fff0f2; border-color: var(--hot-pink);}
         .gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
@@ -452,6 +472,14 @@
 <body>
 
     <div class="main-container">
+
+        <!-- NEW: White Page Splash Screen Timer -->
+        <div id="splash-screen">
+            <div class="logo-z">Z</div>
+            <h2 style="color:#111; font-weight:800; font-size:26px; letter-spacing:2px;">ZINGOO</h2>
+            <p style="color:#888; font-size:14px; margin-top:5px; font-weight:600;">Secure Connection Setup...</p>
+            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">30s</div>
+        </div>
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
 
@@ -666,9 +694,20 @@
                 </div>
                 <div class="action-item" id="menu-settings-btn">
                     <div class="action-icon-circle" style="background: #e2e8f0; color: #475569;"><i class="fas fa-cog"></i></div>
-                    <p>Room Settings</p>
+                    <p>Room Settings (Store)</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: ROOM SETTINGS (CHAIR STORE) MODAL -->
+    <div id="room-settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Room Settings (Host)</h3><button class="close-btn">&times;</button></div>
+            <p style="font-size:13px; color:#666; margin-bottom:15px; text-align:center; font-weight:600;">Decorate your room seat with Premium Admin Chairs.</p>
+            <div class="gift-grid" id="store-chairs-grid">
+                <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading premium chairs...</p>
             </div>
         </div>
     </div>
@@ -750,8 +789,29 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
+            // --- NEW: SPLASH SCREEN 30s TIMER LOGIC ---
+            let splashTime = 30;
+            const splashTimerEl = document.getElementById('splash-timer');
+            const splashScreen = document.getElementById('splash-screen');
             const idLoginScreen = document.getElementById('id-login-screen');
+            
+            const splashInterval = setInterval(() => {
+                splashTime--;
+                splashTimerEl.innerText = splashTime + "s";
+                if(splashTime <= 0) {
+                    clearInterval(splashInterval);
+                    splashTimerEl.innerText = "Timeout. Refreshing...";
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                }
+            }, 1000);
+
+            function hideSplashScreen() {
+                clearInterval(splashInterval);
+                splashScreen.style.display = 'none';
+            }
+
+
+            const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
             const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
             const loginInput = document.getElementById('login-zingoo-id');
@@ -762,7 +822,6 @@
             let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             
-            // NEW: Global variable to store equipped premium chair/frame
             let myEquippedChair = null;
 
             const showToast = (message) => {
@@ -771,14 +830,14 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
-            // NEW AUTO-LOGIN & DIRECT APP ENTRY LOGIC
+            // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
-                // Instantly hide the login screen, go direct to app verification
-                idLoginScreen.style.display = 'none';
-                processDatabaseLogin(storedId, true); // true indicates auto-login
+                // Background verification while 30s timer runs on white page
+                processDatabaseLogin(storedId, true); 
             } else {
-                // If no stored ID, show login screen
+                // If no stored ID, immediately hide splash and show login screen
+                hideSplashScreen();
                 idLoginScreen.style.display = 'flex';
             }
 
@@ -845,7 +904,6 @@
                 }
             });
 
-            // UPDATED: processDatabaseLogin handles auto-login and fetches Premium Chair
             function processDatabaseLogin(enteredId, isAutoLogin = false) {
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
@@ -864,7 +922,6 @@
                     }
                     
                     if (userFound) {
-                        // NEW: Fetch equipped premium chair if bought from store
                         myEquippedChair = allUsers[userKey].equippedChair || null;
 
                         if (selectedAvatarFile && !isAutoLogin) {
@@ -881,17 +938,22 @@
                         document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
                         localStorage.setItem("zingoo_diamonds", userDiamonds);
                         
+                        // Successfully logged in -> hide Splash and Login, show Lobby
+                        hideSplashScreen();
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
+                        
                         listenForAudioRooms(); 
                         listenForIncomingCalls(); 
                         listenForInvites(); 
                         fetchAdminGifts(); 
-                        showToast(`Welcome back, ${currentUser}!`);
+                        fetchStoreChairs(); // NEW: Fetch Chairs for settings
+                        
+                        if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
                     } else {
-                        // If auto-login fails (user deleted), show the screen again
                         if(isAutoLogin) {
                             localStorage.removeItem("zingoo_id");
+                            hideSplashScreen();
                             idLoginScreen.style.display = 'flex';
                         } else {
                             showToast("Invalid ID! User not found.");
@@ -901,6 +963,7 @@
                     }
                 }).catch(err => {
                     if(isAutoLogin) {
+                        hideSplashScreen();
                         idLoginScreen.style.display = 'flex';
                     } else {
                         showToast("Error connecting to database.");
@@ -960,6 +1023,68 @@
                     }
                 });
             }
+
+            // --- NEW: FETCH STORE CHAIRS ---
+            function fetchStoreChairs() {
+                onValue(ref(db, 'store_items/chairs'), (snap) => {
+                    const grid = document.getElementById('store-chairs-grid');
+                    grid.innerHTML = '';
+                    const data = snap.val();
+                    if(data && Object.keys(data).length > 0) {
+                        Object.entries(data).forEach(([key, chair]) => {
+                            grid.innerHTML += `
+                                <div class="gift-item" onclick="buyAndEquipChair('${chair.imageUrl}', ${chair.cost}, '${chair.name}')">
+                                    <img src="${chair.imageUrl}" alt="${chair.name}">
+                                    <p>${chair.name}</p>
+                                    <p class="price"><i class="fas fa-gem"></i> ${chair.cost}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        grid.innerHTML = '<p style="font-size:12px; color:#888; text-align:center; grid-column:1/-1;">No chairs available in store.</p>';
+                    }
+                });
+            }
+
+            // --- NEW: BUY AND EQUIP CHAIR LOGIC ---
+            window.buyAndEquipChair = function(chairUrl, cost, name) {
+                if(currentRoomHost !== currentUser) {
+                    showToast("Only the Room Host can buy/equip room decorations here!");
+                    return;
+                }
+
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= cost) {
+                    if(confirm(`Buy and equip '${name}' for ${cost} diamonds?`)) {
+                        let newBal = currentBal - cost;
+                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                        localStorage.setItem('zingoo_diamonds', newBal);
+                        document.getElementById('lobby-diamond-balance').innerText = newBal;
+                        
+                        // Save to DB User Profile
+                        get(ref(db, 'users')).then(snap => {
+                            let uKey = null;
+                            const users = snap.val();
+                            for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                            if(uKey) set(ref(db, `users/${uKey}/equippedChair`), chairUrl);
+                        });
+
+                        myEquippedChair = chairUrl;
+                        
+                        // Instantly update current seat
+                        if(mySeatIndex !== -1 && currentActiveRoomId) {
+                            set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), chairUrl);
+                        }
+
+                        showToast(`Successfully equipped ${name}!`);
+                        closeModal();
+                    }
+                } else {
+                    if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
+                        window.redirectToDiamondStore();
+                    }
+                }
+            };
 
             window.sendRoomGift = function(giftKey) {
                 if(!currentActiveRoomId) return;
@@ -1431,7 +1556,6 @@
                 }
             }
 
-            // UPDATED: RENDER SEATS WITH CHAIR/FRAME INTEGRATION
             function renderSeats(seatsData) {
                 speakerGrid.innerHTML = '';
                 
@@ -1462,7 +1586,6 @@
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
                         if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
-                        // NEW: Inject Custom Chair/Frame if User Owns it
                         let chairHTML = '';
                         if (seatInfo.chairUrl) {
                             chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
@@ -1492,7 +1615,6 @@
                 }
             }
             
-            // UPDATED: Push chair data when taking a seat
             window.audioRoomAPI = {
                 takeSeat: (index) => {
                     if (!currentActiveRoomId) return;
@@ -1506,7 +1628,7 @@
                         avatar: currentAvatar, 
                         isMuted: false, 
                         timestamp: serverTimestamp(),
-                        chairUrl: myEquippedChair // Assign global chair URL
+                        chairUrl: myEquippedChair 
                     });
                 },
                 leaveSeat: () => {
@@ -1608,9 +1730,14 @@
                 closeModal();
             });
 
+            // UPDATED: Settings now opens Chair Shop
             document.getElementById('menu-settings-btn').addEventListener('click', () => {
-                showToast("Opening settings...");
                 closeModal();
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    openModal('room-settings-modal');
+                } else {
+                    showToast("Only the room host can access Room Settings!");
+                }
             });
 
             document.getElementById('menu-mute-all-btn').addEventListener('click', () => {
