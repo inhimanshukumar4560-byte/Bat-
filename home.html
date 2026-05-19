@@ -57,6 +57,12 @@
               100% { transform: scale(1.5); opacity: 0; }
           }
           
+          @keyframes pulse-icon {
+              0% { opacity: 1; }
+              50% { opacity: 0.5; }
+              100% { opacity: 1; }
+          }
+          
           @keyframes fadeInUp {
               0% { opacity: 0; transform: translateY(15px); }
               100% { opacity: 1; transform: translateY(0); }
@@ -75,9 +81,24 @@
           .ds-gradient-red { background: linear-gradient(135deg, #e6232b 0%, #b81016 100%); }
           .ds-pack-card { transition: transform 0.2s; }
           .ds-pack-card:active { transform: scale(0.96); }
+
+          /* Floating AI Avatar animation */
+          .float-bounce {
+              animation: floaty 3s ease-in-out infinite;
+          }
+          @keyframes floaty {
+              0% { transform: translateY(0px); }
+              50% { transform: translateY(-8px); }
+              100% { transform: translateY(0px); }
+          }
       </style>
 </head>
 <body class="bg-zingoo-bg text-gray-900 relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
+
+<!-- Floating AI Assistant -->
+<a href="https://komal-ai-assistant-gf.vercel.app/" class="fixed top-[45%] right-3 z-[8000] w-14 h-14 rounded-full overflow-hidden border-2 border-pink-500 shadow-lg hover:scale-105 transition-transform bg-white flex items-center justify-center cursor-pointer float-bounce" target="_blank" style="text-decoration:none;">
+    <img src="https://i.ibb.co/jZMn0XTt/file-00000000da7071fab9612db9b848e392.png" alt="AI Assistant" class="w-full h-full object-cover">
+</a>
 
 <!-- Hidden Profile Trigger Button -->
 <div id="header-profile-btn" class="hidden"></div>
@@ -191,10 +212,11 @@
         <span class="text-[10px]">Rooms</span>
     </div>
 
-    <!-- Center Add Button -->
-    <div class="relative -top-5 group" onclick="document.getElementById('upload-video-overlay').style.display='flex';">
-        <button class="w-14 h-14 rounded-full btn-red-gradient flex items-center justify-center border-4 border-white shadow-md group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-white text-[32px] font-bold">add</span>
+    <!-- Center Live Button -->
+    <div class="relative -top-5 group" onclick="window.location.href='live.html';">
+        <button class="w-14 h-14 rounded-full btn-red-gradient flex items-center justify-center border-4 border-white shadow-md group-hover:scale-105 transition-transform relative">
+            <span class="material-symbols-outlined text-white text-[30px] font-bold" style="animation: pulse-icon 1.5s infinite;">podcasts</span>
+            <div class="absolute -bottom-1 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full border border-white font-bold tracking-wider shadow-sm">LIVE</div>
         </button>
     </div>
 
@@ -248,7 +270,7 @@
 
             <!-- Live Shows Image -->
             <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
-                 onclick="document.getElementById('menu-overlay').style.display='none'; openVideoFeed('longs');">
+                 onclick="document.getElementById('menu-overlay').style.display='none'; window.location.href='live.html';">
                 <img src="https://i.ibb.co/PZvGtbNk/file-00000000a2e07208bc2307d7a0fe24f1.png" class="w-full h-full object-cover">
             </div>
 
@@ -378,15 +400,17 @@
                     <p class="text-[10px] text-gray-500">Your balance</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
-                <div class="bg-green-50 text-green-500 w-10 h-10 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined">payments</span>
+            <!-- Video Earnings Replacement -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="openVideoEarnings()">
+                <div class="bg-pink-50 text-pink-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">monetization_on</span>
                 </div>
                 <div>
                     <h4 class="font-bold text-sm text-gray-900">Earnings</h4>
-                    <p class="text-[10px] text-gray-500">Total Earnings</p>
+                    <p class="text-[10px] text-gray-500">Video Diamonds</p>
                 </div>
             </div>
+            
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
                 <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined">badge</span>
@@ -396,13 +420,14 @@
                     <p class="text-[10px] text-gray-500">Your Vcards</p>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
-                <div class="bg-yellow-50 text-yellow-500 w-10 h-10 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined">star</span>
+            <!-- Upload Video Replacement -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('upload-video-overlay').style.display='flex';">
+                <div class="bg-orange-50 text-orange-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">upload</span>
                 </div>
                 <div>
-                    <h4 class="font-bold text-sm text-gray-900">Creator</h4>
-                    <p class="text-[10px] text-gray-500">Start journey</p>
+                    <h4 class="font-bold text-sm text-gray-900">Upload</h4>
+                    <p class="text-[10px] text-gray-500">Post a video</p>
                 </div>
             </div>
         </div>
@@ -410,6 +435,25 @@
         <button id="btn-logout" class="w-full mt-6 py-3 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors">
             <span class="material-symbols-outlined">logout</span> Logout
         </button>
+    </div>
+</div>
+
+<!-- ================= VIDEO EARNINGS OVERLAY ================= -->
+<div id="video-earnings-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button class="text-gray-700 hover:text-black" onclick="document.getElementById('video-earnings-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">Video Earnings</h3>
+        </div>
+    </div>
+    <div class="p-4 bg-gray-50 border-b border-gray-200 text-center">
+        <p class="text-sm text-gray-500">Total Diamonds Earned from Videos</p>
+        <h2 class="text-3xl font-black text-purple-600 flex items-center justify-center gap-2 mt-1">
+            <span class="material-symbols-outlined text-[28px]">diamond</span> <span id="total-video-diamonds">0</span>
+        </h2>
+    </div>
+    <div id="earnings-video-list" class="flex-1 overflow-y-auto p-4 no-scrollbar bg-gray-50 flex flex-col gap-3 pb-24">
+        <!-- Video list will be injected here by JS -->
     </div>
 </div>
 
@@ -645,7 +689,7 @@
             <h3 class="text-gray-900 font-bold text-lg">All Creators</h3>
         </div>
     </div>
-    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
+    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
 </div>
 
 <!-- AUDIO ROOM LOBBY (Kept for compatibility, but normally bypassed to audio.html) -->
@@ -765,7 +809,7 @@
 <!-- Firebase SDK & Functional Scripts Setup -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -786,6 +830,14 @@
 
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
+
+  // --- Auto Redirect for Diamond Buy URL Param ---
+  window.addEventListener('load', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if(urlParams.get('action') === 'buy_diamonds' && currentUser) {
+          document.getElementById('diamond-store-overlay').style.display = 'flex';
+      }
+  });
 
   // --- Auto Reels Scroll Observer ---
   let reelsObserver = null;
@@ -829,7 +881,8 @@
       document.getElementById('manage-profile-overlay').style.display = 'none';
       document.getElementById('video-feed-overlay').style.display = 'none';
       document.getElementById('diamond-store-overlay').style.display = 'none';
-      document.getElementById('bottom-nav').style.display = 'flex'; // Ensure bottom nav is visible on Home
+      document.getElementById('video-earnings-overlay').style.display = 'none';
+      document.getElementById('bottom-nav').style.display = 'flex'; 
       
       resetNavHighlights();
       document.getElementById('nav-home').classList.add('nav-item-active', 'text-zingoo-red');
@@ -838,7 +891,7 @@
 
   window.openVideoFeed = function(tab) {
       document.getElementById('video-feed-overlay').style.display = 'flex';
-      document.getElementById('bottom-nav').style.display = 'none'; // Hide nav on Video/Reels view
+      document.getElementById('bottom-nav').style.display = 'none'; 
       switchVideoTab(tab);
   };
 
@@ -875,7 +928,8 @@
       window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
   };
   
-  window.giftDiamonds = function(authorName) {
+  // Revised Gift Diamonds (Subtracts from sender, adds to video and author)
+  window.giftDiamonds = function(authorName, videoId) {
       if(!currentUser) { alert("Please create a profile first!"); return; }
       if(currentUser === authorName) { alert("You cannot gift yourself!"); return; }
       
@@ -897,7 +951,40 @@
       // Deduct from local sender
       let newBal = currentBal - amount;
       set(ref(db, `users/${currentUser}/diamonds`), newBal);
+
+      // Add to author's profile
+      get(ref(db, `users/${authorName}/diamonds`)).then((snap) => {
+          let authorBal = snap.val() || 0;
+          set(ref(db, `users/${authorName}/diamonds`), authorBal + amount);
+      });
+
+      // Add to video's earnings
+      if(videoId) {
+          get(ref(db, `videos/${videoId}/diamondsEarned`)).then((snap) => {
+              let vidEarned = snap.val() || 0;
+              set(ref(db, `videos/${videoId}/diamondsEarned`), vidEarned + amount);
+          });
+      }
+
       alert(`Successfully gifted ${amount} diamond(s) to ${authorName}! 💎`);
+  };
+
+  // Profile Overlay Open Actions
+  window.openVideoEarnings = function() {
+      document.getElementById('manage-profile-overlay').style.display = 'none';
+      document.getElementById('video-earnings-overlay').style.display = 'flex';
+  };
+
+  window.deleteVideo = async function(videoId) {
+      if(confirm("Are you sure you want to delete this video?")) {
+          try {
+              await remove(ref(db, 'videos/' + videoId));
+              alert("Video deleted successfully.");
+          } catch(e) {
+              console.error(e);
+              alert("Error deleting video.");
+          }
+      }
   };
 
   // --- Video Player ---
@@ -1004,7 +1091,7 @@
       }
 
       push(ref(db, 'videos'), {
-          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp()
+          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0
       }).then(() => {
           document.getElementById('upload-spinner').style.display = 'none';
           document.getElementById('upload-video-overlay').style.display='none';
@@ -1012,19 +1099,42 @@
       });
   };
   
-  // Real-time Videos (Populates Home Feed & Overlay Feeds)
+  // Real-time Videos (Populates Home Feed, Shorts & Earnings Overlay)
   onValue(ref(db, 'videos'), (snapshot) => {
       const shortsContainer = document.getElementById('shorts-feed-container');
       const longsContainer = document.getElementById('longs-feed-container');
       const homeReelsContainer = document.getElementById('home-reels-list');
+      const earningsContainer = document.getElementById('earnings-video-list');
       
       shortsContainer.innerHTML = ''; longsContainer.innerHTML = ''; homeReelsContainer.innerHTML = '';
+      if(earningsContainer) earningsContainer.innerHTML = '';
+
+      let totalEarned = 0;
       const data = snapshot.val();
       
       if(data) {
-          const vids = Object.values(data).reverse();
-          vids.forEach(vid => {
+          const vids = Object.entries(data).reverse();
+          vids.forEach(([vidId, vid]) => {
               const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
+
+              // Populate Video Earnings
+              if(vid.author === currentUser && earningsContainer) {
+                  let earned = vid.diamondsEarned || 0;
+                  totalEarned += earned;
+                  earningsContainer.insertAdjacentHTML('beforeend', `
+                      <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+                          <img src="${vid.thumbUrl}" class="w-16 h-16 rounded-lg object-cover">
+                          <div class="flex-1">
+                              <h4 class="font-bold text-sm text-gray-900 line-clamp-1">${vid.title}</h4>
+                              <p class="text-purple-600 font-bold text-xs flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">diamond</span> ${earned} Earned</p>
+                          </div>
+                          <button class="bg-red-50 text-red-500 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-100" onclick="deleteVideo('${vidId}')">
+                              <span class="material-symbols-outlined text-[18px]">delete</span>
+                          </button>
+                      </div>
+                  `);
+              }
+
               if (vid.type === 'short') {
                   
                   // Embedded TikTok-style Short Item in the Snap Container
@@ -1051,11 +1161,7 @@
                               
                               <!-- Right Side Actions -->
                               <div class="flex flex-col items-center gap-6 pointer-events-auto pb-6">
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer">
-                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-white text-[28px]">favorite</span></div>
-                                      <span class="text-white text-xs font-bold drop-shadow-md">Like</span>
-                                  </div>
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}')">
+                                  <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}', '${vidId}')">
                                       <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-purple-400 text-[28px]">diamond</span></div>
                                       <span class="text-white text-xs font-bold drop-shadow-md">Gift</span>
                                   </div>
@@ -1088,6 +1194,10 @@
                   </div>`);
               }
           });
+          
+          const totalEl = document.getElementById('total-video-diamonds');
+          if(totalEl) totalEl.innerText = totalEarned.toLocaleString();
+
           setTimeout(() => { initReelsObserver(); }, 100);
       }
   });
@@ -1117,32 +1227,30 @@
 
   document.getElementById("btn-create-profile").addEventListener("click", () => {
       const name = document.getElementById("auth-name").value.trim();
-      const ageStr = document.getElementById("auth-age").value.trim();
+      const age = document.getElementById("auth-age").value.trim();
       const phone = document.getElementById("auth-phone").value.trim();
       
-      const age = parseInt(ageStr, 10);
-      
-      if (!name) { alert("Please enter a nickname."); return; }
-      if (isNaN(age) || age < 18) { alert("You must be at least 18 years old to enter Zingoo."); return; }
-      if (!phone) { alert("Please enter your phone number."); return; }
-      
-      const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
-      
-      set(ref(db, 'users/' + name), {
-          name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
-      });
+      if (name && age >= 18 && phone) {
+          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+          
+          set(ref(db, 'users/' + name), {
+              name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
+          });
 
-      localStorage.setItem("zingoo_user", name);
-      localStorage.setItem("zingoo_id", newId);
-      localStorage.setItem("zingoo_avatar", currentAvatar);
-      localStorage.setItem("zingoo_diamonds", "0"); 
-      
-      currentUser = name; currentId = newId;
-      
-      listenToUserDiamonds(); 
-      authOverlay.style.display = "none";
-      document.body.style.overflow = "auto";
-      listenForIncomingCalls();
+          localStorage.setItem("zingoo_user", name);
+          localStorage.setItem("zingoo_id", newId);
+          localStorage.setItem("zingoo_avatar", currentAvatar);
+          localStorage.setItem("zingoo_diamonds", "0"); 
+          
+          currentUser = name; currentId = newId;
+          
+          listenToUserDiamonds(); 
+          authOverlay.style.display = "none";
+          document.body.style.overflow = "auto";
+          listenForIncomingCalls();
+      } else {
+          alert("Fill all fields. Age must be 18+.");
+      }
   });
 
   // Profile View Logic
@@ -1251,18 +1359,16 @@
                   </div>`;
                   usersListContainer.insertAdjacentHTML('beforeend', userHtml);
 
-                  // Standard Flex Grid for See All Overlay (FIXED TO PREVENT OVERLAPPING)
+                  // Standard Grid for See All Overlay
                   seeAllGridContainer.insertAdjacentHTML('beforeend', `
-                  <div class="flex flex-col rounded-xl overflow-hidden shadow-sm bg-white border border-gray-200 h-[220px]">
-                      <div class="w-full h-32 relative bg-gray-100 flex-shrink-0">
-                          <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
-                      </div>
-                      <div class="p-2 bg-white flex flex-col justify-between flex-1">
-                          <span class="text-gray-900 font-bold text-[13px] truncate block mb-1 text-center">${user.name}</span>
-                          <div class="flex gap-1 justify-center mt-auto">
-                              <button class="flex-1 bg-gray-100 py-1.5 rounded-lg text-gray-700 flex justify-center items-center hover:bg-gray-200" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
-                              <button class="flex-1 bg-red-50 py-1.5 rounded-lg text-red-500 flex justify-center items-center hover:bg-red-100" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
-                              <button class="flex-1 bg-red-500 py-1.5 rounded-lg text-white flex justify-center items-center hover:bg-red-600" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
+                  <div class="relative rounded-xl overflow-hidden aspect-[3/4] shadow-sm bg-white border border-gray-200">
+                      <img src="${user.avatar}" class="absolute inset-0 w-full h-4/5 object-cover z-0">
+                      <div class="absolute bottom-0 w-full p-2 bg-white z-20">
+                          <span class="text-gray-900 font-bold text-xs truncate block">${user.name}</span>
+                          <div class="flex gap-1 mt-1">
+                              <button class="flex-1 bg-gray-100 py-1 rounded text-gray-700" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
+                              <button class="flex-1 bg-red-50 py-1 rounded text-red-500" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
+                              <button class="flex-1 bg-red-500 py-1 rounded text-white" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
                           </div>
                       </div>
                   </div>`);
@@ -1313,18 +1419,11 @@
       
       try {
           peerConnection = new RTCPeerConnection(servers);
-          // Added facingMode for mobile camera specification
-          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo ? { facingMode: "user" } : false, audio: true });
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
           document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
           localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-          // Ensure media properly plays upon track receipt
-          peerConnection.ontrack = e => { 
-              const mediaElement = document.getElementById(isVideo ? "remote-video" : "remote-audio");
-              mediaElement.srcObject = e.streams[0]; 
-              mediaElement.onloadedmetadata = () => mediaElement.play().catch(err => console.log(err));
-          };
-          
+          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
           peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/caller`), e.candidate.toJSON()); };
 
           const offer = await peerConnection.createOffer();
@@ -1342,26 +1441,16 @@
 
   document.getElementById("btn-accept-call").addEventListener("click", async () => {
       document.getElementById('incoming-call-overlay').style.display = 'none';
-      
-      // Strict evaluation for isVideo to avoid rendering profile pic via audio-overlay on video calls
-      const isVideo = incomingCallData.isVideo === true || String(incomingCallData.isVideo) === "true";
-      currentCallPath = `calls/${currentUser}`;
+      const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${currentUser}`;
       document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
       
       try {
           peerConnection = new RTCPeerConnection(servers);
-          // Added facingMode for mobile camera specification
-          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo ? { facingMode: "user" } : false, audio: true });
+          localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
           document.getElementById(isVideo ? "local-video" : "local-audio").srcObject = localStream;
           localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-          // Ensure media properly plays upon track receipt
-          peerConnection.ontrack = e => { 
-              const mediaElement = document.getElementById(isVideo ? "remote-video" : "remote-audio");
-              mediaElement.srcObject = e.streams[0]; 
-              mediaElement.onloadedmetadata = () => mediaElement.play().catch(err => console.log(err));
-          };
-          
+          peerConnection.ontrack = e => { document.getElementById(isVideo ? "remote-video" : "remote-audio").srcObject = e.streams[0]; };
           peerConnection.onicecandidate = e => { if(e.candidate) push(ref(db, `${currentCallPath}/candidates/callee`), e.candidate.toJSON()); };
 
           await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingCallData.offer));
@@ -1396,7 +1485,7 @@
       window.location.href = 'audio.html';
   };
   
-  // Audio functions below are preserved fully for backwards compatibility / just in case.
+  // Audio functions below are preserved fully for backwards compatibility
   window.createNewAudioRoom = function() {
       const n = prompt("Room Name:"); if(!n) return;
       const refNew = push(ref(db, 'audio_rooms'));
