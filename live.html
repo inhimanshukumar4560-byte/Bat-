@@ -32,6 +32,19 @@
             color: var(--dark-text);
             min-height: 100vh;
             overflow-x: hidden;
+            /* --- Security: Prevent Text Selection and Image Dragging --- */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            transition: filter 0.2s ease;
+        }
+
+        /* --- Security Blur Filter --- */
+        body.security-blur {
+            filter: blur(20px);
+            pointer-events: none;
         }
 
         /* --- Custom Scrollbar --- */
@@ -442,6 +455,29 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
+        // 1. Disable Right Click (Context Menu)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
+                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+                e.preventDefault();
+                showToast("Security: Screenshots & recording are restricted!");
+            }
+        });
+
+        // 3. Blur screen if app loses focus (minimizing screen recording/screenshot risk)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.body.classList.add('security-blur');
+            } else {
+                document.body.classList.remove('security-blur');
+            }
+        });
+
         // --- FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -833,6 +869,23 @@
             hideLoading();
             showToast("You are now LIVE! 🔴");
             setupLiveChat();
+
+            // Security 4: Detect Camera Interruption / External Screen Record taking over camera
+            if (localStream && localStream.getVideoTracks().length > 0) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                videoTrack.onmute = () => {
+                    showToast("Warning: Camera interrupted (Screen Record/Call detected)!");
+                    document.body.classList.add('security-blur');
+                };
+                videoTrack.onunmute = () => {
+                    showToast("Camera restored.");
+                    document.body.classList.remove('security-blur');
+                };
+                videoTrack.onended = () => {
+                    showToast("Camera stopped unexpectedly!");
+                    leaveLiveStream();
+                };
+            }
 
             // Listen for Viewers joining and offering WebRTC connection
             onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
