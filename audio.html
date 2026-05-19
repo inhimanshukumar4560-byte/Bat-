@@ -409,7 +409,7 @@
                 </div>
                 <div class="actions">
                     <i class="far fa-bell"></i>
-                    <div class="diamond-badge" onclick="window.location.href='index.html?action=buy_diamonds'" style="cursor:pointer;">
+                    <div class="diamond-badge" onclick="window.redirectToDiamondStore()" style="cursor:pointer;">
                         <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span>
                     </div>
                 </div>
@@ -456,7 +456,7 @@
                         </div>
                     </div>
                     <div class="zh-right">
-                        <button class="zh-btn gold" onclick="window.location.href='index.html?action=buy_diamonds'"><i class="fas fa-crown"></i></button>
+                        <button class="zh-btn gold" onclick="window.redirectToDiamondStore()"><i class="fas fa-crown"></i></button>
                         <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
                         <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -483,16 +483,16 @@
                             </div>
                             <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#ccc; cursor:pointer;"></i>
                         </div>
-                        <div class="offer-box" onclick="window.location.href='index.html?action=buy_diamonds'">
+                        <div class="offer-box" onclick="window.redirectToDiamondStore()">
                             <i class="fas fa-times close-x"></i>
                             <div class="offer-title">+ Limited Offers +</div>
                             <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
                             <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn" onclick="window.location.href='index.html?action=buy_diamonds'">Buy Now</button>
+                            <button class="buy-btn" onclick="window.redirectToDiamondStore()">Buy Now</button>
                         </div>
                     </div>
                     <div class="gift-scroll-bar">
-                         <div class="quick-buy-100" onclick="window.location.href='index.html?action=buy_diamonds'">
+                         <div class="quick-buy-100" onclick="window.redirectToDiamondStore()">
                             <i class="fas fa-gem"></i> 100
                             <span>₹100 ₹33.05</span>
                         </div>
@@ -616,6 +616,7 @@
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
             <div class="gift-grid" id="modal-gift-grid">
                 <!-- Populated dynamically via Firebase (Admin upload) -->
+                 <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading gifts from admin panel...</p>
             </div>
         </div>
     </div>
@@ -645,6 +646,7 @@
         let app;
         let db;
 
+        // This prevents re-initializing Firebase if it's already done elsewhere.
         if (window.zingooApp) {
             app = window.zingooApp;
             db = getDatabase(app);
@@ -657,24 +659,25 @@
                 storageBucket: "benchtopinnovations12.firebasestorage.app",
                 messagingSenderId: "113274194106",
                 appId: "1:113274194106:web:c2548c12c1ea20c5b69a83",
-                measurementId: "G-NSW3S36XMP"
             };
             app = initializeApp(firebaseConfig);
             db = getDatabase(app);
+            window.zingooApp = app; // Store it globally
         }
 
         // --- SCRIPT START ---
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- ID LOGIN & IMGBB LOGIC ---
-            const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c"; 
+            // --- ID LOGIN & IMGBB LOGIC (WITH NEW API KEY) ---
+            // *** NEW API KEY INTEGRATED HERE ***
+            const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
             const idLoginScreen = document.getElementById('id-login-screen');
             const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
             const loginInput = document.getElementById('login-zingoo-id');
             const globalToast = document.getElementById('global-toast');
             let selectedAvatarFile = null;
-            let pendingInvites = []; // Used for room creation invites
+            let pendingInvites = [];
 
             let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
@@ -692,6 +695,14 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
+            // NEW/UPDATED: Central function to redirect to the main diamond store
+            window.redirectToDiamondStore = function() {
+                // This redirects to index.html and adds a query parameter.
+                // The index.html file's script will detect this and open the diamond store overlay.
+                window.location.href = 'index.html?action=buy_diamonds';
+            };
+
+
             document.getElementById('login-profile-upload').addEventListener('change', function(e) {
                 if(e.target.files[0]) {
                     const reader = new FileReader();
@@ -708,9 +719,10 @@
                 if (!enteredId) { showToast("Please enter your Zingoo ID"); return; }
                 
                 loginBtn.innerText = "Please wait...";
+                loginBtn.disabled = true;
 
                 if (selectedAvatarFile) {
-                    showToast("Uploading profile image to server...");
+                    showToast("Uploading profile image...");
                     const formData = new FormData();
                     formData.append("image", selectedAvatarFile);
 
@@ -720,8 +732,11 @@
                     }).then(res => res.json()).then(data => {
                         if (data.success) {
                             currentAvatar = data.data.url;
+                            processDatabaseLogin(enteredId);
+                        } else {
+                            showToast("Image upload failed. Please try another image.");
+                            processDatabaseLogin(enteredId); // Continue with default avatar
                         }
-                        processDatabaseLogin(enteredId);
                     }).catch(err => {
                         showToast("Image upload failed, using default.");
                         processDatabaseLogin(enteredId);
@@ -759,10 +774,9 @@
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
-                        if(allUsers[userKey].diamonds !== undefined) {
-                            document.getElementById('lobby-diamond-balance').innerText = allUsers[userKey].diamonds;
-                            localStorage.setItem("zingoo_diamonds", allUsers[userKey].diamonds);
-                        }
+                        const userDiamonds = allUsers[userKey].diamonds || 0;
+                        document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
+                        localStorage.setItem("zingoo_diamonds", userDiamonds);
                         
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
@@ -774,10 +788,12 @@
                     } else {
                         showToast("Invalid ID! User not found.");
                         loginBtn.innerText = "Enter Rooms";
+                        loginBtn.disabled = false;
                     }
                 }).catch(err => {
                     showToast("Error connecting to database.");
                     loginBtn.innerText = "Enter Rooms";
+                    loginBtn.disabled = false;
                 });
             }
 
@@ -793,7 +809,7 @@
 
             // --- App State ---
             let currentActiveRoomId = null;
-            let currentRoomHost = null; // Important for video controls
+            let currentRoomHost = null;
             let mySeatIndex = -1;
             let roomListener = null;
             let unsubscribeChat = null;
@@ -809,17 +825,15 @@
                     modalGridContainer.innerHTML = '';
                     
                     const data = snap.val();
-                    if(data) {
+                    if(data && Object.keys(data).length > 0) {
                         availableGifts = data;
                         Object.entries(data).forEach(([key, gift]) => {
-                            // Bottom Scrollable Bar item
                             scrollContainer.innerHTML += `
                                 <div class="s-gift-item" onclick="sendRoomGift('${key}')">
                                     <img src="${gift.imageUrl}" alt="${gift.name}">
                                     <p><i class="fas fa-gem"></i> ${gift.cost}</p>
                                 </div>
                             `;
-                            // Modal Grid item
                             modalGridContainer.innerHTML += `
                                 <div class="gift-item" onclick="sendRoomGift('${key}')">
                                     <img src="${gift.imageUrl}" alt="${gift.name}">
@@ -829,8 +843,9 @@
                             `;
                         });
                     } else {
-                        scrollContainer.innerHTML = '<p style="font-size:10px; color:#888;">No gifts uploaded yet.</p>';
-                        modalGridContainer.innerHTML = '<p style="font-size:12px; color:#888;">No gifts available from admin.</p>';
+                        const noGiftMsg = '<p style="font-size:10px; color:#888;">No gifts available.</p>';
+                        scrollContainer.innerHTML = noGiftMsg;
+                        modalGridContainer.innerHTML = noGiftMsg;
                     }
                 });
             }
@@ -840,46 +855,42 @@
                 const gift = availableGifts[giftKey];
                 if(!gift) return;
 
-                get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                    const hostName = snap.val();
-                    if(hostName === currentUser) {
-                        showToast("You cannot send gifts to your own room!");
-                        return;
-                    }
+                if(currentRoomHost === currentUser) {
+                    showToast("You cannot send gifts to your own room!");
+                    return;
+                }
+                
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= gift.cost) {
+                    // 1. Deduct from Sender
+                    let newBal = currentBal - gift.cost;
+                    set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                    localStorage.setItem('zingoo_diamonds', newBal);
+                    document.getElementById('lobby-diamond-balance').innerText = newBal;
                     
-                    let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-                    if(currentBal >= gift.cost) {
-                        // 1. Deduct from Sender
-                        let newBal = currentBal - gift.cost;
-                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                        localStorage.setItem('zingoo_diamonds', newBal);
-                        document.getElementById('lobby-diamond-balance').innerText = newBal;
-                        
-                        // 2. Add to Host Profile
-                        get(ref(db, `users/${hostName}/diamonds`)).then((hSnap) => {
-                            let hBal = hSnap.val() || 0;
-                            set(ref(db, `users/${hostName}/diamonds`), hBal + gift.cost);
-                        });
+                    // 2. Add to Host Profile
+                    get(ref(db, `users/${currentRoomHost}/diamonds`)).then((hSnap) => {
+                        let hBal = hSnap.val() || 0;
+                        set(ref(db, `users/${currentRoomHost}/diamonds`), hBal + gift.cost);
+                    });
 
-                        // 3. Send visually appealing chat message
-                        push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                            user: currentUser,
-                            text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:25px; height:25px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
-                            timestamp: serverTimestamp()
-                        });
-                        
-                        showToast(`Successfully sent ${gift.name}!`);
-                        closeModal(); // Close modal if open
-                    } else {
-                        // REDIRECT IF INSUFFICIENT DIAMONDS
-                        if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store?`)) {
-                            window.location.href = 'index.html?action=buy_diamonds';
-                        }
+                    // 3. Send visually appealing chat message
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                        user: currentUser,
+                        text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:25px; height:25px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
+                        timestamp: serverTimestamp()
+                    });
+                    
+                    showToast(`Successfully sent ${gift.name}!`);
+                    closeModal();
+                } else {
+                    // REDIRECT IF INSUFFICIENT DIAMONDS
+                    if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store to buy more?`)) {
+                        window.redirectToDiamondStore();
                     }
-                });
+                }
             };
 
-            // Global removal for Admin/Host Video Control
             window.removeRoomMedia = function(roomId) {
                 remove(ref(db, 'audio_rooms/' + roomId + '/media'));
             };
@@ -1227,11 +1238,9 @@
                     lobbyScreen.style.display = 'none';
                     liveRoomScreen.style.display = 'flex';
 
-                    // Track host for YouTube control visibility
                     get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
                         currentRoomHost = hostSnap.val();
 
-                        // Render Youtube if exists (Host check applied)
                         if (unsubscribeMedia) unsubscribeMedia();
                         unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
                             const videoId = snap.val();
@@ -1261,7 +1270,6 @@
                         renderSeats(snapshot.val() || {});
                     });
 
-                    // Setup Chat Listeners
                     const chatContainer = document.getElementById('chat-messages');
                     const floatingContainer = document.getElementById('floating-live-chat');
                     
@@ -1309,7 +1317,7 @@
                         }
                     } else {
                         alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
-                        window.location.href = 'index.html?action=buy_diamonds';
+                        window.redirectToDiamondStore();
                     }
                 } else {
                     proceed();
@@ -1454,7 +1462,6 @@
                     createdAt: serverTimestamp(),
                     seats: {}
                 }).then(() => {
-                    // Send pending invites
                     pendingInvites.forEach(user => {
                         push(ref(db, `invites/${user}`), {
                             sender: currentUser,
@@ -1462,7 +1469,7 @@
                             timestamp: serverTimestamp()
                         });
                     });
-                    pendingInvites = []; // Clear array
+                    pendingInvites = [];
                     
                     closeModal();
                     joinAudioRoom(newRoomRef.key, topic, 0);
@@ -1471,7 +1478,6 @@
 
             document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
             
-            // --- Action Menu Buttons ---
             document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
@@ -1487,39 +1493,30 @@
             });
 
             document.getElementById('menu-mute-all-btn').addEventListener('click', () => {
-                if(currentActiveRoomId) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                        if(snap.val() === currentUser) {
-                            get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
-                                const seats = seatSnap.val();
-                                if(seats) {
-                                    Object.keys(seats).forEach(key => {
-                                        if(seats[key].user !== currentUser) {
-                                            set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
-                                        }
-                                    });
-                                    showToast("Muted all users.");
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
+                        const seats = seatSnap.val();
+                        if(seats) {
+                            Object.keys(seats).forEach(key => {
+                                if(seats[key].user !== currentUser) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
                                 }
                             });
-                        } else {
-                            showToast("Only the host can mute all!");
+                            showToast("Muted all users.");
                         }
                     });
+                } else {
+                    showToast("Only the host can mute all!");
                 }
                 closeModal();
             });
 
-            // YouTube Media Sync 
             document.getElementById('menu-youtube-btn').addEventListener('click', () => {
                 closeModal();
-                if(currentActiveRoomId) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                        if(snap.val() === currentUser) {
-                            openModal('youtube-modal');
-                        } else {
-                            showToast("Only host can play media.");
-                        }
-                    });
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    openModal('youtube-modal');
+                } else {
+                    showToast("Only host can play media.");
                 }
             });
 
@@ -1540,7 +1537,6 @@
                 }
             });
             
-            // Mic Toggle functionality physically mutes the Local Stream Track
             document.getElementById('main-mic-btn').addEventListener('click', () => {
                  if(currentActiveRoomId && mySeatIndex !== -1) {
                      const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
@@ -1563,7 +1559,6 @@
                  }
             });
 
-            // Re-use logic for the mic button inside the Action Menu
             document.getElementById('menu-mic-btn').addEventListener('click', () => {
                 document.getElementById('main-mic-btn').click();
                 closeModal();
