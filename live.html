@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zingoo - Live Streaming</title>
+    
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --baby-pink: #FFE4E8;
+            --pink-dark: #FFB6C1;
+            --primary-red: #FF3366;
+            --dark-text: #333333;
+            --white: #FFFFFF;
+            --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--baby-pink), #FFF0F5);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { display: none; }
+
+        /* --- LOGIN SCREEN (ID Enforced) --- */
+        #id-login-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        #id-login-screen .logo-container {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        #id-login-screen .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--baby-pink);
+            text-align: center;
+        }
+
+        #id-login-screen h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
+        #id-login-screen p { font-size: 13px; color: #666; margin-bottom: 25px; }
+        
+        .avatar-upload-box {
+            cursor: pointer; margin-bottom: 20px; display: inline-block;
+        }
+        .avatar-upload-box img {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
+            border: 3px solid var(--primary-red); box-shadow: 0 4px 15px rgba(255,51,102,0.2);
+        }
+        .avatar-upload-box p { font-size: 11px; color: var(--primary-red); margin-top: 8px; font-weight: bold; }
+
+        #id-login-screen input[type="number"] {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
+            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
+            outline: none; transition: border 0.3s;
+        }
+        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; }
+        #id-login-screen button {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(255,51,102,0.4); transition: transform 0.2s;
+        }
+        #id-login-screen button:hover { transform: translateY(-2px); }
+
+        /* --- Header Styling (Glassmorphism) --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+
+        .diamond-bal {
+            background: #fff; border: 1px solid var(--pink-dark); color: #d97706; 
+            padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+        }
+
+        .start-live-btn {
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .start-live-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.6);
+        }
+
+        .start-live-btn i { animation: pulse-icon 1.5s infinite; }
+
+        /* --- Main Content & Grid (2-2 Layout) --- */
+        main { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary-red); }
+
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .live-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.5);
+            background: #fff;
+        }
+
+        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .live-card:hover img { transform: scale(1.05); }
+
+        .card-top-info {
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 2;
+        }
+
+        .live-badge {
+            background: var(--primary-red); color: white; font-size: 10px; font-weight: 700;
+            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite;
+        }
+
+        .viewers {
+            background: rgba(0, 0, 0, 0.5); color: white; font-size: 11px; padding: 4px 8px;
+            border-radius: 8px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;
+        }
+
+        .card-bottom-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 10px 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; z-index: 2;
+        }
+
+        .user-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        /* --- Start Live Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            width: 90%; max-width: 350px; transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        
+        .modal-box h3 { color: var(--primary-red); margin-bottom: 10px; font-weight: 700; }
+        .modal-box input[type="text"] {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
+            margin-bottom: 15px; font-family: 'Poppins'; outline: none;
+        }
+        
+        .thumb-upload {
+            border: 2px dashed var(--pink-dark); padding: 15px; border-radius: 10px;
+            margin-bottom: 20px; cursor: pointer; color: var(--primary-red); font-size: 12px; font-weight: 600;
+        }
+
+        .modal-btns { display: flex; gap: 10px; }
+        .btn-confirm { flex: 1; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { flex: 1; background: var(--baby-pink); color: var(--primary-red); border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+
+        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
+        #live-view-screen {
+            position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
+        }
+        
+        .live-video-container { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; }
+        
+        #remote-live-video, #local-live-video {
+            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
+        }
+        
+        .live-overlay-top {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+            background: linear-gradient(rgba(0,0,0,0.6), transparent); z-index: 10;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        
+        .host-info { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px 5px 5px; border-radius: 30px; backdrop-filter: blur(5px); }
+        .host-info img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
+        .host-text h4 { color: white; font-size: 13px; font-weight: 700; line-height: 1; }
+        .host-text p { color: #ccc; font-size: 10px; margin-top: 2px; }
+        
+        .close-live-btn { width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(5px); }
+        
+        .live-overlay-bottom {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 10;
+        }
+        
+        .chat-box { height: 150px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; mask-image: linear-gradient(to top, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to top, black 80%, transparent 100%); }
+        .chat-msg { color: white; font-size: 13px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 15px; width: max-content; max-width: 80%; }
+        .chat-msg span { color: var(--pink-dark); font-weight: 700; margin-right: 5px; }
+        
+        .action-bar { display: flex; gap: 10px; align-items: center; }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 0 15px; display: flex; align-items: center; backdrop-filter: blur(5px); }
+        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; }
+        .chat-input-wrapper input::placeholder { color: #ccc; }
+        
+        .gift-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 15px rgba(255,51,102,0.5); }
+        
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); color: white;
+            display: none; justify-content: center; align-items: center; z-index: 9999;
+            font-size: 18px; font-weight: bold; flex-direction: column;
+        }
+
+        /* --- Animations --- */
+        @keyframes pulse-bg {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+        @keyframes pulse-icon {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #fff; color: var(--dark-text); padding: 12px 25px; border-radius: 30px;
+            font-size: 13px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-red); transition: transform 0.3s ease; z-index: 100000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- Global Toast Notification -->
+    <div class="toast" id="toastMsg">Action Successful!</div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="id-login-screen">
+        <div class="logo-container">ZINGOO LIVE</div>
+        <div class="login-card">
+            <h2>Live Room Access</h2>
+            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
+            
+            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
+                <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
+                <p>Tap to upload picture</p>
+            </div>
+
+            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
+            <button id="btn-login-id">Enter Live App</button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER & HOME PAGE -->
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="logo" onclick="window.location.href='index.html'">Zingoo</div>
+            <div class="header-actions">
+                <div class="diamond-bal" onclick="redirectToDiamondStore()">
+                    <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
+                </div>
+                <button class="start-live-btn" onclick="openStartLiveModal()">
+                    <i class="fas fa-video"></i> Go Live
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <h2 class="section-title">Trending Now 🔥</h2>
+            <!-- Dynamic Grid -->
+            <div class="live-grid" id="liveGrid">
+                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">Fetching active streams...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- 3. START LIVE MODAL -->
+    <div class="modal-overlay" id="startLiveModal">
+        <div class="modal-box">
+            <i class="fas fa-broadcast-tower" style="font-size: 40px; color: var(--primary-red); margin-bottom: 15px;"></i>
+            <h3>Ready to Stream?</h3>
+            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
+            
+            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
+            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
+                <i class="fas fa-image"></i> <span id="thumb-name-display">Upload Thumbnail (Optional)</span>
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
+                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
+    <div id="live-view-screen">
+        <div class="live-video-container">
+            <!-- Broadcaster Video -->
+            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1);"></video>
+            <!-- Viewer Video -->
+            <video id="remote-live-video" autoplay playsinline style="display:none;"></video>
+        </div>
+        
+        <div class="live-overlay-top">
+            <div class="host-info">
+                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
+                <div class="host-text">
+                    <h4 id="live-host-name">Host Name</h4>
+                    <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
+                </div>
+            </div>
+            <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="live-overlay-bottom">
+            <div class="chat-box" id="live-chat-box">
+                <div class="chat-msg"><span>System:</span> Welcome to the live stream!</div>
+            </div>
+            <div class="action-bar">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="live-chat-input" placeholder="Say something...">
+                </div>
+                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px; color: var(--primary-red);"></i>
+        <p id="loading-text">Connecting...</p>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
+    <!-- ============================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // --- FIREBASE SETUP ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
+            authDomain: "benchtopinnovations12.firebaseapp.com",
+            databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
+            projectId: "benchtopinnovations12",
+            storageBucket: "benchtopinnovations12.firebasestorage.app",
+            messagingSenderId: "113274194106",
+            appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- APIS ---
+        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
+        const CLOUD_NAME = "dotjw6tep"; 
+        const UPLOAD_PRESET = "Zingoo"; 
+
+        // --- GLOBAL VARIABLES ---
+        let currentUser = null;
+        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
+        let currentUserId = null;
+        let userDiamonds = 0;
+        let selectedAvatarFile = null;
+        let selectedThumbFile = null;
+
+        // WebRTC Variables
+        const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+        let localStream = null;
+        let currentStreamId = null;
+        let isHost = false;
+        let hostPeerConnections = {}; // For 1-to-Many broadcasting
+        let viewerPeerConnection = null; // For watching
+
+        // --- TOAST FUNCTION ---
+        function showToast(message) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function showLoading(text) {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        // --- 1. ID LOGIN & IMGBB LOGIC ---
+        const loginScreen = document.getElementById('id-login-screen');
+        const mainApp = document.getElementById('main-app');
+
+        const storedId = localStorage.getItem("zingoo_id");
+        if (storedId) {
+            document.getElementById('login-zingoo-id').value = storedId;
+            const storedAv = localStorage.getItem("zingoo_avatar");
+            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+        }
+
+        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
+                reader.readAsDataURL(e.target.files[0]);
+                selectedAvatarFile = e.target.files[0];
+            }
+        });
+
+        document.getElementById('btn-login-id').addEventListener('click', () => {
+            const enteredId = document.getElementById('login-zingoo-id').value.trim();
+            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
+            
+            const btn = document.getElementById('btn-login-id');
+            btn.innerText = "Verifying...";
+
+            if (selectedAvatarFile) {
+                const formData = new FormData();
+                formData.append("image", selectedAvatarFile);
+                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
+                .then(res => res.json()).then(data => {
+                    if (data.success) currentAvatar = data.data.url;
+                    validateDatabaseLogin(enteredId);
+                }).catch(err => {
+                    showToast("Image upload failed, using default.");
+                    validateDatabaseLogin(enteredId);
+                });
+            } else {
+                validateDatabaseLogin(enteredId);
+            }
+        });
+
+        function validateDatabaseLogin(enteredId) {
+            get(ref(db, 'users')).then(snapshot => {
+                let userFound = false;
+                const allUsers = snapshot.val();
+                let userKey = null;
+                
+                if (allUsers) {
+                    for (let key in allUsers) {
+                        if (allUsers[key].id === enteredId) {
+                            currentUser = allUsers[key].name;
+                            currentUserId = enteredId;
+                            userKey = key;
+                            userFound = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (userFound) {
+                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
+                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+
+                    localStorage.setItem("zingoo_user", currentUser);
+                    localStorage.setItem("zingoo_avatar", currentAvatar);
+                    localStorage.setItem("zingoo_id", enteredId);
+                    
+                    userDiamonds = allUsers[userKey].diamonds || 0;
+                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    
+                    loginScreen.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    showToast(`Welcome, ${currentUser}!`);
+                    
+                    // Start fetching active live streams
+                    fetchLiveStreams();
+                    
+                    // Listen for diamond updates live
+                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                        userDiamonds = snap.val() || 0;
+                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    });
+                } else {
+                    showToast("Invalid ID! User not found.");
+                    document.getElementById('btn-login-id').innerText = "Enter Live App";
+                }
+            }).catch(err => {
+                showToast("Connection error!");
+                document.getElementById('btn-login-id').innerText = "Enter Live App";
+            });
+        }
+
+
+        // --- 2. CLOUDINARY THUMBNAIL UPLOAD (Optional for Go Live) ---
+        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedThumbFile = e.target.files[0];
+                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
+            }
+        });
+
+        async function uploadToCloudinary(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET); 
+                formData.append('cloud_name', CLOUD_NAME);
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+                const data = await res.json();
+                return data.secure_url || null;
+            } catch (err) { return null; }
+        }
+
+
+        // --- 3. FETCH LIVE STREAMS (GRID) ---
+        const gridContainer = document.getElementById('liveGrid');
+
+        function fetchLiveStreams() {
+            onValue(ref(db, 'live_streams'), (snapshot) => {
+                gridContainer.innerHTML = '';
+                const streams = snapshot.val();
+                let count = 0;
+                
+                if (streams) {
+                    Object.entries(streams).forEach(([streamId, data]) => {
+                        if (data.isLive) {
+                            count++;
+                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
+                            const thumbUrl = data.thumbnail || data.hostAvatar; // Fallback to avatar if no thumb
+
+                            const card = document.createElement('div');
+                            card.className = 'live-card';
+                            card.onclick = () => joinLiveStream(streamId, data);
+                            
+                            card.innerHTML = `
+                                <img src="${thumbUrl}" alt="Live">
+                                <div class="card-top-info">
+                                    <span class="live-badge">LIVE</span>
+                                    <span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>
+                                </div>
+                                <div class="card-bottom-info">
+                                    <div class="user-name">${data.hostName}</div>
+                                    <div style="font-size:11px; margin-top:3px; color:#ddd;">${data.title}</div>
+                                </div>
+                            `;
+                            gridContainer.appendChild(card);
+                        }
+                    });
+                }
+                
+                if(count === 0) {
+                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">No one is currently live. Be the first!</p>';
+                }
+            });
+        }
+
+        // --- MODAL FUNCTIONS ---
+        window.openStartLiveModal = () => {
+            document.getElementById('startLiveModal').classList.add('active');
+        };
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.remove('active');
+        };
+
+        // --- 4. WEBRTC BROADCASTING (HOST) ---
+        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
+            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            closeModal('startLiveModal');
+            showLoading("Accessing Camera...");
+
+            try {
+                // Get Camera & Mic
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                
+                let thumbUrl = "";
+                if(selectedThumbFile) {
+                    showLoading("Uploading Thumbnail...");
+                    thumbUrl = await uploadToCloudinary(selectedThumbFile);
+                }
+
+                showLoading("Starting Stream...");
+                
+                // Create Node in Firebase
+                const newStreamRef = push(ref(db, 'live_streams'));
+                currentStreamId = newStreamRef.key;
+                isHost = true;
+
+                await set(newStreamRef, {
+                    hostName: currentUser,
+                    hostAvatar: currentAvatar,
+                    title: title,
+                    thumbnail: thumbUrl || currentAvatar,
+                    isLive: true,
+                    timestamp: serverTimestamp()
+                });
+
+                // Remove stream on disconnect
+                onDisconnect(newStreamRef).remove();
+
+                // Setup UI
+                document.getElementById('main-app').style.display = 'none';
+                const liveScreen = document.getElementById('live-view-screen');
+                liveScreen.style.display = 'flex';
+                
+                const localVideo = document.getElementById('local-live-video');
+                localVideo.style.display = 'block';
+                document.getElementById('remote-live-video').style.display = 'none';
+                localVideo.srcObject = localStream;
+
+                document.getElementById('live-host-name').innerText = currentUser + " (You)";
+                document.getElementById('live-host-avatar').src = currentAvatar;
+
+                hideLoading();
+                showToast("You are now LIVE! 🔴");
+                setupLiveChat();
+
+                // Listen for Viewers joining and offering WebRTC connection
+                onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
+                    const viewerId = snapshot.key;
+                    const viewerData = snapshot.val();
+                    
+                    document.getElementById('live-viewer-count').innerText = Object.keys(await (await get(ref(db, `live_streams/${currentStreamId}/viewers`))).val() || {}).length;
+
+                    if (viewerData.offer) {
+                        // Create a connection for this specific viewer
+                        const pc = new RTCPeerConnection(iceServers);
+                        hostPeerConnections[viewerId] = pc;
+
+                        // Add local tracks to this connection
+                        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                        // Listen for ICE candidates from Host to send to Viewer
+                        pc.onicecandidate = e => {
+                            if (e.candidate) {
+                                push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
+                            }
+                        };
+
+                        // Process the Viewer's offer
+                        await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+
+                        // Send Answer back to Viewer
+                        await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
+                            type: answer.type, sdp: answer.sdp
+                        });
+
+                        // Listen for Viewer's ICE candidates
+                        onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
+                            if(snap.val()) pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+                        });
+                    }
+                });
+
+            } catch (err) {
+                hideLoading();
+                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
+            }
+        });
+
+
+        // --- 5. WEBRTC VIEWING (VIEWER) ---
+        async function joinLiveStream(streamId, streamData) {
+            showLoading("Joining Room...");
+            currentStreamId = streamId;
+            isHost = false;
+
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+            
+            document.getElementById('local-live-video').style.display = 'none';
+            const remoteVideo = document.getElementById('remote-live-video');
+            remoteVideo.style.display = 'block';
+
+            document.getElementById('live-host-name').innerText = streamData.hostName;
+            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
+
+            try {
+                viewerPeerConnection = new RTCPeerConnection(iceServers);
+
+                // When stream is received, play it
+                viewerPeerConnection.ontrack = e => {
+                    remoteVideo.srcObject = e.streams[0];
+                };
+
+                // Send ICE candidates to Host
+                viewerPeerConnection.onicecandidate = e => {
+                    if (e.candidate) {
+                        push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
+                    }
+                };
+
+                // Create Offer (Viewer initiates to receive media)
+                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
+                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
+                
+                const offer = await viewerPeerConnection.createOffer();
+                await viewerPeerConnection.setLocalDescription(offer);
+
+                // Write offer to Firebase
+                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
+                    username: currentUser,
+                    offer: { type: offer.type, sdp: offer.sdp }
+                });
+
+                // Delete entry on disconnect
+                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
+
+                // Wait for Host's Answer
+                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
+                    const answer = snap.val();
+                    if (answer && viewerPeerConnection.signalingState !== "closed") {
+                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                    }
+                });
+
+                // Listen for Host's ICE Candidates
+                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
+                    if(snap.val()) viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
+                });
+
+                // Update viewer count locally
+                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
+                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+                });
+
+                hideLoading();
+                setupLiveChat();
+                
+                // System message to chat
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined!` });
+
+            } catch(e) {
+                hideLoading();
+                showToast("Failed to join stream.");
+                leaveLiveStream();
+            }
+        }
+
+
+        // --- 6. LEAVE/STOP STREAM ---
+        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
+
+        function leaveLiveStream() {
+            document.getElementById('live-view-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+
+            if (isHost && currentStreamId) {
+                // Stop camera
+                if (localStream) localStream.getTracks().forEach(t => t.stop());
+                // Close all peer connections
+                Object.values(hostPeerConnections).forEach(pc => pc.close());
+                hostPeerConnections = {};
+                // Remove stream from Firebase
+                remove(ref(db, `live_streams/${currentStreamId}`));
+            } else if (!isHost && currentStreamId) {
+                if (viewerPeerConnection) viewerPeerConnection.close();
+                viewerPeerConnection = null;
+                // Remove viewer from Firebase
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
+                // Notify chat
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
+            }
+
+            currentStreamId = null;
+            document.getElementById('local-live-video').srcObject = null;
+            document.getElementById('remote-live-video').srcObject = null;
+            document.getElementById('live-chat-box').innerHTML = ''; // clear chat
+        }
+
+
+        // --- 7. LIVE CHAT FUNCTIONALITY ---
+        function setupLiveChat() {
+            const chatBox = document.getElementById('live-chat-box');
+            chatBox.innerHTML = ''; // reset
+            
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
+                const data = snap.val();
+                if(data) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'chat-msg';
+                    if (data.user === 'System') {
+                        msgDiv.style.color = '#FFB6C1';
+                        msgDiv.style.fontStyle = 'italic';
+                        msgDiv.innerHTML = `${data.text}`;
+                    } else if (data.isGift) {
+                        msgDiv.style.background = 'var(--gradient-main)';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎`;
+                    } else {
+                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+                    }
+                    chatBox.appendChild(msgDiv);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const text = this.value.trim();
+                if (text && currentStreamId) {
+                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
+                    this.value = '';
+                }
+            }
+        });
+
+
+        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
+        window.handleGiftClick = function() {
+            if (isHost) {
+                showToast("You cannot send gifts to yourself!");
+                return;
+            }
+
+            const giftCost = 10; // 10 Diamonds per click
+
+            if (userDiamonds >= giftCost) {
+                // Deduct diamonds
+                const newBal = userDiamonds - giftCost;
+                get(ref(db, 'users')).then(snap => {
+                    const users = snap.val();
+                    for(let key in users) {
+                        if(users[key].name === currentUser) {
+                            set(ref(db, `users/${key}/diamonds`), newBal);
+                            break;
+                        }
+                    }
+                });
+                
+                // Send gift message to chat
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
+                showToast("Gift Sent! 💎");
+                
+            } else {
+                // NOT ENOUGH DIAMONDS -> Redirect to Main App Diamond Store
+                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
+                
+                if(confirmBuy) {
+                    leaveLiveStream();
+                    redirectToDiamondStore();
+                }
+            }
+        };
+
+        window.redirectToDiamondStore = function() {
+            // As requested, redirecting back to main app to buy diamonds.
+            // Appending a query parameter so main index.html knows to open the store overlay immediately.
+            window.location.href = 'index.html?action=buy_diamonds';
+        };
+
+    </script>
+</body>
+</html>
