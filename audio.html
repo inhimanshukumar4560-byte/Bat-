@@ -88,7 +88,7 @@
             inset: 0;
             background: #ffffff;
             z-index: 9999;
-            display: flex;
+            display: flex; /* Kept as flex but JS will override if logged in */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -194,20 +194,41 @@
         .room-body::-webkit-scrollbar { display: none; }
         .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; z-index: 5;}
         
-        /* UPGRADED SEATS UI */
+        /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
         .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: linear-gradient(135deg, #eee, #ddd); transition: all 0.3s ease; }
-        .speaker-seat img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+        .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
         .speaker-seat p { font-size: 0.7em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
         .admin-tag { background: rgba(255,0,76,0.1); color: var(--hot-pink); font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
         
+        /* NEW: Custom Store Chair Frame Styling */
+        .custom-chair-frame {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 5px 15px rgba(255, 0, 76, 0.4));
+            object-fit: contain;
+        }
+        @keyframes floatChair {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-chair {
+            animation: floatChair 3s ease-in-out infinite;
+        }
+
         .speaker-seat.is-speaking .avatar-container {
             background: linear-gradient(135deg, var(--green-live), #00e676);
             box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
             animation: pulse-green 1.5s infinite;
         }
 
-        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 15;}
         .mic-icon-status.muted { color: #ff004c; }
         
         .speaker-seat.empty .avatar-container { 
@@ -741,12 +762,8 @@
             let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             
-            const storedId = localStorage.getItem("zingoo_id");
-            if (storedId) {
-                loginInput.value = storedId;
-                const storedAv = localStorage.getItem("zingoo_avatar");
-                if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
-            }
+            // NEW: Global variable to store equipped premium chair/frame
+            let myEquippedChair = null;
 
             const showToast = (message) => {
                 globalToast.innerText = message;
@@ -754,7 +771,17 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
-            // NEW: Grand Gift Animation Trigger Function
+            // NEW AUTO-LOGIN & DIRECT APP ENTRY LOGIC
+            const storedId = localStorage.getItem("zingoo_id");
+            if (storedId) {
+                // Instantly hide the login screen, go direct to app verification
+                idLoginScreen.style.display = 'none';
+                processDatabaseLogin(storedId, true); // true indicates auto-login
+            } else {
+                // If no stored ID, show login screen
+                idLoginScreen.style.display = 'flex';
+            }
+
             window.triggerGrandGiftAnimation = function(imgUrl, senderName) {
                 const container = document.body;
                 const giftDiv = document.createElement('div');
@@ -765,7 +792,6 @@
                 `;
                 container.appendChild(giftDiv);
                 
-                // Remove from DOM after animation completes
                 setTimeout(() => {
                     if(giftDiv.parentNode) { giftDiv.parentNode.removeChild(giftDiv); }
                 }, 3500);
@@ -805,21 +831,22 @@
                     }).then(res => res.json()).then(data => {
                         if (data.success) {
                             currentAvatar = data.data.url;
-                            processDatabaseLogin(enteredId);
+                            processDatabaseLogin(enteredId, false);
                         } else {
                             showToast("Image upload failed. Please try another image.");
-                            processDatabaseLogin(enteredId); 
+                            processDatabaseLogin(enteredId, false); 
                         }
                     }).catch(err => {
                         showToast("Image upload failed, using default.");
-                        processDatabaseLogin(enteredId);
+                        processDatabaseLogin(enteredId, false);
                     });
                 } else {
-                    processDatabaseLogin(enteredId);
+                    processDatabaseLogin(enteredId, false);
                 }
             });
 
-            function processDatabaseLogin(enteredId) {
+            // UPDATED: processDatabaseLogin handles auto-login and fetches Premium Chair
+            function processDatabaseLogin(enteredId, isAutoLogin = false) {
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
@@ -837,7 +864,10 @@
                     }
                     
                     if (userFound) {
-                        if (selectedAvatarFile) {
+                        // NEW: Fetch equipped premium chair if bought from store
+                        myEquippedChair = allUsers[userKey].equippedChair || null;
+
+                        if (selectedAvatarFile && !isAutoLogin) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
                         } else {
                             currentAvatar = allUsers[userKey].avatar || currentAvatar;
@@ -859,14 +889,24 @@
                         fetchAdminGifts(); 
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
-                        showToast("Invalid ID! User not found.");
+                        // If auto-login fails (user deleted), show the screen again
+                        if(isAutoLogin) {
+                            localStorage.removeItem("zingoo_id");
+                            idLoginScreen.style.display = 'flex';
+                        } else {
+                            showToast("Invalid ID! User not found.");
+                            loginBtn.innerText = "Enter Rooms";
+                            loginBtn.disabled = false;
+                        }
+                    }
+                }).catch(err => {
+                    if(isAutoLogin) {
+                        idLoginScreen.style.display = 'flex';
+                    } else {
+                        showToast("Error connecting to database.");
                         loginBtn.innerText = "Enter Rooms";
                         loginBtn.disabled = false;
                     }
-                }).catch(err => {
-                    showToast("Error connecting to database.");
-                    loginBtn.innerText = "Enter Rooms";
-                    loginBtn.disabled = false;
                 });
             }
 
@@ -943,11 +983,10 @@
                         set(ref(db, `users/${currentRoomHost}/diamonds`), hBal + gift.cost);
                     });
 
-                    // UPDATED: Push giftUrl to trigger the grand animation for everyone
                     push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
                         user: currentUser,
                         text: `Sent ${gift.name}!`,
-                        giftUrl: gift.imageUrl, // Added for Grand Animation
+                        giftUrl: gift.imageUrl, 
                         timestamp: serverTimestamp()
                     });
                     
@@ -1339,7 +1378,6 @@
                     if (unsubscribeChat) unsubscribeChat();
                     const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
                     
-                    // UPDATED: Advanced Chat Listener for Glassy & Grand Gifts
                     unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
                         const msgData = snapshot.val();
                         if(msgData) {
@@ -1350,7 +1388,6 @@
                                 msgDiv.style.background = 'rgba(255, 0, 76, 0.05)';
                             }
 
-                            // Check if it's a gift message
                             if(msgData.giftUrl) {
                                 triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
                                 msgDiv.classList.add('gift-message');
@@ -1394,6 +1431,7 @@
                 }
             }
 
+            // UPDATED: RENDER SEATS WITH CHAIR/FRAME INTEGRATION
             function renderSeats(seatsData) {
                 speakerGrid.innerHTML = '';
                 
@@ -1424,9 +1462,16 @@
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
                         if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
+                        // NEW: Inject Custom Chair/Frame if User Owns it
+                        let chairHTML = '';
+                        if (seatInfo.chairUrl) {
+                            chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
+                        }
+
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
-                                <img src="${seatInfo.avatar}" alt="Speaker">
+                                ${chairHTML}
+                                <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
                                 <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
                                 </div>
@@ -1447,6 +1492,7 @@
                 }
             }
             
+            // UPDATED: Push chair data when taking a seat
             window.audioRoomAPI = {
                 takeSeat: (index) => {
                     if (!currentActiveRoomId) return;
@@ -1455,7 +1501,13 @@
                         return;
                     }
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
-                    set(seatRef, { user: currentUser, avatar: currentAvatar, isMuted: false, timestamp: serverTimestamp() });
+                    set(seatRef, { 
+                        user: currentUser, 
+                        avatar: currentAvatar, 
+                        isMuted: false, 
+                        timestamp: serverTimestamp(),
+                        chairUrl: myEquippedChair // Assign global chair URL
+                    });
                 },
                 leaveSeat: () => {
                     if (!currentActiveRoomId || mySeatIndex === -1) return;
@@ -1481,7 +1533,6 @@
                 lobbyScreen.style.display = 'flex';
             }
 
-            // UPDATED: Fixed Chat Sending Function
             function sendRoomMessage() {
                 const input = document.getElementById('live-chat-input');
                 const text = input.value.trim();
@@ -1492,7 +1543,7 @@
                     text: text,
                     timestamp: serverTimestamp()
                 });
-                input.value = ''; // Clear input smoothly
+                input.value = ''; 
             }
             document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
             document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
