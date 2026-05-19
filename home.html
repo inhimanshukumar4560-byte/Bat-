@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
 <head>
@@ -717,7 +718,7 @@
 </div>
 
 <!-- PRIVATE CHAT OVERLAY -->
-<div id="chat-overlay" class="fixed inset-0 bg-white flex-col hidden z-[9900]">
+<div id="chat-overlay" class="fixed inset-0 bg-white flex-col hidden z-[10000]">
     <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-200 shadow-sm">
         <div class="flex items-center gap-3">
             <button id="btn-close-chat" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
@@ -911,6 +912,7 @@
   let currentUser = localStorage.getItem("zingoo_user");
   let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
   let currentId = localStorage.getItem("zingoo_id");
+  window.hasPromptedActiveStatus = false; // Flag to prevent multiple prompts
 
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
@@ -1022,10 +1024,11 @@
       if(txt === "Active") { updateUserStatus('offline'); } else { updateUserStatus('online'); }
   };
 
-  document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
-      else { updateUserStatus('offline'); }
-  });
+  // Visibility change disabled to prevent instant offline glitch on mobile tabs
+  // document.addEventListener('visibilitychange', () => {
+  //     if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
+  //     else { updateUserStatus('offline'); }
+  // });
 
   function initPresence() {
       if(!currentUser) return;
@@ -1034,10 +1037,26 @@
           if (snap.val() === true) {
               const userStatusRef = ref(db, `users/${currentUser}/status`);
               onDisconnect(userStatusRef).set('offline');
-              updateUserStatus('online');
+              
+              if(!window.hasPromptedActiveStatus) {
+                  let wantsActive = confirm("Do you want to appear 'Active' (Online) to other users?");
+                  updateUserStatus(wantsActive ? 'online' : 'offline');
+                  window.hasPromptedActiveStatus = true;
+              } else {
+                  // Keep whatever status they currently chose if connection drops and reconnects
+                  updateUserStatus(document.getElementById('status-text').innerText === "Active" ? 'online' : 'offline');
+              }
           }
       });
   }
+
+  // Exit prompt handler via standard browser API
+  window.addEventListener("beforeunload", function (e) {
+      if(currentUser) {
+          e.preventDefault();
+          e.returnValue = "Do you want to leave and appear inactive?";
+      }
+  });
 
   // --- NOTIFICATION SYSTEM (Chat, Video Call, Audio Call) ---
   window.sendNotification = function(target, type, message) {
@@ -1517,6 +1536,7 @@
       document.getElementById('see-all-overlay').style.display = 'none'; 
       document.getElementById('chat-list-overlay').style.display = 'none'; 
       document.body.style.overflow = 'auto';
+      document.getElementById('bottom-nav').style.display = 'none'; // ADDED TO FIX OVERLAP
       currentChatPartnerName = name; currentActiveChatId = [currentUser, name].sort().join('_'); 
       document.getElementById("chat-header-name").innerText = name;
       document.getElementById("chat-header-img").src = avatar;
@@ -1536,7 +1556,10 @@
       });
   };
 
-  document.getElementById("btn-close-chat").addEventListener("click", () => { document.getElementById("chat-overlay").style.display = "none"; });
+  document.getElementById("btn-close-chat").addEventListener("click", () => { 
+      document.getElementById("chat-overlay").style.display = "none"; 
+      document.getElementById('bottom-nav').style.display = 'flex'; // ADDED TO BRING NAV BACK
+  });
   document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
   
   function sendMessage() {
