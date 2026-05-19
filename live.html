@@ -185,6 +185,12 @@
             background: var(--primary-red); color: white; font-size: 10px; font-weight: 700;
             padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite;
         }
+        
+        /* New Scheduled Badge Style */
+        .scheduled-badge {
+            background: #f39c12; color: white; font-size: 10px; font-weight: 700;
+            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px;
+        }
 
         .viewers {
             background: rgba(0, 0, 0, 0.5); color: white; font-size: 11px; padding: 4px 8px;
@@ -210,21 +216,36 @@
         .modal-box {
             background: white; padding: 30px; border-radius: 20px; text-align: center;
             width: 90%; max-width: 350px; transform: translateY(20px); transition: transform 0.3s ease;
+            max-height: 90vh; overflow-y: auto;
         }
         .modal-overlay.active .modal-box { transform: translateY(0); }
         
         .modal-box h3 { color: var(--primary-red); margin-bottom: 10px; font-weight: 700; }
-        .modal-box input[type="text"] {
+        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
             margin-bottom: 15px; font-family: 'Poppins'; outline: none;
         }
         
         .thumb-upload {
             border: 2px dashed var(--pink-dark); padding: 15px; border-radius: 10px;
-            margin-bottom: 20px; cursor: pointer; color: var(--primary-red); font-size: 12px; font-weight: 600;
+            margin-bottom: 10px; cursor: pointer; color: var(--primary-red); font-size: 12px; font-weight: 600;
         }
+        
+        /* New Past Thumbnails Style */
+        .past-thumbs-wrapper {
+            margin-bottom: 15px; text-align: left;
+        }
+        .past-thumbs-wrapper p { font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600; }
+        .past-thumbs-list {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .past-thumbs-list img {
+            width: 50px; height: 50px; border-radius: 8px; object-fit: cover; cursor: pointer;
+            border: 2px solid transparent; transition: border 0.2s;
+        }
+        .past-thumbs-list img.selected { border: 2px solid var(--primary-red); transform: scale(1.05); }
 
-        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
         .btn-confirm { flex: 1; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: var(--baby-pink); color: var(--primary-red); border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
@@ -351,7 +372,18 @@
             
             <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
             <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
-                <i class="fas fa-image"></i> <span id="thumb-name-display">Upload Thumbnail (Optional)</span>
+                <i class="fas fa-image"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
+            </div>
+            
+            <!-- NEW: Past Thumbnails & Schedule Options -->
+            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
+                <p>Or choose previous thumbnail:</p>
+                <div class="past-thumbs-list" id="past-thumbs-container"></div>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 5px;">
+                <label style="font-size:11px; color:#666; font-weight:bold;">Schedule Live (Optional):</label>
+                <input type="datetime-local" id="live-schedule-time">
             </div>
 
             <div class="modal-btns">
@@ -406,7 +438,7 @@
     <!-- ============================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // --- FIREBASE SETUP ---
         const firebaseConfig = {
@@ -433,6 +465,7 @@
         let userDiamonds = 0;
         let selectedAvatarFile = null;
         let selectedThumbFile = null;
+        let selectedPastThumb = null; // New variable for previous thumbs
 
         // WebRTC Variables
         const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
@@ -553,11 +586,13 @@
         }
 
 
-        // --- 2. CLOUDINARY THUMBNAIL UPLOAD (Optional for Go Live) ---
+        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
         document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
             if(e.target.files[0]) {
                 selectedThumbFile = e.target.files[0];
+                selectedPastThumb = null; // Clear past selection if new uploaded
                 document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
+                clearPastThumbSelection();
             }
         });
 
@@ -573,6 +608,48 @@
             } catch (err) { return null; }
         }
 
+        // Add Past Thumbnails rendering logic
+        function loadPastThumbnails() {
+            const container = document.getElementById('past-thumbs-container');
+            const wrapper = document.getElementById('past-thumbs-wrapper');
+            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+            
+            if(pastThumbs.length > 0) {
+                wrapper.style.display = 'block';
+                container.innerHTML = '';
+                pastThumbs.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.onclick = () => {
+                        selectedPastThumb = url;
+                        selectedThumbFile = null; // Reset new file
+                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
+                        clearPastThumbSelection();
+                        img.classList.add('selected');
+                    };
+                    container.appendChild(img);
+                });
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function clearPastThumbSelection() {
+            const imgs = document.querySelectorAll('#past-thumbs-container img');
+            imgs.forEach(i => i.classList.remove('selected'));
+        }
+
+        function saveThumbToPast(url) {
+            if(url && url !== currentAvatar) {
+                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+                if(!pastThumbs.includes(url)) {
+                    pastThumbs.unshift(url); // Add to beginning
+                    if(pastThumbs.length > 5) pastThumbs.pop(); // Keep only last 5
+                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
+                }
+            }
+        }
+
 
         // --- 3. FETCH LIVE STREAMS (GRID) ---
         const gridContainer = document.getElementById('liveGrid');
@@ -585,20 +662,37 @@
                 
                 if (streams) {
                     Object.entries(streams).forEach(([streamId, data]) => {
-                        if (data.isLive) {
+                        // Include both active AND scheduled lives
+                        if (data.isLive || data.scheduledTime) {
                             count++;
                             const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
                             const thumbUrl = data.thumbnail || data.hostAvatar; // Fallback to avatar if no thumb
+                            
+                            // Badge logic based on status
+                            const badgeHTML = data.isLive ? 
+                                `<span class="live-badge">LIVE</span>` : 
+                                `<span class="scheduled-badge">SCHEDULED</span>`;
 
                             const card = document.createElement('div');
                             card.className = 'live-card';
-                            card.onclick = () => joinLiveStream(streamId, data);
+                            
+                            // Logic for clicking card
+                            card.onclick = () => {
+                                if (!data.isLive && data.hostName === currentUser) {
+                                    startScheduledLiveAsHost(streamId, data);
+                                } else if (!data.isLive) {
+                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
+                                    showToast(`This live starts later at: ${timeStr}`);
+                                } else {
+                                    joinLiveStream(streamId, data);
+                                }
+                            };
                             
                             card.innerHTML = `
                                 <img src="${thumbUrl}" alt="Live">
                                 <div class="card-top-info">
-                                    <span class="live-badge">LIVE</span>
-                                    <span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>
+                                    ${badgeHTML}
+                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
                                 </div>
                                 <div class="card-bottom-info">
                                     <div class="user-name">${data.hostName}</div>
@@ -618,6 +712,8 @@
 
         // --- MODAL FUNCTIONS ---
         window.openStartLiveModal = () => {
+            loadPastThumbnails();
+            document.getElementById('live-schedule-time').value = '';
             document.getElementById('startLiveModal').classList.add('active');
         };
         window.closeModal = (id) => {
@@ -627,19 +723,46 @@
         // --- 4. WEBRTC BROADCASTING (HOST) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            const scheduleInput = document.getElementById('live-schedule-time').value;
+            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
+            
             closeModal('startLiveModal');
-            showLoading("Accessing Camera...");
+            showLoading("Processing...");
 
             try {
-                // Get Camera & Mic
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                let thumbUrl = currentAvatar; // Start with fallback
                 
-                let thumbUrl = "";
                 if(selectedThumbFile) {
                     showLoading("Uploading Thumbnail...");
-                    thumbUrl = await uploadToCloudinary(selectedThumbFile);
+                    const uploaded = await uploadToCloudinary(selectedThumbFile);
+                    if(uploaded) {
+                        thumbUrl = uploaded;
+                        saveThumbToPast(thumbUrl);
+                    }
+                } else if (selectedPastThumb) {
+                    thumbUrl = selectedPastThumb;
                 }
 
+                // If scheduled, just write to DB and exit
+                if(isScheduled) {
+                    const newStreamRef = push(ref(db, 'live_streams'));
+                    await set(newStreamRef, {
+                        hostName: currentUser,
+                        hostAvatar: currentAvatar,
+                        title: title,
+                        thumbnail: thumbUrl,
+                        isLive: false,
+                        scheduledTime: new Date(scheduleInput).getTime(),
+                        timestamp: serverTimestamp()
+                    });
+                    hideLoading();
+                    showToast("Live Scheduled Successfully! ⏰");
+                    return; 
+                }
+
+                showLoading("Accessing Camera...");
+                // Get Camera & Mic
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 showLoading("Starting Stream...");
                 
                 // Create Node in Firebase
@@ -651,7 +774,7 @@
                     hostName: currentUser,
                     hostAvatar: currentAvatar,
                     title: title,
-                    thumbnail: thumbUrl || currentAvatar,
+                    thumbnail: thumbUrl,
                     isLive: true,
                     timestamp: serverTimestamp()
                 });
@@ -659,67 +782,108 @@
                 // Remove stream on disconnect
                 onDisconnect(newStreamRef).remove();
 
-                // Setup UI
-                document.getElementById('main-app').style.display = 'none';
-                const liveScreen = document.getElementById('live-view-screen');
-                liveScreen.style.display = 'flex';
-                
-                const localVideo = document.getElementById('local-live-video');
-                localVideo.style.display = 'block';
-                document.getElementById('remote-live-video').style.display = 'none';
-                localVideo.srcObject = localStream;
-
-                document.getElementById('live-host-name').innerText = currentUser + " (You)";
-                document.getElementById('live-host-avatar').src = currentAvatar;
-
-                hideLoading();
-                showToast("You are now LIVE! 🔴");
-                setupLiveChat();
-
-                // Listen for Viewers joining and offering WebRTC connection
-                onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
-                    const viewerId = snapshot.key;
-                    const viewerData = snapshot.val();
-                    
-                    document.getElementById('live-viewer-count').innerText = Object.keys(await (await get(ref(db, `live_streams/${currentStreamId}/viewers`))).val() || {}).length;
-
-                    if (viewerData.offer) {
-                        // Create a connection for this specific viewer
-                        const pc = new RTCPeerConnection(iceServers);
-                        hostPeerConnections[viewerId] = pc;
-
-                        // Add local tracks to this connection
-                        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-                        // Listen for ICE candidates from Host to send to Viewer
-                        pc.onicecandidate = e => {
-                            if (e.candidate) {
-                                push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
-                            }
-                        };
-
-                        // Process the Viewer's offer
-                        await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
-                        const answer = await pc.createAnswer();
-                        await pc.setLocalDescription(answer);
-
-                        // Send Answer back to Viewer
-                        await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
-                            type: answer.type, sdp: answer.sdp
-                        });
-
-                        // Listen for Viewer's ICE candidates
-                        onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
-                            if(snap.val()) pc.addIceCandidate(new RTCIceCandidate(snap.val()));
-                        });
-                    }
-                });
+                setupHostUIAndSignaling();
 
             } catch (err) {
                 hideLoading();
                 alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
             }
         });
+
+        // Function created to allow Host to start their pre-scheduled live directly
+        async function startScheduledLiveAsHost(streamId, data) {
+            showLoading("Accessing Camera...");
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                currentStreamId = streamId;
+                isHost = true;
+
+                // Update DB to mark as live and clear schedule
+                await update(ref(db, `live_streams/${streamId}`), {
+                    isLive: true,
+                    scheduledTime: null,
+                    timestamp: serverTimestamp()
+                });
+                
+                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
+                setupHostUIAndSignaling();
+            } catch (err) {
+                hideLoading();
+                alert("Could not start live: " + err.message);
+            }
+        }
+
+        // Extracted Host logic to reuse for Normal Live & Scheduled Live without breaking anything
+        function setupHostUIAndSignaling() {
+            // Setup UI
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+            
+            const localVideo = document.getElementById('local-live-video');
+            localVideo.style.display = 'block';
+            document.getElementById('remote-live-video').style.display = 'none';
+            localVideo.srcObject = localStream;
+
+            document.getElementById('live-host-name').innerText = currentUser + " (You)";
+            document.getElementById('live-host-avatar').src = currentAvatar;
+
+            hideLoading();
+            showToast("You are now LIVE! 🔴");
+            setupLiveChat();
+
+            // Listen for Viewers joining and offering WebRTC connection
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
+                const viewerId = snapshot.key;
+                const viewerData = snapshot.val();
+                
+                get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
+                    document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
+                });
+
+                if (viewerData.offer) {
+                    // Create a connection for this specific viewer
+                    const pc = new RTCPeerConnection(iceServers);
+                    hostPeerConnections[viewerId] = pc;
+
+                    // Add local tracks to this connection strictly
+                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                    // Listen for ICE candidates from Host to send to Viewer
+                    pc.onicecandidate = e => {
+                        if (e.candidate) {
+                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
+                        }
+                    };
+
+                    // Queue ICE candidates from Viewer to fix WebRTC race condition (THE BUG FIX)
+                    const viewerCandidatesQueue = [];
+                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
+                        if(snap.val()) {
+                            if(pc.remoteDescription && pc.remoteDescription.type) {
+                                pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+                            } else {
+                                viewerCandidatesQueue.push(snap.val());
+                            }
+                        }
+                    });
+
+                    // Process the Viewer's offer
+                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    // Send Answer back to Viewer
+                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
+                        type: answer.type, sdp: answer.sdp
+                    });
+
+                    // Flush queued candidates safely now
+                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
+                    viewerCandidatesQueue.length = 0;
+                }
+            });
+        }
 
 
         // --- 5. WEBRTC VIEWING (VIEWER) ---
@@ -742,9 +906,15 @@
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                // When stream is received, play it
+                // When stream is received, play it (Updated for better device compatibility)
                 viewerPeerConnection.ontrack = e => {
-                    remoteVideo.srcObject = e.streams[0];
+                    if (e.streams && e.streams[0]) {
+                        remoteVideo.srcObject = e.streams[0];
+                    } else {
+                        if (!remoteVideo.srcObject) remoteVideo.srcObject = new MediaStream();
+                        remoteVideo.srcObject.addTrack(e.track);
+                    }
+                    remoteVideo.play().catch(console.error);
                 };
 
                 // Send ICE candidates to Host
@@ -770,17 +940,28 @@
                 // Delete entry on disconnect
                 onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
 
+                // Queue ICE Candidates from Host (THE BUG FIX)
+                const hostCandidatesQueue = [];
+                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
+                    if(snap.val()) {
+                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
+                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
+                        } else {
+                            hostCandidatesQueue.push(snap.val());
+                        }
+                    }
+                });
+
                 // Wait for Host's Answer
                 onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
                     const answer = snap.val();
                     if (answer && viewerPeerConnection.signalingState !== "closed") {
                         await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                        
+                        // Flush queued ICE candidates after Answer is set
+                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
+                        hostCandidatesQueue.length = 0;
                     }
-                });
-
-                // Listen for Host's ICE Candidates
-                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
-                    if(snap.val()) viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
                 });
 
                 // Update viewer count locally
@@ -909,7 +1090,7 @@
 
         window.redirectToDiamondStore = function() {
             // As requested, redirecting back to main app to buy diamonds.
-            // Appending a query parameter so main index.html knows to open the store overlay immediately.
+            // Appending a query parameter so main index.html knows to open the store immediately.
             window.location.href = 'index.html?action=buy_diamonds';
         };
 
