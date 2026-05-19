@@ -10,8 +10,7 @@
     <style>
         /* --- Global Styles & Fonts --- */
         :root {
-            /* Zingoo Specific Light Theme Variables */
-            --dark-bg: #f8f9fa;
+            var(--dark-bg): #f8f9fa;
             --dark-secondary: #ffffff; 
             --dark-card: #ffffff;
             --glass-border: 1px solid #eeeeee;
@@ -20,8 +19,8 @@
             --hot-pink: #ff004c;
             --red-accent: #ff3b6b;
             --text-light: #888888;
-            --text-white: #111111; /* Flipped for light theme */
-            --text-pure-white: #ffffff; /* For buttons and dark cards */
+            --text-white: #111111;
+            --text-pure-white: #ffffff;
 
             --green-live: #25D366;
             
@@ -30,49 +29,28 @@
             --glow-green: 0 0 20px rgba(37, 211, 102, 0.7);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body {
-            height: 100%;
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-white);
+            height: 100%; font-family: 'Outfit', sans-serif;
+            background-color: var(--dark-bg); color: var(--text-white);
         }
 
         .main-container {
-            max-width: 500px;
-            margin: 0 auto;
-            height: 100dvh; /* Changed to 100dvh for better mobile scrolling */
-            position: relative;
-            background-color: #ffffff;
+            max-width: 500px; margin: 0 auto; height: 100dvh;
+            position: relative; background-color: #ffffff;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Contains the scroll inside */
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* --- Toast Notification --- */
         .toast-notification {
-            position: fixed;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border: var(--glass-border);
-            color: var(--text-white);
-            padding: 12px 25px;
-            border-radius: 40px;
-            font-size: 0.9em;
-            font-weight: 600;
-            z-index: 2000;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            white-space: nowrap;
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+            border: var(--glass-border); color: var(--text-white);
+            padding: 12px 25px; border-radius: 40px; font-size: 0.9em;
+            font-weight: 600; z-index: 2000; display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); white-space: nowrap;
             animation: islandDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-left: 4px solid var(--hot-pink);
         }
@@ -82,45 +60,24 @@
             100% { top: 25px; opacity: 1; transform: translateX(-50%) scale(1); }
         }
 
-        /* --- NEW: ID LOGIN SCREEN --- */
+        /* --- ID LOGIN SCREEN --- */
         #id-login-screen {
-            position: absolute;
-            inset: 0;
-            background: #ffffff;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            position: absolute; inset: 0; background: #ffffff;
+            z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
         }
-        
-        #id-login-screen .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        
+        #id-login-screen .logo-container { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         #id-login-screen .logo-container svg { width: 40px; height: 40px; fill: var(--hot-pink); }
         #id-login-screen .logo-container h1 { font-size: 28px; font-weight: 900; letter-spacing: 1px; color: #111; }
-        
         #id-login-screen .login-card {
-            width: 100%;
-            background: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            border: 1px solid #eee;
-            text-align: center;
+            width: 100%; background: #fff; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid #eee; text-align: center;
         }
-
         #id-login-screen .login-card h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
         #id-login-screen .login-card p { font-size: 13px; color: #666; margin-bottom: 25px; }
         #id-login-screen input[type="number"] {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
-            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
-            outline: none; transition: border 0.3s;
+            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center; outline: none; transition: border 0.3s;
         }
         #id-login-screen input[type="number"]:focus { border-color: var(--hot-pink); background: #fff; }
         #id-login-screen button {
@@ -130,54 +87,63 @@
         }
         #id-login-screen button:hover { transform: translateY(-2px); }
 
-        /* ---- LOBBY SCREEN STYLES ---- */
-        #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; }
+        /* ---- LOBBY SCREEN (NEW DESIGN MATCHING SCREENSHOT) ---- */
+        #lobby-screen { display: none; flex-direction: column; height: 100%; background: #fafafa; }
         
-        /* Top Header */
-        .lobby-header-top { padding: 15px 20px 10px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
-        .lobby-header-top .logo { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 1.2em; font-style: italic;}
-        .lobby-header-top .logo svg { width: 24px; height: 24px; fill: var(--hot-pink); }
+        .lobby-header-top { padding: 15px 20px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+        .lobby-header-top .logo { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 1.4em; }
+        .lobby-header-top .logo span { color: var(--hot-pink); }
+        .lobby-header-top .logo svg { width: 26px; height: 26px; fill: var(--hot-pink); }
         .lobby-header-top .actions { display: flex; align-items: center; gap: 15px; }
-        .lobby-header-top .actions i { font-size: 1.2em; color: #444; }
-        .diamond-badge { background: #f3e8ff; color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .lobby-header-top .actions i { font-size: 1.2em; color: #111; cursor: pointer; }
+        .diamond-badge { background: #f3e8ff; color: #9333ea; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 800; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(147,51,234,0.2); }
         
-        /* Search Bar */
-        .lobby-search-container { padding: 0 20px 10px; }
-        .lobby-search-box { display: flex; background: #f5f5f5; border-radius: 12px; overflow: hidden; align-items: center; padding: 0 15px;}
-        .lobby-search-box i { color: #888; }
-        .lobby-search-box input { flex-grow: 1; background: transparent; border: none; padding: 12px 10px; color: #111; font-family: 'Outfit', sans-serif; font-size: 0.9em;}
-        .lobby-search-box input:focus { outline: none; }
-        .filter-btn { color: var(--hot-pink); background: none; border: none; font-size: 1.1em; cursor: pointer; }
-
-        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; } /* Adjusted padding to fix scroll and remove bottom-nav gap */
+        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 10px 20px 30px 20px; }
         .lobby-body::-webkit-scrollbar { display: none; }
 
-        /* Section Title */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 10px;}
-        .section-title { font-size: 1.1em; font-weight: 800; color: #111; }
-        .view-all { font-size: 0.8em; color: var(--hot-pink); font-weight: 600; cursor: pointer; }
-
-        /* Room List Row Layout */
-        .room-list-row { display: flex; align-items: center; gap: 15px; background: #fff; padding: 10px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
-        .room-list-row:hover { background: #fdfdfd; }
-        .room-list-img { position: relative; width: 70px; height: 70px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
-        .room-list-img img { width: 100%; height: 100%; object-fit: cover; }
-        .live-badge { position: absolute; top: 4px; left: 4px; background: red; color: white; font-size: 0.55em; font-weight: 800; padding: 2px 5px; border-radius: 4px; z-index: 2; }
-        .room-list-info { flex-grow: 1; overflow: hidden; }
-        .room-list-info h4 { font-size: 1em; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
-        .room-list-info p { font-size: 0.75em; color: #888; margin-top: 2px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .room-row-avatars { display: flex; align-items: center; }
-        .room-row-avatars img { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #fff; margin-left: -6px; }
-        .room-row-avatars img:first-child { margin-left: 0; }
-        .room-row-avatars span { font-size: 0.65em; color: var(--hot-pink); margin-left: 5px; font-weight: bold; background: #ffe4e8; padding: 1px 5px; border-radius: 10px;}
+        /* Hero Banner */
+        .hero-banner { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); border-radius: 24px; padding: 25px 20px; position: relative; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(255, 154, 158, 0.2); }
+        .hero-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.8); color: var(--hot-pink); font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; margin-bottom: 15px; }
+        .hero-banner h2 { font-size: 26px; font-weight: 900; color: #111; line-height: 1.2; margin-bottom: 8px; }
+        .hero-banner p { font-size: 13px; color: #444; max-width: 60%; font-weight: 500; margin-bottom: 20px;}
+        .hero-avatars { display: flex; align-items: center; }
+        .hero-avatars img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; margin-left: -10px; object-fit: cover;}
+        .hero-avatars img:first-child { margin-left: 0; }
+        .hero-avatars .plus-count { background: var(--hot-pink); color: white; font-size: 10px; font-weight: bold; padding: 5px 8px; border-radius: 12px; margin-left: 5px; }
         
-        .room-list-action { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
-        .room-list-viewers { font-size: 0.75em; color: var(--hot-pink); font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        .join-btn-outline { background: transparent; border: 1px solid var(--hot-pink); color: var(--hot-pink); padding: 5px 18px; border-radius: 20px; font-size: 0.8em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .join-btn-outline:hover { background: var(--hot-pink); color: white; }
+        .hero-mic-img { position: absolute; right: -10px; top: 10px; width: 140px; opacity: 0.9; }
+
+        /* Quick Actions Grid */
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
+        .action-card { background: #fff; border-radius: 16px; padding: 18px 5px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.2s;}
+        .action-card:hover { transform: translateY(-3px); }
+        .action-card .icon-box { width: 45px; height: 45px; border-radius: 14px; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 20px; }
+        .action-card:nth-child(1) .icon-box { background: #ffe4e8; color: var(--hot-pink); }
+        .action-card:nth-child(2) .icon-box { background: #f3e8ff; color: #9333ea; }
+        .action-card:nth-child(3) .icon-box { background: #fef3c7; color: #d97706; }
+        .action-card:nth-child(4) .icon-box { background: #e0f2fe; color: #0284c7; }
+        .action-card h4 { font-size: 12px; font-weight: 800; color: #111; line-height: 1.1; margin-bottom: 3px;}
+        .action-card p { font-size: 9px; color: #888; }
+
+        /* Section Title */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .section-title { font-size: 1.2em; font-weight: 900; color: #111; }
+        .view-all { font-size: 0.85em; color: var(--hot-pink); font-weight: 700; cursor: pointer; }
+
+        /* Popular Rooms Grid */
+        .popular-rooms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .room-card { position: relative; border-radius: 20px; overflow: hidden; height: 170px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.08); background: #111; }
+        .room-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.5) contrast(1.1); transition: transform 0.4s ease; }
+        .room-card:hover .room-card-bg { transform: scale(1.08); filter: brightness(0.4); }
+        .room-card-content { position: absolute; inset: 0; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; z-index: 2; }
+        .rc-top { display: flex; justify-content: space-between; align-items: center; }
+        .rc-badge { background: var(--hot-pink); color: white; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 10px rgba(255,0,76,0.5);}
+        .rc-viewers { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: white; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; }
+        .rc-bottom h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 5px;}
+        .rc-bottom p { color: #ccc; font-size: 11px; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 4px;}
 
         /* Floating Action Button (Create Room) */
-        .fab-create { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
+        .fab-create { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: 0 10px 25px rgba(255, 0, 76, 0.5); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
         .fab-create:hover { transform: scale(1.1); }
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
@@ -204,16 +170,8 @@
         .speaker-seat p { font-size: 0.65em; color: #333; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .admin-tag { background: #eee; color: #555; font-size: 0.55em; padding: 2px 6px; border-radius: 10px; margin-top: 3px; font-weight: 700;}
         
-        .speaker-seat.is-speaking img {
-            border-color: var(--green-live);
-            box-shadow: var(--glow-green);
-            animation: pulse-green 1.5s infinite;
-        }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(37, 211, 102, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); }
-        }
+        .speaker-seat.is-speaking img { border-color: var(--green-live); box-shadow: var(--glow-green); animation: pulse-green 1.5s infinite; }
+        @keyframes pulse-green { 0% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); } 50% { box-shadow: 0 0 20px rgba(37, 211, 102, 0.8); } 100% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); } }
 
         .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-size: 0.55em; border: 1px solid #ddd; }
         .mic-icon-status.muted { color: #888; }
@@ -248,129 +206,103 @@
         .scrollable-gifts::-webkit-scrollbar { display: none; }
         .s-gift-item { text-align: center; flex-shrink: 0; cursor: pointer; transition: transform 0.2s ease; }
         .s-gift-item:hover { transform: scale(1.1); }
-        .s-gift-item img { width: 25px; height: 25px; object-fit: contain; margin: 0 auto; }
-        .s-gift-item p { font-size: 0.6em; color: #555; margin-top: 2px; font-weight: 600;}
+        /* INCREASED GIFT SIZE HERE */
+        .s-gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
+        .s-gift-item p { font-size: 0.7em; color: #555; margin-top: 4px; font-weight: 700;}
         .s-gift-item p i { color: #00BFFF; }
         
         /* --- NEW FLOATING CHAT OVERLAY --- */
         .floating-chat-container {
-            position: absolute;
-            bottom: 75px; 
-            left: 15px;
-            width: 80%;
-            height: 180px;
-            overflow-y: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            z-index: 15;
-            pointer-events: none; /* Allows clicks to pass through to main content */
+            position: absolute; bottom: 75px; left: 15px; width: 80%; height: 180px;
+            overflow-y: hidden; display: flex; flex-direction: column;
+            justify-content: flex-end; z-index: 15; pointer-events: none;
         }
         .floating-chat-msg {
-            background: rgba(0, 0, 0, 0.4);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            margin-top: 6px;
-            width: max-content;
-            max-width: 100%;
-            word-wrap: break-word;
-            pointer-events: auto;
-            animation: slideInLeft 0.3s ease-out;
-            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5); color: white; padding: 8px 14px;
+            border-radius: 18px; font-size: 0.9em; margin-top: 6px; width: max-content;
+            max-width: 100%; word-wrap: break-word; pointer-events: auto;
+            animation: slideInLeft 0.3s ease-out; text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
         }
         .floating-chat-msg .username { color: #ffeb3b; font-weight: bold; margin-right: 5px; }
         .floating-system-msg {
-            background: rgba(255, 0, 76, 0.6);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-top: 6px;
-            font-weight: bold;
-            width: max-content;
-            animation: slideInLeft 0.3s ease-out;
+            background: rgba(255, 0, 76, 0.8); color: white; padding: 6px 12px;
+            border-radius: 15px; font-size: 0.85em; margin-top: 6px; font-weight: bold;
+            width: max-content; animation: slideInLeft 0.3s ease-out;
         }
 
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
         .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee; z-index: 20;}
         .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
-        .zf-btn { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.1em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease;}
+        .zf-btn { width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease;}
         .zf-btn:hover { transform: scale(1.1); }
         .zf-dots { background: #eee; color: #333; }
         .zf-gift { background: #ffeb3b; color: #b45309; }
         .zf-mic { background: var(--hot-pink); }
 
-        /* --- CHAT PANEL OVERLAY (Hidden full chat) --- */
+        /* --- CHAT PANEL OVERLAY --- */
         #chat-panel-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: rgba(255, 255, 255, 0.98); border-top: 1px solid #eee; border-radius: 20px 20px 0 0; display: none; flex-direction: column; z-index: 50; animation: slideUpModal 0.3s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.05);}
         .chat-panel-header { padding: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
         .chat-panel-header h3 { font-size: 1em; color: #111; font-weight: 700;}
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { background: #f5f5f5; padding: 8px 12px; border-radius: 15px; font-size: 0.85em; align-self: flex-start; max-width: 85%; color: #333; }
+        .chat-msg { background: #f5f5f5; padding: 10px 14px; border-radius: 15px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; }
         .chat-msg .username { color: var(--hot-pink); font-weight: 700; margin-right: 5px; }
-        .chat-msg.system { background: transparent; font-style: italic; color: #888; text-align: center; align-self: center; font-size: 0.75em;}
-        .chat-msg.gift { background: var(--gradient-main); color: white; align-self: center; }
+        .chat-msg.system { background: transparent; font-style: italic; color: #888; text-align: center; align-self: center; font-size: 0.8em;}
         .chat-input-area { padding: 10px 15px; display: flex; gap: 10px; background: #fff; border-top: 1px solid #eee;}
-        .chat-input { flex-grow: 1; background: #f5f5f5; border: none; color: #111; padding: 10px 15px; border-radius: 20px; font-size: 0.9em; }
+        .chat-input { flex-grow: 1; background: #f5f5f5; border: none; color: #111; padding: 10px 15px; border-radius: 20px; font-size: 0.95em; }
         .chat-input:focus { outline: none; border: 1px solid #ddd;}
-        #send-msg-btn { background: var(--hot-pink); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+        #send-msg-btn { background: var(--hot-pink); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
         /* --- Modals / Popups --- */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 100; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: #ffffff; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; animation: slideUpModal 0.3s; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        .modal-header h3 { color: #111; font-weight: 700; font-size: 1.2em;}
-        .close-btn { background: #f5f5f5; width: 30px; height: 30px; border-radius: 50%; border: none; color: #555; cursor: pointer; display: flex; justify-content: center; align-items: center;}
+        .modal-header h3 { color: #111; font-weight: 800; font-size: 1.2em;}
+        .close-btn { background: #f5f5f5; width: 32px; height: 32px; border-radius: 50%; border: none; color: #555; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 18px;}
         @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
         #footer-action-modal .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; margin-top: 10px; margin-bottom: 15px; }
         .action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .action-icon-circle { width: 50px; height: 50px; border-radius: 50%; background: #fff0f2; border: 1px solid var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 1.3em; color: var(--hot-pink); transition: background-color 0.2s ease; }
+        .action-icon-circle { width: 55px; height: 55px; border-radius: 50%; background: #fff0f2; border: 1px solid var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 1.4em; color: var(--hot-pink); transition: background-color 0.2s ease; }
         .action-item:hover .action-icon-circle { background-color: #ffe4e8; }
-        .action-item p { font-size: 0.75em; color: #555; font-weight: 600;}
-        .action-item.mic-off-state .action-icon-circle { background: #eee; border-color: transparent; color: #888; }
+        .action-item p { font-size: 0.8em; color: #555; font-weight: 600;}
         
         #gift-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
         .gift-item { text-align: center; background: #f9f9f9; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #eee; transition: background-color 0.2s ease; }
         .gift-item:hover { background-color: #fff0f2; border-color: var(--hot-pink);}
-        .gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
-        .gift-item p { font-size: 0.8em; margin-top: 5px; color: #333; font-weight: 600;}
-        .gift-item .price { font-size: 0.7em; color: #d97706; margin-top: 2px; font-weight: bold;}
+        /* INCREASED GIFT SIZE HERE */
+        .gift-item img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto; }
+        .gift-item p { font-size: 0.85em; margin-top: 8px; color: #333; font-weight: 700;}
+        .gift-item .price { font-size: 0.75em; color: #d97706; margin-top: 2px; font-weight: bold;}
         
+        /* --- DIAMOND STORE OVERLAY (LOCAL INTEGRATION) --- */
+        #diamond-store-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .ds-content { background: #fff; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; animation: slideUpModal 0.3s; }
+        .ds-gradient-red { background: linear-gradient(135deg, #e6232b 0%, #b81016 100%); border-radius: 16px; padding: 20px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 8px 15px rgba(218,28,34,0.2); }
+        .ds-pack-card { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+        .ds-pack-card:hover { border-color: var(--hot-pink); transform: translateY(-3px); }
+
         #profile-popup .profile-content { text-align: center; }
-        #profile-popup img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--hot-pink); margin-bottom: 10px; object-fit: cover;}
-        #profile-popup h4 { font-size: 1.3em; color: #111; font-weight: 800;}
-        #profile-popup .user-id { font-size: 0.85em; color: #666; margin-bottom: 20px; font-weight: 500;}
+        #profile-popup img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--hot-pink); margin-bottom: 10px; object-fit: cover;}
+        #profile-popup h4 { font-size: 1.4em; color: #111; font-weight: 900;}
+        #profile-popup .user-id { font-size: 0.9em; color: #666; margin-bottom: 20px; font-weight: 500;}
         #profile-popup .profile-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
-        #profile-popup .action-btn { background: var(--gradient-main); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600;}
-        #profile-popup .action-btn.secondary { background: transparent; border: 1px solid #ccc; color: #333;}
-        .host-control-btn { background: transparent !important; border: 1px solid var(--hot-pink) !important; color: var(--hot-pink) !important; }
+        #profile-popup .action-btn { background: var(--gradient-main); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: 700;}
         
         #create-room-modal .modal-content { height: 85vh; display: flex; flex-direction: column; }
-        .custom-input { width: 100%; background: #f9f9f9; border: 1px solid #ddd; color: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.9em; font-family: 'Outfit'; font-weight: 500;}
+        .custom-input { width: 100%; background: #f9f9f9; border: 1px solid #ddd; color: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.95em; font-family: 'Outfit'; font-weight: 500;}
         .custom-input:focus { outline: none; border-color: var(--hot-pink); background: #fff;}
         .invite-user-list { flex-grow: 1; overflow-y: auto; margin-bottom: 15px; }
         .user-card { display: flex; align-items: center; padding: 10px; background: #fff; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
-        .user-card img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
+        .user-card img { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; }
         .user-info { flex-grow: 1; }
-        .user-info h4 { font-size: 0.9em; color: #111; font-weight: 700;}
-        .user-info p { font-size: 0.7em; color: #888; }
-        .invite-action-btn { background: transparent; border: 1px solid var(--hot-pink); color: var(--hot-pink); padding: 5px 15px; border-radius: 15px; cursor: pointer; font-size: 0.8em; font-weight: 600;}
-        .invite-action-btn.sent { background-color: var(--hot-pink); color: white; }
-        .start-room-btn { width: 100%; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 25px; font-size: 1.1em; cursor: pointer; font-weight: 700; box-shadow: var(--glow-red);}
+        .user-info h4 { font-size: 1em; color: #111; font-weight: 800;}
+        .start-room-btn { width: 100%; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 25px; font-size: 1.1em; cursor: pointer; font-weight: 800; box-shadow: var(--glow-red);}
         
         #youtube-modal .modal-content { max-height: 40vh; }
-        .youtube-btn { margin-top: 10px; width: 100%; background: #FF0000; color: white; border: none; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: 700;}
-        
-        .gift-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 70%; pointer-events: none; z-index: 99; overflow: hidden; }
-        .gift-animation-container img { position: absolute; opacity: 0; width: 100px; height: 100px; }
+        .youtube-btn { margin-top: 10px; width: 100%; background: #FF0000; color: white; border: none; padding: 15px; border-radius: 20px; cursor: pointer; font-weight: 800;}
     </style>
 </head>
 <body>
@@ -379,7 +311,7 @@
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
 
-        <!-- NEW: ID LOGIN OVERLAY (Enforces ID check and ImgBB Upload before entering) -->
+        <!-- ID LOGIN OVERLAY (With New API Key) -->
         <div id="id-login-screen">
             <div class="logo-container">
                 <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
@@ -391,8 +323,8 @@
                 
                 <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
                 <div style="cursor:pointer; margin-bottom:20px; display:inline-block;" onclick="document.getElementById('login-profile-upload').click()">
-                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--hot-pink); box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-                    <p style="font-size:11px; color:var(--hot-pink); margin-top:8px; font-weight:bold;">Tap to upload picture</p>
+                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:85px; height:85px; border-radius:50%; object-fit:cover; border:3px solid var(--hot-pink); box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+                    <p style="font-size:12px; color:var(--hot-pink); margin-top:10px; font-weight:800;">Tap to upload picture</p>
                 </div>
 
                 <input type="number" id="login-zingoo-id" placeholder="e.g. 14873198">
@@ -400,50 +332,77 @@
             </div>
         </div>
 
-        <!-- LOBBY SCREEN (Zingoo Light Theme) -->
+        <!-- LOBBY SCREEN (Redesigned as per Screenshot, No Bottom Nav) -->
         <div id="lobby-screen">
             <header class="lobby-header-top">
                 <div class="logo">
-                    <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
-                    ZINGOO
+                    Z <span>ZINGOO</span>
                 </div>
                 <div class="actions">
+                    <i class="fas fa-search"></i>
                     <i class="far fa-bell"></i>
-                    <div class="diamond-badge" onclick="window.redirectToDiamondStore()" style="cursor:pointer;">
-                        <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span>
+                    <div class="diamond-badge" onclick="window.openDiamondStoreLocal()" style="cursor:pointer;">
+                        <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span> <i class="fas fa-plus" style="font-size: 10px; color: var(--hot-pink);"></i>
                     </div>
                 </div>
             </header>
 
-            <div class="lobby-search-container">
-                <div class="lobby-search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="lobby-room-search" placeholder="Search people, rooms, games...">
-                    <button class="filter-btn"><i class="fas fa-filter"></i></button>
-                </div>
-            </div>
-
             <main class="lobby-body">
-                
-                <div class="section-header">
-                    <h2 class="section-title">Live Rooms</h2>
-                    <span class="view-all">View All</span>
+                <!-- Hero Banner -->
+                <div class="hero-banner">
+                    <span class="hero-badge">🔥 TRENDING ROOM</span>
+                    <h2>Late Night<br>Conversations</h2>
+                    <p>Talk about anything & everything.</p>
+                    <div class="hero-avatars">
+                        <img src="https://i.pravatar.cc/150?img=1">
+                        <img src="https://i.pravatar.cc/150?img=2">
+                        <img src="https://i.pravatar.cc/150?img=3">
+                        <img src="https://i.pravatar.cc/150?img=4">
+                        <span class="plus-count">+28</span>
+                    </div>
+                    <!-- Dummy mic icon logic using font awesome -->
+                    <i class="fas fa-microphone-alt hero-mic-img" style="font-size: 80px; color: #fff; text-shadow: 0 10px 20px rgba(0,0,0,0.2);"></i>
                 </div>
 
-                <div id="lobby-rooms-list">
-                    <p id="no-rooms-message" style="color: #aaa; text-align: center; margin-top: 30px;">Fetching active rooms...</p>
-                    <!-- Rooms injected here by JS -->
+                <!-- Quick Actions Grid -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="document.getElementById('global-toast').innerText='Finding Match...'; document.getElementById('global-toast').style.display='block'; setTimeout(()=>document.getElementById('global-toast').style.display='none',2000);">
+                        <div class="icon-box"><i class="fas fa-heart"></i></div>
+                        <h4>Find Match</h4><p>Find your vibe</p>
+                    </div>
+                    <div class="action-card" onclick="document.getElementById('global-toast').innerText='Connecting Call...'; document.getElementById('global-toast').style.display='block'; setTimeout(()=>document.getElementById('global-toast').style.display='none',2000);">
+                        <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
+                        <h4>Voice Match</h4><p>Talk & connect</p>
+                    </div>
+                    <div class="action-card" onclick="document.getElementById('global-toast').innerText='Loading Picks...'; document.getElementById('global-toast').style.display='block'; setTimeout(()=>document.getElementById('global-toast').style.display='none',2000);">
+                        <div class="icon-box"><i class="fas fa-star"></i></div>
+                        <h4>Top Picks</h4><p>Handpicked</p>
+                    </div>
+                    <div class="action-card" onclick="document.getElementById('global-toast').innerText='Exploring...'; document.getElementById('global-toast').style.display='block'; setTimeout(()=>document.getElementById('global-toast').style.display='none',2000);">
+                        <div class="icon-box"><i class="fas fa-user-friends"></i></div>
+                        <h4>Explore</h4><p>Join rooms</p>
+                    </div>
                 </div>
-                
+
+                <!-- Popular Rooms Section -->
+                <div class="section-header">
+                    <h2 class="section-title">Popular Rooms</h2>
+                    <span class="view-all">See All</span>
+                </div>
+
+                <div id="lobby-rooms-list" class="popular-rooms-grid">
+                    <p id="no-rooms-message" style="color: #aaa; text-align: center; grid-column: 1 / -1; margin-top: 20px;">Fetching active rooms...</p>
+                    <!-- Rooms injected here by JS as Grid Cards -->
+                </div>
             </main>
             
-            <!-- Create Room Floating Action Button -->
+            <!-- Create Room FAB (No bottom nav) -->
             <button class="fab-create" id="open-create-room-btn">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
 
-        <!-- LIVE ROOM SCREEN (Maintained layout, adjusted to Light Theme colors) -->
+        <!-- LIVE ROOM SCREEN -->
         <div id="live-room-screen">
              <div class="live-room-container">
                 <div id="gift-animation-container" class="gift-animation-container"></div>
@@ -456,7 +415,7 @@
                         </div>
                     </div>
                     <div class="zh-right">
-                        <button class="zh-btn gold" onclick="window.redirectToDiamondStore()"><i class="fas fa-crown"></i></button>
+                        <button class="zh-btn gold" onclick="window.openDiamondStoreLocal()"><i class="fas fa-crown"></i></button>
                         <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
                         <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -467,7 +426,6 @@
                         <!-- Speakers Injected Here -->
                     </div>
                     
-                    <!-- Center Logo / YouTube Area -->
                     <div class="center-logo-area" id="room-center-display">
                         <div class="logo-z">Z</div>
                         <div class="logo-text">ZINGOO</div>
@@ -479,31 +437,26 @@
                             <div class="warning-icon"><i class="fas fa-shield-alt"></i></div>
                             <div class="warning-text">
                                 <h5>Welcome to Zingoo Audio Room!</h5>
-                                <p>This room is being monitored. Please abide by the guidelines.</p>
+                                <p>This room is monitored. Please abide by the guidelines.</p>
                             </div>
-                            <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#ccc; cursor:pointer;"></i>
                         </div>
-                        <div class="offer-box" onclick="window.redirectToDiamondStore()">
-                            <i class="fas fa-times close-x"></i>
+                        <div class="offer-box" onclick="window.openDiamondStoreLocal()">
                             <div class="offer-title">+ Limited Offers +</div>
                             <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
-                            <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn" onclick="window.redirectToDiamondStore()">Buy Now</button>
+                            <button class="buy-btn">Buy Now</button>
                         </div>
                     </div>
                     <div class="gift-scroll-bar">
-                         <div class="quick-buy-100" onclick="window.redirectToDiamondStore()">
+                         <div class="quick-buy-100" onclick="window.openDiamondStoreLocal()">
                             <i class="fas fa-gem"></i> 100
-                            <span>₹100 ₹33.05</span>
+                            <span>₹100</span>
                         </div>
                         <div class="scrollable-gifts" id="bottom-scrollable-gifts">
-                            <!-- Dynamic Gifts Fetched from Admin will appear here -->
-                            <p style="font-size:10px; color:#888; padding-top:10px;">Loading gifts...</p>
+                            <p style="font-size:12px; color:#888; padding-top:10px;">Loading gifts...</p>
                         </div>
                     </div>
                 </main>
                 
-                <!-- NEW: FLOATING LIVE CHAT OVERLAY -->
                 <div id="floating-live-chat" class="floating-chat-container">
                     <div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>
                 </div>
@@ -517,7 +470,6 @@
                     </div>
                 </footer>
                 
-                <!-- CHAT PANEL OVERLAY -->
                 <div id="chat-panel-overlay">
                     <div class="chat-panel-header">
                         <h3>Room Chat</h3>
@@ -534,7 +486,7 @@
             </div>
         </div>
 
-        <!-- INCOMING / WEBRTC CALL OVERLAYS -->
+        <!-- WEBRTC OVERLAYS -->
         <div id="incoming-call-overlay" class="modal-overlay" style="z-index:10000; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.9);">
             <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
             <h2 id="incoming-caller-name" style="color:white; font-size:24px; font-weight:bold; margin-bottom:10px;">Caller Name</h2>
@@ -546,12 +498,10 @@
         </div>
 
         <div id="video-overlay" style="position:fixed; inset:0; background:black; z-index:10000; display:none;">
-            <!-- Remote Video Unmirrored, Local Video Mirrored -->
             <video id="remote-video" style="width:100%; height:100%; object-fit:cover;" autoplay playsinline></video>
             <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
                 <div style="background:rgba(0,0,0,0.5); color:white; padding:10px 20px; border-radius:30px; align-self:flex-start;" id="video-partner-name">Waiting...</div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
-                    <!-- Mirrored Local Video properly styled -->
                     <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink); transform: scaleX(-1);" autoplay playsinline muted></video>
                     <button id="btn-end-video" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
                 </div>
@@ -567,21 +517,19 @@
             <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
         </div>
 
-        <!-- Hidden container for Room WebRTC Mesh Audio -->
         <div id="room-audio-container" style="display:none;"></div>
 
     </div>
     
-    <!-- MODALS (Updated to Light Theme) -->
+    <!-- MODALS -->
     <div id="create-room-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Create Room & Invite</h3><button class="close-btn">&times;</button></div>
             <div class="create-room-inputs">
-                <input type="text" id="new-room-topic" class="custom-input" placeholder="Enter Room Topic (e.g., Chill Vibes)">
-                <input type="number" id="new-room-fee" class="custom-input diamond-input" placeholder="Entry Fee (Diamonds) - Leave blank for Free">
-                
+                <input type="text" id="new-room-topic" class="custom-input" placeholder="Room Topic (e.g., Chill Vibes)">
+                <input type="number" id="new-room-fee" class="custom-input diamond-input" placeholder="Entry Fee (Diamonds) - Blank for Free">
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
-                    <input type="text" id="user-search-input" class="custom-input" placeholder="Search friends by Name or ID..." style="margin-bottom:0;">
+                    <input type="text" id="user-search-input" class="custom-input" placeholder="Search friends..." style="margin-bottom:0;">
                     <button id="btn-search-users" style="background:var(--hot-pink); color:white; border:none; padding:0 20px; border-radius:12px; cursor:pointer; font-weight:700;"><i class="fas fa-search"></i></button>
                 </div>
             </div>
@@ -594,11 +542,10 @@
         <div class="modal-content">
             <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
             <div class="action-grid">
-                <div class="action-item" id="menu-mic-btn"><div class="action-icon-circle"><i class="fas fa-microphone"></i></div><p>Mic On/Off</p></div>
+                <div class="action-item" id="menu-mic-btn"><div class="action-icon-circle"><i class="fas fa-microphone"></i></div><p>Mic Toggle</p></div>
                 <div class="action-item" id="menu-hand-btn"><div class="action-icon-circle"><i class="fas fa-hand-paper"></i></div><p>Raise Hand</p></div>
                 <div class="action-item" id="menu-youtube-btn"><div class="action-icon-circle"><i class="fab fa-youtube"></i></div><p>Play Media</p></div>
                 <div class="action-item" id="menu-mute-all-btn"><div class="action-icon-circle"><i class="fas fa-volume-mute"></i></div><p>Mute All</p></div>
-                <div class="action-item" id="menu-settings-btn"><div class="action-icon-circle"><i class="fas fa-cog"></i></div><p>Settings</p></div>
             </div>
         </div>
     </div>
@@ -615,8 +562,7 @@
         <div class="modal-content">
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
             <div class="gift-grid" id="modal-gift-grid">
-                <!-- Populated dynamically via Firebase (Admin upload) -->
-                 <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading gifts from admin panel...</p>
+                 <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading gifts...</p>
             </div>
         </div>
     </div>
@@ -629,12 +575,69 @@
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
                 <div class="profile-actions" style="margin-top: 10px;">
-                    <!-- Updated Buttons for WebRTC Implementation -->
-                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
-                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
-                    <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
+                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio</button>
+                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video</button>
+                    <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- NEW: DIAMOND STORE OVERLAY (LOCAL TO AUDIO.HTML) -->
+    <div id="diamond-store-overlay">
+        <div class="ds-content">
+            <div class="modal-header">
+                <h3>Diamonds Store</h3>
+                <button class="close-btn" onclick="document.getElementById('diamond-store-overlay').style.display='none'">&times;</button>
+            </div>
+            
+            <div class="ds-gradient-red">
+                <div>
+                    <div style="font-size:12px; opacity:0.9;">Your Balance</div>
+                    <div style="font-size:32px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-gem"></i> <span id="store-current-balance">0</span>
+                    </div>
+                </div>
+                <div style="font-size:50px; opacity:0.8;">💎</div>
+            </div>
+
+            <div style="font-weight:800; font-size:16px; margin-bottom:15px; color:#111;">Choose a Pack</div>
+            
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom: 20px;">
+                <!-- Directly links to shubhzone.shop payment gateway -->
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(50, 150)">
+                    <div style="font-weight:800; font-size:16px; color:#111;">150 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">🔮</div>
+                    <div style="font-size:12px; font-weight:700; color:#444;">₹50</div>
+                </div>
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(100, 300)" style="border-color:var(--hot-pink); background:#fff9f9;">
+                    <div style="font-weight:800; font-size:16px; color:#111;">300 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">💰</div>
+                    <div style="background:var(--hot-pink); color:white; border-radius:15px; padding:3px 0; font-size:12px; font-weight:800;">₹100</div>
+                </div>
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(200, 600)">
+                    <div style="font-weight:800; font-size:16px; color:#111;">600 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">📦</div>
+                    <div style="font-size:12px; font-weight:700; color:#444;">₹200</div>
+                </div>
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(500, 1500)">
+                    <div style="font-weight:800; font-size:16px; color:#111;">1500 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">🛍️</div>
+                    <div style="font-size:12px; font-weight:700; color:#444;">₹500</div>
+                </div>
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(1000, 3000)">
+                    <div style="font-weight:800; font-size:16px; color:#111;">3000 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">🧰</div>
+                    <div style="font-size:12px; font-weight:700; color:#444;">₹1000</div>
+                </div>
+                <div class="ds-pack-card" onclick="window.buyDiamondPack(2000, 6000)">
+                    <div style="font-weight:800; font-size:16px; color:#111;">6000 <i class="fas fa-gem" style="color:#9333ea; font-size:12px;"></i></div>
+                    <div style="font-size:28px; margin:10px 0;">🪙</div>
+                    <div style="font-size:12px; font-weight:700; color:#444;">₹2000</div>
+                </div>
+            </div>
+            
+            <p style="font-size:11px; color:#888; text-align:center;">100% Secure Payments <i class="fas fa-shield-alt" style="color:#25D366;"></i></p>
         </div>
     </div>
 
@@ -642,11 +645,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- ROBUST FIREBASE INITIALIZATION ---
         let app;
         let db;
 
-        // This prevents re-initializing Firebase if it's already done elsewhere.
         if (window.zingooApp) {
             app = window.zingooApp;
             db = getDatabase(app);
@@ -662,14 +663,12 @@
             };
             app = initializeApp(firebaseConfig);
             db = getDatabase(app);
-            window.zingooApp = app; // Store it globally
+            window.zingooApp = app; 
         }
 
-        // --- SCRIPT START ---
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- ID LOGIN & IMGBB LOGIC (WITH NEW API KEY) ---
-            // *** NEW API KEY INTEGRATED HERE ***
+            // --- ID LOGIN & IMGBB LOGIC (NEW API KEY INTEGRATED) ---
             const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
             const idLoginScreen = document.getElementById('id-login-screen');
             const lobbyScreen = document.getElementById('lobby-screen');
@@ -695,11 +694,21 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
-            // NEW/UPDATED: Central function to redirect to the main diamond store
-            window.redirectToDiamondStore = function() {
-                // This redirects to index.html and adds a query parameter.
-                // The index.html file's script will detect this and open the diamond store overlay.
-                window.location.href = 'index.html?action=buy_diamonds';
+            // --- DIRECT PAYMENT LOGIC ---
+            window.openDiamondStoreLocal = function() {
+                // Gets current balance and opens local modal
+                const bal = localStorage.getItem('zingoo_diamonds') || 0;
+                document.getElementById('store-current-balance').innerText = bal;
+                document.getElementById('diamond-store-overlay').style.display = 'flex';
+            };
+
+            window.buyDiamondPack = function(amount, diamonds) {
+                if(!currentUser) {
+                    showToast("Please login first!"); return;
+                }
+                // Redirects directly to the Shubhzone Payment Gateway (zingoo-pay.html)
+                const paymentDomain = "https://shubhzone.shop";
+                window.location.href = `${paymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
             };
 
 
@@ -734,8 +743,8 @@
                             currentAvatar = data.data.url;
                             processDatabaseLogin(enteredId);
                         } else {
-                            showToast("Image upload failed. Please try another image.");
-                            processDatabaseLogin(enteredId); // Continue with default avatar
+                            showToast("Image upload failed. Using default avatar.");
+                            processDatabaseLogin(enteredId);
                         }
                     }).catch(err => {
                         showToast("Image upload failed, using default.");
@@ -774,16 +783,20 @@
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
-                        const userDiamonds = allUsers[userKey].diamonds || 0;
-                        document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
-                        localStorage.setItem("zingoo_diamonds", userDiamonds);
+                        // Sync Diamonds real-time for correct display
+                        onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                            const d = snap.val() || 0;
+                            localStorage.setItem("zingoo_diamonds", d);
+                            document.getElementById('lobby-diamond-balance').innerText = d;
+                            document.getElementById('store-current-balance').innerText = d;
+                        });
                         
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
                         listenForAudioRooms(); 
                         listenForIncomingCalls(); 
                         listenForInvites(); 
-                        fetchAdminGifts(); // Fetch dynamically added gifts
+                        fetchAdminGifts(); 
                         showToast(`Welcome back, ${currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
@@ -807,7 +820,6 @@
                 });
             }
 
-            // --- App State ---
             let currentActiveRoomId = null;
             let currentRoomHost = null;
             let mySeatIndex = -1;
@@ -862,31 +874,26 @@
                 
                 let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
                 if(currentBal >= gift.cost) {
-                    // 1. Deduct from Sender
                     let newBal = currentBal - gift.cost;
                     set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                    localStorage.setItem('zingoo_diamonds', newBal);
-                    document.getElementById('lobby-diamond-balance').innerText = newBal;
                     
-                    // 2. Add to Host Profile
                     get(ref(db, `users/${currentRoomHost}/diamonds`)).then((hSnap) => {
                         let hBal = hSnap.val() || 0;
                         set(ref(db, `users/${currentRoomHost}/diamonds`), hBal + gift.cost);
                     });
 
-                    // 3. Send visually appealing chat message
+                    // Gift Image size increased in chat message CSS
                     push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
                         user: currentUser,
-                        text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:25px; height:25px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
+                        text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:45px; height:45px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
                         timestamp: serverTimestamp()
                     });
                     
                     showToast(`Successfully sent ${gift.name}!`);
                     closeModal();
                 } else {
-                    // REDIRECT IF INSUFFICIENT DIAMONDS
                     if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store to buy more?`)) {
-                        window.redirectToDiamondStore();
+                        window.openDiamondStoreLocal();
                     }
                 }
             };
@@ -908,7 +915,6 @@
             let roomPeers = {}; 
             let signalUnsubscribe = null;
 
-            // --- UI Elements ---
             const liveRoomScreen = document.getElementById('live-room-screen');
             const modals = document.querySelectorAll('.modal-overlay');
             const closeButtons = document.querySelectorAll('.close-btn');
@@ -925,7 +931,6 @@
                 modals.forEach(modal => modal.style.display = 'none');
             };
 
-            // --- WebRTC 1v1 Functions ---
             function listenForIncomingCalls() {
                 if(!currentUser) return;
                 onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
@@ -1024,7 +1029,6 @@
             document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC1v1);
 
 
-            // --- ROOM WEBRTC MESH LOGIC ---
             async function startRoomAudio() {
                 try {
                     roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
@@ -1119,7 +1123,6 @@
                 }
             }
 
-            // --- UI Search & Invite Functions ---
             document.getElementById('btn-search-users').addEventListener('click', () => {
                 const query = document.getElementById('user-search-input').value.trim().toLowerCase();
                 if(!query) return;
@@ -1165,8 +1168,6 @@
                 }
             };
 
-
-            // --- Audio Rooms UI Functions ---
             window.openUserProfile = function(username, avatar) {
                 document.getElementById('popup-username').innerText = username;
                 document.getElementById('popup-profile-img').src = avatar;
@@ -1178,6 +1179,7 @@
                 openModal('profile-popup');
             };
 
+            // MODIFIED FOR GRID LAYOUT (SCREENSHOT MATCH)
             function listenForAudioRooms() {
                 const roomsRef = ref(db, 'audio_rooms');
                 onValue(roomsRef, (snapshot) => {
@@ -1187,36 +1189,23 @@
                         if(noRoomsMsg) noRoomsMsg.style.display = 'none';
                         Object.entries(rooms).forEach(([roomId, roomData]) => {
                             const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
-                            const vacantSeats = 10 - seatCount;
-                            
-                            let joinedHTML = '';
-                            if(seatCount > 0) {
-                                joinedHTML = `
-                                <div class="room-row-avatars">
-                                    <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150'}">
-                                    <span>+${seatCount} joined</span>
-                                </div>`;
-                            }
-
                             const roomCard = document.createElement('div');
-                            roomCard.className = `room-list-row`;
+                            roomCard.className = `room-card`;
                             roomCard.dataset.roomId = roomId;
                             roomCard.dataset.roomTitle = roomData.name;
                             roomCard.dataset.fee = roomData.fee || 0;
 
                             roomCard.innerHTML = `
-                                <div class="room-list-img">
-                                    <span class="live-badge">+ LIVE</span>
-                                    <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150?img=50'}">
-                                </div>
-                                <div class="room-list-info">
-                                    <h4>${roomData.name} ${roomData.fee > 0 ? `<i class="fas fa-gem" style="color:#d97706; font-size: 0.8em; margin-left: 5px;"></i>${roomData.fee}` : ''}</h4>
-                                    <p>Host: ${roomData.host}</p>
-                                    ${joinedHTML}
-                                </div>
-                                <div class="room-list-action">
-                                    <span class="room-list-viewers"><i class="far fa-user"></i> ${vacantSeats} left</span>
-                                    <button class="join-btn-outline">Join</button>
+                                <div class="room-card-bg" style="background-image: url('${roomData.hostAvatar || 'https://i.pravatar.cc/150'}');"></div>
+                                <div class="room-card-content">
+                                    <div class="rc-top">
+                                        <span class="rc-badge"><i class="fas fa-video"></i> LIVE</span>
+                                        <span class="rc-viewers"><i class="fas fa-user"></i> ${seatCount}/10</span>
+                                    </div>
+                                    <div class="rc-bottom">
+                                        <h4>${roomData.name} ${roomData.fee > 0 ? `<i class="fas fa-gem" style="color:#d97706; font-size: 0.8em; margin-left: 5px;"></i>${roomData.fee}` : ''}</h4>
+                                        <p><img src="${roomData.hostAvatar}" style="width:14px; height:14px; border-radius:50%; border:1px solid white;"> ${roomData.host}</p>
+                                    </div>
                                 </div>
                             `;
                             lobbyRoomsList.appendChild(roomCard);
@@ -1317,7 +1306,7 @@
                         }
                     } else {
                         alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
-                        window.redirectToDiamondStore();
+                        window.openDiamondStoreLocal();
                     }
                 } else {
                     proceed();
@@ -1434,8 +1423,9 @@
                 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
             });
             
+            // Event listener for room cards
             lobbyRoomsList.addEventListener('click', (e) => {
-                const card = e.target.closest('.room-list-row');
+                const card = e.target.closest('.room-card');
                 if (card) {
                     joinAudioRoom(card.dataset.roomId, card.dataset.roomTitle, parseInt(card.dataset.fee));
                 }
