@@ -554,6 +554,7 @@
             font-weight: bold;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
         }
         .balance-pill span { font-size: 8px; color: #666; font-weight: normal; margin-top: 2px;}
 
@@ -572,10 +573,11 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
+            min-width: 40px;
         }
         .h-gift-icon { font-size: 24px; }
         .h-gift-price { font-size: 9px; color: white; margin-top: 2px; display: flex; align-items: center; gap: 2px; }
-        .free-tag { background: #ab47bc; padding: 1px 5px; border-radius: 5px; font-size: 8px; margin-top: 2px; color: white; }
+        .free-tag { background: #ab47bc; padding: 1px 5px; border-radius: 5px; font-size: 8px; margin-top: 2px; color: white; white-space: nowrap; }
 
         .lower-bottom-row {
             display: flex;
@@ -673,7 +675,7 @@
         .dropdown-menu.active { display: flex; }
         .menu-item { padding: 15px; color: #333; font-size: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; cursor: pointer; }
 
-        /* YouTube Modal */
+        /* YouTube Modal (Kept for fallback, but settings does it now) */
         #youtubeModal {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 110; display: none; justify-content: center; align-items: center;
         }
@@ -684,6 +686,13 @@
         .yt-play { background: #ff1f5a; color: white;}
         .yt-stop { background: #333; color: white;}
         .yt-cancel { background: #ddd; color: #333;}
+        
+        /* STORE MODAL AND ROOM SETTINGS MODAL */
+        .store-item-card { min-width: 80px; background:#f0f0f0; padding:10px; border-radius:10px; text-align:center; flex-shrink:0; }
+        .store-item-card img { width:50px; height:50px; object-fit:contain; margin-bottom:5px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));}
+        .store-item-card .st-name { font-size:10px; font-weight:bold; color:#333; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .store-item-card .st-cost { font-size:10px; color:var(--z-pink); font-weight:bold; margin-top:2px; }
+        .store-item-card button { background:var(--z-pink); color:white; border:none; border-radius:5px; padding:4px 8px; font-size:9px; margin-top:5px; cursor:pointer; width:100%; font-weight:bold; }
 
     </style>
 </head>
@@ -800,7 +809,7 @@
                 <h5>Limited Offers</h5>
                 <div class="offer-content">💎 <span id="offer-diamonds">300</span></div>
                 <div class="offer-price">₹100</div>
-                <button>Buy Now</button>
+                <button id="buyOfferBtn">Buy Now</button>
             </div>
 
             <!-- NEW BOTTOM UI WRAPPER -->
@@ -808,40 +817,14 @@
                 
                 <!-- Upper Row: Balance & Horizontal Gifts -->
                 <div class="upper-bottom-row">
-                    <div class="balance-pill">
+                    <div class="balance-pill" id="buyMorePill">
                         <div>💎 <span id="rv_myDiamonds" style="font-size:11px; color:black; font-weight:bold;">0</span></div>
                         <span>Buy More</span>
                     </div>
                     
-                    <div class="horizontal-gifts">
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🎁</span>
-                            <span class="free-tag">Loading gifts...</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🌹</span>
-                            <span class="free-tag">FREE GIFT</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">💝</span>
-                            <span class="h-gift-price">💎 89</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🔥</span>
-                            <span class="h-gift-price">💎 10</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🔫</span>
-                            <span class="h-gift-price">💎 199</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🥰</span>
-                            <span class="h-gift-price">💎 49</span>
-                        </div>
-                        <div class="h-gift-item">
-                            <span class="h-gift-icon">🏆</span>
-                            <span class="h-gift-price">💎 1500</span>
-                        </div>
+                    <div class="horizontal-gifts" id="dynamic-gifts-container">
+                        <!-- Loaded dynamically from Firebase Admin Panel Gifts -->
+                        <span style="color:white; font-size:10px;">Loading gifts...</span>
                     </div>
                 </div>
 
@@ -853,7 +836,7 @@
                     
                     <div class="action-circles">
                         <button class="circle-btn menu-circle" id="menuBtn">⋮</button>
-                        <button class="circle-btn gift-circle">🎁</button>
+                        <button class="circle-btn gift-circle" id="openStoreBtn">🎁</button>
                         <button class="circle-btn flame-circle">🔥</button>
                     </div>
                 </div>
@@ -863,7 +846,7 @@
             <div class="dropdown-menu" id="topMenu">
                 <div class="menu-item" id="menuPlayYt" style="display:none;">Play YouTube Video <span>▶️</span></div>
                 <div class="menu-item">Lock Room <span>🔒</span></div>
-                <div class="menu-item">Room Settings <span>⚙️</span></div>
+                <div class="menu-item" id="openRoomSettingsBtn">Room Settings <span>⚙️</span></div>
             </div>
 
             <!-- YOUTUBE URL MODAL -->
@@ -877,6 +860,48 @@
                         <button class="yt-stop" id="ytStopBtn">Stop Current Video</button>
                         <button class="yt-play" id="ytPlayBtn">Play</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- STORE MODAL -->
+            <div id="storeModal" class="modal-overlay" style="z-index: 120;">
+                <div class="modal-box" style="max-height: 85vh; overflow-y: auto; width: 95%;">
+                    <div class="modal-title">Zingoo Virtual Store</div>
+                    
+                    <!-- Chairs -->
+                    <h4 style="font-size: 13px; font-weight: bold; margin-top:10px; color:var(--z-pink);">Premium Chairs</h4>
+                    <div id="store_chairs" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+
+                    <!-- Profile Icons -->
+                    <h4 style="font-size: 13px; font-weight: bold; margin-top:15px; color:var(--z-pink);">Profile Icons</h4>
+                    <div id="store_icons" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+
+                    <!-- Entry Stickers -->
+                    <h4 style="font-size: 13px; font-weight: bold; margin-top:15px; color:var(--z-pink);">Entry Stickers</h4>
+                    <div id="store_stickers" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+
+                    <button class="cancel-btn" id="closeStoreBtn" style="margin-top:20px;">Close Store</button>
+                </div>
+            </div>
+
+            <!-- ROOM SETTINGS MODAL -->
+            <div id="roomSettingsModal" class="modal-overlay" style="z-index: 120;">
+                <div class="modal-box" style="max-height: 80vh; overflow-y: auto;">
+                    <div class="modal-title">Room Settings</div>
+                    
+                    <h4 style="font-size: 14px; font-weight: bold; margin-top:10px;">YouTube Video Playback</h4>
+                    <div class="input-group">
+                        <input type="text" id="rs_youtubeInput" placeholder="Paste link here...">
+                        <button class="submit-btn" id="rs_saveYtBtn" style="padding: 10px; margin-top:5px;">Set Video</button>
+                        <button class="cancel-btn" id="rs_stopYtBtn" style="padding: 10px; margin-top:5px; background:#333; color:white;">Stop Video</button>
+                    </div>
+
+                    <h4 style="font-size: 14px; font-weight: bold; margin-top:20px;">Change Room Background</h4>
+                    <div id="store_backgrounds" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:10px;">
+                        <p style="font-size:10px;">Loading backgrounds from Admin Panel...</p>
+                    </div>
+
+                    <button class="cancel-btn" id="closeSettingsModalBtn" style="margin-top:20px;">Close Settings</button>
                 </div>
             </div>
 
@@ -916,9 +941,11 @@
         const db = firebase.database();
 
         const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a";
+        // Exact GitHub URL requested for purchasing diamonds
+        const PAYMENT_URL = "https://inhimanshukumar4560-byte.github.io/Iccha/zingoo-pay.html";
 
         // ----------------------------------------
-        // 2. USER SETUP (Syncing exactly with home.html)
+        // 2. USER SETUP & DIAMOND SYNC
         // ----------------------------------------
         let myUserId = localStorage.getItem('zingoo_id') || localStorage.getItem('zingoo_uid');
         let myUserName = localStorage.getItem('zingoo_user') || localStorage.getItem('zingoo_uname');
@@ -932,8 +959,26 @@
             localStorage.setItem('zingoo_uname', myUserName);
         }
 
-        document.getElementById('lobby-diamond-count').innerText = myDiamonds;
-        document.getElementById('rv_myDiamonds').innerText = myDiamonds;
+        // Real-Time Diamond Sync logic
+        db.ref(`users/${myUserName}/diamonds`).on('value', snap => {
+            if (snap.exists()) {
+                myDiamonds = snap.val();
+                localStorage.setItem('zingoo_diamonds', myDiamonds);
+                document.getElementById('lobby-diamond-count').innerText = myDiamonds;
+                document.getElementById('rv_myDiamonds').innerText = myDiamonds;
+            }
+        });
+
+        // ----------------------------------------
+        // 3. PAYMENT REDIRECT LOGIC
+        // ----------------------------------------
+        window.redirectToPayment = function(amount, diamonds) {
+            const payUrl = `${PAYMENT_URL}?from=zingoo&username=${encodeURIComponent(myUserName)}&amount=${amount}&diamonds=${diamonds}`;
+            window.location.href = payUrl;
+        };
+
+        document.getElementById('buyMorePill').addEventListener('click', () => redirectToPayment(100, 300));
+        document.getElementById('buyOfferBtn').addEventListener('click', () => redirectToPayment(100, 300));
 
         let currentRoomId = null;
         let roomHostId = null;
@@ -946,11 +991,12 @@
         const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
         // ----------------------------------------
-        // 3. DOM ELEMENTS
+        // 4. DOM ELEMENTS
         // ----------------------------------------
         const homeView = document.getElementById('home-view');
         const roomView = document.getElementById('room-view');
         const roomListContainer = document.getElementById('roomListContainer');
+        const dynamicGiftsContainer = document.getElementById('dynamic-gifts-container');
         
         const createRoomModal = document.getElementById('createRoomModal');
         const openCreateModalBtn = document.getElementById('openCreateModalBtn');
@@ -980,8 +1026,12 @@
         const ytContainer = document.getElementById('youtubePlayerContainer');
         const webrtcAudioContainer = document.getElementById('webrtc-audio-container');
 
+        // Modals
+        const storeModal = document.getElementById('storeModal');
+        const roomSettingsModal = document.getElementById('roomSettingsModal');
+
         // ----------------------------------------
-        // 4. CORE PAGE LOGIC (RUNS ON LOAD)
+        // 5. CORE PAGE LOGIC (RUNS ON LOAD)
         // ----------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -992,10 +1042,121 @@
             } else {
                 loadRooms();
             }
+
+            loadDynamicGifts();
+            loadStoreItems();
         });
 
         // ----------------------------------------
-        // 5. HOME LOGIC (LOBBY)
+        // 6. DYNAMIC GIFTS AND STORE FETCHING
+        // ----------------------------------------
+        function loadDynamicGifts() {
+            db.ref('gifts').on('value', snap => {
+                dynamicGiftsContainer.innerHTML = '';
+                const data = snap.val();
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const g = data[k];
+                        dynamicGiftsContainer.innerHTML += `
+                        <div class="h-gift-item" onclick="sendDynamicGift('${g.name}', ${g.cost}, '${g.imageUrl}')">
+                            <img src="${g.imageUrl}" style="width:30px; height:30px; object-fit:contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                            <span class="h-gift-price">💎 ${g.cost}</span>
+                        </div>`;
+                    });
+                } else {
+                    dynamicGiftsContainer.innerHTML = '<span class="free-tag">No gifts available</span>';
+                }
+            });
+        }
+
+        window.sendDynamicGift = function(name, cost, img) {
+            if (!currentRoomId) return alert("Please join a room first.");
+            if (parseInt(myDiamonds) < cost) {
+                if(confirm("Not enough diamonds! Do you want to recharge?")) redirectToPayment(100, 300);
+                return;
+            }
+            // Deduct diamonds
+            db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
+            // Send animated gift to chat
+            db.ref(`rooms/${currentRoomId}/chats`).push({
+                uid: myUserId,
+                name: myUserName,
+                text: `Sent a gift: <strong style="color:yellow;">${name}</strong> <img src="${img}" style="width:25px; vertical-align:middle; margin-left:5px;">`
+            });
+            alert(`Gift sent successfully! Deducted ${cost} diamonds.`);
+        };
+
+        function loadStoreItems() {
+            db.ref('store_items').on('value', snap => {
+                const data = snap.val() || {};
+                
+                renderStoreCategory(data.backgrounds, 'store_backgrounds', 'backgrounds');
+                renderStoreCategory(data.chairs, 'store_chairs', 'chairs');
+                renderStoreCategory(data.profile_icons, 'store_icons', 'profile_icons');
+                renderStoreCategory(data.entry_stickers, 'store_stickers', 'entry_stickers');
+            });
+        }
+
+        function renderStoreCategory(items, containerId, categoryName) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (items) {
+                Object.keys(items).forEach(k => {
+                    const item = items[k];
+                    container.innerHTML += `
+                    <div class="store-item-card">
+                        <img src="${item.imageUrl}">
+                        <div class="st-name">${item.name}</div>
+                        <div class="st-cost">💎 ${item.cost}</div>
+                        <button onclick="buyStoreItem('${categoryName}', '${item.imageUrl}', ${item.cost})">${categoryName === 'backgrounds' ? 'Apply' : 'Buy/Use'}</button>
+                    </div>`;
+                });
+            } else {
+                container.innerHTML = '<span style="font-size:10px; color:#888;">No items found.</span>';
+            }
+        }
+
+        window.buyStoreItem = function(category, url, cost) {
+            if (parseInt(myDiamonds) < cost) {
+                if(confirm("Not enough diamonds! Buy more?")) redirectToPayment(100, 300);
+                return;
+            }
+            if (category === 'backgrounds') {
+                if(myUserId !== roomHostId) return alert("Error: Only the host can change the room background!");
+                // Deduct & Apply Background
+                db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
+                db.ref(`rooms/${currentRoomId}`).update({ backgroundImage: url });
+                alert("Room Background changed successfully!");
+            } else {
+                // Deduct & Equip standard items
+                db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
+                db.ref(`users/${myUserName}/equipped_${category}`).set(url);
+                alert(`Successfully purchased and equipped ${category}!`);
+            }
+        };
+
+        // Modal Listeners
+        document.getElementById('openStoreBtn').addEventListener('click', () => {
+            storeModal.style.display = 'flex';
+        });
+        document.getElementById('closeStoreBtn').addEventListener('click', () => {
+            storeModal.style.display = 'none';
+        });
+
+        document.getElementById('openRoomSettingsBtn').addEventListener('click', () => {
+            if(myUserId !== roomHostId) return alert("Only the host can access Room Settings.");
+            topMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            roomSettingsModal.style.display = 'flex';
+        });
+        document.getElementById('closeSettingsModalBtn').addEventListener('click', () => {
+            roomSettingsModal.style.display = 'none';
+        });
+
+        // ----------------------------------------
+        // 7. HOME LOGIC (LOBBY)
         // ----------------------------------------
         function loadRooms() {
             db.ref('rooms').on('value', (snapshot) => {
@@ -1077,6 +1238,7 @@
                 roomId: newRoomRef.key, hostId: myUserId, hostName: myUserName,
                 roomName: roomName, thumbnail: thumbnailUrl, maxSeats: seats,
                 entryPrice: price, youtubeVideoId: null, createdAt: firebase.database.ServerValue.TIMESTAMP,
+                backgroundImage: 'https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png', // Default
                 seatsData: {
                     0: { uid: myUserId, name: myUserName, avatar: thumbnailUrl } // Host automatically gets seat 0
                 }
@@ -1089,7 +1251,7 @@
         });
 
         // ----------------------------------------
-        // 6. AUDIO ROOM & WEBRTC LOGIC
+        // 8. AUDIO ROOM & WEBRTC LOGIC
         // ----------------------------------------
         async function joinRoom(roomId) {
             currentRoomId = roomId;
@@ -1118,7 +1280,7 @@
             homeView.style.transform = 'translateX(-100%)';
             roomView.style.left = '0';
 
-            // Start Listening for the Room state (Seats & YouTube Sync)
+            // Start Listening for the Room state (Seats, Background & YouTube Sync)
             startRoomListener(roomId);
             startChatListener(roomId);
             
@@ -1135,6 +1297,11 @@
                 }
                 const data = snapshot.val();
                 
+                // Dynamic Background Application
+                if(data.backgroundImage) {
+                    roomView.style.backgroundImage = `url('${data.backgroundImage}')`;
+                }
+
                 // YouTube Sync
                 if(data.youtubeVideoId) {
                     ytContainer.style.display = 'block';
@@ -1151,6 +1318,46 @@
                 syncWebRTCPeers(data.seatsData);
             });
         }
+
+        function extractVideoID(url) {
+            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : null;
+        }
+
+        // Room Settings YouTube Update
+        document.getElementById('rs_saveYtBtn').addEventListener('click', () => {
+            const url = document.getElementById('rs_youtubeInput').value;
+            const vidId = extractVideoID(url);
+            if(vidId && currentRoomId) {
+                db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: vidId });
+                roomSettingsModal.style.display = 'none';
+                document.getElementById('rs_youtubeInput').value = '';
+            } else { alert("Invalid YouTube URL"); }
+        });
+
+        document.getElementById('rs_stopYtBtn').addEventListener('click', () => {
+            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
+            roomSettingsModal.style.display = 'none';
+        });
+
+        // Legacy Fallback YT Modal (Still fully intact per strict request)
+        ytPlayBtn.addEventListener('click', () => {
+            const url = ytUrlInput.value;
+            const vidId = extractVideoID(url);
+            if(vidId && currentRoomId) {
+                db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: vidId });
+                ytModal.style.display = 'none';
+                ytUrlInput.value = '';
+            } else { alert("Invalid YouTube URL"); }
+        });
+
+        ytStopBtn.addEventListener('click', () => {
+            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
+            ytModal.style.display = 'none';
+        });
+
+        ytCancelBtn.addEventListener('click', () => ytModal.style.display = 'none');
 
         function renderSeats(roomData) {
             seatsContainer.innerHTML = '';
@@ -1169,7 +1376,6 @@
                         </div>`;
                 } else {
                     if(seats[i]) {
-                        // Seat is Occupied
                         const isMe = (seats[i].uid === myUserId);
                         seatsContainer.innerHTML += `
                             <div class="seat occupied" onclick="${isMe ? `leaveSeat(${i})` : ''}">
@@ -1180,7 +1386,6 @@
                                 ${isMe ? '<span style="font-size:8px; background:red; color:white; border-radius:5px; padding:1px 4px; position:absolute; top:-5px;">Leave</span>' : ''}
                             </div>`;
                     } else {
-                        // Seat is Empty
                         seatsContainer.innerHTML += `
                             <div class="seat empty" onclick="takeSeat(${i})">
                                 <div class="seat-avatar">🔒</div>
@@ -1196,14 +1401,12 @@
             const snapshot = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
             const seats = snapshot.val() || {};
             
-            // Check if already sitting
             const alreadySitting = Object.values(seats).some(s => s.uid === myUserId);
             if(alreadySitting && myUserId !== roomHostId) {
                 return alert("You are already sitting on a seat!");
             }
 
             try {
-                // Request Microphone Permission for WebRTC
                 localAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 
                 await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).set({
@@ -1212,7 +1415,6 @@
                     avatar: myAvatar
                 });
                 
-                // Re-initiate peers so they get the new local stream track
                 renegotiateAllPeers();
                 
             } catch (err) {
@@ -1233,14 +1435,12 @@
             if(!seatsObj) return;
             const activeUids = Object.values(seatsObj).map(s => s.uid);
             
-            // Connect to everyone who is on a seat
             activeUids.forEach(targetUid => {
                 if(targetUid !== myUserId && !peerConnections[targetUid]) {
                     createPeerConnection(targetUid);
                 }
             });
 
-            // Disconnect from users who left seats
             Object.keys(peerConnections).forEach(uid => {
                 if(!activeUids.includes(uid)) {
                     peerConnections[uid].close();
@@ -1255,12 +1455,10 @@
             const pc = new RTCPeerConnection(rtcConfig);
             peerConnections[targetUid] = pc;
 
-            // Add our local mic stream if we are sitting
             if(localAudioStream) {
                 localAudioStream.getTracks().forEach(track => pc.addTrack(track, localAudioStream));
             }
 
-            // Listen for remote audio streams
             pc.ontrack = (event) => {
                 let audioEl = document.getElementById(`audio-${targetUid}`);
                 if(!audioEl) {
@@ -1272,14 +1470,12 @@
                 audioEl.srcObject = event.streams[0];
             };
 
-            // Send ICE candidates to Firebase
             pc.onicecandidate = (event) => {
                 if(event.candidate) {
                     db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}/candidates`).push(event.candidate.toJSON());
                 }
             };
 
-            // The user with the greater UID creates the offer to avoid collision
             if(myUserId > targetUid) {
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
@@ -1293,8 +1489,6 @@
 
         function initWebRTCSignaling() {
             const sigRef = db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}`);
-            
-            // Listen for incoming offers/answers
             sigRef.on('child_added', handleSignalingData);
             sigRef.on('child_changed', handleSignalingData);
         }
@@ -1319,7 +1513,6 @@
                 await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
             }
 
-            // Handle Candidates
             db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${senderUid}/candidates`).on('child_added', (candSnap) => {
                 if(candSnap.val()) {
                     pc.addIceCandidate(new RTCIceCandidate(candSnap.val()));
@@ -1332,12 +1525,11 @@
                 peerConnections[uid].close();
                 delete peerConnections[uid];
             });
-            // Re-sync will automatically recreate them
             db.ref(`rooms/${currentRoomId}/seatsData`).once('value').then(snap => syncWebRTCPeers(snap.val()));
         }
 
         // ----------------------------------------
-        // 7. LEAVING & CLEANUP
+        // 9. LEAVING & CLEANUP
         // ----------------------------------------
         document.getElementById('leaveRoomBtn').addEventListener('click', leaveProcess);
         document.getElementById('topExitBtn').addEventListener('click', leaveProcess);
@@ -1345,10 +1537,9 @@
         async function leaveProcess() {
             if (myUserId === roomHostId) {
                 if (confirm("You are the host. Leaving will close the room for everyone. Are you sure?")) {
-                    await db.ref(`rooms/${currentRoomId}`).remove(); // Triggers exitRoomUI for all
+                    await db.ref(`rooms/${currentRoomId}`).remove(); 
                 }
             } else {
-                // Remove self from seats if sitting
                 const snap = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
                 const seats = snap.val() || {};
                 for(let key in seats) {
@@ -1364,7 +1555,6 @@
             if(chatListenerRef) chatListenerRef.off();
             if(roomListenerRef) roomListenerRef.off();
             
-            // Stop Mic and Clean WebRTC
             if(localAudioStream) {
                 localAudioStream.getTracks().forEach(t => t.stop());
                 localAudioStream = null;
@@ -1383,7 +1573,7 @@
         }
 
         // ----------------------------------------
-        // 8. CHAT INTERFACE LOGIC
+        // 10. CHAT INTERFACE LOGIC
         // ----------------------------------------
         function startChatListener(roomId) {
             chatBox.innerHTML = `<div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>`;
