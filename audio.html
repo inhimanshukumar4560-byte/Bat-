@@ -1,3 +1,5 @@
+:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -195,29 +197,12 @@
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
         #live-room-screen { display: none; }
-        .live-room-container { 
-            display: flex; 
-            flex-direction: column; 
-            height: 100dvh; 
-            position: relative; 
-            background: url('https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png') no-repeat center center; 
-            background-size: cover; 
-            background-attachment: fixed;
-        }
-        .zingoo-header { 
-            padding: 15px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 10; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-        }
+        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: transparent; } /* Made transparent */
+        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: none; background: transparent;} /* Made transparent */
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
         .zh-info h1 { font-size: 1em; font-weight: 700; color: #111; margin-bottom: 2px; }
-        .zh-info p { font-size: 0.75em; color: #555; display: flex; align-items: center; gap: 5px; font-weight: bold;}
+        .zh-info p { font-size: 0.75em; color: #888; display: flex; align-items: center; gap: 5px;}
         .zh-info p i { font-size: 0.9em; }
         .zh-right { display: flex; align-items: center; gap: 12px; }
         .zh-btn { background: transparent; border: none; color: #444; font-size: 1.3em; cursor: pointer; transition: color 0.2s ease; }
@@ -227,30 +212,22 @@
         
         .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
-        .speaker-grid-zingoo { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 15px 5px; 
-            margin-top: 10px; 
-            z-index: 5;
-            width: 100%;
-            justify-items: center;
-        }
+        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; z-index: 5;}
         
-        /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS - FULLY RESPONSIVE FOR MOBILE */
-        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .avatar-container { position: relative; width: 14vw; max-width: 55px; height: 14vw; max-height: 55px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: linear-gradient(135deg, #eee, #ddd); transition: all 0.3s ease; }
+        /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
+        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: linear-gradient(135deg, #eee, #ddd); transition: all 0.3s ease; }
         .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
-        .speaker-seat p { font-size: 0.65em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 60px; margin-top: 2px; background: rgba(255, 255, 255, 0.7); padding: 2px 4px; border-radius: 8px;}
-        .admin-tag { background: rgba(255, 255, 255, 0.9); color: var(--hot-pink); font-size: 0.55em; padding: 3px 6px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
+        .speaker-seat p { font-size: 0.7em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
+        .admin-tag { background: rgba(255,0,76,0.1); color: var(--hot-pink); font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
         
-        /* Custom Store Chair Frame Styling Responsive Scaling */
+        /* Custom Store Chair Frame Styling */
         .custom-chair-frame {
             position: absolute;
-            top: -25%;
-            left: -25%;
-            width: 150%;
-            height: 150%;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
             z-index: 10;
             pointer-events: none;
             filter: drop-shadow(0 5px 15px rgba(255, 0, 76, 0.4));
@@ -271,29 +248,29 @@
             animation: pulse-green 1.5s infinite;
         }
 
-        .mic-icon-status { position: absolute; bottom: -2px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 15;}
+        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 15;}
         .mic-icon-status.muted { color: #ff004c; }
         
         .speaker-seat.empty .avatar-container { 
             border: 2px dashed rgba(255, 0, 76, 0.4); 
-            background: rgba(255, 255, 255, 0.5); 
+            background: rgba(255, 0, 76, 0.05); 
             display: flex; justify-content: center; align-items: center; 
         }
-        .speaker-seat.empty:hover .avatar-container { background: rgba(255, 255, 255, 0.8); border-style: solid; border-color: var(--hot-pink);}
-        .speaker-seat.empty .avatar-container svg { width: 24px; height: 24px; fill: var(--hot-pink); opacity: 0.8; }
+        .speaker-seat.empty:hover .avatar-container { background: rgba(255, 0, 76, 0.15); border-style: solid; border-color: var(--hot-pink);}
+        .speaker-seat.empty .avatar-container svg { width: 24px; height: 24px; fill: var(--hot-pink); opacity: 0.7; }
         
         .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
-        .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #111; margin-bottom: 10px; }
-        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #111; text-shadow: 0 0 10px #fff; }
-        .logo-sub { font-size: 0.7em; color: #444; display: flex; align-items: center; font-weight: bold; gap: 10px; margin-top: 5px; text-shadow: 0 0 5px #fff; }
-        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 2px; background: #fff; }
+        .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #111; margin-bottom: 10px; }
+        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #111; }
+        .logo-sub { font-size: 0.7em; color: #888; display: flex; align-items: center; gap: 10px; margin-top: 5px;}
+        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: #ddd; }
         
         .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
-        .warning-box { flex: 1.5; background: rgba(255, 247, 247, 0.9); border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
+        .warning-box { flex: 1.5; background: rgba(255, 247, 247, 0.8); border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
         .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
         .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
         .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
-        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.9); border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
+        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
         .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#888;}
         .offer-title { font-size: 0.65em; color: var(--hot-pink); margin-bottom: 5px; font-weight: 700;}
         .offer-price { font-size: 1.2em; font-weight: 800; color: #111; display: flex; justify-content: center; align-items: center; gap: 5px;}
@@ -301,8 +278,8 @@
         .offer-sub { font-size: 0.6em; text-decoration: line-through; color: #888; }
         .buy-btn { background: var(--hot-pink); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700;}
         
-        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.9); border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
-        .quick-buy-100 { background: #f9f9f9; color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
+        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.7); border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
+        .quick-buy-100 { background: rgba(249, 249, 249, 0.8); color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
         .quick-buy-100 i { color: #00BFFF; }
         .quick-buy-100 span { display: block; font-size: 0.8em; color: #888; font-weight: 400; text-decoration: line-through;}
         .scrollable-gifts { display: flex; gap: 15px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px; }
@@ -360,40 +337,31 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .zingoo-footer { 
-            padding: 10px 15px 20px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(255, 255, 255, 0.85); 
-            border-top: 1px solid rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(10px);
-            z-index: 20;
-        }
-        .chat-open-btn { background: rgba(245, 245, 245, 0.9); border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
+        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: transparent; border-top: none; z-index: 20;} /* Made transparent */
+        .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
         .zf-btn { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.1em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease;}
         .zf-btn:hover { transform: scale(1.1); }
-        .zf-dots { background: rgba(238, 238, 238, 0.9); color: #333; }
+        .zf-dots { background: #eee; color: #333; }
         .zf-gift { background: #ffeb3b; color: #b45309; }
         .zf-mic { background: var(--hot-pink); }
 
         /* --- GLASSY CHAT PANEL OVERLAY --- */
         #chat-panel-overlay { 
             position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; 
-            background: rgba(255, 255, 255, 0.7); /* Glassy Background */
-            backdrop-filter: blur(20px); /* Beautiful Blur */
+            background: rgba(255, 255, 255, 0.4); /* Made more transparent */
+            backdrop-filter: blur(20px); 
             border-top: 1px solid rgba(255,255,255,0.8); 
             border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
             z-index: 50; animation: slideUpModal 0.3s ease-out; 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
         }
-        .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: none; }
         .chat-panel-header h3 { font-size: 1.1em; color: #111; font-weight: 800;}
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
         .chat-messages::-webkit-scrollbar { display: none; }
-        .chat-msg { background: #ffffff; padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.03); font-weight: 500;}
+        .chat-msg { background: rgba(255, 255, 255, 0.85); padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.03); font-weight: 500;}
         .chat-msg .username { color: var(--hot-pink); font-weight: 800; margin-right: 5px; }
         .chat-msg.system { background: transparent; box-shadow: none; font-style: italic; color: #666; text-align: center; align-self: center; font-size: 0.8em;}
         .chat-msg.gift-message { background: linear-gradient(135deg, #fff0f2, #ffe4e8); border: 1px solid var(--hot-pink); color: #111; font-weight: 700; align-self: flex-start; }
@@ -601,9 +569,7 @@
                     </div>
                     
                     <div class="center-logo-area" id="room-center-display">
-                        <div class="logo-z">Z</div>
-                        <div class="logo-text">ZINGOO</div>
-                        <div class="logo-sub">Audio Room</div>
+                        <!-- Removed Zingoo Logo from here as per instructions -->
                     </div>
                     
                     <div class="banners-container">
@@ -796,7 +762,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         let app;
         let db;
@@ -1303,11 +1269,25 @@
                             push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
                                 sender: currentUser, type: 'answer', sdp: answer
                             });
+                            
+                            if (roomPeers[sender].pendingCandidates) {
+                                roomPeers[sender].pendingCandidates.forEach(c => roomPeers[sender].addIceCandidate(c).catch(e=>console.log(e)));
+                                roomPeers[sender].pendingCandidates = [];
+                            }
                         } else if (data.type === 'answer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            
+                            if (roomPeers[sender].pendingCandidates) {
+                                roomPeers[sender].pendingCandidates.forEach(c => roomPeers[sender].addIceCandidate(c).catch(e=>console.log(e)));
+                                roomPeers[sender].pendingCandidates = [];
+                            }
                         } else if (data.type === 'candidate') {
-                            if(roomPeers[sender].remoteDescription) {
-                                roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                            const candidate = new RTCIceCandidate(data.candidate);
+                            if (roomPeers[sender].remoteDescription && roomPeers[sender].remoteDescription.type) {
+                                roomPeers[sender].addIceCandidate(candidate).catch(e=>console.log(e));
+                            } else {
+                                if (!roomPeers[sender].pendingCandidates) roomPeers[sender].pendingCandidates = [];
+                                roomPeers[sender].pendingCandidates.push(candidate);
                             }
                         }
                     });
@@ -1337,6 +1317,7 @@
 
             function createRoomPeerConnection(targetUser) {
                 const pc = new RTCPeerConnection(servers);
+                pc.pendingCandidates = [];
                 if(roomLocalStream) {
                     roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
                 }
@@ -1511,18 +1492,13 @@
                                     <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
                                 </div>`;
                             } else {
-                                display.innerHTML = `
-                                    <div class="logo-z">Z</div>
-                                    <div class="logo-text">ZINGOO</div>
-                                    <div class="logo-sub">Audio Room</div>
-                                `;
+                                display.innerHTML = ``;
                             }
                         });
                     });
 
                     const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
                     if (roomListener) roomListener(); 
-                    speakerGrid.innerHTML = ''; // NEW: Clear grid before joining new room to prevent flash
                     roomListener = onValue(roomSeatsRef, (snapshot) => {
                         renderSeats(snapshot.val() || {});
                     });
@@ -1590,6 +1566,8 @@
             }
 
             function renderSeats(seatsData) {
+                speakerGrid.innerHTML = '';
+                
                 let wasInSeat = mySeatIndex !== -1;
                 mySeatIndex = -1;
 
@@ -1607,56 +1585,42 @@
 
                 document.getElementById('listener-count-num').innerText = Object.keys(seatsData).length;
 
-                // NEW: Ensure 10 seats exist without deleting existing DOM (fixes flicker/fetching lag)
-                while (speakerGrid.children.length < 10) {
-                    const seatDiv = document.createElement('div');
-                    seatDiv.className = 'speaker-seat empty';
-                    speakerGrid.appendChild(seatDiv);
-                }
-
                 for (let i = 0; i < 10; i++) {
                     const seatInfo = seatsData[i];
-                    const seatDiv = speakerGrid.children[i];
+                    const seatDiv = document.createElement('div');
+                    seatDiv.className = 'speaker-seat';
                     
                     if (seatInfo) {
-                        const stateStr = `${seatInfo.user}_${seatInfo.avatar}_${seatInfo.isMuted}_${seatInfo.chairUrl}`;
-                        if (seatDiv.dataset.state !== stateStr) {
-                            seatDiv.dataset.state = stateStr;
-                            seatDiv.dataset.username = seatInfo.user;
-                            seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
-                            seatDiv.className = 'speaker-seat';
-                            if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
+                        seatDiv.dataset.username = seatInfo.user;
+                        seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
+                        if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
-                            let chairHTML = '';
-                            if (seatInfo.chairUrl) {
-                                chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
-                            }
-
-                            seatDiv.innerHTML = `
-                                <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
-                                    ${chairHTML}
-                                    <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
-                                    <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
-                                        <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
-                                    </div>
-                                </div>
-                                <p>${seatInfo.user}</p>
-                                ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : `<span class="admin-tag">User</span>`}
-                            `;
+                        let chairHTML = '';
+                        if (seatInfo.chairUrl) {
+                            chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
                         }
+
+                        seatDiv.innerHTML = `
+                            <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
+                                ${chairHTML}
+                                <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
+                                <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
+                                    <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
+                                </div>
+                            </div>
+                            <p>${seatInfo.user}</p>
+                            ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : `<span class="admin-tag">User</span>`}
+                        `;
                     } else {
-                        const emptyState = "empty";
-                        if (seatDiv.dataset.state !== emptyState) {
-                            seatDiv.dataset.state = emptyState;
-                            seatDiv.className = 'speaker-seat empty';
-                            seatDiv.innerHTML = `
-                                <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
-                                    <svg viewBox="0 0 24 24"><path d="M20,10V7A2,2 0 0,0 18,5H6A2,2 0 0,0 4,7V10A2,2 0 0,0 2,12V15A2,2 0 0,0 4,17H5V20H7V17H17V20H19V17H20A2,2 0 0,0 22,15V12A2,2 0 0,0 20,10M6,7H18V10H6V7M20,15H4V12H20V15Z" fill="currentColor"/></svg>
-                                </div>
-                                <p>Seat ${i + 1}</p>
-                            `;
-                        }
+                        seatDiv.classList.add('empty');
+                        seatDiv.innerHTML = `
+                            <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
+                                <svg viewBox="0 0 24 24"><path d="M20,10V7A2,2 0 0,0 18,5H6A2,2 0 0,0 4,7V10A2,2 0 0,0 2,12V15A2,2 0 0,0 4,17H5V20H7V17H17V20H19V17H20A2,2 0 0,0 22,15V12A2,2 0 0,0 20,10M6,7H18V10H6V7M20,15H4V12H20V15Z" fill="currentColor"/></svg>
+                            </div>
+                            <p>Seat ${i + 1}</p>
+                        `;
                     }
+                    speakerGrid.appendChild(seatDiv);
                 }
             }
             
@@ -1668,17 +1632,20 @@
                         return;
                     }
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
-                    set(seatRef, { 
-                        user: currentUser, 
-                        avatar: currentAvatar, 
-                        isMuted: false, 
-                        timestamp: serverTimestamp(),
-                        chairUrl: myEquippedChair 
+                    onDisconnect(seatRef).remove().then(() => {
+                        set(seatRef, { 
+                            user: currentUser, 
+                            avatar: currentAvatar, 
+                            isMuted: false, 
+                            timestamp: serverTimestamp(),
+                            chairUrl: myEquippedChair 
+                        });
                     });
                 },
                 leaveSeat: () => {
                     if (!currentActiveRoomId || mySeatIndex === -1) return;
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                    onDisconnect(seatRef).cancel();
                     remove(seatRef);
                 }
             };
@@ -1738,29 +1705,53 @@
             });
             
             document.getElementById('start-new-room-btn').addEventListener('click', () => {
-                const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
-                const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
-                
-                const newRoomRef = push(ref(db, 'audio_rooms'));
-                set(newRoomRef, {
-                    name: topic,
-                    fee: fee,
-                    host: currentUser,
-                    hostAvatar: currentAvatar,
-                    createdAt: serverTimestamp(),
-                    seats: {}
-                }).then(() => {
-                    pendingInvites.forEach(user => {
-                        push(ref(db, `invites/${user}`), {
-                            sender: currentUser,
-                            roomName: topic,
-                            timestamp: serverTimestamp()
-                        });
-                    });
-                    pendingInvites = [];
+                get(ref(db, 'audio_rooms')).then(snap => {
+                    let alreadyHosting = false;
+                    let existingRoomId = null;
+                    let existingRoomTitle = null;
+                    if(snap.exists()){
+                        const rooms = snap.val();
+                        for(let id in rooms){
+                            if(rooms[id].host === currentUser){
+                                alreadyHosting = true;
+                                existingRoomId = id;
+                                existingRoomTitle = rooms[id].name;
+                                break;
+                            }
+                        }
+                    }
                     
-                    closeModal();
-                    joinAudioRoom(newRoomRef.key, topic, 0);
+                    if(alreadyHosting){
+                        showToast("You already have an active room! Joining it...");
+                        closeModal();
+                        joinAudioRoom(existingRoomId, existingRoomTitle, 0);
+                        return;
+                    }
+                    
+                    const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
+                    const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
+                    
+                    const newRoomRef = push(ref(db, 'audio_rooms'));
+                    set(newRoomRef, {
+                        name: topic,
+                        fee: fee,
+                        host: currentUser,
+                        hostAvatar: currentAvatar,
+                        createdAt: serverTimestamp(),
+                        seats: {}
+                    }).then(() => {
+                        pendingInvites.forEach(user => {
+                            push(ref(db, `invites/${user}`), {
+                                sender: currentUser,
+                                roomName: topic,
+                                timestamp: serverTimestamp()
+                            });
+                        });
+                        pendingInvites = [];
+                        
+                        closeModal();
+                        joinAudioRoom(newRoomRef.key, topic, 0);
+                    });
                 });
             });
 
