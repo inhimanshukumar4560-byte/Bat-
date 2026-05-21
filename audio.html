@@ -1440,23 +1440,20 @@
                     createPeerConnection(targetUid);
                 }
             });
-
-            Object.keys(peerConnections).forEach(uid => {
-                if(!activeUids.includes(uid)) {
-                    peerConnections[uid].close();
-                    delete peerConnections[uid];
-                    const audioEl = document.getElementById(`audio-${uid}`);
-                    if(audioEl) audioEl.remove();
-                }
-            });
         }
 
         async function createPeerConnection(targetUid) {
             const pc = new RTCPeerConnection(rtcConfig);
             peerConnections[targetUid] = pc;
 
+            pc.addTransceiver('audio', { direction: 'recvonly' });
+
             if(localAudioStream) {
-                localAudioStream.getTracks().forEach(track => pc.addTrack(track, localAudioStream));
+                localAudioStream.getTracks().forEach(track => {
+                    const senders = pc.getSenders();
+                    const hasTrack = senders.some(s => s.track === track);
+                    if(!hasTrack) pc.addTrack(track, localAudioStream);
+                });
             }
 
             // WebRTC Mobile Audio Fix
@@ -1480,6 +1477,15 @@
                 }
             };
 
+            pc.oniceconnectionstatechange = () => {
+                if(pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'closed') {
+                    pc.close();
+                    delete peerConnections[targetUid];
+                    const audioEl = document.getElementById(`audio-${targetUid}`);
+                    if(audioEl) audioEl.remove();
+                }
+            };
+
             // Fix for Candidate Loop Overlap: Listen strictly on peer connection creation
             db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${targetUid}/candidates`).on('child_added', (candSnap) => {
                 if(candSnap.val()) {
@@ -1488,11 +1494,13 @@
             });
 
             if(myUserId > targetUid) {
-                const offer = await pc.createOffer();
+                const offer = await pc.createOffer({ offerToReceiveAudio: true });
                 await pc.setLocalDescription(offer);
                 db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).update({
                     offer: { type: offer.type, sdp: offer.sdp }
                 });
+            } else {
+                db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).update({ wakeup: true });
             }
             
             return pc;
@@ -1512,24 +1520,66 @@
             let pc = peerConnections[senderUid];
             if(!pc) pc = await createPeerConnection(senderUid);
 
-            if(data.offer && pc.signalingState === 'stable') {
-                await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
-                db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
-                    answer: { type: answer.type, sdp: answer.sdp }
-                });
+            if(data.wakeup && myUserId > senderUid) {
+                try {
+                    const offer = await pc.createOffer({ offerToReceiveAudio: true });
+                    await pc.setLocalDescription(offer);
+                    db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
+                        offer: { type: offer.type, sdp: offer.sdp }
+                    });
+                } catch(e) { console.error(e); }
             }
 
-            if(data.answer && pc.signalingState === 'have-local-offer') {
-                await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            if(data.offer) {
+                if (pc.remoteDescription && pc.remoteDescription.sdp === data.offer.sdp) {
+                    // Prevent duplicate processing
+                } else {
+                    try {
+                        await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
+                            answer: { type: answer.type, sdp: answer.sdp }
+                        });
+                    } catch(e) { console.error(e); }
+                }
+            }
+
+            if(data.answer) {
+                if (pc.remoteDescription && pc.remoteDescription.sdp === data.answer.sdp) {
+                    // Prevent duplicate processing
+                } else {
+                    try {
+                        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                    } catch(e) { console.error(e); }
+                }
             }
         }
 
         function renegotiateAllPeers() {
-            Object.keys(peerConnections).forEach(uid => {
-                peerConnections[uid].close();
-                delete peerConnections[uid];
+            Object.keys(peerConnections).forEach(async uid => {
+                const pc = peerConnections[uid];
+                if(localAudioStream) {
+                    const senders = pc.getSenders();
+                    localAudioStream.getTracks().forEach(track => {
+                        const hasTrack = senders.some(s => s.track === track);
+                        if(!hasTrack) {
+                            pc.addTrack(track, localAudioStream);
+                        }
+                    });
+                    
+                    if (myUserId > uid) {
+                        try {
+                            const offer = await pc.createOffer({ offerToReceiveAudio: true });
+                            await pc.setLocalDescription(offer);
+                            db.ref(`rooms/${currentRoomId}/webrtc/${uid}/${myUserId}`).update({
+                                offer: { type: offer.type, sdp: offer.sdp }
+                            });
+                        } catch(e) {}
+                    } else {
+                        db.ref(`rooms/${currentRoomId}/webrtc/${uid}/${myUserId}`).update({ wakeup: true });
+                    }
+                }
             });
             db.ref(`rooms/${currentRoomId}/seatsData`).once('value').then(snap => syncWebRTCPeers(snap.val()));
         }
