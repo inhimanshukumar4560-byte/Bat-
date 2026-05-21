@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport-fit=cover and maximum-scale=1.0 ensures the app doesn't zoom and respects mobile safe areas -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Live Audio Rooms</title>
     
@@ -37,10 +36,7 @@
             --panel-bg: #ffffff;
         }
 
-        /* MOBILE VIEWPORT FIX: prevents bottom footer from hiding */
-        html {
-            height: -webkit-fill-available;
-        }
+        html { height: -webkit-fill-available; }
 
         body {
             background: #e0e0e0;
@@ -48,10 +44,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            height: 100dvh; /* Modern fix for mobile bottom bar */
+            height: 100dvh;
             min-height: -webkit-fill-available;
             overflow: hidden;
-            position: fixed; /* Stops body from scrolling entirely */
+            position: fixed;
             width: 100%;
         }
 
@@ -68,9 +64,7 @@
             margin: 0 auto;
         }
 
-        /* ==========================================
-           HOME PAGE (ZINGOO LOBBY UI)
-           ========================================== */
+        /* HOME PAGE UI */
         #home-view {
             width: 100%;
             height: 100%;
@@ -84,625 +78,131 @@
             transition: transform 0.3s ease-in-out;
         }
 
-        .z-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
+        .z-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; }
+        .z-logo { font-size: 20px; font-weight: 900; font-style: italic; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .z-back-btn { font-size: 24px; font-style: normal; margin-right: 5px; color: #333; }
+        .z-logo span.z-icon { background: var(--z-pink); color: white; padding: 2px 8px; border-radius: 5px; border-top-left-radius: 15px; border-bottom-right-radius: 15px; }
 
-        .z-logo {
-            font-size: 20px;
-            font-weight: 900;
-            font-style: italic;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        
-        .z-back-btn {
-            font-size: 24px;
-            font-style: normal;
-            margin-right: 5px;
-            color: #333;
-        }
+        .z-header-icons { display: flex; gap: 15px; align-items: center; }
+        .z-diamond-badge { background: #f3e5f5; color: #9c27b0; padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+        .z-search-bar { margin: 10px 20px; background: #f1f2f6; padding: 12px 15px; border-radius: 25px; display: flex; align-items: center; gap: 10px; color: #888; }
+        .z-search-bar input { border: none; background: transparent; outline: none; width: 100%; font-size: 14px; }
+        .z-section-title { padding: 15px 20px 5px; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .z-section-title span { color: var(--z-pink); font-size: 12px; cursor: pointer; }
 
-        .z-logo span.z-icon {
-            background: var(--z-pink);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 5px;
-            border-top-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-        }
-
-        .z-header-icons {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .z-diamond-badge {
-            background: #f3e5f5;
-            color: #9c27b0;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .z-search-bar {
-            margin: 10px 20px;
-            background: #f1f2f6;
-            padding: 12px 15px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #888;
-        }
-
-        .z-search-bar input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .z-section-title {
-            padding: 15px 20px 5px;
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .z-section-title span {
-            color: var(--z-pink);
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .room-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 100px;
-        }
-        
+        .room-list { flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 100px; }
         .room-list::-webkit-scrollbar { display: none; }
+        .room-card { display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+        .room-card-left { display: flex; align-items: center; gap: 15px; }
+        .room-thumb-container { position: relative; width: 60px; height: 60px; border-radius: 15px; overflow: hidden; }
+        .room-thumb { width: 100%; height: 100%; object-fit: cover; background: #ccc; }
+        .live-badge { position: absolute; top: 5px; left: 5px; background: var(--z-pink); color: white; font-size: 8px; font-weight: bold; padding: 2px 5px; border-radius: 5px; }
+        .room-info { display: flex; flex-direction: column; gap: 4px; }
+        .room-info h4 { font-size: 15px; color: var(--z-text); }
+        .room-info p { font-size: 11px; color: var(--z-text-light); }
+        .room-entry-price { font-size: 10px; color: #9c27b0; background: #f3e5f5; padding: 2px 6px; border-radius: 5px; display: inline-block; width: max-content; }
+        .room-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .seats-left { font-size: 12px; color: var(--z-pink); font-weight: bold; }
+        .join-btn { border: 1px solid var(--z-pink); color: var(--z-pink); background: transparent; padding: 6px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        
+        .fab { position: absolute; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--z-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 30px; box-shadow: 0 5px 15px rgba(255, 31, 90, 0.4); cursor: pointer; z-index: 60; border: none; outline: none; }
 
-        .room-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: white;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #f0f0f0;
-        }
-
-        .room-card-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .room-thumb-container {
-            position: relative;
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .room-thumb {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #ccc;
-        }
-
-        .live-badge {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: var(--z-pink);
-            color: white;
-            font-size: 8px;
-            font-weight: bold;
-            padding: 2px 5px;
-            border-radius: 5px;
-        }
-
-        .room-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .room-info h4 {
-            font-size: 15px;
-            color: var(--z-text);
-        }
-
-        .room-info p {
-            font-size: 11px;
-            color: var(--z-text-light);
-        }
-
-        .room-entry-price {
-            font-size: 10px;
-            color: #9c27b0;
-            background: #f3e5f5;
-            padding: 2px 6px;
-            border-radius: 5px;
-            display: inline-block;
-            width: max-content;
-        }
-
-        .room-card-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        .seats-left {
-            font-size: 12px;
-            color: var(--z-pink);
-            font-weight: bold;
-        }
-
-        .join-btn {
-            border: 1px solid var(--z-pink);
-            color: var(--z-pink);
-            background: transparent;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .fab {
-            position: absolute;
-            bottom: 30px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: var(--z-pink);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 30px;
-            box-shadow: 0 5px 15px rgba(255, 31, 90, 0.4);
-            cursor: pointer;
-            z-index: 60;
-            border: none;
-            outline: none;
-        }
-
-        /* ==========================================
-           CREATE ROOM MODAL
-           ========================================== */
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 100;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-box {
-            background: white;
-            width: 90%;
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-            color: var(--z-text);
-            margin-bottom: 10px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
+        /* MODALS */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: none; justify-content: center; align-items: center; }
+        .modal-box { background: white; width: 90%; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .modal-title { font-size: 18px; font-weight: bold; text-align: center; color: var(--z-text); margin-bottom: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 12px; font-weight: bold; color: var(--z-text-light); }
         .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 10px; outline: none; font-size: 14px; }
-        
         .submit-btn { background: var(--z-pink); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .cancel-btn { background: #eee; color: #333; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
         .loader { display: none; text-align: center; font-size: 12px; color: var(--z-pink); }
 
-        /* ==========================================
-           AUDIO ROOM UI (NEW CHINGARI STYLE WITH IMAGE BG)
-           ========================================== */
-        #room-view {
-            width: 100%;
-            height: 100%;
-            /* User Requested Image Background */
-            background: url('https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png') no-repeat center center;
-            background-size: cover;
-            position: absolute;
-            top: 0;
-            left: 100%;
-            z-index: 70;
-            display: flex;
-            flex-direction: column;
-            transition: left 0.3s ease-in-out;
-        }
+        /* AUDIO ROOM UI */
+        #room-view { width: 100%; height: 100%; background: url('https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png') no-repeat center center; background-size: cover; position: absolute; top: 0; left: 100%; z-index: 70; display: flex; flex-direction: column; transition: left 0.3s ease-in-out; }
+        .big-bg-logo { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 250px; opacity: 0.15; pointer-events: none; z-index: 0; text-align: center; }
+        .big-bg-logo svg { width: 100px; height: 100px; fill: #ff5722; margin-bottom: 10px; }
+        .big-bg-logo h1 { color: #ff8a65; font-size: 40px; font-family: 'Brush Script MT', cursive; margin: 0; letter-spacing: 2px; }
 
-        /* Large Background Logo Overlay */
-        .big-bg-logo {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
-            text-align: center;
-        }
-        .big-bg-logo svg {
-            width: 100px;
-            height: 100px;
-            fill: #ff5722;
-            margin-bottom: 10px;
-        }
-        .big-bg-logo h1 {
-            color: #ff8a65;
-            font-size: 40px;
-            font-family: 'Brush Script MT', cursive;
-            margin: 0;
-            letter-spacing: 2px;
-        }
-
-        /* YouTube Player Container */
-        #youtubePlayerContainer {
-            width: 90%;
-            margin: 10px auto;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
-            z-index: 15;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            z-index: 10;
-        }
-
-        .host-info {
-            display: flex;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 30px;
-            padding: 5px 15px 5px 5px;
-            max-width: 60%;
-        }
-
-        .host-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-            border: 2px solid #ffd700;
-            overflow: hidden;
-        }
+        #youtubePlayerContainer { width: 90%; margin: 10px auto; border-radius: 10px; overflow: hidden; display: none; z-index: 15; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; z-index: 10; }
+        .host-info { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); border-radius: 30px; padding: 5px 15px 5px 5px; max-width: 60%; }
+        .host-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 10px; border: 2px solid #ffd700; overflow: hidden; }
         .host-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
         .host-details { display: flex; flex-direction: column; overflow: hidden; }
         .host-name { color: var(--text-light); font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .viewers { color: var(--text-dim); font-size: 10px; display: flex; align-items: center; gap: 3px; }
-        
         .header-actions { display: flex; gap: 15px; align-items: center; color: var(--text-light); font-size: 20px; }
         .header-icon { cursor: pointer; }
         .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; }
 
-        .seats-container {
-            padding: 20px 10px; 
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 15px 5px;
-            z-index: 10;
-        }
-
+        .seats-container { padding: 20px 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; z-index: 10; }
         .seat { display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
-        
-        .seat-avatar {
-            width: 50px; 
-            height: 50px;
-            border-radius: 50%;
-            background: var(--seat-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            margin-bottom: 5px;
-            border: 2px solid transparent;
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-        }
-
-        .seat.empty .seat-avatar {
-            background: white;
-            color: #9c27b0;
-            font-size: 20px;
-            border: 2px solid #9c27b0;
-        }
-
+        .seat-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--seat-bg); display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 5px; border: 2px solid transparent; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .seat.empty .seat-avatar { background: white; color: #9c27b0; font-size: 20px; border: 2px solid #9c27b0; }
         .seat.occupied .seat-avatar { color: white; font-size: 24px; }
         .seat-name { color: var(--text-light); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 60px; }
 
-        /* Modified: Extra margin-bottom to clear the footer on all phones safely */
-        .chat-container {
-            flex: 1;
-            padding: 10px 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10;
-            margin-bottom: 160px; /* Crucial Fix to prevent hiding behind footer */
-        }
+        .chat-container { flex: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; z-index: 10; margin-bottom: 160px; }
         .chat-container::-webkit-scrollbar { display: none; }
-        
-        .sys-message {
-            color: #ffffff;
-            font-size: 13px;
-            line-height: 1.4;
-            background: rgba(0,0,0,0.4);
-            padding: 10px 15px;
-            border-radius: 10px;
-            align-self: flex-start; /* Always left side */
-            max-width: 90%;
-        }
-
-        .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; /* Always left side */ }
+        .sys-message { color: #ffffff; font-size: 13px; line-height: 1.4; background: rgba(0,0,0,0.4); padding: 10px 15px; border-radius: 10px; align-self: flex-start; max-width: 90%; }
+        .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; }
         .msg-avatar { width: 25px; height: 25px; border-radius: 50%; background: #ccc; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; }
         .msg-content { background: rgba(0, 0, 0, 0.5); padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; }
         .msg-name { color: #ffeb3b; font-size: 11px; font-weight: bold; margin-bottom: 3px; }
         .msg-text { color: white; font-size: 13px; }
 
-        /* Floating Offers Banner */
-        .limited-offers {
-            position: absolute;
-            bottom: 140px;
-            right: 15px;
-            background: linear-gradient(135deg, #b388ff, #7c4dff);
-            border-radius: 15px;
-            padding: 10px;
-            color: white;
-            text-align: center;
-            z-index: 20;
-            box-shadow: 0 0 15px rgba(124, 77, 255, 0.6);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+        .limited-offers { position: absolute; bottom: 140px; right: 15px; background: linear-gradient(135deg, #b388ff, #7c4dff); border-radius: 15px; padding: 10px; color: white; text-align: center; z-index: 20; box-shadow: 0 0 15px rgba(124, 77, 255, 0.6); border: 1px solid rgba(255,255,255,0.3); }
         .limited-offers h5 { font-size: 10px; font-weight: normal; margin-bottom: 5px; }
         .limited-offers .offer-content { display: flex; align-items: center; gap: 5px; font-size: 16px; font-weight: bold; }
         .limited-offers .offer-price { font-size: 9px; color: #e0e0e0; margin-top: 5px; text-decoration: line-through; }
         .limited-offers button { background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 10px; padding: 4px 10px; font-size: 10px; margin-top: 5px; cursor: pointer; width: 100%;}
 
-        /* NEW BOTTOM UI AREA (Fixed Viewport Visibility) */
-        .bottom-ui-wrapper {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px 15px 15px 15px;
-            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); /* Safe area fix for notched phones */
-            z-index: 20;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        }
-
-        .upper-bottom-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .balance-pill {
-            background: rgba(255,255,255,0.9);
-            color: #000;
-            border-radius: 20px;
-            padding: 5px 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
+        .bottom-ui-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px 15px 15px 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); z-index: 20; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
+        .upper-bottom-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .balance-pill { background: rgba(255,255,255,0.9); color: #000; border-radius: 20px; padding: 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
         .balance-pill span { font-size: 8px; color: #666; font-weight: normal; margin-top: 2px;}
-
-        .horizontal-gifts {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            flex: 1;
-            scrollbar-width: none;
-            padding-bottom: 5px;
-        }
+        .horizontal-gifts { display: flex; gap: 15px; overflow-x: auto; flex: 1; scrollbar-width: none; padding-bottom: 5px; }
         .horizontal-gifts::-webkit-scrollbar { display: none; }
-        
-        .h-gift-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            min-width: 40px;
-        }
+        .h-gift-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 40px; }
         .h-gift-icon { font-size: 24px; }
         .h-gift-price { font-size: 9px; color: white; margin-top: 2px; display: flex; align-items: center; gap: 2px; }
         .free-tag { background: #ab47bc; padding: 1px 5px; border-radius: 5px; font-size: 8px; margin-top: 2px; color: white; white-space: nowrap; }
 
-        .lower-bottom-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-pill-btn {
-            background: #ff8a65;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 138, 101, 0.4);
-        }
-
-        .action-circles {
-            display: flex;
-            gap: 12px;
-        }
-
-        .circle-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            outline: none;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+        .lower-bottom-row { display: flex; justify-content: space-between; align-items: center; }
+        .chat-pill-btn { background: #ff8a65; color: white; border: none; padding: 10px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 138, 101, 0.4); }
+        .action-circles { display: flex; gap: 12px; }
+        .circle-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; border: none; outline: none; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .menu-circle { background: #ab47bc; }
         .gift-circle { background: #26a69a; }
         .flame-circle { background: #392b58; }
 
-        /* CHAT INPUT OVERLAY (Screenshot Style) */
-        .chat-input-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 15px;
-            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
-            background: linear-gradient(to top, rgba(26, 15, 46, 1) 50%, rgba(26, 15, 46, 0.8));
-            display: none;
-            z-index: 40;
-        }
+        .chat-input-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, rgba(26, 15, 46, 1) 50%, rgba(26, 15, 46, 0.8)); display: none; z-index: 40; }
         .chat-input-overlay.active { display: block; }
-        
-        .chat-input-box {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ff8a65;
-            border-radius: 30px;
-            padding: 5px 15px;
-            background: transparent;
-        }
-        .chat-input-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 10px 0;
-            color: white;
-            font-size: 14px;
-            outline: none;
-        }
+        .chat-input-box { display: flex; align-items: center; border: 1px solid #ff8a65; border-radius: 30px; padding: 5px 15px; background: transparent; }
+        .chat-input-box input { flex: 1; background: transparent; border: none; padding: 10px 0; color: white; font-size: 14px; outline: none; }
         .chat-input-box input::placeholder { color: rgba(255,255,255,0.5); }
-        .chat-send-icon {
-            color: #ffffff;
-            font-size: 20px;
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            outline: none;
-            padding: 5px;
-        }
+        .chat-send-icon { color: #ffffff; font-size: 20px; cursor: pointer; background: transparent; border: none; outline: none; padding: 5px; }
 
-        /* Panels & Modals */
         .bottom-sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 35; display: none; }
         .bottom-sheet-overlay.active { display: block; }
-        
-        .dropdown-menu {
-            position: absolute; top: auto; bottom: 80px; right: 15px; background: white; border-radius: 10px; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100; display: none; flex-direction: column; overflow: hidden;
-        }
+        .dropdown-menu { position: absolute; top: auto; bottom: 80px; right: 15px; background: white; border-radius: 10px; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 100; display: none; flex-direction: column; overflow: hidden; }
         .dropdown-menu.active { display: flex; }
         .menu-item { padding: 15px; color: #333; font-size: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; cursor: pointer; }
 
-        /* YouTube Modal (Kept for fallback, but settings does it now) */
-        #youtubeModal {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 110; display: none; justify-content: center; align-items: center;
-        }
-        .yt-box { background: white; padding: 20px; border-radius: 15px; width: 90%; display: flex; flex-direction: column; gap: 10px;}
-        .yt-box input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;}
-        .yt-btns { display: flex; gap: 10px; justify-content: flex-end;}
-        .yt-btns button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
-        .yt-play { background: #ff1f5a; color: white;}
-        .yt-stop { background: #333; color: white;}
-        .yt-cancel { background: #ddd; color: #333;}
-        
-        /* STORE MODAL AND ROOM SETTINGS MODAL */
+        /* MODALS */
         .store-item-card { min-width: 80px; background:#f0f0f0; padding:10px; border-radius:10px; text-align:center; flex-shrink:0; }
         .store-item-card img { width:50px; height:50px; object-fit:contain; margin-bottom:5px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));}
         .store-item-card .st-name { font-size:10px; font-weight:bold; color:#333; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .store-item-card .st-cost { font-size:10px; color:var(--z-pink); font-weight:bold; margin-top:2px; }
         .store-item-card button { background:var(--z-pink); color:white; border:none; border-radius:5px; padding:4px 8px; font-size:9px; margin-top:5px; cursor:pointer; width:100%; font-weight:bold; }
-
     </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- ==========================================
-             HOME VIEW (ZINGOO LOBBY)
-             ========================================== -->
+        <!-- HOME VIEW (ZINGOO LOBBY) -->
         <div id="home-view">
             <div class="z-header">
                 <div class="z-logo" onclick="window.location.href='home.html'">
@@ -721,10 +221,7 @@
                 <span>⚙️</span>
             </div>
 
-            <div class="z-section-title">
-                Live Rooms
-                <span>View All</span>
-            </div>
+            <div class="z-section-title">Live Rooms <span>View All</span></div>
 
             <div class="room-list" id="roomListContainer">
                 <p style="text-align: center; color: #888; font-size: 14px; margin-top: 20px;">Loading live rooms...</p>
@@ -737,7 +234,6 @@
         <div class="modal-overlay" id="createRoomModal">
             <div class="modal-box">
                 <div class="modal-title">Host a New Room</div>
-                
                 <div class="input-group">
                     <label>Room Name</label>
                     <input type="text" id="cr_roomName" placeholder="Enter Room Name" required>
@@ -762,12 +258,9 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             AUDIO ROOM VIEW (NEW SCREENSHOT STYLE)
-             ========================================== -->
+        <!-- AUDIO ROOM VIEW -->
         <div id="room-view">
             
-            <!-- Large Background Logo -->
             <div class="big-bg-logo">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C12 2 7 7 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 7 12 2 12 2ZM12 22C6.48 22 2 17.52 2 12C2 10.88 2.19 9.8 2.54 8.8C3.12 11.23 5.3 13 8 13C8 13 8 10 10.5 7.5C11.66 6.34 13.5 6.34 14.66 7.5C17.16 10 17.16 13 17.16 13C19.86 13 22 10.86 22 8.16C22 9.38 22 10.66 22 12C22 17.52 17.52 22 12 22Z"/>
@@ -789,22 +282,14 @@
                 </div>
             </header>
 
-            <!-- YOUTUBE PLAYER CONTAINER -->
             <div id="youtubePlayerContainer"></div>
 
-            <!-- Dynamic Seats Container (Now 5-5 Grid) -->
-            <div class="seats-container" id="seatsContainer">
-                <!-- Injected via JS dynamically for WebRTC seats -->
-            </div>
+            <div class="seats-container" id="seatsContainer"></div>
 
-            <!-- Chat Area -->
             <div class="chat-container" id="chatBox">
-                <div class="sys-message">
-                    Welcome to Zingoo Audio Room! Please follow community guidelines.
-                </div>
+                <div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>
             </div>
 
-            <!-- Floating Offers Banner -->
             <div class="limited-offers">
                 <h5>Limited Offers</h5>
                 <div class="offer-content">💎 <span id="offer-diamonds">300</span></div>
@@ -812,28 +297,18 @@
                 <button id="buyOfferBtn">Buy Now</button>
             </div>
 
-            <!-- NEW BOTTOM UI WRAPPER -->
             <div class="bottom-ui-wrapper" id="mainBottomUI">
-                
-                <!-- Upper Row: Balance & Horizontal Gifts -->
                 <div class="upper-bottom-row">
                     <div class="balance-pill" id="buyMorePill">
                         <div>💎 <span id="rv_myDiamonds" style="font-size:11px; color:black; font-weight:bold;">0</span></div>
                         <span>Buy More</span>
                     </div>
-                    
                     <div class="horizontal-gifts" id="dynamic-gifts-container">
-                        <!-- Loaded dynamically from Firebase Admin Panel Gifts -->
                         <span style="color:white; font-size:10px;">Loading gifts...</span>
                     </div>
                 </div>
-
-                <!-- Lower Row: Chat Button & Action Icons -->
                 <div class="lower-bottom-row">
-                    <button class="chat-pill-btn" id="openChatBtn">
-                        💬 Chat
-                    </button>
-                    
+                    <button class="chat-pill-btn" id="openChatBtn">💬 Chat</button>
                     <div class="action-circles">
                         <button class="circle-btn menu-circle" id="menuBtn">⋮</button>
                         <button class="circle-btn gift-circle" id="openStoreBtn">🎁</button>
@@ -842,25 +317,8 @@
                 </div>
             </div>
 
-            <!-- MENU DROPDOWN -->
             <div class="dropdown-menu" id="topMenu">
-                <div class="menu-item" id="menuPlayYt" style="display:none;">Play YouTube Video <span>▶️</span></div>
-                <div class="menu-item">Lock Room <span>🔒</span></div>
                 <div class="menu-item" id="openRoomSettingsBtn">Room Settings <span>⚙️</span></div>
-            </div>
-
-            <!-- YOUTUBE URL MODAL -->
-            <div id="youtubeModal">
-                <div class="yt-box">
-                    <h3>Play YouTube Video</h3>
-                    <p style="font-size:12px; color:#666;">Paste Youtube URL below (Song/Video). It will play for everyone in the room.</p>
-                    <input type="text" id="ytUrlInput" placeholder="https://youtube.com/watch?v=...">
-                    <div class="yt-btns">
-                        <button class="yt-cancel" id="ytCancelBtn">Cancel</button>
-                        <button class="yt-stop" id="ytStopBtn">Stop Current Video</button>
-                        <button class="yt-play" id="ytPlayBtn">Play</button>
-                    </div>
-                </div>
             </div>
 
             <!-- STORE MODAL -->
@@ -868,15 +326,12 @@
                 <div class="modal-box" style="max-height: 85vh; overflow-y: auto; width: 95%;">
                     <div class="modal-title">Zingoo Virtual Store</div>
                     
-                    <!-- Chairs -->
                     <h4 style="font-size: 13px; font-weight: bold; margin-top:10px; color:var(--z-pink);">Premium Chairs</h4>
                     <div id="store_chairs" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
 
-                    <!-- Profile Icons -->
                     <h4 style="font-size: 13px; font-weight: bold; margin-top:15px; color:var(--z-pink);">Profile Icons</h4>
                     <div id="store_icons" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
 
-                    <!-- Entry Stickers -->
                     <h4 style="font-size: 13px; font-weight: bold; margin-top:15px; color:var(--z-pink);">Entry Stickers</h4>
                     <div id="store_stickers" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
 
@@ -889,7 +344,13 @@
                 <div class="modal-box" style="max-height: 80vh; overflow-y: auto;">
                     <div class="modal-title">Room Settings</div>
                     
-                    <h4 style="font-size: 14px; font-weight: bold; margin-top:10px;">YouTube Video Playback</h4>
+                    <h4 style="font-size: 14px; font-weight: bold; margin-top:10px;">Edit Room Seats</h4>
+                    <div class="input-group">
+                        <input type="number" id="rs_seatCount" min="1" max="10" placeholder="Max Seats (e.g. 10)">
+                        <button class="submit-btn" id="rs_saveSeatsBtn" style="padding: 10px; margin-top:5px;">Update Seats</button>
+                    </div>
+
+                    <h4 style="font-size: 14px; font-weight: bold; margin-top:20px;">YouTube Video Playback</h4>
                     <div class="input-group">
                         <input type="text" id="rs_youtubeInput" placeholder="Paste link here...">
                         <button class="submit-btn" id="rs_saveYtBtn" style="padding: 10px; margin-top:5px;">Set Video</button>
@@ -915,19 +376,12 @@
 
             <div class="bottom-sheet-overlay" id="overlay"></div>
             
-            <!-- Hidden Audio Container for WebRTC streams -->
             <div id="webrtc-audio-container" style="display:none;"></div>
         </div>
-
     </div>
 
-    <!-- ==========================================
-         JAVASCRIPT LOGIC, FIREBASE & WEBRTC
-         ========================================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // ----------------------------------------
-        // 1. FIREBASE CONFIG
-        // ----------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -941,12 +395,8 @@
         const db = firebase.database();
 
         const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a";
-        // Exact GitHub URL requested for purchasing diamonds
         const PAYMENT_URL = "https://inhimanshukumar4560-byte.github.io/Iccha/zingoo-pay.html";
 
-        // ----------------------------------------
-        // 2. USER SETUP & DIAMOND SYNC
-        // ----------------------------------------
         let myUserId = localStorage.getItem('zingoo_id') || localStorage.getItem('zingoo_uid');
         let myUserName = localStorage.getItem('zingoo_user') || localStorage.getItem('zingoo_uname');
         let myAvatar = localStorage.getItem('zingoo_avatar') || 'https://via.placeholder.com/150';
@@ -959,7 +409,6 @@
             localStorage.setItem('zingoo_uname', myUserName);
         }
 
-        // Real-Time Diamond Sync logic
         db.ref(`users/${myUserName}/diamonds`).on('value', snap => {
             if (snap.exists()) {
                 myDiamonds = snap.val();
@@ -969,14 +418,9 @@
             }
         });
 
-        // ----------------------------------------
-        // 3. PAYMENT REDIRECT LOGIC
-        // ----------------------------------------
         window.redirectToPayment = function(amount, diamonds) {
-            const payUrl = `${PAYMENT_URL}?from=zingoo&username=${encodeURIComponent(myUserName)}&amount=${amount}&diamonds=${diamonds}`;
-            window.location.href = payUrl;
+            window.location.href = `${PAYMENT_URL}?from=zingoo&username=${encodeURIComponent(myUserName)}&amount=${amount}&diamonds=${diamonds}`;
         };
-
         document.getElementById('buyMorePill').addEventListener('click', () => redirectToPayment(100, 300));
         document.getElementById('buyOfferBtn').addEventListener('click', () => redirectToPayment(100, 300));
 
@@ -984,15 +428,15 @@
         let roomHostId = null;
         let chatListenerRef = null;
         let roomListenerRef = null;
+        
+        let currentSeatUids = [];
+        let currentYtVideoId = null;
 
         // --- WebRTC Global Variables ---
         let localAudioStream = null;
         let peerConnections = {}; 
         const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
-        // ----------------------------------------
-        // 4. DOM ELEMENTS
-        // ----------------------------------------
         const homeView = document.getElementById('home-view');
         const roomView = document.getElementById('room-view');
         const roomListContainer = document.getElementById('roomListContainer');
@@ -1018,38 +462,17 @@
         const sendBtn = document.getElementById('sendBtn');
         const overlay = document.getElementById('overlay');
 
-        const ytModal = document.getElementById('youtubeModal');
-        const ytPlayBtn = document.getElementById('ytPlayBtn');
-        const ytStopBtn = document.getElementById('ytStopBtn');
-        const ytCancelBtn = document.getElementById('ytCancelBtn');
-        const ytUrlInput = document.getElementById('ytUrlInput');
         const ytContainer = document.getElementById('youtubePlayerContainer');
         const webrtcAudioContainer = document.getElementById('webrtc-audio-container');
-
-        // Modals
         const storeModal = document.getElementById('storeModal');
         const roomSettingsModal = document.getElementById('roomSettingsModal');
 
-        // ----------------------------------------
-        // 5. CORE PAGE LOGIC (RUNS ON LOAD)
-        // ----------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomIdFromUrl = urlParams.get('roomId');
-
-            if (roomIdFromUrl) {
-                joinRoom(roomIdFromUrl);
-            } else {
-                loadRooms();
-            }
-
+            loadRooms();
             loadDynamicGifts();
             loadStoreItems();
         });
 
-        // ----------------------------------------
-        // 6. DYNAMIC GIFTS AND STORE FETCHING
-        // ----------------------------------------
         function loadDynamicGifts() {
             db.ref('gifts').on('value', snap => {
                 dynamicGiftsContainer.innerHTML = '';
@@ -1075,21 +498,17 @@
                 if(confirm("Not enough diamonds! Do you want to recharge?")) redirectToPayment(100, 300);
                 return;
             }
-            // Deduct diamonds
             db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
-            // Send animated gift to chat
             db.ref(`rooms/${currentRoomId}/chats`).push({
                 uid: myUserId,
                 name: myUserName,
                 text: `Sent a gift: <strong style="color:yellow;">${name}</strong> <img src="${img}" style="width:25px; vertical-align:middle; margin-left:5px;">`
             });
-            alert(`Gift sent successfully! Deducted ${cost} diamonds.`);
         };
 
         function loadStoreItems() {
             db.ref('store_items').on('value', snap => {
                 const data = snap.val() || {};
-                
                 renderStoreCategory(data.backgrounds, 'store_backgrounds', 'backgrounds');
                 renderStoreCategory(data.chairs, 'store_chairs', 'chairs');
                 renderStoreCategory(data.profile_icons, 'store_icons', 'profile_icons');
@@ -1101,7 +520,6 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
-            
             if (items) {
                 Object.keys(items).forEach(k => {
                     const item = items[k];
@@ -1125,39 +543,32 @@
             }
             if (category === 'backgrounds') {
                 if(myUserId !== roomHostId) return alert("Error: Only the host can change the room background!");
-                // Deduct & Apply Background
                 db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
                 db.ref(`rooms/${currentRoomId}`).update({ backgroundImage: url });
                 alert("Room Background changed successfully!");
+                roomSettingsModal.style.display = 'none';
             } else {
-                // Deduct & Equip standard items
                 db.ref(`users/${myUserName}/diamonds`).set(parseInt(myDiamonds) - cost);
                 db.ref(`users/${myUserName}/equipped_${category}`).set(url);
                 alert(`Successfully purchased and equipped ${category}!`);
             }
         };
 
-        // Modal Listeners
-        document.getElementById('openStoreBtn').addEventListener('click', () => {
-            storeModal.style.display = 'flex';
-        });
-        document.getElementById('closeStoreBtn').addEventListener('click', () => {
-            storeModal.style.display = 'none';
-        });
+        document.getElementById('openStoreBtn').addEventListener('click', () => { storeModal.style.display = 'flex'; });
+        document.getElementById('closeStoreBtn').addEventListener('click', () => { storeModal.style.display = 'none'; });
 
         document.getElementById('openRoomSettingsBtn').addEventListener('click', () => {
             if(myUserId !== roomHostId) return alert("Only the host can access Room Settings.");
             topMenu.classList.remove('active');
             overlay.classList.remove('active');
+            
+            db.ref(`rooms/${currentRoomId}/maxSeats`).once('value').then(snap => {
+                document.getElementById('rs_seatCount').value = snap.val() || 10;
+            });
             roomSettingsModal.style.display = 'flex';
         });
-        document.getElementById('closeSettingsModalBtn').addEventListener('click', () => {
-            roomSettingsModal.style.display = 'none';
-        });
+        document.getElementById('closeSettingsModalBtn').addEventListener('click', () => { roomSettingsModal.style.display = 'none'; });
 
-        // ----------------------------------------
-        // 7. HOME LOGIC (LOBBY)
-        // ----------------------------------------
         function loadRooms() {
             db.ref('rooms').on('value', (snapshot) => {
                 roomListContainer.innerHTML = '';
@@ -1196,7 +607,13 @@
             });
         }
 
-        openCreateModalBtn.addEventListener('click', () => createRoomModal.style.display = 'flex');
+        // PRE-FILL CREATE ROOM UI USING LOCALSTORAGE
+        openCreateModalBtn.addEventListener('click', () => {
+            document.getElementById('cr_roomName').value = localStorage.getItem('zingoo_lastRoomName') || '';
+            document.getElementById('cr_seats').value = localStorage.getItem('zingoo_lastRoomSeats') || '10';
+            document.getElementById('cr_price').value = localStorage.getItem('zingoo_lastRoomPrice') || '0';
+            createRoomModal.style.display = 'flex';
+        });
         closeCreateModalBtn.addEventListener('click', () => createRoomModal.style.display = 'none');
 
         async function uploadImageToImgBB(file) {
@@ -1233,26 +650,30 @@
                 if(uploadedUrl) thumbnailUrl = uploadedUrl;
             }
 
+            // Save details to resume correctly later
+            localStorage.setItem('zingoo_lastRoomName', roomName);
+            if(thumbnailUrl !== myAvatar) localStorage.setItem('zingoo_lastRoomThumb', thumbnailUrl);
+            localStorage.setItem('zingoo_lastRoomSeats', seats);
+            localStorage.setItem('zingoo_lastRoomPrice', price);
+
             const newRoomRef = db.ref('rooms').push();
+            // Automatically close broad when host internet cuts / closes the app
+            newRoomRef.onDisconnect().remove(); 
+            
             await newRoomRef.set({
                 roomId: newRoomRef.key, hostId: myUserId, hostName: myUserName,
                 roomName: roomName, thumbnail: thumbnailUrl, maxSeats: seats,
                 entryPrice: price, youtubeVideoId: null, createdAt: firebase.database.ServerValue.TIMESTAMP,
-                backgroundImage: 'https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png', // Default
+                backgroundImage: 'https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png', 
                 seatsData: {
-                    0: { uid: myUserId, name: myUserName, avatar: thumbnailUrl } // Host automatically gets seat 0
+                    0: { uid: myUserId, name: myUserName, avatar: thumbnailUrl } 
                 }
             });
             
             crLoader.style.display = 'none'; submitRoomBtn.style.display = 'block'; createRoomModal.style.display = 'none';
-            document.getElementById('cr_roomName').value = ''; fileInput.value = '';
-            
             joinRoom(newRoomRef.key);
         });
 
-        // ----------------------------------------
-        // 8. AUDIO ROOM & WEBRTC LOGIC
-        // ----------------------------------------
         async function joinRoom(roomId) {
             currentRoomId = roomId;
             const roomRef = db.ref(`rooms/${roomId}`);
@@ -1261,7 +682,7 @@
 
             if(!roomData) {
                 alert("Room not found or has been closed!");
-                window.location.href = 'audio.html';
+                window.location.href = 'home.html';
                 return;
             }
 
@@ -1269,22 +690,22 @@
             rvRoomName.innerText = roomData.roomName;
             rvHostImage.innerHTML = `<img src="${roomData.thumbnail}" onerror="this.src='https://via.placeholder.com/35'">`;
             
+            // If Host, grab Microphone stream instantly to fix no-voice bug
             if (myUserId === roomHostId) {
-                document.getElementById('menuPlayYt').style.display = 'block';
-                document.getElementById('menuPlayYt').addEventListener('click', () => {
-                    topMenu.classList.remove('active');
-                    ytModal.style.display = 'flex';
-                });
+                if (!localAudioStream) {
+                    try {
+                        localAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    } catch (err) {
+                        alert("Mic access denied. You will not be heard.");
+                    }
+                }
             }
 
             homeView.style.transform = 'translateX(-100%)';
             roomView.style.left = '0';
 
-            // Start Listening for the Room state (Seats, Background & YouTube Sync)
             startRoomListener(roomId);
             startChatListener(roomId);
-            
-            // WebRTC Signaling Initialization
             initWebRTCSignaling();
         }
 
@@ -1297,24 +718,45 @@
                 }
                 const data = snapshot.val();
                 
-                // Dynamic Background Application
                 if(data.backgroundImage) {
                     roomView.style.backgroundImage = `url('${data.backgroundImage}')`;
                 }
 
-                // YouTube Sync
+                // Prevent youtube player loop glitch by checking active ID
                 if(data.youtubeVideoId) {
-                    ytContainer.style.display = 'block';
-                    ytContainer.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${data.youtubeVideoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    if(currentYtVideoId !== data.youtubeVideoId) {
+                        currentYtVideoId = data.youtubeVideoId;
+                        ytContainer.style.display = 'block';
+                        ytContainer.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${data.youtubeVideoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    }
                 } else {
-                    ytContainer.style.display = 'none';
-                    ytContainer.innerHTML = '';
+                    if (currentYtVideoId !== null) {
+                        currentYtVideoId = null;
+                        ytContainer.style.display = 'none';
+                        ytContainer.innerHTML = '';
+                    }
                 }
 
-                // Render Dynamic WebRTC Seats
                 renderSeats(data);
                 
-                // Sync WebRTC Connections based on occupants
+                // Smart WebRTC cleanup & renegotiation
+                const newSeatUids = data.seatsData ? Object.values(data.seatsData).map(s => s.uid) : [];
+                const newlySeated = newSeatUids.filter(uid => !currentSeatUids.includes(uid));
+                const leftSeats = currentSeatUids.filter(uid => !newSeatUids.includes(uid));
+                
+                currentSeatUids = newSeatUids;
+                
+                // If a user jumps on/off a seat, we reset their peer connection quickly 
+                // so the new stream takes priority without disrupting everyone else.
+                [...newlySeated, ...leftSeats].forEach(uid => {
+                    if (peerConnections[uid]) {
+                        peerConnections[uid].close();
+                        delete peerConnections[uid];
+                        const audioEl = document.getElementById(`audio-${uid}`);
+                        if(audioEl) audioEl.remove();
+                    }
+                });
+
                 syncWebRTCPeers(data.seatsData);
             });
         }
@@ -1325,7 +767,18 @@
             return (match && match[2].length == 11) ? match[2] : null;
         }
 
-        // Room Settings YouTube Update
+        // Room Settings Update Triggers
+        document.getElementById('rs_saveSeatsBtn').addEventListener('click', () => {
+            const seats = parseInt(document.getElementById('rs_seatCount').value);
+            if(seats >= 1 && seats <= 10 && currentRoomId) {
+                db.ref(`rooms/${currentRoomId}`).update({ maxSeats: seats });
+                alert("Seats updated successfully!");
+                roomSettingsModal.style.display = 'none';
+            } else {
+                alert("Invalid seat count. Must be 1 to 10.");
+            }
+        });
+
         document.getElementById('rs_saveYtBtn').addEventListener('click', () => {
             const url = document.getElementById('rs_youtubeInput').value;
             const vidId = extractVideoID(url);
@@ -1340,24 +793,6 @@
             if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
             roomSettingsModal.style.display = 'none';
         });
-
-        // Legacy Fallback YT Modal (Still fully intact per strict request)
-        ytPlayBtn.addEventListener('click', () => {
-            const url = ytUrlInput.value;
-            const vidId = extractVideoID(url);
-            if(vidId && currentRoomId) {
-                db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: vidId });
-                ytModal.style.display = 'none';
-                ytUrlInput.value = '';
-            } else { alert("Invalid YouTube URL"); }
-        });
-
-        ytStopBtn.addEventListener('click', () => {
-            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
-            ytModal.style.display = 'none';
-        });
-
-        ytCancelBtn.addEventListener('click', () => ytModal.style.display = 'none');
 
         function renderSeats(roomData) {
             seatsContainer.innerHTML = '';
@@ -1396,62 +831,63 @@
             }
         }
 
-        // --- TAKING A SEAT & MIC ACCESS ---
+        let isTakingSeat = false;
         async function takeSeat(index) {
+            if (isTakingSeat) return;
+            isTakingSeat = true;
+
             const snapshot = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
             const seats = snapshot.val() || {};
             
+            // Prevent duplicated seats glitch
             const alreadySitting = Object.values(seats).some(s => s.uid === myUserId);
-            if(alreadySitting && myUserId !== roomHostId) {
-                return alert("You are already sitting on a seat!");
+            if(alreadySitting) {
+                alert("You are already sitting on a seat!");
+                isTakingSeat = false;
+                return;
             }
 
             try {
                 localAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 
-                await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).set({
+                const seatRef = db.ref(`rooms/${currentRoomId}/seatsData/${index}`);
+                // Clear seat instantly if user kills the app
+                seatRef.onDisconnect().remove(); 
+                await seatRef.set({
                     uid: myUserId,
                     name: myUserName,
                     avatar: myAvatar
                 });
-                
-                renegotiateAllPeers();
-                
             } catch (err) {
                 alert("Microphone permission denied! You cannot take a seat.");
             }
+            isTakingSeat = false;
         }
 
         async function leaveSeat(index) {
-            if (localAudioStream) {
+            if (localAudioStream && myUserId !== roomHostId) {
                 localAudioStream.getTracks().forEach(t => t.stop());
                 localAudioStream = null;
             }
-            await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).remove();
+            const seatRef = db.ref(`rooms/${currentRoomId}/seatsData/${index}`);
+            seatRef.onDisconnect().cancel();
+            await seatRef.remove();
         }
 
-        // --- WEBRTC MULTI-PEER LOGIC ---
+        // --- FIXED WEBRTC MULTI-PEER LOGIC ---
         function syncWebRTCPeers(seatsObj) {
             if(!seatsObj) return;
             const activeUids = Object.values(seatsObj).map(s => s.uid);
             
+            // Connect to everyone on a seat
             activeUids.forEach(targetUid => {
                 if(targetUid !== myUserId && !peerConnections[targetUid]) {
-                    createPeerConnection(targetUid);
-                }
-            });
-
-            Object.keys(peerConnections).forEach(uid => {
-                if(!activeUids.includes(uid)) {
-                    peerConnections[uid].close();
-                    delete peerConnections[uid];
-                    const audioEl = document.getElementById(`audio-${uid}`);
-                    if(audioEl) audioEl.remove();
+                    createPeerConnection(targetUid, true);
                 }
             });
         }
 
-        async function createPeerConnection(targetUid) {
+        async function createPeerConnection(targetUid, initiate) {
             const pc = new RTCPeerConnection(rtcConfig);
             peerConnections[targetUid] = pc;
 
@@ -1465,6 +901,7 @@
                     audioEl = document.createElement('audio');
                     audioEl.id = `audio-${targetUid}`;
                     audioEl.autoplay = true;
+                    audioEl.playsInline = true; 
                     webrtcAudioContainer.appendChild(audioEl);
                 }
                 audioEl.srcObject = event.streams[0];
@@ -1476,12 +913,22 @@
                 }
             };
 
-            if(myUserId > targetUid) {
-                const offer = await pc.createOffer();
-                await pc.setLocalDescription(offer);
-                db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).update({
-                    offer: { type: offer.type, sdp: offer.sdp }
-                });
+            if(initiate) {
+                const mySeat = currentSeatUids.includes(myUserId);
+                const targetSeat = currentSeatUids.includes(targetUid);
+                
+                let shouldOffer = false;
+                if (!mySeat && targetSeat) shouldOffer = true; // Viewer must initiate to Seat Holder
+                else if (mySeat && targetSeat && myUserId > targetUid) shouldOffer = true; // Seat-to-Seat Tie breaker
+                
+                if (shouldOffer) {
+                    await db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).remove();
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+                    db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).set({
+                        offer: { type: offer.type, sdp: offer.sdp }
+                    });
+                }
             }
             
             return pc;
@@ -1498,7 +945,7 @@
             const data = snap.val();
             
             let pc = peerConnections[senderUid];
-            if(!pc) pc = await createPeerConnection(senderUid);
+            if(!pc) pc = await createPeerConnection(senderUid, false);
 
             if(data.offer && pc.signalingState === 'stable') {
                 await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
@@ -1513,47 +960,49 @@
                 await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
             }
 
+            // Await remote description before adding ICE candidates to prevent error crashes
             db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${senderUid}/candidates`).on('child_added', (candSnap) => {
-                if(candSnap.val()) {
-                    pc.addIceCandidate(new RTCIceCandidate(candSnap.val()));
+                const candData = candSnap.val();
+                if(candData) {
+                    const candidate = new RTCIceCandidate(candData);
+                    let checkInterval = setInterval(() => {
+                        if (pc.remoteDescription) {
+                            clearInterval(checkInterval);
+                            pc.addIceCandidate(candidate).catch(e => console.log(e));
+                        }
+                        if (pc.signalingState === 'closed') clearInterval(checkInterval);
+                    }, 200);
                 }
             });
         }
 
-        function renegotiateAllPeers() {
-            Object.keys(peerConnections).forEach(uid => {
-                peerConnections[uid].close();
-                delete peerConnections[uid];
-            });
-            db.ref(`rooms/${currentRoomId}/seatsData`).once('value').then(snap => syncWebRTCPeers(snap.val()));
-        }
-
-        // ----------------------------------------
-        // 9. LEAVING & CLEANUP
-        // ----------------------------------------
         document.getElementById('leaveRoomBtn').addEventListener('click', leaveProcess);
         document.getElementById('topExitBtn').addEventListener('click', leaveProcess);
 
         async function leaveProcess() {
             if (myUserId === roomHostId) {
                 if (confirm("You are the host. Leaving will close the room for everyone. Are you sure?")) {
+                    db.ref(`rooms/${currentRoomId}`).onDisconnect().cancel();
                     await db.ref(`rooms/${currentRoomId}`).remove(); 
-                }
+                } else return;
             } else {
                 const snap = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
                 const seats = snap.val() || {};
                 for(let key in seats) {
                     if(seats[key].uid === myUserId) {
-                        await db.ref(`rooms/${currentRoomId}/seatsData/${key}`).remove();
+                        const seatRef = db.ref(`rooms/${currentRoomId}/seatsData/${key}`);
+                        seatRef.onDisconnect().cancel();
+                        await seatRef.remove();
                     }
                 }
-                exitRoomUI();
             }
+            exitRoomUI();
         }
 
         function exitRoomUI() {
             if(chatListenerRef) chatListenerRef.off();
             if(roomListenerRef) roomListenerRef.off();
+            if(currentRoomId) db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}`).off();
             
             if(localAudioStream) {
                 localAudioStream.getTracks().forEach(t => t.stop());
@@ -1562,6 +1011,9 @@
             Object.values(peerConnections).forEach(pc => pc.close());
             peerConnections = {};
             webrtcAudioContainer.innerHTML = '';
+
+            currentSeatUids = [];
+            currentYtVideoId = null;
 
             ytContainer.style.display = 'none';
             ytContainer.innerHTML = '';
@@ -1572,9 +1024,7 @@
             roomView.style.left = '100%';
         }
 
-        // ----------------------------------------
-        // 10. CHAT INTERFACE LOGIC
-        // ----------------------------------------
+        // CHAT LOGIC
         function startChatListener(roomId) {
             chatBox.innerHTML = `<div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>`;
             chatListenerRef = db.ref(`rooms/${roomId}/chats`);
@@ -1598,7 +1048,6 @@
             if (text !== '' && currentRoomId) {
                 db.ref(`rooms/${currentRoomId}/chats`).push({ uid: myUserId, name: myUserName, text: text });
                 messageInput.value = '';
-                
                 chatInputArea.classList.remove('active');
                 overlay.classList.remove('active');
                 mainBottomUI.style.display = 'block';
