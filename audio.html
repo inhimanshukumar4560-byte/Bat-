@@ -215,6 +215,12 @@
         
         .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
+        
+        /* FIX: Prevent UI squishing when room is full */
+        .speaker-grid-zingoo, .center-logo-area, .banners-container, .gift-scroll-bar {
+            flex-shrink: 0;
+        }
+
         .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; z-index: 5;}
         
         /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
@@ -1556,9 +1562,10 @@
                                     ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
                                     : '';
                                 
+                                // FIX: Aspect Ratio instead of fixed 200px height so mobile UI doesn't break
                                 display.innerHTML = `<div style="position:relative; width:100%;">
                                     ${closeBtn}
-                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
+                                    <iframe style="width:100%; aspect-ratio:16/9; border-radius:15px; border: 2px solid var(--hot-pink);" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                                 </div>`;
                             } else {
                                 display.innerHTML = `
