@@ -197,8 +197,23 @@
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
         #live-room-screen { display: none; }
-        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: #fdfdfd; }
-        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eee; background: #fff;}
+        .live-room-container { 
+            display: flex; 
+            flex-direction: column; 
+            height: 100dvh; 
+            position: relative; 
+            background-color: #fdfdfd;
+            
+            /* ---- ROOM BACKGROUND IMAGE ADDED HERE ---- */
+            background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1000'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        /* Glassy Header so Background shows beautifully */
+        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);}
+        
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
         .zh-info h1 { font-size: 1em; font-weight: 700; color: #111; margin-bottom: 2px; }
@@ -337,7 +352,9 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee; z-index: 20;}
+        /* Glassy Footer so Background shows beautifully */
+        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-top: 1px solid rgba(255, 255, 255, 0.2); z-index: 20;}
+        
         .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
@@ -473,12 +490,12 @@
 
     <div class="main-container">
 
-        <!-- NEW: White Page Splash Screen Timer -->
+        <!-- FIX: Splash Screen Loading Overlay (Timer Loop Removed) -->
         <div id="splash-screen">
             <div class="logo-z">Z</div>
             <h2 style="color:#111; font-weight:800; font-size:26px; letter-spacing:2px;">ZINGOO</h2>
             <p style="color:#888; font-size:14px; margin-top:5px; font-weight:600;">Secure Connection Setup...</p>
-            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">30s</div>
+            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">Loading...</div>
         </div>
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
@@ -789,24 +806,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- NEW: SPLASH SCREEN 30s TIMER LOGIC ---
-            let splashTime = 30;
+            // --- FIX: SPLASH SCREEN LOGIC (REMOVED RELOAD LOOP) ---
             const splashTimerEl = document.getElementById('splash-timer');
             const splashScreen = document.getElementById('splash-screen');
             const idLoginScreen = document.getElementById('id-login-screen');
             
-            const splashInterval = setInterval(() => {
-                splashTime--;
-                splashTimerEl.innerText = splashTime + "s";
-                if(splashTime <= 0) {
-                    clearInterval(splashInterval);
-                    splashTimerEl.innerText = "Timeout. Refreshing...";
-                    setTimeout(() => { window.location.reload(); }, 1500);
-                }
-            }, 1000);
-
             function hideSplashScreen() {
-                clearInterval(splashInterval);
                 splashScreen.style.display = 'none';
             }
 
@@ -833,7 +838,7 @@
             // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
-                // Background verification while 30s timer runs on white page
+                // Background verification while loading on white page
                 processDatabaseLogin(storedId, true); 
             } else {
                 // If no stored ID, immediately hide splash and show login screen
@@ -905,7 +910,19 @@
             });
 
             function processDatabaseLogin(enteredId, isAutoLogin = false) {
+                // Failsafe timeout to prevent getting stuck on splash screen forever
+                const loginTimeout = setTimeout(() => {
+                    hideSplashScreen();
+                    idLoginScreen.style.display = 'flex';
+                    if (!isAutoLogin) {
+                        showToast("Connection Timeout. Please check your internet or Firebase connection.");
+                        loginBtn.innerText = "Enter Rooms";
+                        loginBtn.disabled = false;
+                    }
+                }, 10000); // 10 seconds timeout instead of infinite loop
+
                 get(ref(db, 'users')).then(snapshot => {
+                    clearTimeout(loginTimeout); // Clear failsafe timeout on success
                     let userFound = false;
                     const allUsers = snapshot.val();
                     let userKey = null;
@@ -962,6 +979,7 @@
                         }
                     }
                 }).catch(err => {
+                    clearTimeout(loginTimeout);
                     if(isAutoLogin) {
                         hideSplashScreen();
                         idLoginScreen.style.display = 'flex';
