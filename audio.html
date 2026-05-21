@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Viewport-fit=cover and maximum-scale=1.0 ensures the app doesn't zoom and respects mobile safe areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Live Audio Rooms</title>
     
     <!-- Firebase SDK -->
@@ -36,13 +37,22 @@
             --panel-bg: #ffffff;
         }
 
+        /* MOBILE VIEWPORT FIX: prevents bottom footer from hiding */
+        html {
+            height: -webkit-fill-available;
+        }
+
         body {
             background: #e0e0e0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            height: 100dvh; /* Modern fix for mobile bottom bar */
+            min-height: -webkit-fill-available;
             overflow: hidden;
+            position: fixed; /* Stops body from scrolling entirely */
+            width: 100%;
         }
 
         .app-container {
@@ -55,6 +65,7 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            margin: 0 auto;
         }
 
         /* ==========================================
@@ -428,17 +439,17 @@
         .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; }
 
         .seats-container {
-            padding: 20px 10px; /* Adjusted padding to fit 5 items */
+            padding: 20px 10px; 
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* User Requested 5-5 grid line */
+            grid-template-columns: repeat(5, 1fr); 
             gap: 15px 5px;
             z-index: 10;
         }
 
-        .seat { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .seat { display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
         
         .seat-avatar {
-            width: 50px; /* Reduced slightly to fit 5 avatars in a row */
+            width: 50px; 
             height: 50px;
             border-radius: 50%;
             background: var(--seat-bg);
@@ -452,7 +463,6 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
 
-        /* Lock icon for empty seats based on screenshot */
         .seat.empty .seat-avatar {
             background: white;
             color: #9c27b0;
@@ -463,6 +473,7 @@
         .seat.occupied .seat-avatar { color: white; font-size: 24px; }
         .seat-name { color: var(--text-light); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 60px; }
 
+        /* Modified: Extra margin-bottom to clear the footer on all phones safely */
         .chat-container {
             flex: 1;
             padding: 10px 15px;
@@ -471,7 +482,7 @@
             flex-direction: column;
             gap: 10px;
             z-index: 10;
-            margin-bottom: 120px; /* Space for new complex bottom area */
+            margin-bottom: 160px; /* Crucial Fix to prevent hiding behind footer */
         }
         .chat-container::-webkit-scrollbar { display: none; }
         
@@ -495,7 +506,7 @@
         /* Floating Offers Banner */
         .limited-offers {
             position: absolute;
-            bottom: 130px;
+            bottom: 140px;
             right: 15px;
             background: linear-gradient(135deg, #b388ff, #7c4dff);
             border-radius: 15px;
@@ -511,12 +522,14 @@
         .limited-offers .offer-price { font-size: 9px; color: #e0e0e0; margin-top: 5px; text-decoration: line-through; }
         .limited-offers button { background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 10px; padding: 4px 10px; font-size: 10px; margin-top: 5px; cursor: pointer; width: 100%;}
 
-        /* NEW BOTTOM UI AREA */
+        /* NEW BOTTOM UI AREA (Fixed Viewport Visibility) */
         .bottom-ui-wrapper {
             position: absolute;
             bottom: 0;
+            left: 0;
             width: 100%;
             padding: 10px 15px 15px 15px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); /* Safe area fix for notched phones */
             z-index: 20;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
         }
@@ -608,14 +621,14 @@
         .gift-circle { background: #26a69a; }
         .flame-circle { background: #392b58; }
 
-        /* ==========================================
-           CHAT INPUT OVERLAY (Screenshot Style)
-           ========================================== */
+        /* CHAT INPUT OVERLAY (Screenshot Style) */
         .chat-input-overlay {
             position: absolute;
             bottom: 0;
+            left: 0;
             width: 100%;
             padding: 15px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
             background: linear-gradient(to top, rgba(26, 15, 46, 1) 50%, rgba(26, 15, 46, 0.8));
             display: none;
             z-index: 40;
@@ -757,7 +770,7 @@
                 <div class="host-info">
                     <div class="host-avatar" id="rv_hostImage">👩</div>
                     <div class="host-details">
-                        <span class="host-name" id="rv_roomName">Room Name</span>
+                        <span class="host-name" id="rv_roomName">Loading Room...</span>
                         <span class="viewers">👥 <span id="rv_viewerCount">0</span></span>
                     </div>
                 </div>
@@ -772,21 +785,21 @@
 
             <!-- Dynamic Seats Container (Now 5-5 Grid) -->
             <div class="seats-container" id="seatsContainer">
-                <!-- Injected via JS -->
+                <!-- Injected via JS dynamically for WebRTC seats -->
             </div>
 
             <!-- Chat Area -->
             <div class="chat-container" id="chatBox">
                 <div class="sys-message">
-                    Welcome to Chingari Audio Room! This room is being monitored. Please abide by the guidelines, do note that all consequences are to your own account.
+                    Welcome to Zingoo Audio Room! Please follow community guidelines.
                 </div>
             </div>
 
             <!-- Floating Offers Banner -->
             <div class="limited-offers">
                 <h5>Limited Offers</h5>
-                <div class="offer-content">💎 20</div>
-                <div class="offer-price">₹20 ₹6.78</div>
+                <div class="offer-content">💎 <span id="offer-diamonds">300</span></div>
+                <div class="offer-price">₹100</div>
                 <button>Buy Now</button>
             </div>
 
@@ -797,13 +810,13 @@
                 <div class="upper-bottom-row">
                     <div class="balance-pill">
                         <div>💎 <span id="rv_myDiamonds" style="font-size:11px; color:black; font-weight:bold;">0</span></div>
-                        <span>₹100 ₹33.05</span>
+                        <span>Buy More</span>
                     </div>
                     
                     <div class="horizontal-gifts">
                         <div class="h-gift-item">
                             <span class="h-gift-icon">🎁</span>
-                            <span class="free-tag">FREE GIFT</span>
+                            <span class="free-tag">Loading gifts...</span>
                         </div>
                         <div class="h-gift-item">
                             <span class="h-gift-icon">🌹</span>
@@ -848,7 +861,7 @@
 
             <!-- MENU DROPDOWN -->
             <div class="dropdown-menu" id="topMenu">
-                <!-- Host Youtube Option will be injected here if host -->
+                <div class="menu-item" id="menuPlayYt" style="display:none;">Play YouTube Video <span>▶️</span></div>
                 <div class="menu-item">Lock Room <span>🔒</span></div>
                 <div class="menu-item">Room Settings <span>⚙️</span></div>
             </div>
@@ -867,7 +880,7 @@
                 </div>
             </div>
 
-            <!-- CHAT INPUT OVERLAY (Background Transparent) -->
+            <!-- CHAT INPUT OVERLAY -->
             <div class="chat-input-overlay" id="chatInputArea">
                 <div class="chat-input-box">
                     <input type="text" id="messageInput" placeholder="Add comment...">
@@ -876,12 +889,15 @@
             </div>
 
             <div class="bottom-sheet-overlay" id="overlay"></div>
+            
+            <!-- Hidden Audio Container for WebRTC streams -->
+            <div id="webrtc-audio-container" style="display:none;"></div>
         </div>
 
     </div>
 
     <!-- ==========================================
-         JAVASCRIPT LOGIC & FIREBASE
+         JAVASCRIPT LOGIC, FIREBASE & WEBRTC
          ========================================== -->
     <script>
         // ----------------------------------------
@@ -909,23 +925,25 @@
         let myAvatar = localStorage.getItem('zingoo_avatar') || 'https://via.placeholder.com/150';
         let myDiamonds = localStorage.getItem('zingoo_diamonds') || '0';
 
-        // Fallback for direct testing
         if (!myUserId || !myUserName) {
             myUserId = 'user_' + Math.floor(Math.random() * 1000000);
-            myUserName = 'User_' + Math.floor(Math.random() * 1000);
+            myUserName = 'Guest_' + Math.floor(Math.random() * 1000);
             localStorage.setItem('zingoo_uid', myUserId);
             localStorage.setItem('zingoo_uname', myUserName);
         }
 
-        // Update Diamonds UI
         document.getElementById('lobby-diamond-count').innerText = myDiamonds;
         document.getElementById('rv_myDiamonds').innerText = myDiamonds;
 
-        // Global State
         let currentRoomId = null;
         let roomHostId = null;
         let chatListenerRef = null;
         let roomListenerRef = null;
+
+        // --- WebRTC Global Variables ---
+        let localAudioStream = null;
+        let peerConnections = {}; 
+        const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
         // ----------------------------------------
         // 3. DOM ELEMENTS
@@ -960,9 +978,24 @@
         const ytCancelBtn = document.getElementById('ytCancelBtn');
         const ytUrlInput = document.getElementById('ytUrlInput');
         const ytContainer = document.getElementById('youtubePlayerContainer');
+        const webrtcAudioContainer = document.getElementById('webrtc-audio-container');
 
         // ----------------------------------------
-        // 4. HOME LOGIC (LOBBY)
+        // 4. CORE PAGE LOGIC (RUNS ON LOAD)
+        // ----------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomIdFromUrl = urlParams.get('roomId');
+
+            if (roomIdFromUrl) {
+                joinRoom(roomIdFromUrl);
+            } else {
+                loadRooms();
+            }
+        });
+
+        // ----------------------------------------
+        // 5. HOME LOGIC (LOBBY)
         // ----------------------------------------
         function loadRooms() {
             db.ref('rooms').on('value', (snapshot) => {
@@ -1002,9 +1035,6 @@
             });
         }
 
-        // ----------------------------------------
-        // 5. CREATE ROOM
-        // ----------------------------------------
         openCreateModalBtn.addEventListener('click', () => createRoomModal.style.display = 'flex');
         closeCreateModalBtn.addEventListener('click', () => createRoomModal.style.display = 'none');
 
@@ -1036,7 +1066,7 @@
 
             crLoader.style.display = 'block'; submitRoomBtn.style.display = 'none';
 
-            let thumbnailUrl = myAvatar; // Default to user profile image
+            let thumbnailUrl = myAvatar; 
             if(fileInput.files.length > 0) {
                 const uploadedUrl = await uploadImageToImgBB(fileInput.files[0]);
                 if(uploadedUrl) thumbnailUrl = uploadedUrl;
@@ -1046,16 +1076,20 @@
             await newRoomRef.set({
                 roomId: newRoomRef.key, hostId: myUserId, hostName: myUserName,
                 roomName: roomName, thumbnail: thumbnailUrl, maxSeats: seats,
-                entryPrice: price, youtubeVideoId: null, createdAt: firebase.database.ServerValue.TIMESTAMP
+                entryPrice: price, youtubeVideoId: null, createdAt: firebase.database.ServerValue.TIMESTAMP,
+                seatsData: {
+                    0: { uid: myUserId, name: myUserName, avatar: thumbnailUrl } // Host automatically gets seat 0
+                }
             });
             
             crLoader.style.display = 'none'; submitRoomBtn.style.display = 'block'; createRoomModal.style.display = 'none';
             document.getElementById('cr_roomName').value = ''; fileInput.value = '';
+            
             joinRoom(newRoomRef.key);
         });
 
         // ----------------------------------------
-        // 6. AUDIO ROOM LOGIC
+        // 6. AUDIO ROOM & WEBRTC LOGIC
         // ----------------------------------------
         async function joinRoom(roomId) {
             currentRoomId = roomId;
@@ -1065,6 +1099,7 @@
 
             if(!roomData) {
                 alert("Room not found or has been closed!");
+                window.location.href = 'audio.html';
                 return;
             }
 
@@ -1072,93 +1107,35 @@
             rvRoomName.innerText = roomData.roomName;
             rvHostImage.innerHTML = `<img src="${roomData.thumbnail}" onerror="this.src='https://via.placeholder.com/35'">`;
             
-            // Build Menu based on role
-            let menuHtml = '';
-            if(myUserId === roomHostId) {
-                menuHtml += `<div class="menu-item" id="menuPlayYt">Play YouTube Video <span>▶️</span></div>`;
-            }
-            menuHtml += `<div class="menu-item">Lock Room <span>🔒</span></div>
-                         <div class="menu-item">Room Settings <span>⚙️</span></div>`;
-            topMenu.innerHTML = menuHtml;
-            
-            // Event listener for dynamic Youtube button
-            if(myUserId === roomHostId) {
+            if (myUserId === roomHostId) {
+                document.getElementById('menuPlayYt').style.display = 'block';
                 document.getElementById('menuPlayYt').addEventListener('click', () => {
                     topMenu.classList.remove('active');
                     ytModal.style.display = 'flex';
                 });
             }
 
-            // Generate Seats (Host + Locks) in 5-5 grid
-            seatsContainer.innerHTML = '';
-            for(let i=0; i<roomData.maxSeats; i++) {
-                if(i === 0) {
-                    seatsContainer.innerHTML += `
-                        <div class="seat occupied">
-                            <div class="seat-avatar" style="border-color: #ffd700;"><img src="${roomData.thumbnail}" onerror="this.src='https://via.placeholder.com/50'"></div>
-                            <span class="seat-name">${roomData.hostName}</span>
-                            <span class="seat-role" style="background:#ff9800; color:white; font-size:9px; padding:2px 6px; border-radius:10px; position:absolute; bottom:18px;">Owner</span>
-                        </div>`;
-                } else {
-                    seatsContainer.innerHTML += `
-                        <div class="seat empty">
-                            <div class="seat-avatar">🔒</div>
-                            <span class="seat-name">..</span>
-                        </div>`;
-                }
-            }
-
-            chatBox.innerHTML = `<div class="sys-message">Welcome to Chingari Audio Room! This room is being monitored. Please abide by the guidelines.</div>`;
-
-            // Transition UI: Slide out lobby, slide in Room
             homeView.style.transform = 'translateX(-100%)';
             roomView.style.left = '0';
 
-            startChatListener(roomId);
+            // Start Listening for the Room state (Seats & YouTube Sync)
             startRoomListener(roomId);
-        }
-
-        // Leave Logic
-        document.getElementById('leaveRoomBtn').addEventListener('click', leaveProcess);
-        document.getElementById('topExitBtn').addEventListener('click', leaveProcess);
-
-        async function leaveProcess() {
-            if(myUserId === roomHostId) {
-                if(confirm("You are the host. Leaving will close the room. Continue?")) {
-                    await db.ref(`rooms/${currentRoomId}`).remove();
-                    exitRoomUI();
-                }
-            } else {
-                exitRoomUI();
-            }
-        }
-
-        function exitRoomUI() {
-            if(chatListenerRef) chatListenerRef.off();
-            if(roomListenerRef) roomListenerRef.off();
-            ytContainer.style.display = 'none';
-            ytContainer.innerHTML = '';
-            currentRoomId = null; roomHostId = null;
+            startChatListener(roomId);
             
-            // Transition UI: Slide in lobby, slide out Room
-            homeView.style.transform = 'translateX(0)';
-            roomView.style.left = '100%';
+            // WebRTC Signaling Initialization
+            initWebRTCSignaling();
         }
 
-        // ----------------------------------------
-        // 7. YOUTUBE PLAYER SYNCING
-        // ----------------------------------------
         function startRoomListener(roomId) {
             roomListenerRef = db.ref(`rooms/${roomId}`);
             roomListenerRef.on('value', (snapshot) => {
                 if(!snapshot.exists()) {
-                    if(currentRoomId === roomId) { 
-                        alert("Room was closed by host."); 
-                        exitRoomUI(); 
-                    }
+                    if(currentRoomId === roomId) { alert("The room was closed by the host."); exitRoomUI(); }
                     return;
                 }
                 const data = snapshot.val();
+                
+                // YouTube Sync
                 if(data.youtubeVideoId) {
                     ytContainer.style.display = 'block';
                     ytContainer.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${data.youtubeVideoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
@@ -1166,42 +1143,255 @@
                     ytContainer.style.display = 'none';
                     ytContainer.innerHTML = '';
                 }
+
+                // Render Dynamic WebRTC Seats
+                renderSeats(data);
+                
+                // Sync WebRTC Connections based on occupants
+                syncWebRTCPeers(data.seatsData);
             });
         }
 
-        function extractVideoID(url) {
-            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            var match = url.match(regExp);
-            return (match && match[2].length == 11) ? match[2] : null;
+        function renderSeats(roomData) {
+            seatsContainer.innerHTML = '';
+            const seats = roomData.seatsData || {};
+            
+            for(let i=0; i<roomData.maxSeats; i++) {
+                if(i === 0) {
+                    const hostAvatar = seats[0] ? seats[0].avatar : roomData.thumbnail;
+                    seatsContainer.innerHTML += `
+                        <div class="seat occupied">
+                            <div class="seat-avatar" style="border-color: #ffd700;">
+                                <img src="${hostAvatar}" onerror="this.src='https://via.placeholder.com/50'">
+                            </div>
+                            <span class="seat-name">${roomData.hostName}</span>
+                            <span class="seat-role" style="background:#ff9800; color:white; font-size:9px; padding:2px 6px; border-radius:10px; position:absolute; bottom:18px;">Owner</span>
+                        </div>`;
+                } else {
+                    if(seats[i]) {
+                        // Seat is Occupied
+                        const isMe = (seats[i].uid === myUserId);
+                        seatsContainer.innerHTML += `
+                            <div class="seat occupied" onclick="${isMe ? `leaveSeat(${i})` : ''}">
+                                <div class="seat-avatar" style="${isMe ? 'border-color: #00e676;' : ''}">
+                                    <img src="${seats[i].avatar}" onerror="this.src='https://via.placeholder.com/50'">
+                                </div>
+                                <span class="seat-name">${seats[i].name}</span>
+                                ${isMe ? '<span style="font-size:8px; background:red; color:white; border-radius:5px; padding:1px 4px; position:absolute; top:-5px;">Leave</span>' : ''}
+                            </div>`;
+                    } else {
+                        // Seat is Empty
+                        seatsContainer.innerHTML += `
+                            <div class="seat empty" onclick="takeSeat(${i})">
+                                <div class="seat-avatar">🔒</div>
+                                <span class="seat-name">..</span>
+                            </div>`;
+                    }
+                }
+            }
         }
 
-        ytPlayBtn.addEventListener('click', () => {
-            const url = ytUrlInput.value;
-            const vidId = extractVideoID(url);
-            if(vidId && currentRoomId) {
-                db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: vidId });
-                ytModal.style.display = 'none';
-                ytUrlInput.value = '';
-            } else { alert("Invalid YouTube URL"); }
-        });
+        // --- TAKING A SEAT & MIC ACCESS ---
+        async function takeSeat(index) {
+            const snapshot = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
+            const seats = snapshot.val() || {};
+            
+            // Check if already sitting
+            const alreadySitting = Object.values(seats).some(s => s.uid === myUserId);
+            if(alreadySitting && myUserId !== roomHostId) {
+                return alert("You are already sitting on a seat!");
+            }
 
-        ytStopBtn.addEventListener('click', () => {
-            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
-            ytModal.style.display = 'none';
-        });
+            try {
+                // Request Microphone Permission for WebRTC
+                localAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                
+                await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).set({
+                    uid: myUserId,
+                    name: myUserName,
+                    avatar: myAvatar
+                });
+                
+                // Re-initiate peers so they get the new local stream track
+                renegotiateAllPeers();
+                
+            } catch (err) {
+                alert("Microphone permission denied! You cannot take a seat.");
+            }
+        }
 
-        ytCancelBtn.addEventListener('click', () => ytModal.style.display = 'none');
+        async function leaveSeat(index) {
+            if (localAudioStream) {
+                localAudioStream.getTracks().forEach(t => t.stop());
+                localAudioStream = null;
+            }
+            await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).remove();
+        }
+
+        // --- WEBRTC MULTI-PEER LOGIC ---
+        function syncWebRTCPeers(seatsObj) {
+            if(!seatsObj) return;
+            const activeUids = Object.values(seatsObj).map(s => s.uid);
+            
+            // Connect to everyone who is on a seat
+            activeUids.forEach(targetUid => {
+                if(targetUid !== myUserId && !peerConnections[targetUid]) {
+                    createPeerConnection(targetUid);
+                }
+            });
+
+            // Disconnect from users who left seats
+            Object.keys(peerConnections).forEach(uid => {
+                if(!activeUids.includes(uid)) {
+                    peerConnections[uid].close();
+                    delete peerConnections[uid];
+                    const audioEl = document.getElementById(`audio-${uid}`);
+                    if(audioEl) audioEl.remove();
+                }
+            });
+        }
+
+        async function createPeerConnection(targetUid) {
+            const pc = new RTCPeerConnection(rtcConfig);
+            peerConnections[targetUid] = pc;
+
+            // Add our local mic stream if we are sitting
+            if(localAudioStream) {
+                localAudioStream.getTracks().forEach(track => pc.addTrack(track, localAudioStream));
+            }
+
+            // Listen for remote audio streams
+            pc.ontrack = (event) => {
+                let audioEl = document.getElementById(`audio-${targetUid}`);
+                if(!audioEl) {
+                    audioEl = document.createElement('audio');
+                    audioEl.id = `audio-${targetUid}`;
+                    audioEl.autoplay = true;
+                    webrtcAudioContainer.appendChild(audioEl);
+                }
+                audioEl.srcObject = event.streams[0];
+            };
+
+            // Send ICE candidates to Firebase
+            pc.onicecandidate = (event) => {
+                if(event.candidate) {
+                    db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}/candidates`).push(event.candidate.toJSON());
+                }
+            };
+
+            // The user with the greater UID creates the offer to avoid collision
+            if(myUserId > targetUid) {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                db.ref(`rooms/${currentRoomId}/webrtc/${targetUid}/${myUserId}`).update({
+                    offer: { type: offer.type, sdp: offer.sdp }
+                });
+            }
+            
+            return pc;
+        }
+
+        function initWebRTCSignaling() {
+            const sigRef = db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}`);
+            
+            // Listen for incoming offers/answers
+            sigRef.on('child_added', handleSignalingData);
+            sigRef.on('child_changed', handleSignalingData);
+        }
+
+        async function handleSignalingData(snap) {
+            const senderUid = snap.key;
+            const data = snap.val();
+            
+            let pc = peerConnections[senderUid];
+            if(!pc) pc = await createPeerConnection(senderUid);
+
+            if(data.offer && pc.signalingState === 'stable') {
+                await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
+                    answer: { type: answer.type, sdp: answer.sdp }
+                });
+            }
+
+            if(data.answer && pc.signalingState !== 'stable') {
+                await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            }
+
+            // Handle Candidates
+            db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${senderUid}/candidates`).on('child_added', (candSnap) => {
+                if(candSnap.val()) {
+                    pc.addIceCandidate(new RTCIceCandidate(candSnap.val()));
+                }
+            });
+        }
+
+        function renegotiateAllPeers() {
+            Object.keys(peerConnections).forEach(uid => {
+                peerConnections[uid].close();
+                delete peerConnections[uid];
+            });
+            // Re-sync will automatically recreate them
+            db.ref(`rooms/${currentRoomId}/seatsData`).once('value').then(snap => syncWebRTCPeers(snap.val()));
+        }
 
         // ----------------------------------------
-        // 8. CHAT & UI INTERACTIONS
+        // 7. LEAVING & CLEANUP
+        // ----------------------------------------
+        document.getElementById('leaveRoomBtn').addEventListener('click', leaveProcess);
+        document.getElementById('topExitBtn').addEventListener('click', leaveProcess);
+
+        async function leaveProcess() {
+            if (myUserId === roomHostId) {
+                if (confirm("You are the host. Leaving will close the room for everyone. Are you sure?")) {
+                    await db.ref(`rooms/${currentRoomId}`).remove(); // Triggers exitRoomUI for all
+                }
+            } else {
+                // Remove self from seats if sitting
+                const snap = await db.ref(`rooms/${currentRoomId}/seatsData`).once('value');
+                const seats = snap.val() || {};
+                for(let key in seats) {
+                    if(seats[key].uid === myUserId) {
+                        await db.ref(`rooms/${currentRoomId}/seatsData/${key}`).remove();
+                    }
+                }
+                exitRoomUI();
+            }
+        }
+
+        function exitRoomUI() {
+            if(chatListenerRef) chatListenerRef.off();
+            if(roomListenerRef) roomListenerRef.off();
+            
+            // Stop Mic and Clean WebRTC
+            if(localAudioStream) {
+                localAudioStream.getTracks().forEach(t => t.stop());
+                localAudioStream = null;
+            }
+            Object.values(peerConnections).forEach(pc => pc.close());
+            peerConnections = {};
+            webrtcAudioContainer.innerHTML = '';
+
+            ytContainer.style.display = 'none';
+            ytContainer.innerHTML = '';
+            currentRoomId = null; 
+            roomHostId = null;
+
+            homeView.style.transform = 'translateX(0)';
+            roomView.style.left = '100%';
+        }
+
+        // ----------------------------------------
+        // 8. CHAT INTERFACE LOGIC
         // ----------------------------------------
         function startChatListener(roomId) {
+            chatBox.innerHTML = `<div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>`;
             chatListenerRef = db.ref(`rooms/${roomId}/chats`);
             chatListenerRef.on('child_added', (snapshot) => {
                 const msg = snapshot.val();
-                const alignStyle = ''; 
                 const html = `
-                    <div class="user-message" style="${alignStyle}">
+                    <div class="user-message">
                         <div class="msg-avatar" style="${msg.uid === myUserId ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
                         <div class="msg-content">
                             <div class="msg-name">${msg.name}</div>
@@ -1246,9 +1436,6 @@
             if(topMenu.classList.contains('active')) overlay.classList.add('active');
             else overlay.classList.remove('active');
         });
-
-        // Load Rooms when page starts
-        loadRooms();
 
     </script>
 </body>
