@@ -58,7 +58,7 @@
         }
 
         /* ==========================================
-           HOME PAGE (ZINGOO UI)
+           HOME PAGE (ZINGOO LOBBY UI)
            ========================================== */
         #home-view {
             width: 100%;
@@ -79,6 +79,8 @@
             align-items: center;
             padding: 15px 20px;
             background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 10;
         }
 
         .z-logo {
@@ -88,9 +90,17 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
+        }
+        
+        .z-back-btn {
+            font-size: 24px;
+            font-style: normal;
+            margin-right: 5px;
+            color: #333;
         }
 
-        .z-logo span {
+        .z-logo span.z-icon {
             background: var(--z-pink);
             color: white;
             padding: 2px 8px;
@@ -160,6 +170,8 @@
             gap: 15px;
             padding-bottom: 100px;
         }
+        
+        .room-list::-webkit-scrollbar { display: none; }
 
         .room-card {
             display: flex;
@@ -323,11 +335,12 @@
         .loader { display: none; text-align: center; font-size: 12px; color: var(--z-pink); }
 
         /* ==========================================
-           AUDIO ROOM UI
+           AUDIO ROOM UI (NEW CHINGARI STYLE WITH IMAGE BG)
            ========================================== */
         #room-view {
             width: 100%;
             height: 100%;
+            /* User Requested Image Background */
             background: url('https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png') no-repeat center center;
             background-size: cover;
             position: absolute;
@@ -339,6 +352,7 @@
             transition: left 0.3s ease-in-out;
         }
 
+        /* Large Background Logo Overlay */
         .big-bg-logo {
             position: absolute;
             top: 40%;
@@ -364,16 +378,15 @@
             letter-spacing: 2px;
         }
 
+        /* YouTube Player Container */
         #youtubePlayerContainer {
             width: 90%;
-            max-width: 320px; /* Small player size */
             margin: 10px auto;
             border-radius: 10px;
             overflow: hidden;
             display: none;
             z-index: 15;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: height 0.3s ease;
         }
 
         header {
@@ -415,9 +428,9 @@
         .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; }
 
         .seats-container {
-            padding: 20px 10px;
+            padding: 20px 10px; /* Adjusted padding to fit 5 items */
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, 1fr); /* User Requested 5-5 grid line */
             gap: 15px 5px;
             z-index: 10;
         }
@@ -425,7 +438,7 @@
         .seat { display: flex; flex-direction: column; align-items: center; position: relative; }
         
         .seat-avatar {
-            width: 50px;
+            width: 50px; /* Reduced slightly to fit 5 avatars in a row */
             height: 50px;
             border-radius: 50%;
             background: var(--seat-bg);
@@ -439,6 +452,7 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
 
+        /* Lock icon for empty seats based on screenshot */
         .seat.empty .seat-avatar {
             background: white;
             color: #9c27b0;
@@ -457,7 +471,7 @@
             flex-direction: column;
             gap: 10px;
             z-index: 10;
-            margin-bottom: 120px;
+            margin-bottom: 120px; /* Space for new complex bottom area */
         }
         .chat-container::-webkit-scrollbar { display: none; }
         
@@ -468,16 +482,17 @@
             background: rgba(0,0,0,0.4);
             padding: 10px 15px;
             border-radius: 10px;
-            align-self: flex-start;
+            align-self: flex-start; /* Always left side */
             max-width: 90%;
         }
 
-        .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; }
+        .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; /* Always left side */ }
         .msg-avatar { width: 25px; height: 25px; border-radius: 50%; background: #ccc; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; }
         .msg-content { background: rgba(0, 0, 0, 0.5); padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; }
         .msg-name { color: #ffeb3b; font-size: 11px; font-weight: bold; margin-bottom: 3px; }
         .msg-text { color: white; font-size: 13px; }
 
+        /* Floating Offers Banner */
         .limited-offers {
             position: absolute;
             bottom: 130px;
@@ -496,6 +511,7 @@
         .limited-offers .offer-price { font-size: 9px; color: #e0e0e0; margin-top: 5px; text-decoration: line-through; }
         .limited-offers button { background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 10px; padding: 4px 10px; font-size: 10px; margin-top: 5px; cursor: pointer; width: 100%;}
 
+        /* NEW BOTTOM UI AREA */
         .bottom-ui-wrapper {
             position: absolute;
             bottom: 0;
@@ -525,7 +541,6 @@
             font-weight: bold;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            cursor: pointer;
         }
         .balance-pill span { font-size: 8px; color: #666; font-weight: normal; margin-top: 2px;}
 
@@ -593,6 +608,9 @@
         .gift-circle { background: #26a69a; }
         .flame-circle { background: #392b58; }
 
+        /* ==========================================
+           CHAT INPUT OVERLAY (Screenshot Style)
+           ========================================== */
         .chat-input-overlay {
             position: absolute;
             bottom: 0;
@@ -632,6 +650,7 @@
             padding: 5px;
         }
 
+        /* Panels & Modals */
         .bottom-sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 35; display: none; }
         .bottom-sheet-overlay.active { display: block; }
         
@@ -641,15 +660,15 @@
         .dropdown-menu.active { display: flex; }
         .menu-item { padding: 15px; color: #333; font-size: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; cursor: pointer; }
 
+        /* YouTube Modal */
         #youtubeModal {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 110; display: none; justify-content: center; align-items: center;
         }
         .yt-box { background: white; padding: 20px; border-radius: 15px; width: 90%; display: flex; flex-direction: column; gap: 10px;}
         .yt-box input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;}
-        .yt-btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;}
+        .yt-btns { display: flex; gap: 10px; justify-content: flex-end;}
         .yt-btns button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
-        .yt-play-video { background: #ff1f5a; color: white;}
-        .yt-play-audio { background: #4caf50; color: white;}
+        .yt-play { background: #ff1f5a; color: white;}
         .yt-stop { background: #333; color: white;}
         .yt-cancel { background: #ddd; color: #333;}
 
@@ -660,14 +679,17 @@
     <div class="app-container">
         
         <!-- ==========================================
-             HOME VIEW (ZINGOO)
+             HOME VIEW (ZINGOO LOBBY)
              ========================================== -->
         <div id="home-view">
             <div class="z-header">
-                <div class="z-logo"><span>Z</span> ZINGOO</div>
+                <div class="z-logo" onclick="window.location.href='home.html'">
+                    <span class="z-back-btn">←</span>
+                    <span class="z-icon">Z</span> ZINGOO
+                </div>
                 <div class="z-header-icons">
                     <span style="font-size: 20px;">🔔</span>
-                    <div class="z-diamond-badge">💎 <span id="home-diamond-balance">100</span></div>
+                    <div class="z-diamond-badge">💎 <span id="lobby-diamond-count">0</span></div>
                 </div>
             </div>
 
@@ -701,6 +723,7 @@
                 <div class="input-group">
                     <label>Upload Thumbnail</label>
                     <input type="file" id="cr_thumbnail" accept="image/*">
+                    <p style="font-size: 10px; color: #888; margin-top: 2px;">Leave empty to use your Profile Avatar</p>
                 </div>
                 <div class="input-group">
                     <label>Number of Seats (Max 10)</label>
@@ -718,10 +741,11 @@
         </div>
 
         <!-- ==========================================
-             AUDIO ROOM VIEW
+             AUDIO ROOM VIEW (NEW SCREENSHOT STYLE)
              ========================================== -->
         <div id="room-view">
             
+            <!-- Large Background Logo -->
             <div class="big-bg-logo">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C12 2 7 7 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 7 12 2 12 2ZM12 22C6.48 22 2 17.52 2 12C2 10.88 2.19 9.8 2.54 8.8C3.12 11.23 5.3 13 8 13C8 13 8 10 10.5 7.5C11.66 6.34 13.5 6.34 14.66 7.5C17.16 10 17.16 13 17.16 13C19.86 13 22 10.86 22 8.16C22 9.38 22 10.66 22 12C22 17.52 17.52 22 12 22Z"/>
@@ -743,37 +767,77 @@
                 </div>
             </header>
 
-            <!-- YOUTUBE PLAYER CONTAINER (now a small player) -->
+            <!-- YOUTUBE PLAYER CONTAINER -->
             <div id="youtubePlayerContainer"></div>
 
-            <div class="seats-container" id="seatsContainer"></div>
+            <!-- Dynamic Seats Container (Now 5-5 Grid) -->
+            <div class="seats-container" id="seatsContainer">
+                <!-- Injected via JS -->
+            </div>
 
+            <!-- Chat Area -->
             <div class="chat-container" id="chatBox">
                 <div class="sys-message">
-                    Welcome to Zingoo Audio Room! Please follow community guidelines.
+                    Welcome to Chingari Audio Room! This room is being monitored. Please abide by the guidelines, do note that all consequences are to your own account.
                 </div>
             </div>
 
+            <!-- Floating Offers Banner -->
             <div class="limited-offers">
                 <h5>Limited Offers</h5>
-                <div class="offer-content">💎 300</div>
-                <div class="offer-price">₹100</div>
-                <button onclick="buyDiamonds(100, 300)">Buy Now</button>
+                <div class="offer-content">💎 20</div>
+                <div class="offer-price">₹20 ₹6.78</div>
+                <button>Buy Now</button>
             </div>
 
+            <!-- NEW BOTTOM UI WRAPPER -->
             <div class="bottom-ui-wrapper" id="mainBottomUI">
+                
+                <!-- Upper Row: Balance & Horizontal Gifts -->
                 <div class="upper-bottom-row">
-                    <div class="balance-pill" onclick="buyDiamonds(50, 150)">
-                        <div>💎 <span id="rv_myDiamonds" style="font-size:11px; color:black; font-weight:bold;">100</span></div>
-                        <span>Buy More</span>
+                    <div class="balance-pill">
+                        <div>💎 <span id="rv_myDiamonds" style="font-size:11px; color:black; font-weight:bold;">0</span></div>
+                        <span>₹100 ₹33.05</span>
                     </div>
                     
-                    <div class="horizontal-gifts" id="gift-tray">
-                        <p style="color:white; font-size:10px;">Loading gifts...</p>
+                    <div class="horizontal-gifts">
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🎁</span>
+                            <span class="free-tag">FREE GIFT</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🌹</span>
+                            <span class="free-tag">FREE GIFT</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">💝</span>
+                            <span class="h-gift-price">💎 89</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🔥</span>
+                            <span class="h-gift-price">💎 10</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🔫</span>
+                            <span class="h-gift-price">💎 199</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🥰</span>
+                            <span class="h-gift-price">💎 49</span>
+                        </div>
+                        <div class="h-gift-item">
+                            <span class="h-gift-icon">🏆</span>
+                            <span class="h-gift-price">💎 1500</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Lower Row: Chat Button & Action Icons -->
                 <div class="lower-bottom-row">
-                    <button class="chat-pill-btn" id="openChatBtn">💬 Chat</button>
+                    <button class="chat-pill-btn" id="openChatBtn">
+                        💬 Chat
+                    </button>
+                    
                     <div class="action-circles">
                         <button class="circle-btn menu-circle" id="menuBtn">⋮</button>
                         <button class="circle-btn gift-circle">🎁</button>
@@ -789,21 +853,21 @@
                 <div class="menu-item">Room Settings <span>⚙️</span></div>
             </div>
 
-            <!-- YOUTUBE URL MODAL (Updated with new options) -->
+            <!-- YOUTUBE URL MODAL -->
             <div id="youtubeModal">
                 <div class="yt-box">
-                    <h3>Room Music & Video</h3>
-                    <p style="font-size:12px; color:#666;">Paste a YouTube link to play for everyone.</p>
+                    <h3>Play YouTube Video</h3>
+                    <p style="font-size:12px; color:#666;">Paste Youtube URL below (Song/Video). It will play for everyone in the room.</p>
                     <input type="text" id="ytUrlInput" placeholder="https://youtube.com/watch?v=...">
                     <div class="yt-btns">
-                        <button class="yt-play-video" id="ytPlayVideoBtn">Play Video</button>
-                        <button class="yt-play-audio" id="ytPlayAudioBtn">Play Audio Only</button>
-                        <button class="yt-stop" id="ytStopBtn">Stop Media</button>
                         <button class="yt-cancel" id="ytCancelBtn">Cancel</button>
+                        <button class="yt-stop" id="ytStopBtn">Stop Current Video</button>
+                        <button class="yt-play" id="ytPlayBtn">Play</button>
                     </div>
                 </div>
             </div>
 
+            <!-- CHAT INPUT OVERLAY (Background Transparent) -->
             <div class="chat-input-overlay" id="chatInputArea">
                 <div class="chat-input-box">
                     <input type="text" id="messageInput" placeholder="Add comment...">
@@ -813,11 +877,15 @@
 
             <div class="bottom-sheet-overlay" id="overlay"></div>
         </div>
+
     </div>
 
+    <!-- ==========================================
+         JAVASCRIPT LOGIC & FIREBASE
+         ========================================== -->
     <script>
         // ----------------------------------------
-        // 1. FIREBASE & USER CONFIG
+        // 1. FIREBASE CONFIG
         // ----------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -833,35 +901,38 @@
 
         const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a";
 
-        // --- User Setup (Integrates with main dashboard) ---
-        // It first checks for IDs from the main dashboard, then falls back to its own.
-        let myUserId = localStorage.getItem('zingoo_id'); // Main dashboard ID
-        let myUserName = localStorage.getItem('zingoo_user'); // Main dashboard username
+        // ----------------------------------------
+        // 2. USER SETUP (Syncing exactly with home.html)
+        // ----------------------------------------
+        let myUserId = localStorage.getItem('zingoo_id') || localStorage.getItem('zingoo_uid');
+        let myUserName = localStorage.getItem('zingoo_user') || localStorage.getItem('zingoo_uname');
+        let myAvatar = localStorage.getItem('zingoo_avatar') || 'https://via.placeholder.com/150';
+        let myDiamonds = localStorage.getItem('zingoo_diamonds') || '0';
 
-        if (!myUserId) {
+        // Fallback for direct testing
+        if (!myUserId || !myUserName) {
             myUserId = 'user_' + Math.floor(Math.random() * 1000000);
             myUserName = 'User_' + Math.floor(Math.random() * 1000);
-            localStorage.setItem('zingoo_id', myUserId);
-            localStorage.setItem('zingoo_user', myUserName);
+            localStorage.setItem('zingoo_uid', myUserId);
+            localStorage.setItem('zingoo_uname', myUserName);
         }
 
-        let myDiamondBalance = 0;
+        // Update Diamonds UI
+        document.getElementById('lobby-diamond-count').innerText = myDiamonds;
+        document.getElementById('rv_myDiamonds').innerText = myDiamonds;
 
-        // --- Global State ---
+        // Global State
         let currentRoomId = null;
         let roomHostId = null;
         let chatListenerRef = null;
         let roomListenerRef = null;
 
         // ----------------------------------------
-        // 2. DOM ELEMENTS
+        // 3. DOM ELEMENTS
         // ----------------------------------------
-        // ... (all previous DOM elements are here)
         const homeView = document.getElementById('home-view');
         const roomView = document.getElementById('room-view');
         const roomListContainer = document.getElementById('roomListContainer');
-        const homeDiamondBalance = document.getElementById('home-diamond-balance');
-        const rvMyDiamonds = document.getElementById('rv_myDiamonds');
         
         const createRoomModal = document.getElementById('createRoomModal');
         const openCreateModalBtn = document.getElementById('openCreateModalBtn');
@@ -883,47 +954,15 @@
         const sendBtn = document.getElementById('sendBtn');
         const overlay = document.getElementById('overlay');
 
-        // YouTube Modal Buttons
         const ytModal = document.getElementById('youtubeModal');
-        const ytPlayVideoBtn = document.getElementById('ytPlayVideoBtn');
-        const ytPlayAudioBtn = document.getElementById('ytPlayAudioBtn');
+        const ytPlayBtn = document.getElementById('ytPlayBtn');
         const ytStopBtn = document.getElementById('ytStopBtn');
         const ytCancelBtn = document.getElementById('ytCancelBtn');
         const ytUrlInput = document.getElementById('ytUrlInput');
         const ytContainer = document.getElementById('youtubePlayerContainer');
 
-
         // ----------------------------------------
-        // 3. PAYMENT & DIAMONDS
-        // ----------------------------------------
-        function listenToMyDiamonds() {
-            if (!myUserName) return; // Use username as it's the key in the 'users' node
-            db.ref(`users/${myUserName}/diamonds`).on('value', (snapshot) => {
-                const diamonds = snapshot.val() || 0;
-                myDiamondBalance = diamonds;
-                localStorage.setItem('zingoo_diamonds', diamonds);
-                updateDiamondDisplays(diamonds);
-            });
-        }
-
-        function updateDiamondDisplays(balance) {
-             if (homeDiamondBalance) homeDiamondBalance.innerText = balance;
-             if (rvMyDiamonds) rvMyDiamonds.innerText = balance;
-        }
-
-        // This function opens the payment page in a new tab
-        function buyDiamonds(amount, diamonds) {
-            if (myUserName) {
-                // IMPORTANT: Replace 'zingoo-pay.html' with the full URL of your payment page on GitHub
-                const paymentPageUrl = `zingoo-pay.html`;
-                window.open(`${paymentPageUrl}?from=zingoo&username=${myUserName}&amount=${amount}&diamonds=${diamonds}`, '_blank');
-            } else {
-                alert("Please create a profile first!");
-            }
-        }
-        
-        // ----------------------------------------
-        // 4. HOME LOGIC
+        // 4. HOME LOGIC (LOBBY)
         // ----------------------------------------
         function loadRooms() {
             db.ref('rooms').on('value', (snapshot) => {
@@ -988,18 +1027,16 @@
             if(!roomName) return alert("Please enter room name");
             if(seats > 10) seats = 10;
 
-            // --- HOST LIMITATION CHECK ---
-            // This checks if the user is already a host of another room.
             const snapshot = await db.ref('rooms').orderByChild('hostId').equalTo(myUserId).once('value');
             if (snapshot.exists()) {
-                alert("You are already hosting a room! Please close your other room before creating a new one.");
+                alert("You are already hosting a room! Please delete it before creating a new one.");
                 createRoomModal.style.display = 'none';
                 return;
             }
 
             crLoader.style.display = 'block'; submitRoomBtn.style.display = 'none';
 
-            let thumbnailUrl = "https://via.placeholder.com/150";
+            let thumbnailUrl = myAvatar; // Default to user profile image
             if(fileInput.files.length > 0) {
                 const uploadedUrl = await uploadImageToImgBB(fileInput.files[0]);
                 if(uploadedUrl) thumbnailUrl = uploadedUrl;
@@ -1009,10 +1046,7 @@
             await newRoomRef.set({
                 roomId: newRoomRef.key, hostId: myUserId, hostName: myUserName,
                 roomName: roomName, thumbnail: thumbnailUrl, maxSeats: seats,
-                entryPrice: price, 
-                youtubeVideoId: null, // NEW: for youtube video
-                youtubePlayMode: null, // NEW: for 'video' or 'audio' mode
-                createdAt: firebase.database.ServerValue.TIMESTAMP
+                entryPrice: price, youtubeVideoId: null, createdAt: firebase.database.ServerValue.TIMESTAMP
             });
             
             crLoader.style.display = 'none'; submitRoomBtn.style.display = 'block'; createRoomModal.style.display = 'none';
@@ -1024,26 +1058,30 @@
         // 6. AUDIO ROOM LOGIC
         // ----------------------------------------
         async function joinRoom(roomId) {
-            // ... (rest of joinRoom logic is mostly the same)
             currentRoomId = roomId;
             const roomRef = db.ref(`rooms/${roomId}`);
             const snapshot = await roomRef.once('value');
             const roomData = snapshot.val();
 
-            if(!roomData) return alert("Room not found!");
+            if(!roomData) {
+                alert("Room not found or has been closed!");
+                return;
+            }
 
             roomHostId = roomData.hostId;
             rvRoomName.innerText = roomData.roomName;
-            rvHostImage.innerHTML = `<img src="${roomData.thumbnail}" onerror="this.parentElement.innerHTML='👩';">`;
+            rvHostImage.innerHTML = `<img src="${roomData.thumbnail}" onerror="this.src='https://via.placeholder.com/35'">`;
             
+            // Build Menu based on role
             let menuHtml = '';
             if(myUserId === roomHostId) {
-                menuHtml += `<div class="menu-item" id="menuPlayYt">Room Media <span>▶️</span></div>`;
+                menuHtml += `<div class="menu-item" id="menuPlayYt">Play YouTube Video <span>▶️</span></div>`;
             }
             menuHtml += `<div class="menu-item">Lock Room <span>🔒</span></div>
                          <div class="menu-item">Room Settings <span>⚙️</span></div>`;
             topMenu.innerHTML = menuHtml;
             
+            // Event listener for dynamic Youtube button
             if(myUserId === roomHostId) {
                 document.getElementById('menuPlayYt').addEventListener('click', () => {
                     topMenu.classList.remove('active');
@@ -1051,65 +1089,79 @@
                 });
             }
 
+            // Generate Seats (Host + Locks) in 5-5 grid
             seatsContainer.innerHTML = '';
             for(let i=0; i<roomData.maxSeats; i++) {
                 if(i === 0) {
-                    seatsContainer.innerHTML += `<div class="seat occupied"><div class="seat-avatar" style="border-color: #ffd700;"><img src="${roomData.thumbnail}" onerror="this.parentElement.innerHTML='👑';"></div><span class="seat-name">${roomData.hostName}</span></div>`;
+                    seatsContainer.innerHTML += `
+                        <div class="seat occupied">
+                            <div class="seat-avatar" style="border-color: #ffd700;"><img src="${roomData.thumbnail}" onerror="this.src='https://via.placeholder.com/50'"></div>
+                            <span class="seat-name">${roomData.hostName}</span>
+                            <span class="seat-role" style="background:#ff9800; color:white; font-size:9px; padding:2px 6px; border-radius:10px; position:absolute; bottom:18px;">Owner</span>
+                        </div>`;
                 } else {
-                    seatsContainer.innerHTML += `<div class="seat empty"><div class="seat-avatar">🔒</div><span class="seat-name">..</span></div>`;
+                    seatsContainer.innerHTML += `
+                        <div class="seat empty">
+                            <div class="seat-avatar">🔒</div>
+                            <span class="seat-name">..</span>
+                        </div>`;
                 }
             }
 
-            chatBox.innerHTML = `<div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>`;
+            chatBox.innerHTML = `<div class="sys-message">Welcome to Chingari Audio Room! This room is being monitored. Please abide by the guidelines.</div>`;
+
+            // Transition UI: Slide out lobby, slide in Room
             homeView.style.transform = 'translateX(-100%)';
             roomView.style.left = '0';
+
             startChatListener(roomId);
             startRoomListener(roomId);
         }
 
-        // --- Leave Logic (unchanged) ---
+        // Leave Logic
         document.getElementById('leaveRoomBtn').addEventListener('click', leaveProcess);
         document.getElementById('topExitBtn').addEventListener('click', leaveProcess);
+
         async function leaveProcess() {
             if(myUserId === roomHostId) {
                 if(confirm("You are the host. Leaving will close the room. Continue?")) {
                     await db.ref(`rooms/${currentRoomId}`).remove();
                     exitRoomUI();
                 }
-            } else { exitRoomUI(); }
+            } else {
+                exitRoomUI();
+            }
         }
+
         function exitRoomUI() {
             if(chatListenerRef) chatListenerRef.off();
             if(roomListenerRef) roomListenerRef.off();
-            ytContainer.style.display = 'none'; ytContainer.innerHTML = '';
+            ytContainer.style.display = 'none';
+            ytContainer.innerHTML = '';
             currentRoomId = null; roomHostId = null;
+            
+            // Transition UI: Slide in lobby, slide out Room
             homeView.style.transform = 'translateX(0)';
             roomView.style.left = '100%';
         }
 
         // ----------------------------------------
-        // 7. YOUTUBE PLAYER SYNCING (UPDATED)
+        // 7. YOUTUBE PLAYER SYNCING
         // ----------------------------------------
         function startRoomListener(roomId) {
             roomListenerRef = db.ref(`rooms/${roomId}`);
             roomListenerRef.on('value', (snapshot) => {
                 if(!snapshot.exists()) {
-                    if(currentRoomId === roomId) { alert("Room was closed by host."); exitRoomUI(); }
+                    if(currentRoomId === roomId) { 
+                        alert("Room was closed by host."); 
+                        exitRoomUI(); 
+                    }
                     return;
                 }
                 const data = snapshot.val();
-                
-                // NEW LOGIC for YouTube Player
-                if (data.youtubeVideoId && data.youtubePlayMode) {
+                if(data.youtubeVideoId) {
                     ytContainer.style.display = 'block';
-                    const videoHeight = data.youtubePlayMode === 'video' ? '180' : '0'; // If audio only, hide player
-                    if (data.youtubePlayMode === 'audio') {
-                        ytContainer.style.height = '0px';
-                        ytContainer.style.overflow = 'hidden';
-                    } else {
-                        ytContainer.style.height = '180px';
-                    }
-                    ytContainer.innerHTML = `<iframe width="100%" height="${videoHeight}" src="https://www.youtube.com/embed/${data.youtubeVideoId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    ytContainer.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${data.youtubeVideoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
                     ytContainer.style.display = 'none';
                     ytContainer.innerHTML = '';
@@ -1118,42 +1170,44 @@
         }
 
         function extractVideoID(url) {
-            const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
+            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
             return (match && match[2].length == 11) ? match[2] : null;
         }
 
-        function playYoutube(mode) {
-             const url = ytUrlInput.value;
-             const vidId = extractVideoID(url);
-             if (vidId && currentRoomId) {
-                 db.ref(`rooms/${currentRoomId}`).update({ 
-                     youtubeVideoId: vidId,
-                     youtubePlayMode: mode // 'video' or 'audio'
-                 });
-                 ytModal.style.display = 'none';
-                 ytUrlInput.value = '';
-             } else {
-                 alert("Invalid YouTube URL");
-             }
-        }
-        ytPlayVideoBtn.addEventListener('click', () => playYoutube('video'));
-        ytPlayAudioBtn.addEventListener('click', () => playYoutube('audio'));
+        ytPlayBtn.addEventListener('click', () => {
+            const url = ytUrlInput.value;
+            const vidId = extractVideoID(url);
+            if(vidId && currentRoomId) {
+                db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: vidId });
+                ytModal.style.display = 'none';
+                ytUrlInput.value = '';
+            } else { alert("Invalid YouTube URL"); }
+        });
 
         ytStopBtn.addEventListener('click', () => {
-            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null, youtubePlayMode: null });
+            if(currentRoomId) db.ref(`rooms/${currentRoomId}`).update({ youtubeVideoId: null });
             ytModal.style.display = 'none';
         });
+
         ytCancelBtn.addEventListener('click', () => ytModal.style.display = 'none');
 
         // ----------------------------------------
-        // 8. CHAT & UI INTERACTIONS (Unchanged)
+        // 8. CHAT & UI INTERACTIONS
         // ----------------------------------------
         function startChatListener(roomId) {
             chatListenerRef = db.ref(`rooms/${roomId}/chats`);
             chatListenerRef.on('child_added', (snapshot) => {
                 const msg = snapshot.val();
-                const html = `<div class="user-message"><div class="msg-avatar" style="${msg.uid === myUserId ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div><div class="msg-content"><div class="msg-name">${msg.name}</div><div class="msg-text">${msg.text}</div></div></div>`;
+                const alignStyle = ''; 
+                const html = `
+                    <div class="user-message" style="${alignStyle}">
+                        <div class="msg-avatar" style="${msg.uid === myUserId ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
+                        <div class="msg-content">
+                            <div class="msg-name">${msg.name}</div>
+                            <div class="msg-text">${msg.text}</div>
+                        </div>
+                    </div>`;
                 chatBox.insertAdjacentHTML('beforeend', html);
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
@@ -1164,6 +1218,7 @@
             if (text !== '' && currentRoomId) {
                 db.ref(`rooms/${currentRoomId}/chats`).push({ uid: myUserId, name: myUserName, text: text });
                 messageInput.value = '';
+                
                 chatInputArea.classList.remove('active');
                 overlay.classList.remove('active');
                 mainBottomUI.style.display = 'block';
@@ -1171,20 +1226,28 @@
         }
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
-        openChatBtn.addEventListener('click', () => { mainBottomUI.style.display = 'none'; chatInputArea.classList.add('active'); overlay.classList.add('active'); messageInput.focus(); });
+
+        openChatBtn.addEventListener('click', () => { 
+            mainBottomUI.style.display = 'none'; 
+            chatInputArea.classList.add('active'); 
+            overlay.classList.add('active'); 
+            messageInput.focus(); 
+        });
+
         overlay.addEventListener('click', () => {
             chatInputArea.classList.remove('active');
             overlay.classList.remove('active');
             topMenu.classList.remove('active');
             mainBottomUI.style.display = 'block';
         });
+
         menuBtn.addEventListener('click', () => {
             topMenu.classList.toggle('active');
-            if(topMenu.classList.contains('active')) overlay.classList.add('active'); else overlay.classList.remove('active');
+            if(topMenu.classList.contains('active')) overlay.classList.add('active');
+            else overlay.classList.remove('active');
         });
-        
-        // --- INITIALIZE APP ---
-        listenToMyDiamonds();
+
+        // Load Rooms when page starts
         loadRooms();
 
     </script>
