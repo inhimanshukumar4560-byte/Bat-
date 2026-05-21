@@ -1280,6 +1280,9 @@
             homeView.style.transform = 'translateX(-100%)';
             roomView.style.left = '0';
 
+            // IMPORTANT FIX: Clear stale WebRTC signaling data before starting
+            await db.ref(`rooms/${roomId}/webrtc/${myUserId}`).remove();
+
             startRoomListener(roomId);
             startChatListener(roomId);
             
@@ -1428,6 +1431,8 @@
                 localAudioStream = null;
             }
             await db.ref(`rooms/${currentRoomId}/seatsData/${index}`).remove();
+            // IMPORTANT FIX: Call renegotiate so others stop hearing you
+            renegotiateAllPeers();
         }
 
         // --- WEBRTC AUDIO FIXES ---
@@ -1446,7 +1451,9 @@
             const pc = new RTCPeerConnection(rtcConfig);
             peerConnections[targetUid] = pc;
 
-            pc.addTransceiver('audio', { direction: 'recvonly' });
+            // FIX 1: Add robust variables to handle race conditions
+            pc.candidateQueue = [];
+            pc.isRemoteSet = false;
 
             if(localAudioStream) {
                 localAudioStream.getTracks().forEach(track => {
@@ -1454,6 +1461,8 @@
                     const hasTrack = senders.some(s => s.track === track);
                     if(!hasTrack) pc.addTrack(track, localAudioStream);
                 });
+            } else {
+                pc.addTransceiver('audio', { direction: 'recvonly' });
             }
 
             // WebRTC Mobile Audio Fix
@@ -1467,7 +1476,9 @@
                     webrtcAudioContainer.appendChild(audioEl);
                 }
                 audioEl.srcObject = event.streams[0];
-                // Force play command for strict browsers
+                // Mobile Autoplay strictness fix
+                audioEl.muted = false;
+                audioEl.volume = 1.0;
                 audioEl.play().catch(e => console.log("Audio play issue (needs gesture):", e));
             };
 
@@ -1486,10 +1497,14 @@
                 }
             };
 
-            // Fix for Candidate Loop Overlap: Listen strictly on peer connection creation
+            // FIX 2: Implement candidate queue system to avoid dropping signals
             db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${targetUid}/candidates`).on('child_added', (candSnap) => {
                 if(candSnap.val()) {
-                    pc.addIceCandidate(new RTCIceCandidate(candSnap.val())).catch(e => console.error("ICE Error", e));
+                    if (pc.isRemoteSet && pc.remoteDescription) {
+                        pc.addIceCandidate(new RTCIceCandidate(candSnap.val())).catch(e => console.error("ICE Error", e));
+                    } else {
+                        pc.candidateQueue.push(candSnap.val());
+                    }
                 }
             });
 
@@ -1522,6 +1537,8 @@
 
             if(data.wakeup && myUserId > senderUid) {
                 try {
+                    // FIX 3: Clear wakeup to prevent signaling loops
+                    db.ref(`rooms/${currentRoomId}/webrtc/${myUserId}/${senderUid}`).update({ wakeup: null });
                     const offer = await pc.createOffer({ offerToReceiveAudio: true });
                     await pc.setLocalDescription(offer);
                     db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
@@ -1536,6 +1553,14 @@
                 } else {
                     try {
                         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+                        
+                        // Execute queued candidates once remote description is successfully set
+                        pc.isRemoteSet = true;
+                        if (pc.candidateQueue) {
+                            pc.candidateQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)).catch(e=>console.error(e)));
+                            pc.candidateQueue = [];
+                        }
+
                         const answer = await pc.createAnswer();
                         await pc.setLocalDescription(answer);
                         db.ref(`rooms/${currentRoomId}/webrtc/${senderUid}/${myUserId}`).update({
@@ -1551,14 +1576,23 @@
                 } else {
                     try {
                         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                        
+                        // Execute queued candidates once remote description is successfully set
+                        pc.isRemoteSet = true;
+                        if (pc.candidateQueue) {
+                            pc.candidateQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)).catch(e=>console.error(e)));
+                            pc.candidateQueue = [];
+                        }
                     } catch(e) { console.error(e); }
                 }
             }
         }
 
+        // FIX 4: Proper renegotiation when joining/leaving seat
         function renegotiateAllPeers() {
             Object.keys(peerConnections).forEach(async uid => {
                 const pc = peerConnections[uid];
+                
                 if(localAudioStream) {
                     const senders = pc.getSenders();
                     localAudioStream.getTracks().forEach(track => {
@@ -1566,6 +1600,23 @@
                         if(!hasTrack) {
                             pc.addTrack(track, localAudioStream);
                         }
+                    });
+                    
+                    if (myUserId > uid) {
+                        try {
+                            const offer = await pc.createOffer({ offerToReceiveAudio: true });
+                            await pc.setLocalDescription(offer);
+                            db.ref(`rooms/${currentRoomId}/webrtc/${uid}/${myUserId}`).update({
+                                offer: { type: offer.type, sdp: offer.sdp }
+                            });
+                        } catch(e) {}
+                    } else {
+                        db.ref(`rooms/${currentRoomId}/webrtc/${uid}/${myUserId}`).update({ wakeup: true });
+                    }
+                } else {
+                    // User left the seat, remove their audio track gracefully
+                    pc.getSenders().forEach(sender => {
+                        pc.removeTrack(sender);
                     });
                     
                     if (myUserId > uid) {
