@@ -197,23 +197,8 @@
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
         #live-room-screen { display: none; }
-        .live-room-container { 
-            display: flex; 
-            flex-direction: column; 
-            height: 100dvh; 
-            position: relative; 
-            background-color: #fdfdfd;
-            
-            /* ---- ROOM BACKGROUND IMAGE ADDED HERE ---- */
-            background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1000'); 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        
-        /* Glassy Header so Background shows beautifully */
-        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);}
-        
+        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: #fdfdfd; }
+        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eee; background: #fff;}
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
         .zh-info h1 { font-size: 1em; font-weight: 700; color: #111; margin-bottom: 2px; }
@@ -352,9 +337,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Glassy Footer so Background shows beautifully */
-        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-top: 1px solid rgba(255, 255, 255, 0.2); z-index: 20;}
-        
+        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee; z-index: 20;}
         .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
@@ -490,12 +473,12 @@
 
     <div class="main-container">
 
-        <!-- FIX: Splash Screen Loading Overlay -->
+        <!-- NEW: White Page Splash Screen Timer -->
         <div id="splash-screen">
             <div class="logo-z">Z</div>
             <h2 style="color:#111; font-weight:800; font-size:26px; letter-spacing:2px;">ZINGOO</h2>
             <p style="color:#888; font-size:14px; margin-top:5px; font-weight:600;">Secure Connection Setup...</p>
-            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">Loading...</div>
+            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">30s</div>
         </div>
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
@@ -552,7 +535,7 @@
                 </div>
 
                 <div id="lobby-rooms-list">
-                    <!-- Fixed HTML Clearing Bug for Empty Rooms -->
+                    <p id="no-rooms-message" style="color: #aaa; text-align: center; margin-top: 30px;">Fetching active rooms...</p>
                 </div>
                 
             </main>
@@ -806,16 +789,30 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- FIX: SPLASH SCREEN LOGIC ---
+            // --- NEW: SPLASH SCREEN 30s TIMER LOGIC ---
+            let splashTime = 30;
+            const splashTimerEl = document.getElementById('splash-timer');
             const splashScreen = document.getElementById('splash-screen');
             const idLoginScreen = document.getElementById('id-login-screen');
-            const lobbyScreen = document.getElementById('lobby-screen');
             
+            const splashInterval = setInterval(() => {
+                splashTime--;
+                splashTimerEl.innerText = splashTime + "s";
+                if(splashTime <= 0) {
+                    clearInterval(splashInterval);
+                    splashTimerEl.innerText = "Timeout. Refreshing...";
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                }
+            }, 1000);
+
             function hideSplashScreen() {
+                clearInterval(splashInterval);
                 splashScreen.style.display = 'none';
             }
 
+
             const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
+            const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
             const loginInput = document.getElementById('login-zingoo-id');
             const globalToast = document.getElementById('global-toast');
@@ -833,43 +830,13 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
-            // --- INSTANT AUTO-LOGIN LOGIC ---
+            // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
-            const storedUser = localStorage.getItem("zingoo_user");
-            const storedAvatar = localStorage.getItem("zingoo_avatar");
-
-            if (storedId && storedUser) {
-                // Instantly Bypass Loading Screen
-                currentUser = storedUser;
-                currentAvatar = storedAvatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
-                
-                document.getElementById('lobby-diamond-balance').innerText = localStorage.getItem("zingoo_diamonds") || "0";
-                
-                hideSplashScreen();
-                idLoginScreen.style.display = 'none';
-                lobbyScreen.style.display = 'flex';
-                
-                // Start Room Fetching and Actions Immediately
-                listenForAudioRooms(); 
-                listenForIncomingCalls(); 
-                listenForInvites(); 
-                fetchAdminGifts(); 
-                fetchStoreChairs();
-                
-                // Background Sync for Chair & Diamonds
-                get(ref(db, `users/${currentUser}`)).then(snap => {
-                    if(snap.exists()) {
-                        let uData = snap.val();
-                        myEquippedChair = uData.equippedChair || null;
-                        if(uData.diamonds !== undefined) {
-                            localStorage.setItem("zingoo_diamonds", uData.diamonds);
-                            document.getElementById('lobby-diamond-balance').innerText = uData.diamonds;
-                        }
-                    }
-                });
-
+            if (storedId) {
+                // Background verification while 30s timer runs on white page
+                processDatabaseLogin(storedId, true); 
             } else {
-                // If not logged in previously, show Login
+                // If no stored ID, immediately hide splash and show login screen
                 hideSplashScreen();
                 idLoginScreen.style.display = 'flex';
             }
@@ -923,21 +890,21 @@
                     }).then(res => res.json()).then(data => {
                         if (data.success) {
                             currentAvatar = data.data.url;
-                            processDatabaseLogin(enteredId);
+                            processDatabaseLogin(enteredId, false);
                         } else {
                             showToast("Image upload failed. Please try another image.");
-                            processDatabaseLogin(enteredId); 
+                            processDatabaseLogin(enteredId, false); 
                         }
                     }).catch(err => {
                         showToast("Image upload failed, using default.");
-                        processDatabaseLogin(enteredId);
+                        processDatabaseLogin(enteredId, false);
                     });
                 } else {
-                    processDatabaseLogin(enteredId);
+                    processDatabaseLogin(enteredId, false);
                 }
             });
 
-            function processDatabaseLogin(enteredId) {
+            function processDatabaseLogin(enteredId, isAutoLogin = false) {
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
@@ -957,7 +924,7 @@
                     if (userFound) {
                         myEquippedChair = allUsers[userKey].equippedChair || null;
 
-                        if (selectedAvatarFile) {
+                        if (selectedAvatarFile && !isAutoLogin) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
                         } else {
                             currentAvatar = allUsers[userKey].avatar || currentAvatar;
@@ -971,6 +938,7 @@
                         document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
                         localStorage.setItem("zingoo_diamonds", userDiamonds);
                         
+                        // Successfully logged in -> hide Splash and Login, show Lobby
                         hideSplashScreen();
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
@@ -979,18 +947,29 @@
                         listenForIncomingCalls(); 
                         listenForInvites(); 
                         fetchAdminGifts(); 
-                        fetchStoreChairs(); 
+                        fetchStoreChairs(); // NEW: Fetch Chairs for settings
                         
-                        showToast(`Welcome back, ${currentUser}!`);
+                        if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
                     } else {
-                        showToast("Invalid ID! User not found.");
+                        if(isAutoLogin) {
+                            localStorage.removeItem("zingoo_id");
+                            hideSplashScreen();
+                            idLoginScreen.style.display = 'flex';
+                        } else {
+                            showToast("Invalid ID! User not found.");
+                            loginBtn.innerText = "Enter Rooms";
+                            loginBtn.disabled = false;
+                        }
+                    }
+                }).catch(err => {
+                    if(isAutoLogin) {
+                        hideSplashScreen();
+                        idLoginScreen.style.display = 'flex';
+                    } else {
+                        showToast("Error connecting to database.");
                         loginBtn.innerText = "Enter Rooms";
                         loginBtn.disabled = false;
                     }
-                }).catch(err => {
-                    showToast("Error connecting to database.");
-                    loginBtn.innerText = "Enter Rooms";
-                    loginBtn.disabled = false;
                 });
             }
 
@@ -1164,6 +1143,7 @@
             const modals = document.querySelectorAll('.modal-overlay');
             const closeButtons = document.querySelectorAll('.close-btn');
             const lobbyRoomsList = document.getElementById('lobby-rooms-list');
+            const noRoomsMsg = document.getElementById('no-rooms-message');
             const speakerGrid = document.getElementById('speaker-grid-container');
 
             const openModal = (modalId) => {
@@ -1422,13 +1402,13 @@
                 openModal('profile-popup');
             };
 
-            // --- FIXED ROOM FETCHING BUG ---
             function listenForAudioRooms() {
                 const roomsRef = ref(db, 'audio_rooms');
                 onValue(roomsRef, (snapshot) => {
                     lobbyRoomsList.innerHTML = '';
                     const rooms = snapshot.val();
                     if (rooms && Object.keys(rooms).length > 0) {
+                        if(noRoomsMsg) noRoomsMsg.style.display = 'none';
                         Object.entries(rooms).forEach(([roomId, roomData]) => {
                             const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
                             const vacantSeats = 10 - seatCount;
@@ -1466,8 +1446,11 @@
                             lobbyRoomsList.appendChild(roomCard);
                         });
                     } else {
-                        // Safe replacement that won't break if DOM updates multiple times
-                        lobbyRoomsList.innerHTML = '<p style="color: #aaa; text-align: center; margin-top: 30px;">No active rooms. Create your own party!</p>';
+                        if(noRoomsMsg) {
+                           noRoomsMsg.style.display = 'block';
+                           noRoomsMsg.innerText = "No active rooms. Create your own party!";
+                           lobbyRoomsList.appendChild(noRoomsMsg);
+                        }
                     }
                 });
             }
