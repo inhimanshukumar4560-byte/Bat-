@@ -1615,8 +1615,10 @@
       listenForNotifications();
   }
 
+  let selectedProfileFile = null;
   document.getElementById("profile-image-upload").addEventListener("change", function(e) {
       if(e.target.files[0]) {
+          selectedProfileFile = e.target.files[0];
           const reader = new FileReader();
           reader.onload = (event) => {
               currentAvatar = event.target.result;
@@ -1626,7 +1628,7 @@
       }
   });
 
-  document.getElementById("btn-create-profile").addEventListener("click", () => {
+  document.getElementById("btn-create-profile").addEventListener("click", async () => {
       const rawName = document.getElementById("auth-name").value.trim();
       // REMOVE INVALID FIREBASE CHARACTERS (., #, $, [, ]) TO PREVENT CREATION FAILURES
       const name = rawName.replace(/[.#$\[\]]/g, ""); 
@@ -1644,6 +1646,16 @@
       }
 
       if (name && ageNum >= 18 && phone && gender && state) {
+          
+          if (selectedProfileFile) {
+              document.getElementById("btn-create-text").innerText = "Uploading Image...";
+              const cloudUrl = await uploadToCloudinary(selectedProfileFile, "image");
+              if (cloudUrl) {
+                  currentAvatar = cloudUrl;
+              }
+              document.getElementById("btn-create-text").innerText = "Enter Zingoo";
+          }
+          
           // FIX: Keep existing ID if editing profile, else create new
           const finalId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
           
