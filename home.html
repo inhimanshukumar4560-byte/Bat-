@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
 <head>
@@ -59,12 +57,6 @@
               100% { transform: scale(1.5); opacity: 0; }
           }
           
-          @keyframes pulse-icon {
-              0% { opacity: 1; }
-              50% { opacity: 0.5; }
-              100% { opacity: 1; }
-          }
-          
           @keyframes fadeInUp {
               0% { opacity: 0; transform: translateY(15px); }
               100% { opacity: 1; transform: translateY(0); }
@@ -72,8 +64,8 @@
           .animate-fade-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
 
           /* Bottom Nav styling */
-          .nav-item-active { color: #da1c22; transform: scale(1.1); transition: all 0.3s ease; font-weight: bold; }
-          .nav-item-hover:hover { color: #da1c22; transform: translateY(-2px); cursor: pointer; }
+          .nav-item-active { color: #ff004c; transform: scale(1.1); transition: all 0.3s ease; font-weight: bold; }
+          .nav-item-hover:hover { color: #ff004c; transform: translateY(-2px); cursor: pointer; }
 
           /* Chat bubbles for light theme */
           .chat-bubble { background: #f1f3f5; color: #111; border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; max-width: 80%; word-wrap: break-word; }
@@ -83,114 +75,47 @@
           .ds-gradient-red { background: linear-gradient(135deg, #e6232b 0%, #b81016 100%); }
           .ds-pack-card { transition: transform 0.2s; }
           .ds-pack-card:active { transform: scale(0.96); }
-
-          /* Floating AI Avatar animation */
-          .float-bounce {
-              animation: floaty 3s ease-in-out infinite;
-          }
-          @keyframes floaty {
-              0% { transform: translateY(0px); }
-              50% { transform: translateY(-8px); }
-              100% { transform: translateY(0px); }
-          }
-
-          /* Profile View Background Gradients */
-          .profile-header-bg {
-              background: radial-gradient(circle at top left, #5a0000, #b30000, #380000);
-              position: relative;
-          }
-          .profile-header-bg::after {
-              content: '';
-              position: absolute;
-              top: 0; left: 0; right: 0; bottom: 0;
-              background-image: radial-gradient(white 1px, transparent 1px);
-              background-size: 20px 20px;
-              opacity: 0.05;
-              pointer-events: none;
-          }
-          
-          /* Toggle Switch Style */
-          .toggle-checkbox:checked {
-              right: 0;
-              border-color: #10B981;
-          }
-          .toggle-checkbox:checked + .toggle-label {
-              background-color: #10B981;
-          }
       </style>
 </head>
 <body class="bg-zingoo-bg text-gray-900 relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
 
-<!-- Floating AI Assistant -->
-<a href="https://komal-ai-assistant-gf.vercel.app/" class="fixed top-[45%] right-3 z-[8000] w-14 h-14 rounded-full overflow-hidden border-2 border-pink-500 shadow-lg hover:scale-105 transition-transform bg-white flex items-center justify-center cursor-pointer float-bounce" target="_blank" style="text-decoration:none;">
-    <img src="https://i.ibb.co/jZMn0XTt/file-00000000da7071fab9612db9b848e392.png" alt="AI Assistant" class="w-full h-full object-cover">
-</a>
-
 <!-- Hidden Profile Trigger Button -->
 <div id="header-profile-btn" class="hidden"></div>
 
-<!-- ================= TOP HEADER (LIGHT THEME & NEW FEATURES) ================= -->
+<!-- ================= TOP HEADER (LIGHT THEME) ================= -->
 <header class="sticky top-0 w-full z-50 bg-white px-4 pt-4 pb-2 shadow-sm flex justify-between items-center">
     
     <!-- LEFT: Zingoo Logo -->
     <div class="flex items-center cursor-pointer">
         <svg viewBox="0 0 100 100" class="w-8 h-8 text-zingoo-red fill-current mr-1"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
-        <span class="text-black font-black text-xl tracking-wide hidden sm:block">ZINGOO</span>
+        <span class="text-black font-black text-xl tracking-wide">ZINGOO</span>
     </div>
 
-    <!-- RIGHT: Filter, Status, Notifications, Diamonds -->
-    <div class="flex items-center gap-3">
-        
-        <!-- Filter Replace Search -->
-        <select id="gender-filter" class="bg-gray-100 border-none rounded-full text-xs px-2 py-1.5 focus:ring-1 focus:ring-red-500 cursor-pointer font-bold text-gray-700 outline-none shadow-sm">
-            <option value="all">👥 All</option>
-            <option value="male">👨 Male</option>
-            <option value="female">👩 Female</option>
-        </select>
-
-        <!-- Active/Inactive Status Toggle -->
-        <div class="flex items-center gap-1 cursor-pointer bg-gray-50 px-2 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors" id="status-toggle-btn" onclick="toggleManualStatus()">
-            <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors"></div>
-            <span id="status-text" class="text-[10px] font-bold text-green-600 hidden md:block">Active</span>
+    <!-- RIGHT: Search, Notifications, Diamonds -->
+    <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-gray-700 text-[24px] cursor-pointer">search</span>
+        <div class="relative cursor-pointer">
+            <span class="material-symbols-outlined text-gray-700 text-[24px]">notifications</span>
+            <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">4</div>
         </div>
-
-        <!-- Notification Bell -->
-        <div class="relative cursor-pointer" id="notification-trigger" onclick="document.getElementById('notification-dropdown').classList.toggle('hidden')">
-            <span class="material-symbols-outlined text-gray-700 text-[26px]">notifications</span>
-            <div id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full hidden items-center justify-center border border-white z-10">0</div>
-        </div>
-
-        <!-- Buy Diamonds -->
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors shrink-0">
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2.5 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors">
             <span class="material-symbols-outlined text-purple-600 text-[16px]">diamond</span>
             <span id="diamond-balance-display" class="text-xs font-bold text-purple-800">0</span>
             <span class="material-symbols-outlined text-red-500 text-[14px]">add_circle</span>
         </div>
-
         <!-- 3-Line Menu Trigger -->
-        <div class="cursor-pointer shrink-0" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
+        <div class="cursor-pointer" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
             <span class="material-symbols-outlined text-gray-700 text-[28px]">menu</span>
         </div>
     </div>
 </header>
 
-<!-- NOTIFICATION DROPDOWN -->
-<div id="notification-dropdown" class="fixed top-[65px] right-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col z-[9999] max-h-96 overflow-y-auto no-scrollbar">
-    <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
-        <span class="font-bold text-gray-900">Notifications</span>
-        <span class="text-[10px] text-red-500 cursor-pointer font-semibold" onclick="markAllNotificationsRead()">Mark all read</span>
-    </div>
-    <div id="notification-list" class="flex flex-col">
-        <div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>
-    </div>
-</div>
-
 <!-- TOP TABS -->
 <div class="sticky top-[60px] z-40 bg-white w-full border-b border-gray-100 flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 text-sm font-semibold text-gray-500">
     <div class="pb-3 border-b-2 border-red-500 text-red-500 whitespace-nowrap cursor-pointer">For You</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('longs');">Live</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">Live</div>
     <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openAudioRoomLobby()">Rooms</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('shorts');">Reels</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">Reels</div>
     <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer">Following</div>
 </div>
 
@@ -228,12 +153,12 @@
     <!-- LIVE NOW SECTION (Vertical Portrait Cards) -->
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
-            <h2 class="text-lg font-bold text-gray-900">Active Users</h2>
+            <h2 class="text-lg font-bold text-gray-900">Live Now</h2>
             <span id="see-all-trigger" class="text-xs font-bold text-red-500 cursor-pointer hover:underline">View All</span>
         </div>
         
         <!-- Real users injected dynamically here -->
-        <div id="real-users-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar items-stretch">
+        <div id="real-users-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
             <p class="text-gray-400 text-sm">Loading amazing creators...</p>
         </div>
     </section>
@@ -242,7 +167,7 @@
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
             <h2 class="text-lg font-bold text-gray-900">Trending Reels</h2>
-            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openVideoFeed('shorts');">View All</span>
+            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">View All</span>
         </div>
         
         <!-- Real Shorts injected dynamically here -->
@@ -254,34 +179,33 @@
 </main>
 
 <!-- ================= BOTTOM NAVIGATION BAR (Z-[9999] High Priority) ================= -->
-<nav class="fixed bottom-0 w-full z-[9999] bg-white pb-5 pt-3 px-6 flex justify-between items-center border-t border-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
+<nav class="fixed bottom-0 w-full z-[9999] bg-white pb-6 pt-3 px-6 flex justify-between items-center border-t border-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
     
-    <div id="nav-home" class="flex flex-col items-center gap-1 cursor-pointer nav-item-active text-dia-red w-12" onclick="closeAllMainTabs()">
-        <span class="material-symbols-outlined text-[28px] font-light">home</span>
-        <span class="text-[10px] font-semibold">Home</span>
+    <div id="nav-home" class="flex flex-col items-center gap-1 cursor-pointer nav-item-active text-zingoo-red" onclick="closeAllMainTabs()">
+        <span class="material-symbols-outlined text-[26px]">home</span>
+        <span class="text-[10px]">Home</span>
     </div>
 
-    <div id="nav-rooms" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="openAudioRoomLobby()">
-        <span class="material-symbols-outlined text-[28px] font-light">mic</span>
-        <span class="text-[10px] font-semibold">Rooms</span>
+    <div id="nav-rooms" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="openAudioRoomLobby()">
+        <span class="material-symbols-outlined text-[26px]">mic</span>
+        <span class="text-[10px]">Rooms</span>
     </div>
 
-    <!-- Center Live Button -->
-    <div class="relative -top-6 group w-14 flex justify-center" onclick="window.location.href='live.html';">
-        <button class="w-[60px] h-[60px] rounded-full bg-dia-red flex flex-col items-center justify-center border-4 border-white shadow-[0_5px_15px_rgba(218,28,34,0.4)] group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-white text-[28px]" style="animation: pulse-icon 1.5s infinite;">podcasts</span>
-            <span class="text-white text-[9px] font-bold mt-0.5 uppercase tracking-wider">Live</span>
+    <!-- Center Add Button -->
+    <div class="relative -top-5 group" onclick="document.getElementById('upload-video-overlay').style.display='flex';">
+        <button class="w-14 h-14 rounded-full btn-red-gradient flex items-center justify-center border-4 border-white shadow-md group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-white text-[32px] font-bold">add</span>
         </button>
     </div>
 
-    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="openVideoFeed('shorts');">
-        <span class="material-symbols-outlined text-[28px] font-light">play_circle</span>
-        <span class="text-[10px] font-semibold">Reels</span>
+    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
+        <span class="material-symbols-outlined text-[26px]">smart_display</span>
+        <span class="text-[10px]">Reels</span>
     </div>
 
-    <div id="nav-profile" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="document.getElementById('header-profile-btn').click()">
-        <span class="material-symbols-outlined text-[28px] font-light">person</span>
-        <span class="text-[10px] font-semibold">Profile</span>
+    <div id="nav-profile" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover" onclick="document.getElementById('header-profile-btn').click()">
+        <span class="material-symbols-outlined text-[26px]">person</span>
+        <span class="text-[10px]">Profile</span>
     </div>
 
 </nav>
@@ -324,13 +248,13 @@
 
             <!-- Live Shows Image -->
             <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
-                 onclick="document.getElementById('menu-overlay').style.display='none'; window.location.href='live.html';">
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('longs');">
                 <img src="https://i.ibb.co/PZvGtbNk/file-00000000a2e07208bc2307d7a0fe24f1.png" class="w-full h-full object-cover">
             </div>
 
             <!-- Secret Gallery Image -->
             <div class="aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform" 
-                 onclick="document.getElementById('menu-overlay').style.display='none'; openVideoFeed('shorts');">
+                 onclick="document.getElementById('menu-overlay').style.display='none'; document.getElementById('video-feed-overlay').style.display='flex'; switchVideoTab('shorts');">
                 <img src="https://i.ibb.co/84xpBDH1/file-00000000ca047208b27d596686e3776f.png" class="w-full h-full object-cover">
             </div>
 
@@ -339,286 +263,153 @@
 </div>
 
 <!-- ================= REDESIGNED PROFILE VIEW OVERLAY ================= -->
-<div id="manage-profile-overlay" class="fixed inset-0 bg-[#f8f9fa] z-[9000] flex-col hidden overflow-y-auto no-scrollbar pb-32">
-    
-    <!-- Header Hero Background (Dark Red Gradient) -->
-    <div class="profile-header-bg w-full pt-12 pb-8 px-5 text-white shadow-md relative rounded-b-[2rem]">
-        
-        <!-- Header Icons Row -->
-        <div class="flex justify-between items-center mb-6 relative z-10">
-            <!-- Zingoo Logo Top Left -->
-            <div class="flex items-center">
-                <svg viewBox="0 0 100 100" class="w-7 h-7 text-white fill-current mr-1"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
-                <span class="font-black tracking-wider text-xl">ZINGOO</span>
-            </div>
-            <!-- Action Icons Right -->
-            <div class="flex items-center gap-4">
-                <span class="material-symbols-outlined cursor-pointer hover:text-gray-200">ios_share</span>
-                <span class="material-symbols-outlined cursor-pointer hover:text-gray-200">notifications_active</span>
-                <span class="material-symbols-outlined cursor-pointer hover:text-gray-200">settings</span>
-            </div>
-        </div>
-
-        <!-- Identity Section -->
-        <div class="flex justify-between items-start relative z-10">
-            <div class="flex gap-4">
-                <!-- Avatar -->
-                <div class="relative w-20 h-20 shrink-0">
-                    <img id="profile-header-avatar" src="" class="w-full h-full rounded-full object-cover border-4 border-white/80 shadow-md">
-                    <div class="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                </div>
-                
-                <!-- Info -->
-                <div class="flex flex-col justify-center">
-                    <h2 class="font-bold text-2xl flex items-center gap-1.5" id="profile-header-name">
-                        <span id="profile-header-name-text">User</span>
-                        <span class="material-symbols-outlined text-dia-red bg-white rounded-full text-[14px] leading-none">check_circle</span>
-                        <span class="text-red-500 text-[16px]">❤️</span>
-                    </h2>
-                    <p class="text-sm text-white/80 flex items-center gap-1 mt-0.5">
-                        <span id="profile-header-id">ID: 00000000</span>
-                        <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="navigator.clipboard.writeText(currentId); alert('ID Copied: ' + currentId)">content_copy</span>
-                    </p>
-                    <p class="text-xs text-white/90 mt-2 leading-tight">Welcome to Zingoo 🎙️<br>Let's connect and vibe together! ✨</p>
-                </div>
-            </div>
-
-            <!-- Golden Profile Request Button -->
-            <div class="shrink-0 mt-2">
-                <button class="border border-yellow-400 bg-black/20 backdrop-blur text-yellow-400 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-black/30 transition shadow-sm" onclick="requestGoldenProfile()">
-                    <span class="material-symbols-outlined text-[14px] text-yellow-400">workspace_premium</span> Golden Profile
-                </button>
-            </div>
+<div id="manage-profile-overlay" class="fixed inset-0 bg-zingoo-bg z-[9000] flex-col hidden overflow-y-auto no-scrollbar pb-32">
+    <!-- Header -->
+    <div class="bg-white px-4 pt-4 pb-2 sticky top-0 z-50 flex justify-between items-center shadow-sm">
+        <div></div> <!-- Empty div to replace back button and keep flex spacing -->
+        <div class="flex gap-4">
+            <span class="material-symbols-outlined text-gray-700">notifications</span>
+            <span class="material-symbols-outlined text-gray-700" onclick="alert('Settings menu')">settings</span>
         </div>
     </div>
 
-    <!-- Quick Stats Bar -->
-    <div class="flex justify-between px-6 py-4 bg-white shadow-[0_4px_10px_rgba(0,0,0,0.03)] border-b border-gray-100 rounded-b-xl -mt-2 relative z-20 mx-2">
-        <div class="text-center w-1/3">
-            <div class="font-bold text-xl text-gray-900 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-red-500 text-[20px]">group</span> 3.2K</div>
-            <div class="text-[11px] text-gray-500 font-medium">Followers</div>
-        </div>
-        <div class="text-center w-1/3 border-l border-r border-gray-100">
-            <div class="font-bold text-xl text-gray-900 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-purple-500 text-[20px]">person_add</span> 180</div>
-            <div class="text-[11px] text-gray-500 font-medium">Following</div>
-        </div>
-        <div class="text-center w-1/3">
-            <div class="font-bold text-xl text-gray-900 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-orange-500 text-[20px]">visibility</span> 45.6K</div>
-            <div class="text-[11px] text-gray-500 font-medium">Views</div>
-        </div>
-    </div>
+    <div class="p-4">
+        <!-- Greetings -->
+        <h2 class="text-2xl font-bold text-gray-900 mb-0.5">Hello, <span id="profile-header-name">User</span> ❤️</h2>
+        <p class="text-gray-500 text-sm mb-4">Welcome back to Zingoo!</p>
 
-    <!-- Action Buttons -->
-    <div class="flex gap-3 px-4 pt-5 pb-3">
-        <button class="flex-1 bg-white border border-gray-200 text-dia-red font-bold py-2.5 rounded-full text-sm shadow-sm flex items-center justify-center gap-1.5 hover:bg-gray-50 transition" id="btn-edit-profile">
-            <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profile
-        </button>
-        <button class="flex-[1.5] bg-dia-red text-white font-bold py-2.5 rounded-full text-sm shadow-md flex items-center justify-center gap-1.5 hover:opacity-90 transition">
-            <span class="material-symbols-outlined text-[20px]">person_add</span> Follow
-        </button>
-        <button class="w-12 h-12 bg-white border border-gray-200 text-dia-red rounded-full flex items-center justify-center shadow-sm shrink-0 hover:bg-gray-50 transition">
-            <span class="material-symbols-outlined text-[20px] ml-1">send</span>
-        </button>
-    </div>
-
-    <!-- Wallet & Diamonds Box -->
-    <div class="px-4 py-2">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex p-4">
-            <!-- Wallet -->
-            <div class="flex-1 flex flex-col justify-center border-r border-gray-100 pr-2">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="material-symbols-outlined text-red-500 text-xl">account_balance_wallet</span>
-                    <span class="text-gray-500 text-xs font-medium">Wallet Balance</span>
+        <!-- Red Identity Card -->
+        <div class="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl p-4 flex items-center justify-between shadow-md mb-4 text-white relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+            
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="relative w-14 h-14">
+                    <img id="profile-header-avatar" src="" class="w-full h-full rounded-full object-cover border-2 border-white">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></div>
                 </div>
-                <div class="flex items-center gap-1.5">
-                    <h3 class="text-2xl font-black text-gray-900 wallet-balance-display">₹ 0.00</h3>
-                    <span class="material-symbols-outlined text-red-500 text-[22px] cursor-pointer hover:scale-110 transition" onclick="addWalletBalance()">add_circle</span>
+                <div>
+                    <h3 class="font-bold text-lg flex items-center gap-1" id="profile-header-name-2">User <span class="material-symbols-outlined text-[14px] bg-white text-red-500 rounded-full p-[1px]">check</span></h3>
+                    <p class="text-xs text-white/80 flex items-center gap-1"><span id="profile-header-id">ID: 00000000</span> <span class="material-symbols-outlined text-[12px] cursor-pointer" onclick="alert('ID Copied')">content_copy</span></p>
                 </div>
-            </div>
-            <!-- Diamonds -->
-            <div class="flex-1 flex flex-col justify-center pl-4 pr-1 relative cursor-pointer group" onclick="document.getElementById('buy-diamonds-trigger').click()">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="material-symbols-outlined text-purple-500 text-xl">diamond</span>
-                    <span class="text-gray-500 text-xs font-medium">Diamonds</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-black text-gray-900" id="profile-diamonds-display">0</h3>
-                    <span class="material-symbols-outlined text-gray-400 group-hover:text-gray-600 transition">chevron_right</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Features Toggles Section (Prices) -->
-    <div class="px-4 py-2">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-gray-900 text-sm">Service Settings (Pricing)</h3>
-                <span class="text-xs text-gray-500">Enable/Disable</span>
             </div>
             
-            <div class="flex flex-col gap-3">
-                <!-- Video Call Toggle -->
-                <div class="flex justify-between items-center pb-2 border-b border-gray-50">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500"><span class="material-symbols-outlined text-[18px]">videocam</span></div>
-                        <div>
-                            <div class="font-bold text-sm text-gray-900">Video Call</div>
-                            <div class="text-[10px] font-medium text-gray-500">₹10 / minute</div>
-                        </div>
-                    </div>
-                    <label class="flex items-center cursor-pointer">
-                        <div class="relative">
-                            <input type="checkbox" id="toggle-video-call" class="sr-only toggle-checkbox" checked onchange="updateServiceStatus('video', this.checked)">
-                            <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors toggle-label"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
-                        </div>
-                    </label>
-                </div>
-                <!-- Audio Call Toggle -->
-                <div class="flex justify-between items-center pb-2 border-b border-gray-50">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500"><span class="material-symbols-outlined text-[18px]">call</span></div>
-                        <div>
-                            <div class="font-bold text-sm text-gray-900">Audio Call</div>
-                            <div class="text-[10px] font-medium text-gray-500">₹5 / minute</div>
-                        </div>
-                    </div>
-                    <label class="flex items-center cursor-pointer">
-                        <div class="relative">
-                            <input type="checkbox" id="toggle-audio-call" class="sr-only toggle-checkbox" checked onchange="updateServiceStatus('audio', this.checked)">
-                            <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors toggle-label"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
-                        </div>
-                    </label>
-                </div>
-                <!-- Chat Toggle -->
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500"><span class="material-symbols-outlined text-[18px]">chat</span></div>
-                        <div>
-                            <div class="font-bold text-sm text-gray-900">Chat Message</div>
-                            <div class="text-[10px] font-medium text-gray-500">₹4 / message</div>
-                        </div>
-                    </div>
-                    <label class="flex items-center cursor-pointer">
-                        <div class="relative">
-                            <input type="checkbox" id="toggle-chat" class="sr-only toggle-checkbox" checked onchange="updateServiceStatus('chat', this.checked)">
-                            <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors toggle-label"></div>
-                            <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
-                        </div>
-                    </label>
-                </div>
-            </div>
+            <button class="bg-white text-red-600 font-bold text-xs px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm relative z-10" id="btn-edit-profile">
+                <span class="material-symbols-outlined text-[14px]">edit</span> Edit Profile
+            </button>
         </div>
-    </div>
 
-    <!-- Bottom Features Grid (Matches Screenshot) -->
-    <div class="px-4 py-2 mt-1">
-        <div class="grid grid-cols-4 gap-2 mb-4 text-center">
-            <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
-                <span class="material-symbols-outlined text-red-500 text-[28px] mb-1">local_police</span>
-                <span class="text-[10px] font-bold text-gray-900 block leading-tight">My Badges</span>
-                <span class="text-[8px] text-gray-500 block leading-tight mt-0.5">View all<br>achievements</span>
+        <!-- Wallet & Diamonds Box -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex p-4 mb-6">
+            <div class="flex-1 flex flex-col justify-center border-r border-gray-100 px-2">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined text-red-500 text-xl">account_balance_wallet</span>
+                    <span class="text-gray-500 text-xs">Wallet Balance</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <h3 class="text-xl font-bold text-gray-900">₹ 0.00</h3>
+                    <span class="material-symbols-outlined text-red-500 text-[16px] cursor-pointer">add_circle</span>
+                </div>
             </div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50">
-                <span class="material-symbols-outlined text-yellow-500 text-[28px] mb-1">emoji_events</span>
-                <span class="text-[10px] font-bold text-gray-900 block leading-tight">Level Up</span>
-                <span class="text-[8px] text-gray-500 block leading-tight mt-0.5">Check your<br>level</span>
-            </div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('chat-list-overlay').style.display='flex';">
-                <span class="material-symbols-outlined text-blue-500 text-[28px] mb-1">badge</span>
-                <span class="text-[10px] font-bold text-gray-900 block leading-tight">Vcard</span>
-                <span class="text-[8px] text-gray-500 block leading-tight mt-0.5">Your digital<br>card</span>
-            </div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('upload-video-overlay').style.display='flex';">
-                <span class="material-symbols-outlined text-green-500 text-[28px] mb-1">stars</span>
-                <span class="text-[10px] font-bold text-gray-900 block leading-tight">Become a<br>Creator</span>
-                <span class="text-[8px] text-gray-500 block leading-tight mt-0.5">Start your<br>journey</span>
+            <div class="flex-1 flex flex-col justify-center pl-4 pr-2 relative cursor-pointer" onclick="document.getElementById('buy-diamonds-trigger').click()">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-symbols-outlined text-purple-500 text-xl">diamond</span>
+                    <span class="text-gray-500 text-xs">Diamonds</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900" id="profile-diamonds-display">0</h3>
+                <span class="material-symbols-outlined absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">chevron_right</span>
             </div>
         </div>
 
         <!-- Product Center -->
-        <div class="flex justify-between items-center mb-2 px-1">
+        <div class="flex justify-between items-center mb-3">
             <h3 class="font-bold text-gray-900">Product Center</h3>
-            <span class="text-red-500 text-xs font-semibold cursor-pointer">View All ></span>
+            <span class="text-red-500 text-xs cursor-pointer">View All ></span>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">sports_esports</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">Games</h4>
-                        <p class="text-[10px] text-gray-500">Play & Win</p>
-                    </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="alert('Games coming soon')">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">sports_esports</span>
                 </div>
-                <span class="material-symbols-outlined text-gray-400">chevron_right</span>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Games</h4>
+                    <p class="text-xs text-gray-500">Play & Win</p>
+                </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold font-display-lg">
-                        CA
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">CA</h4>
-                        <p class="text-[10px] text-gray-500">Challenges Arena</p>
-                    </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="alert('Arena coming soon')">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold font-display-lg">
+                    CA
                 </div>
-                <span class="material-symbols-outlined text-gray-400">chevron_right</span>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">CA</h4>
+                    <p class="text-xs text-gray-500">Challenges Arena</p>
+                </div>
             </div>
-            
-            <!-- Lower Row of the Grid -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="document.getElementById('buy-diamonds-trigger').click()">
-                <div class="flex items-center gap-3">
-                    <div class="bg-purple-50 text-purple-500 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">diamond</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">0</h4>
-                        <p class="text-[10px] text-gray-500">Diamonds</p>
-                    </div>
+        </div>
+
+        <!-- Explore Grid -->
+        <h3 class="font-bold text-gray-900 mb-3">Explore</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('chat-list-overlay').style.display='flex';">
+                <div class="bg-red-50 text-red-500 w-10 h-10 rounded-full flex items-center justify-center relative">
+                    <span class="material-symbols-outlined">chat</span>
+                    <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</div>
                 </div>
-                <span class="material-symbols-outlined text-gray-400">add</span>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Messages</h4>
+                    <p class="text-[10px] text-gray-500">Your chats</p>
+                </div>
             </div>
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('see-all-trigger').click();">
-                <div class="flex items-center gap-3">
-                    <div class="bg-gray-50 text-gray-600 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">group</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">Users</h4>
-                        <p class="text-[10px] text-gray-500">Explore</p>
-                    </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-blue-50 text-blue-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">stars</span>
                 </div>
-                <span class="material-symbols-outlined text-gray-400">more_horiz</span>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Level</h4>
+                    <p class="text-[10px] text-gray-500">Keep growing!</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer" onclick="document.getElementById('buy-diamonds-trigger').click()">
+                <div class="bg-purple-50 text-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">diamond</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Diamonds</h4>
+                    <p class="text-[10px] text-gray-500">Your balance</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-green-50 text-green-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Earnings</h4>
+                    <p class="text-[10px] text-gray-500">Total Earnings</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">badge</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Vcards</h4>
+                    <p class="text-[10px] text-gray-500">Your Vcards</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center gap-3 cursor-pointer">
+                <div class="bg-yellow-50 text-yellow-500 w-10 h-10 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-gray-900">Creator</h4>
+                    <p class="text-[10px] text-gray-500">Start journey</p>
+                </div>
             </div>
         </div>
         
-        <button id="btn-logout" class="w-full mt-2 mb-10 py-3.5 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors shadow-sm">
+        <button id="btn-logout" class="w-full mt-6 py-3 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors">
             <span class="material-symbols-outlined">logout</span> Logout
         </button>
-    </div>
-</div>
-
-<!-- ================= VIDEO EARNINGS OVERLAY ================= -->
-<div id="video-earnings-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
-    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <button class="text-gray-700 hover:text-black" onclick="document.getElementById('video-earnings-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
-            <h3 class="text-gray-900 font-bold text-lg">Video Earnings</h3>
-        </div>
-    </div>
-    <div class="p-4 bg-gray-50 border-b border-gray-200 text-center">
-        <p class="text-sm text-gray-500">Total Diamonds Earned from Videos</p>
-        <h2 class="text-3xl font-black text-purple-600 flex items-center justify-center gap-2 mt-1">
-            <span class="material-symbols-outlined text-[28px]">diamond</span> <span id="total-video-diamonds">0</span>
-        </h2>
-    </div>
-    <div id="earnings-video-list" class="flex-1 overflow-y-auto p-4 no-scrollbar bg-gray-50 flex flex-col gap-3 pb-24">
-        <!-- Video list will be injected here by JS -->
     </div>
 </div>
 
@@ -772,58 +563,14 @@
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">call</span>
                 <input type="number" id="auth-phone" placeholder="Phone Number" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
             </div>
-            
-            <!-- Gender Selection Field -->
-            <div class="relative w-full">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">wc</span>
-                <select id="auth-gender" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
-                    <option value="" disabled selected class="text-gray-400">Select Gender *</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-            </div>
-
-            <!-- Complete Indian States Dropdown -->
             <div class="relative w-full mb-6">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">map</span>
                 <select id="auth-state" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
-                    <option value="" disabled selected class="text-gray-400">Select State *</option>
+                    <option value="" disabled selected class="text-gray-400">Select State</option>
                     <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Bihar">Bihar</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Madhya Pradesh">Madhya Pradesh</option>
                     <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
-                    <option value="West Bengal">West Bengal</option>
-                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                    <option value="Ladakh">Ladakh</option>
-                    <option value="Lakshadweep">Lakshadweep</option>
-                    <option value="Puducherry">Puducherry</option>
+                    <option value="Delhi">Delhi (UT)</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
         </div>
@@ -849,18 +596,16 @@
     <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-gray-200 shadow-sm">
         <div class="flex items-center gap-3">
             <button id="btn-close-chat" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
-            <div class="w-10 h-10 rounded-full overflow-hidden relative">
-                <img id="chat-header-img" src="" class="w-full h-full object-cover">
-            </div>
+            <div class="w-10 h-10 rounded-full overflow-hidden"><img id="chat-header-img" src="" class="w-full h-full object-cover"></div>
             <div>
                 <h3 class="text-gray-900 font-bold text-sm" id="chat-header-name">User</h3>
-                <p class="text-green-500 text-[10px]">Active</p>
+                <p class="text-green-500 text-[10px]">Online</p>
             </div>
         </div>
     </div>
     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 flex flex-col no-scrollbar bg-gray-50"></div>
     <div class="p-4 bg-white border-t border-gray-200 flex gap-2 pb-8">
-        <input type="text" id="chat-input" placeholder="Type a message... (₹4/msg)" class="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500">
+        <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500">
         <button id="btn-send-msg" class="w-10 h-10 rounded-full btn-red-gradient flex items-center justify-center text-white shadow-md">
             <span class="material-symbols-outlined text-[20px] ml-1">send</span>
         </button>
@@ -876,15 +621,15 @@
             <span class="material-symbols-outlined text-[24px]">close</span>
         </button>
         <div class="absolute bottom-0 w-full p-6 flex flex-col gap-4 z-20">
-            <h2 id="quick-profile-name" class="text-white font-bold text-2xl flex items-center gap-2">Name</h2>
+            <h2 id="quick-profile-name" class="text-white font-bold text-2xl">Name</h2>
             <div class="flex justify-between items-center gap-3 mt-2">
-                <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
+                <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
                     <span class="material-symbols-outlined mb-1">chat</span><span class="text-[10px] font-bold">Chat</span>
                 </button>
-                <button id="quick-btn-audio" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
+                <button id="quick-btn-audio" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white">
                     <span class="material-symbols-outlined mb-1">call</span><span class="text-[10px] font-bold">Audio</span>
                 </button>
-                <button id="quick-btn-video" class="flex-1 btn-red-gradient border border-red-500 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:opacity-90 transition-opacity">
+                <button id="quick-btn-video" class="flex-1 btn-red-gradient border border-red-500 rounded-xl py-3 flex flex-col items-center justify-center text-white">
                     <span class="material-symbols-outlined mb-1">videocam</span><span class="text-[10px] font-bold">Video</span>
                 </button>
             </div>
@@ -900,11 +645,10 @@
             <h3 class="text-gray-900 font-bold text-lg">All Creators</h3>
         </div>
     </div>
-    <!-- Adjusted Grid layout parameters strictly to prevent up-down misalignment -->
-    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-5 items-start pb-24 bg-gray-50 no-scrollbar"></div>
+    <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar"></div>
 </div>
 
-<!-- AUDIO ROOM LOBBY (Kept for compatibility, but normally bypassed to audio.html) -->
+<!-- AUDIO ROOM LOBBY -->
 <div id="audio-room-lobby-overlay" class="fixed inset-0 bg-white z-[9000] flex-col hidden overflow-hidden">
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
         <div class="flex items-center gap-3">
@@ -916,7 +660,7 @@
     <div id="audio-rooms-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-32 bg-gray-50 no-scrollbar"></div>
 </div>
 
-<!-- ACTIVE AUDIO ROOM (Kept for compatibility) -->
+<!-- ACTIVE AUDIO ROOM -->
 <div id="audio-room-active-overlay" class="fixed inset-0 bg-gray-900 z-[8500] flex-col hidden overflow-hidden">
     <div class="bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-700 sticky top-0 z-50">
         <h3 id="active-room-name" class="text-white font-bold text-lg flex items-center gap-2">Room Name <div class="live-pulse relative w-2 h-2 ml-1"></div></h3>
@@ -925,22 +669,19 @@
     <div id="audio-room-seats-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-3 md:grid-cols-4 gap-4 pb-24 no-scrollbar"></div>
 </div>
 
-<!-- VIDEO FEED (Reels & Longs) - Full Screen Snap Scroll -->
+<!-- VIDEO FEED (Reels & Longs) -->
 <div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
-    <!-- Floating Header over Video -->
-    <div class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent px-4 pt-6 pb-4 flex justify-between items-center pointer-events-auto border-none">
+    <div class="bg-black/80 backdrop-blur px-4 py-4 flex justify-between border-b border-white/10 sticky top-0 z-50">
         <button class="text-white" onclick="closeAllMainTabs()"><span class="material-symbols-outlined">arrow_back</span></button>
         <div class="flex gap-4">
-            <button id="tab-shorts-btn" class="text-red-500 font-bold drop-shadow-md" onclick="switchVideoTab('shorts')">Reels</button>
-            <button id="tab-longs-btn" class="text-white/70 font-bold drop-shadow-md" onclick="switchVideoTab('longs')">Live/Vods</button>
+            <button id="tab-shorts-btn" class="text-red-500 font-bold" onclick="switchVideoTab('shorts')">Reels</button>
+            <button id="tab-longs-btn" class="text-white/50 font-bold" onclick="switchVideoTab('longs')">Live/Vods</button>
         </div>
     </div>
-    
-    <!-- Shorts container with snap-scroll for YouTube/TikTok style -->
-    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth"></div>
-    
+    <!-- Shorts container with snap-scroll for YouTube style -->
+    <div id="shorts-feed-container" class="flex flex-col w-full h-[calc(100vh-60px)] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black pb-24"></div>
     <!-- Longs container standard flow -->
-    <div class="w-full h-full overflow-y-auto pt-20 pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
+    <div class="flex-1 overflow-y-auto pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
         <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
     </div>
 </div>
@@ -1021,7 +762,7 @@
 <!-- Firebase SDK & Functional Scripts Setup -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -1043,47 +784,13 @@
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
 
-  // --- Auto Redirect for Diamond Buy URL Param ---
-  window.addEventListener('load', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      if(urlParams.get('action') === 'buy_diamonds' && currentUser) {
-          document.getElementById('diamond-store-overlay').style.display = 'flex';
-      }
-  });
-
-  // --- Auto Reels Scroll Observer ---
-  let reelsObserver = null;
-  window.initReelsObserver = function() {
-      if (reelsObserver) reelsObserver.disconnect();
-      const container = document.getElementById('shorts-feed-container');
-      if (!container) return;
-
-      const options = { root: container, rootMargin: '0px', threshold: 0.5 };
-
-      reelsObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-              const videoEl = entry.target.querySelector('.html5-video');
-              const iframeEl = entry.target.querySelector('.yt-iframe');
-              if (entry.isIntersecting) {
-                  if (videoEl) videoEl.play().catch(e => console.log('Autoplay issue:', e));
-                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*');
-              } else {
-                  if (videoEl) videoEl.pause();
-                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'pauseVideo', args: []}), '*');
-              }
-          });
-      }, options);
-
-      container.querySelectorAll('.snap-start').forEach(el => reelsObserver.observe(el));
-  };
-
   // --- Tab Navigation Handlers ---
   window.resetNavHighlights = function() {
       const navs = ['nav-home', 'nav-rooms', 'nav-reels', 'nav-profile'];
       navs.forEach(id => {
           const el = document.getElementById(id);
           if(el) {
-              el.classList.remove('nav-item-active', 'text-dia-red');
+              el.classList.remove('nav-item-active', 'text-zingoo-red');
               el.classList.add('text-gray-400', 'nav-item-hover');
           }
       });
@@ -1092,69 +799,12 @@
   window.closeAllMainTabs = function() {
       document.getElementById('manage-profile-overlay').style.display = 'none';
       document.getElementById('video-feed-overlay').style.display = 'none';
+      document.getElementById('audio-room-lobby-overlay').style.display = 'none';
       document.getElementById('diamond-store-overlay').style.display = 'none';
-      document.getElementById('video-earnings-overlay').style.display = 'none';
-      document.getElementById('bottom-nav').style.display = 'flex'; 
       
       resetNavHighlights();
-      document.getElementById('nav-home').classList.add('nav-item-active', 'text-dia-red');
+      document.getElementById('nav-home').classList.add('nav-item-active', 'text-zingoo-red');
       document.getElementById('nav-home').classList.remove('text-gray-400');
-  }
-
-  window.openVideoFeed = function(tab) {
-      document.getElementById('video-feed-overlay').style.display = 'flex';
-      document.getElementById('bottom-nav').style.display = 'none'; 
-      switchVideoTab(tab);
-  };
-
-  // --- WALLET & DIAMONDS & SERVICES LOGIC ---
-  window.addWalletBalance = function() {
-      let amt = prompt("Enter amount (₹) to add to Wallet for Testing:", "100");
-      if(amt && !isNaN(amt)) {
-          let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-          currentWallet += parseFloat(amt);
-          localStorage.setItem('zingoo_wallet', currentWallet);
-          if(currentUser) update(ref(db, `users/${currentUser}`), { wallet: currentWallet });
-          updateWalletDisplay();
-          alert(`₹${amt} added to your wallet successfully!`);
-      }
-  };
-
-  window.updateWalletDisplay = function() {
-      let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-      const displays = document.querySelectorAll('.wallet-balance-display');
-      displays.forEach(el => el.innerText = '₹ ' + currentWallet.toFixed(2));
-  };
-
-  window.updateServiceStatus = function(service, isActive) {
-      if(!currentUser) return;
-      update(ref(db, `users/${currentUser}/services`), { [service]: isActive });
-  };
-
-  function listenToUserData() {
-      if (!currentUser) return;
-      onValue(ref(db, `users/${currentUser}`), (snapshot) => {
-          const data = snapshot.val();
-          if(data) {
-              // Wallet sync
-              localStorage.setItem('zingoo_wallet', data.wallet || 0);
-              updateWalletDisplay();
-              
-              // Diamonds sync
-              const diamonds = data.diamonds || 0;
-              localStorage.setItem('zingoo_diamonds', diamonds);
-              updateDiamondDisplay();
-
-              // Services Toggles sync
-              const svcs = data.services || { video: true, audio: true, chat: true };
-              const vToggle = document.getElementById('toggle-video-call');
-              const aToggle = document.getElementById('toggle-audio-call');
-              const cToggle = document.getElementById('toggle-chat');
-              if(vToggle) vToggle.checked = svcs.video !== false;
-              if(aToggle) aToggle.checked = svcs.audio !== false;
-              if(cToggle) cToggle.checked = svcs.chat !== false;
-          }
-      });
   }
 
   function updateDiamondDisplay() {
@@ -1169,143 +819,14 @@
       if(storeDisplayEl2) storeDisplayEl2.innerText = parseInt(balance).toLocaleString();
   }
 
-  // --- Call Billing Logic ---
-  let callInterval;
-  function startCallBilling(costPerMin) {
-      deductWallet(costPerMin); // First min upfront
-      callInterval = setInterval(() => {
-          let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-          if(currentWallet < costPerMin) {
-              alert("Insufficient wallet balance. Call ended automatically.");
-              stopWebRTC();
-          } else {
-              deductWallet(costPerMin);
-          }
-      }, 60000); // Check every minute
-  }
-  function stopCallBilling() {
-      if(callInterval) clearInterval(callInterval);
-  }
-  function deductWallet(amount) {
-      let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-      currentWallet -= amount;
-      if(currentWallet < 0) currentWallet = 0;
-      localStorage.setItem('zingoo_wallet', currentWallet);
-      if(currentUser) update(ref(db, `users/${currentUser}`), { wallet: currentWallet });
-      updateWalletDisplay();
-  }
-
-  // --- STATUS (ONLINE / OFFLINE) & VISIBILITY TRACKING ---
-  function updateUserStatus(status) {
-      if(!currentUser) return;
-      set(ref(db, `users/${currentUser}/status`), status);
-      const ind = document.getElementById('status-indicator');
-      const txt = document.getElementById('status-text');
-      if(status === 'online') {
-          ind.className = "w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors";
-          txt.innerText = "Active";
-          txt.className = "text-[10px] font-bold text-green-600 hidden md:block";
-      } else {
-          ind.className = "w-2.5 h-2.5 rounded-full bg-gray-400 transition-colors";
-          txt.innerText = "Inactive";
-          txt.className = "text-[10px] font-bold text-gray-500 hidden md:block";
-      }
-  }
-
-  window.toggleManualStatus = function() {
-      const txt = document.getElementById('status-text').innerText;
-      if(txt === "Active") { updateUserStatus('offline'); } else { updateUserStatus('online'); }
-  };
-
-  document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
-      else { updateUserStatus('offline'); }
-  });
-
-  function initPresence() {
-      if(!currentUser) return;
-      const connectedRef = ref(db, ".info/connected");
-      onValue(connectedRef, (snap) => {
-          if (snap.val() === true) {
-              const userStatusRef = ref(db, `users/${currentUser}/status`);
-              onDisconnect(userStatusRef).set('offline');
-              updateUserStatus('online');
-          }
+  function listenToUserDiamonds() {
+      if (!currentUser) return;
+      onValue(ref(db, `users/${currentUser}/diamonds`), (snapshot) => {
+          const diamonds = snapshot.val() || 0;
+          localStorage.setItem('zingoo_diamonds', diamonds);
+          updateDiamondDisplay();
       });
   }
-
-  // --- NOTIFICATION SYSTEM (Chat, Video Call, Audio Call) ---
-  window.sendNotification = function(target, type, message) {
-      if(!currentUser || currentUser === target) return;
-      push(ref(db, `notifications/${target}`), {
-          from: currentUser,
-          avatar: currentAvatar,
-          type: type,
-          message: message,
-          timestamp: serverTimestamp(),
-          read: false
-      });
-  };
-
-  function listenForNotifications() {
-      if(!currentUser) return;
-      onValue(ref(db, `notifications/${currentUser}`), (snap) => {
-          const list = document.getElementById('notification-list');
-          const badge = document.getElementById('notification-badge');
-          list.innerHTML = '';
-          let unreadCount = 0;
-          const data = snap.val();
-          
-          if(data) {
-              const notifs = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
-              notifs.forEach(([key, n]) => {
-                  if(!n.read) unreadCount++;
-                  let icon = 'notifications';
-                  if(n.type === 'chat') icon = 'chat';
-                  if(n.type === 'video') icon = 'videocam';
-                  if(n.type === 'audio') icon = 'call';
-                  
-                  list.insertAdjacentHTML('beforeend', `
-                      <div class="p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors" onclick="handleNotificationClick('${key}', '${n.from}', '${n.avatar}', '${n.type}')">
-                          <div class="relative w-10 h-10 shrink-0">
-                              <img src="${n.avatar}" class="w-full h-full rounded-full object-cover border border-gray-200">
-                              <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] shadow-sm flex items-center justify-center">
-                                  <span class="material-symbols-outlined text-[10px] ${n.type==='chat'?'text-blue-500':(n.type==='video'?'text-red-500':'text-green-500')}">${icon}</span>
-                              </div>
-                          </div>
-                          <div class="flex-1">
-                              <p class="text-xs text-gray-800 leading-tight"><span class="font-bold text-gray-900">${n.from}</span> ${n.message}</p>
-                          </div>
-                          ${!n.read ? '<div class="w-2.5 h-2.5 bg-red-500 rounded-full shrink-0"></div>' : ''}
-                      </div>
-                  `);
-              });
-          } else {
-              list.innerHTML = `<div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>`;
-          }
-          
-          if(unreadCount > 0) {
-              badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
-          } else { badge.style.display = 'none'; }
-      });
-  }
-
-  window.handleNotificationClick = function(notifId, fromUser, avatar, type) {
-      update(ref(db, `notifications/${currentUser}/${notifId}`), { read: true });
-      document.getElementById('notification-dropdown').classList.add('hidden');
-      if(type === 'chat') { openChatWith(fromUser, avatar); }
-  };
-
-  window.markAllNotificationsRead = function() {
-      if(!currentUser) return;
-      get(ref(db, `notifications/${currentUser}`)).then((snap) => {
-          if(snap.exists()) {
-              let updates = {};
-              Object.keys(snap.val()).forEach(key => { updates[`${key}/read`] = true; });
-              update(ref(db, `notifications/${currentUser}`), updates);
-          }
-      });
-  };
 
   // --- Diamond Purchase Triggers ---
   document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
@@ -1319,83 +840,6 @@
       window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
   };
   
-  // Gift Diamonds
-  window.giftDiamonds = function(authorName, videoId) {
-      if(!currentUser) { alert("Please create a profile first!"); return; }
-      if(currentUser === authorName) { alert("You cannot gift yourself!"); return; }
-      
-      let amount = prompt(`How many diamonds do you want to gift to ${authorName}?`, "1");
-      if(amount === null) return;
-      amount = parseInt(amount);
-      
-      if(isNaN(amount) || amount <= 0) {
-          alert("Enter a valid amount."); return;
-      }
-      
-      let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if(currentBal < amount) {
-          alert("Insufficient diamonds. Please buy more from the store!");
-          document.getElementById('diamond-store-overlay').style.display = 'flex';
-          return;
-      }
-      
-      let newBal = currentBal - amount;
-      set(ref(db, `users/${currentUser}/diamonds`), newBal);
-
-      get(ref(db, `users/${authorName}/diamonds`)).then((snap) => {
-          let authorBal = snap.val() || 0;
-          set(ref(db, `users/${authorName}/diamonds`), authorBal + amount);
-      });
-
-      if(videoId) {
-          get(ref(db, `videos/${videoId}/diamondsEarned`)).then((snap) => {
-              let vidEarned = snap.val() || 0;
-              set(ref(db, `videos/${videoId}/diamondsEarned`), vidEarned + amount);
-          });
-      }
-
-      alert(`Successfully gifted ${amount} diamond(s) to ${authorName}! 💎`);
-      sendNotification(authorName, 'gift', `gifted you ${amount} diamond(s)! 💎`);
-  };
-
-  // Profile Overlay Open Actions
-  window.openVideoEarnings = function() {
-      document.getElementById('manage-profile-overlay').style.display = 'none';
-      document.getElementById('video-earnings-overlay').style.display = 'flex';
-  };
-
-  window.deleteVideo = async function(videoId) {
-      if(confirm("Are you sure you want to delete this video?")) {
-          try {
-              await remove(ref(db, 'videos/' + videoId));
-              alert("Video deleted successfully.");
-          } catch(e) {
-              console.error(e);
-              alert("Error deleting video.");
-          }
-      }
-  };
-
-  // --- Golden Profile Request ---
-  window.requestGoldenProfile = function() {
-      if(!currentUser) { alert("Please create profile first!"); return; }
-      
-      // Checking if request already exists
-      get(ref(db, `admin_requests/golden_profiles/${currentUser}`)).then((snapshot) => {
-          if (snapshot.exists()) {
-              alert("You have already requested a Golden Profile. Please wait for admin approval.");
-          } else {
-              set(ref(db, `admin_requests/golden_profiles/${currentUser}`), {
-                  user: currentUser,
-                  timestamp: serverTimestamp(),
-                  status: 'pending'
-              }).then(() => {
-                  alert("Request for Golden Profile sent successfully! Admin will review it.");
-              });
-          }
-      });
-  };
-
   // --- Video Player ---
   window.playVideo = function(url, type, isYouTube) {
       const overlay = document.getElementById('video-player-overlay');
@@ -1435,19 +879,19 @@
 
   window.switchVideoTab = function(tab) {
       resetNavHighlights();
-      document.getElementById('nav-reels').classList.add('nav-item-active', 'text-dia-red');
+      document.getElementById('nav-reels').classList.add('nav-item-active', 'text-zingoo-red');
       document.getElementById('nav-reels').classList.remove('text-gray-400');
       
       const shortsBtn = document.getElementById('tab-shorts-btn');
       const longsBtn = document.getElementById('tab-longs-btn');
       if(tab === 'shorts') {
-          shortsBtn.className = "text-red-500 font-bold drop-shadow-md";
-          longsBtn.className = "text-white/70 font-bold drop-shadow-md";
-          document.getElementById('shorts-feed-container').style.display = 'block';
+          shortsBtn.className = "text-red-500 font-bold";
+          longsBtn.className = "text-white/50 font-bold";
+          document.getElementById('shorts-feed-container').style.display = 'flex';
           document.getElementById('longs-feed-wrap').style.display = 'none';
       } else {
-          longsBtn.className = "text-red-500 font-bold drop-shadow-md";
-          shortsBtn.className = "text-white/70 font-bold drop-shadow-md";
+          longsBtn.className = "text-red-500 font-bold";
+          shortsBtn.className = "text-white/50 font-bold";
           document.getElementById('shorts-feed-container').style.display = 'none';
           document.getElementById('longs-feed-wrap').style.display = 'block';
       }
@@ -1500,7 +944,7 @@
       }
 
       push(ref(db, 'videos'), {
-          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0
+          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp()
       }).then(() => {
           document.getElementById('upload-spinner').style.display = 'none';
           document.getElementById('upload-video-overlay').style.display='none';
@@ -1508,75 +952,39 @@
       });
   };
   
-  // Real-time Videos (Populates Home Feed, Shorts & Earnings Overlay)
+  // Real-time Videos (Populates Home Feed & Overlay Feeds)
   onValue(ref(db, 'videos'), (snapshot) => {
       const shortsContainer = document.getElementById('shorts-feed-container');
       const longsContainer = document.getElementById('longs-feed-container');
       const homeReelsContainer = document.getElementById('home-reels-list');
-      const earningsContainer = document.getElementById('earnings-video-list');
       
       shortsContainer.innerHTML = ''; longsContainer.innerHTML = ''; homeReelsContainer.innerHTML = '';
-      if(earningsContainer) earningsContainer.innerHTML = '';
-
-      let totalEarned = 0;
       const data = snapshot.val();
       
       if(data) {
-          const vids = Object.entries(data).reverse();
-          vids.forEach(([vidId, vid]) => {
+          const vids = Object.values(data).reverse();
+          vids.forEach(vid => {
               const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
-
-              if(vid.author === currentUser && earningsContainer) {
-                  let earned = vid.diamondsEarned || 0;
-                  totalEarned += earned;
-                  earningsContainer.insertAdjacentHTML('beforeend', `
-                      <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
-                          <img src="${vid.thumbUrl}" class="w-16 h-16 rounded-lg object-cover">
-                          <div class="flex-1">
-                              <h4 class="font-bold text-sm text-gray-900 line-clamp-1">${vid.title}</h4>
-                              <p class="text-purple-600 font-bold text-xs flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">diamond</span> ${earned} Earned</p>
-                          </div>
-                          <button class="bg-red-50 text-red-500 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-100" onclick="deleteVideo('${vidId}')">
-                              <span class="material-symbols-outlined text-[18px]">delete</span>
-                          </button>
-                      </div>
-                  `);
-              }
-
               if (vid.type === 'short') {
-                  let embeddedMedia = vid.isYouTube 
-                        ? `<iframe class="relative z-10 w-full h-full pointer-events-auto yt-iframe" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
-                        : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto html5-video" src="${vid.mediaUrl}" loop controls playsinline></video>`;
-
+                  // YouTube-Style Snap Scroll Shorts Feed
                   shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden">
-                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm z-0 pointer-events-none">
-                      ${embeddedMedia}
-                      <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-end">
-                          <div class="flex justify-between items-end p-4 pb-8 h-full w-full bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                              <div class="flex-col gap-2 max-w-[70%]">
-                                  <div class="flex items-center gap-2 mb-2 pointer-events-auto">
-                                      <img src="${vid.authorAvatar || currentAvatar}" class="w-10 h-10 rounded-full border-2 border-white object-cover">
-                                      <span class="text-white text-md font-bold drop-shadow-md">${vid.author || 'Creator'}</span>
-                                  </div>
-                                  <h3 class="text-white font-medium text-sm drop-shadow-md">${vid.title}</h3>
-                              </div>
-                              <div class="flex flex-col items-center gap-6 pointer-events-auto pb-6">
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}', '${vidId}')">
-                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-purple-400 text-[28px]">diamond</span></div>
-                                      <span class="text-white text-xs font-bold drop-shadow-md">Gift</span>
-                                  </div>
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer">
-                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-white text-[28px]">share</span></div>
-                                      <span class="text-white text-xs font-bold drop-shadow-md">Share</span>
-                                  </div>
-                              </div>
+                  <div class="relative w-full h-full snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center">
+                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                      <div class="absolute inset-0 flex flex-col justify-end p-4 pb-8 z-10 pointer-events-none bg-gradient-to-t from-black/80 to-transparent">
+                          <h3 class="text-white font-bold text-lg mb-1">${vid.title}</h3>
+                          <div class="flex items-center gap-2 pointer-events-auto">
+                              <img src="${vid.authorAvatar || currentAvatar}" class="w-8 h-8 rounded-full border border-white">
+                              <span class="text-white text-sm font-medium">${vid.author || 'Creator'}</span>
                           </div>
                       </div>
+                      <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-4 shadow-lg flex items-center justify-center z-20 hover:scale-110 transition-transform cursor-pointer" onclick="${clickHandler}">
+                          <span class="material-symbols-outlined text-[40px]">play_arrow</span>
+                      </button>
                   </div>`);
                   
+                  // Home Horizontal list view
                   homeReelsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="openVideoFeed('shorts');">
+                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="${clickHandler}">
                       <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
                       <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[30px]">play_arrow</span>
                       <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -1594,11 +1002,6 @@
                   </div>`);
               }
           });
-          
-          const totalEl = document.getElementById('total-video-diamonds');
-          if(totalEl) totalEl.innerText = totalEarned.toLocaleString();
-
-          setTimeout(() => { initReelsObserver(); }, 100);
       }
   });
 
@@ -1609,16 +1012,13 @@
       authOverlay.style.display = "flex";
       document.body.style.overflow = "hidden";
   } else {
-      listenToUserData();
+      listenToUserDiamonds();
+      updateDiamondDisplay();
       listenForIncomingCalls(); 
-      initPresence();
-      listenForNotifications();
   }
 
-  let selectedProfileFile = null;
   document.getElementById("profile-image-upload").addEventListener("change", function(e) {
       if(e.target.files[0]) {
-          selectedProfileFile = e.target.files[0];
           const reader = new FileReader();
           reader.onload = (event) => {
               currentAvatar = event.target.result;
@@ -1628,82 +1028,51 @@
       }
   });
 
-  document.getElementById("btn-create-profile").addEventListener("click", async () => {
-      const rawName = document.getElementById("auth-name").value.trim();
-      // REMOVE INVALID FIREBASE CHARACTERS (., #, $, [, ]) TO PREVENT CREATION FAILURES
-      const name = rawName.replace(/[.#$\[\]]/g, ""); 
-      
+  document.getElementById("btn-create-profile").addEventListener("click", () => {
+      const name = document.getElementById("auth-name").value.trim();
       const age = document.getElementById("auth-age").value.trim();
-      const ageNum = parseInt(age, 10);
-      
       const phone = document.getElementById("auth-phone").value.trim();
-      const gender = document.getElementById("auth-gender").value;
-      const state = document.getElementById("auth-state").value;
       
-      if (!name) {
-          alert("Please enter a valid nickname without special characters (. # $ [ ]).");
-          return;
-      }
-
-      if (name && ageNum >= 18 && phone && gender && state) {
-          
-          if (selectedProfileFile) {
-              document.getElementById("btn-create-text").innerText = "Uploading Image...";
-              const cloudUrl = await uploadToCloudinary(selectedProfileFile, "image");
-              if (cloudUrl) {
-                  currentAvatar = cloudUrl;
-              }
-              document.getElementById("btn-create-text").innerText = "Enter Zingoo";
-          }
-          
-          // FIX: Keep existing ID if editing profile, else create new
-          const finalId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
-          
-          // FIX: Keep existing balances if editing
-          const existingDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-          const existingWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
+      if (name && age >= 18 && phone) {
+          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
           
           set(ref(db, 'users/' + name), {
-              name: name, id: finalId, phone: phone, gender: gender, state: state, avatar: currentAvatar, diamonds: existingDiamonds, wallet: existingWallet, status: 'online', golden: false, timestamp: serverTimestamp(),
-              services: { video: true, audio: true, chat: true }
+              name: name, id: newId, phone: phone, avatar: currentAvatar, diamonds: 0, timestamp: serverTimestamp()
           });
 
           localStorage.setItem("zingoo_user", name);
-          localStorage.setItem("zingoo_id", finalId);
+          localStorage.setItem("zingoo_id", newId);
           localStorage.setItem("zingoo_avatar", currentAvatar);
-          localStorage.setItem("zingoo_diamonds", existingDiamonds.toString());
-          localStorage.setItem("zingoo_wallet", existingWallet.toString()); 
+          localStorage.setItem("zingoo_diamonds", "0"); 
           
-          currentUser = name; currentId = finalId;
+          currentUser = name; currentId = newId;
           
-          listenToUserData(); 
+          listenToUserDiamonds(); 
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
           listenForIncomingCalls();
-          initPresence();
-          listenForNotifications();
       } else {
-          alert("Please fill all fields properly. Gender and State are compulsory. Age must be 18+.");
+          alert("Fill all fields. Age must be 18+.");
       }
   });
 
   // Profile View Logic
   document.getElementById("header-profile-btn").addEventListener("click", () => {
       if(currentUser) {
-          document.getElementById("profile-header-name-text").innerText = currentUser;
+          document.getElementById("profile-header-name").innerText = currentUser;
+          document.getElementById("profile-header-name-2").innerText = currentUser;
           document.getElementById("profile-header-id").innerText = "ID: " + (currentId || "00000000");
           document.getElementById("profile-header-avatar").src = currentAvatar;
-          document.getElementById('manage-profile-overlay').style.display = 'flex';
+          document.getElementById('manage-profile-overlay').style.display = 'block';
           
           resetNavHighlights();
-          document.getElementById('nav-profile').classList.add('nav-item-active', 'text-dia-red');
+          document.getElementById('nav-profile').classList.add('nav-item-active', 'text-zingoo-red');
           document.getElementById('nav-profile').classList.remove('text-gray-400');
       }
   });
 
   document.getElementById("btn-logout").addEventListener("click", () => {
       if(confirm("Log out?")) {
-          if(currentUser) set(ref(db, `users/${currentUser}/status`), 'offline');
           localStorage.clear(); location.reload();
       }
   });
@@ -1726,9 +1095,9 @@
       if(data) {
           Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([partner, details]) => {
               container.insertAdjacentHTML('beforeend', `
-              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors" onclick="openChatWith('${partner}', '${details.avatar}')">
-                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
-                  <div class="flex-1 min-w-0"><h4 class="text-gray-900 font-bold text-[15px] truncate">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
+              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100" onclick="openChatWith('${partner}', '${details.avatar}')">
+                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover">
+                  <div class="flex-1"><h4 class="text-gray-900 font-bold text-[15px]">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
               </div>`);
           });
       }
@@ -1760,123 +1129,70 @@
   document.getElementById("btn-close-chat").addEventListener("click", () => { document.getElementById("chat-overlay").style.display = "none"; });
   document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
   
-  async function sendMessage() {
+  function sendMessage() {
       const msg = document.getElementById("chat-input").value.trim();
       if(msg && currentActiveChatId) {
-          // Check partner chat toggle status
-          const snap = await get(ref(db, `users/${currentChatPartnerName}/services/chat`));
-          const partnerChatActive = snap.exists() ? snap.val() : true;
-          if(!partnerChatActive) { alert(`${currentChatPartnerName} has disabled incoming chats.`); return; }
-
-          // Check and Deduct Wallet Balance
-          let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-          if(currentWallet < 4) { alert("Insufficient Wallet Balance for Chat (₹4/msg). Please recharge in your Profile."); return; }
-          
-          deductWallet(4);
-
           push(ref(db, 'chats/' + currentActiveChatId), { user: currentUser, text: msg, timestamp: serverTimestamp() });
           set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), { avatar: document.getElementById("chat-header-img").src, lastMessage: "You: " + msg, timestamp: serverTimestamp() });
           set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), { avatar: currentAvatar, lastMessage: msg, timestamp: serverTimestamp() });
           document.getElementById("chat-input").value = "";
-          
-          // Send notification payload
-          sendNotification(currentChatPartnerName, 'chat', 'sent you a message');
       }
   }
 
-  // --- Home Users List, Filter & See All Grid ---
+  // --- Home Users List & See All Grid ---
   document.getElementById('see-all-trigger').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'flex'; });
   document.getElementById('btn-close-see-all').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'none'; });
 
-  let allUsersData = {};
-  
-  document.getElementById('gender-filter').addEventListener('change', () => { renderUsers(); });
-
   onValue(ref(db, 'users'), (snapshot) => {
-      if(snapshot.val()) {
-          allUsersData = snapshot.val();
-          renderUsers();
-      }
-  });
-
-  function renderUsers() {
       const usersListContainer = document.getElementById("real-users-list");
       const seeAllGridContainer = document.getElementById("see-all-grid");
-      const currentFilter = document.getElementById("gender-filter").value;
-      
       usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
-
-      // Convert to array and strictly sort: Online status first
-      let usersArray = Object.values(allUsersData).filter(user => user.name !== currentUser);
       
-      usersArray.sort((a, b) => {
-          let aStatus = a.status === 'online' ? 1 : 0;
-          let bStatus = b.status === 'online' ? 1 : 0;
-          return bStatus - aStatus; // Online (1) will come before Offline (0)
-      });
-      
-      usersArray.forEach(user => {
-          // Apply Gender Filter
-          if(currentFilter !== 'all' && user.gender !== currentFilter) return;
+      const data = snapshot.val();
+      if(data) {
+          Object.values(data).forEach(user => {
+              if (user.name !== currentUser) { 
+                  // Vertical Portrait Card for Home Page "Live Now"
+                  const userHtml = `
+                  <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+                      <img src="${user.avatar}" class="w-full h-full object-cover">
+                      <div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">LIVE</div>
+                      <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
+                          <h4 class="text-white text-xs font-bold truncate">${user.name}</h4>
+                      </div>
+                  </div>`;
+                  usersListContainer.insertAdjacentHTML('beforeend', userHtml);
 
-          // Strict online check to prevent inactive showing active
-          const isOnline = user.status === 'online';
-          const dotColor = isOnline ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : 'bg-gray-400';
-          
-          // Check for Golden Profile
-          const isGolden = user.golden === true;
-          const cardBorderShadow = isGolden 
-              ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400 shadow-[0_5px_20px_rgba(250,204,21,0.3)]' 
-              : 'bg-white border-gray-100 shadow-[0_5px_15px_rgba(0,0,0,0.08)]';
-          
-          const nameColor = isGolden ? 'text-yellow-700' : 'text-gray-900';
-          const goldenBadge = isGolden 
-              ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">star</span> VIP</div>` 
-              : '';
-
-          // Vertical Portrait Card for Home Page "Active Users"
-          const userHtml = `
-          <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
-              <img src="${user.avatar}" class="w-full h-full object-cover">
-              <div class="absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
-              <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
-                  <h4 class="text-white text-xs font-bold truncate flex items-center gap-1">${user.name} ${isGolden ? '<span class="material-symbols-outlined text-[12px] text-yellow-400">verified</span>' : ''}</h4>
-              </div>
-          </div>`;
-          usersListContainer.insertAdjacentHTML('beforeend', userHtml);
-
-          // 3D Styled Grid for See All Overlay
-          seeAllGridContainer.insertAdjacentHTML('beforeend', `
-          <div class="relative w-full h-[230px] rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] ${cardBorderShadow} border">
-              ${goldenBadge}
-              <div class="relative h-[65%] w-full">
-                  <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
-                  <div class="absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white"></div>
-              </div>
-              <div class="h-[35%] w-full p-2.5 flex flex-col justify-between shrink-0 bg-opacity-90">
-                  <span class="${nameColor} font-bold text-sm truncate flex items-center gap-1">${user.name} ${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : ''}</span>
-                  <div class="flex gap-1.5 mt-auto">
-                      <button class="flex-1 bg-gray-50 py-1.5 rounded-xl text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center transform active:scale-95" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
-                      <button class="flex-1 bg-red-50 py-1.5 rounded-xl text-red-500 shadow-sm border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
-                      <button class="flex-1 bg-gradient-to-r from-red-500 to-pink-500 py-1.5 rounded-xl text-white shadow-md hover:opacity-90 transition-opacity flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
-                  </div>
-              </div>
-          </div>`);
-      });
-      
-      document.querySelectorAll('.model-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-              const name = e.currentTarget.getAttribute('data-name');
-              const avatar = e.currentTarget.getAttribute('data-avatar');
-              document.getElementById('quick-profile-name').innerHTML = `${name} <div class="w-2.5 h-2.5 rounded-full inline-block ${allUsersData[name]?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} ml-1"></div>`;
-              document.getElementById('quick-profile-img').src = avatar;
-              document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
-              document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
-              document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
-              document.getElementById('quick-profile-overlay').style.display = 'flex';
+                  // Standard Grid for See All Overlay
+                  seeAllGridContainer.insertAdjacentHTML('beforeend', `
+                  <div class="relative rounded-xl overflow-hidden aspect-[3/4] shadow-sm bg-white border border-gray-200">
+                      <img src="${user.avatar}" class="absolute inset-0 w-full h-4/5 object-cover z-0">
+                      <div class="absolute bottom-0 w-full p-2 bg-white z-20">
+                          <span class="text-gray-900 font-bold text-xs truncate block">${user.name}</span>
+                          <div class="flex gap-1 mt-1">
+                              <button class="flex-1 bg-gray-100 py-1 rounded text-gray-700" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">chat</span></button>
+                              <button class="flex-1 bg-red-50 py-1 rounded text-red-500" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">call</span></button>
+                              <button class="flex-1 bg-red-500 py-1 rounded text-white" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[14px]">videocam</span></button>
+                          </div>
+                      </div>
+                  </div>`);
+              }
           });
-      });
-  }
+          
+          document.querySelectorAll('.model-btn').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                  const name = e.currentTarget.getAttribute('data-name');
+                  const avatar = e.currentTarget.getAttribute('data-avatar');
+                  document.getElementById('quick-profile-name').innerText = name;
+                  document.getElementById('quick-profile-img').src = avatar;
+                  document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
+                  document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
+                  document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
+                  document.getElementById('quick-profile-overlay').style.display = 'flex';
+              });
+          });
+      }
+  });
 
   // --- WEBRTC Calls ---
   let localStream = null; let peerConnection = null; let currentCallPath = null; let incomingCallData = null;
@@ -1899,23 +1215,6 @@
 
   window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
       if(peerConnection) return;
-      
-      // Target settings checks
-      const serviceType = isVideo ? 'video' : 'audio';
-      const costPerMin = isVideo ? 10 : 5;
-      const snap = await get(ref(db, `users/${targetUser}/services/${serviceType}`));
-      const partnerActive = snap.exists() ? snap.val() : true;
-      if(!partnerActive) { alert(`${targetUser} has disabled incoming ${serviceType} calls.`); return; }
-
-      // Check Wallet Balance before starting
-      let currentWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
-      if(currentWallet < costPerMin) { alert(`Insufficient Wallet Balance for ${serviceType} call (₹${costPerMin}/min). Please recharge in your Profile.`); return; }
-
-      // Check if target is online
-      if(allUsersData[targetUser] && allUsersData[targetUser].status !== 'online') {
-          if(!confirm(`${targetUser} is currently inactive/away. Do you still want to call?`)) { return; }
-      }
-
       currentCallPath = `calls/${targetUser}`;
       document.getElementById('video-partner-name').innerText = targetUser;
       document.getElementById('audio-partner-name').innerText = targetUser;
@@ -1935,21 +1234,9 @@
           await peerConnection.setLocalDescription(offer);
           set(ref(db, currentCallPath), { caller: currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
 
-          onValue(ref(db, `${currentCallPath}/answer`), (snap) => { 
-              if(snap.val()) {
-                  peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); 
-                  startCallBilling(costPerMin); // Start billing interval when call is answered
-              }
-          });
+          onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
           onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-          
-          // Send Notification
-          sendNotification(targetUser, isVideo ? 'video' : 'audio', `is calling you`);
-      } catch(e) { 
-          console.error("Call Init Error:", e);
-          alert("Microphone/Camera permission denied or not available.");
-          stopWebRTC(); 
-      }
+      } catch(e) { stopWebRTC(); }
   };
 
   document.getElementById("btn-accept-call").addEventListener("click", async () => {
@@ -1971,22 +1258,17 @@
           await peerConnection.setLocalDescription(answer);
           set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
           onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
-      } catch(e) { 
-          console.error("Call Accept Error:", e);
-          alert("Microphone/Camera permission denied or not available.");
-          stopWebRTC(); 
-      }
+      } catch(e) { stopWebRTC(); }
   });
 
   function stopWebRTC() {
-      stopCallBilling();
       if(localStream) localStream.getTracks().forEach(t => t.stop());
       if(peerConnection) peerConnection.close();
       document.getElementById("video-overlay").style.display = "none";
       document.getElementById("audio-overlay").style.display = "none";
       document.getElementById("incoming-call-overlay").style.display = "none";
       if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
-      peerConnection = null; incomingCallData = null; localStream = null;
+      peerConnection = null; incomingCallData = null;
   }
   document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
   document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
@@ -1995,11 +1277,24 @@
   // --- Audio Rooms ---
   let currentRoomId = null;
   window.openAudioRoomLobby = function() {
-      // Directs seamlessly to audio.html as requested
-      window.location.href = 'audio.html';
+      document.getElementById('audio-room-lobby-overlay').style.display = 'flex';
+      resetNavHighlights();
+      document.getElementById('nav-rooms').classList.add('nav-item-active', 'text-zingoo-red');
+      document.getElementById('nav-rooms').classList.remove('text-gray-400');
+      
+      onValue(ref(db, 'audio_rooms'), (snapshot) => {
+          const container = document.getElementById('audio-rooms-list'); container.innerHTML = '';
+          const data = snapshot.val();
+          if(data) {
+              Object.entries(data).forEach(([id, room]) => {
+                  container.insertAdjacentHTML('beforeend', `
+                  <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer" onclick="joinAudioRoom('${id}', '${room.name}')">
+                      <div><h4 class="font-bold">${room.name}</h4><p class="text-xs text-gray-500">Host: ${room.host}</p></div>
+                  </div>`);
+              });
+          }
+      });
   };
-  
-  // Audio functions below are preserved fully for backwards compatibility
   window.createNewAudioRoom = function() {
       const n = prompt("Room Name:"); if(!n) return;
       const refNew = push(ref(db, 'audio_rooms'));
