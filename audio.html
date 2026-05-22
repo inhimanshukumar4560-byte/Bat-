@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -260,7 +262,7 @@
         
         .header-actions { display: flex; gap: 15px; align-items: center; color: var(--text-light); font-size: 20px; }
         .header-icon { cursor: pointer; }
-        .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px; }
+        .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; }
 
         .seats-container {
             padding: 20px 10px; 
@@ -472,18 +474,6 @@
 
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-
-        .fire-icon {
-            font-size: 16px;
-            position: absolute;
-            opacity: 0;
-            animation: floatUpFire 1.5s infinite ease-in-out;
-        }
-        @keyframes floatUpFire {
-            0% { transform: translateY(10px) scale(0.8); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
-        }
     </style>
 </head>
 <body>
@@ -525,7 +515,6 @@
         <div id="lobby-screen">
             <header class="lobby-header-top">
                 <div class="logo">
-                    <i class="fas fa-arrow-left" id="lobby-back-btn" style="cursor:pointer; margin-right: 10px; font-size: 1.2em; color: #111;"></i>
                     <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
                     ZINGOO
                 </div>
@@ -580,7 +569,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <span class="header-icon leave-btn" id="close-room-btn"><i class="fas fa-arrow-left"></i> Leave</span>
+                    <span class="header-icon leave-btn" id="close-room-btn">Leave</span>
                     <span class="header-icon" id="header-more-btn">↪</span>
                 </div>
             </header>
@@ -622,14 +611,7 @@
                     <div class="action-circles">
                         <button class="circle-btn menu-circle" id="bottom-more-btn">⋮</button>
                         <button class="circle-btn gift-circle" id="gift-btn-footer">🎁</button>
-                        <div style="position: relative;">
-                            <button class="circle-btn flame-circle" id="main-mic-btn"><i class="fas fa-microphone"></i></button>
-                            <div style="position: absolute; top: -15px; left: 10px; pointer-events: none; width:20px; height:40px;">
-                                <span class="fire-icon" style="bottom: 0px; animation-delay: 0s;">🔥</span>
-                                <span class="fire-icon" style="bottom: 10px; animation-delay: 0.5s;">🔥</span>
-                                <span class="fire-icon" style="bottom: 20px; animation-delay: 1s;">🔥</span>
-                            </div>
-                        </div>
+                        <button class="circle-btn flame-circle" id="main-mic-btn"><i class="fas fa-microphone"></i></button>
                     </div>
                 </div>
             </div>
@@ -701,11 +683,6 @@
                 <div class="action-item" id="menu-mute-all-btn">
                     <div class="action-icon-circle" style="background: #f3e8ff; color: #9333ea;"><i class="fas fa-volume-mute"></i></div>
                     <p>Mute All Users</p>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-                <div class="action-item" id="menu-unmute-all-btn">
-                    <div class="action-icon-circle" style="background: #e6fffa; color: #0d9488;"><i class="fas fa-microphone"></i></div>
-                    <p>Unmute All Users</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
                 <div class="action-item" id="menu-settings-btn">
@@ -1102,70 +1079,53 @@
                     return;
                 }
 
-                const sanitizeUrl = (str) => str.replace(/[.#$[\]\s]/g, '_');
-                const assetKey = sanitizeUrl(url);
-
-                get(ref(db, `users/${currentUser}/owned_assets/${category}/${assetKey}`)).then(snap => {
-                    const isOwned = snap.val();
-
-                    if(isOwned) {
-                        equipAsset(category, url, name);
-                    } else {
-                        if(confirm(`Are you sure you want to buy '${name}' for ${cost} diamonds?`)) {
-                            let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-                            if(currentBal >= cost) {
-                                let newBal = currentBal - cost;
-                                set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                                set(ref(db, `users/${currentUser}/owned_assets/${category}/${assetKey}`), true);
-                                
-                                showToast(`Successfully bought ${name}!`);
-                                equipAsset(category, url, name);
-                            } else {
-                                if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store to buy more?`)) {
-                                    window.redirectToDiamondStore(cost, cost * 5);
-                                }
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= cost) {
+                    if(confirm(`Buy and equip '${name}' for ${cost} diamonds?`)) {
+                        let newBal = currentBal - cost;
+                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                        
+                        // Save to DB User Profile
+                        get(ref(db, 'users')).then(snap => {
+                            let uKey = null;
+                            const users = snap.val();
+                            for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                            if(uKey) {
+                                let updateData = {};
+                                if(category === 'chairs') updateData.equippedChair = url;
+                                if(category === 'frames') updateData.equippedFrame = url;
+                                if(category === 'profile_icons') updateData.equippedIcon = url;
+                                if(category === 'entry_stickers') updateData.equippedSticker = url;
+                                update(ref(db, `users/${uKey}`), updateData);
                             }
+                        });
+
+                        if(category === 'chairs') myEquippedChair = url;
+                        if(category === 'frames') myEquippedFrame = url;
+                        if(category === 'profile_icons') myEquippedIcon = url;
+                        if(category === 'entry_stickers') myEquippedSticker = url;
+                        
+                        // Instantly update current seat
+                        if(mySeatIndex !== -1 && currentActiveRoomId) {
+                            if(category === 'chairs') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), url);
+                            if(category === 'frames') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), url);
+                            if(category === 'profile_icons') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/iconUrl`), url);
                         }
+
+                        // Background directly to room
+                        if(category === 'backgrounds' && currentActiveRoomId) {
+                            set(ref(db, `audio_rooms/${currentActiveRoomId}/backgroundUrl`), url);
+                        }
+
+                        showToast(`Successfully equipped ${name}!`);
+                        closeModal();
                     }
-                });
+                } else {
+                    if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
+                        window.redirectToDiamondStore(cost, cost * 5);
+                    }
+                }
             };
-
-            function equipAsset(category, url, name) {
-                // Save to DB User Profile
-                get(ref(db, 'users')).then(snap => {
-                    let uKey = null;
-                    const users = snap.val();
-                    for(let k in users) { if(users[k].name === currentUser) uKey = k; }
-                    if(uKey) {
-                        let updateData = {};
-                        if(category === 'chairs') updateData.equippedChair = url;
-                        if(category === 'frames') updateData.equippedFrame = url;
-                        if(category === 'profile_icons') updateData.equippedIcon = url;
-                        if(category === 'entry_stickers') updateData.equippedSticker = url;
-                        update(ref(db, `users/${uKey}`), updateData);
-                    }
-                });
-
-                if(category === 'chairs') myEquippedChair = url;
-                if(category === 'frames') myEquippedFrame = url;
-                if(category === 'profile_icons') myEquippedIcon = url;
-                if(category === 'entry_stickers') myEquippedSticker = url;
-                
-                // Instantly update current seat
-                if(mySeatIndex !== -1 && currentActiveRoomId) {
-                    if(category === 'chairs') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), url);
-                    if(category === 'frames') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), url);
-                    if(category === 'profile_icons') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/iconUrl`), url);
-                }
-
-                // Background directly to room
-                if(category === 'backgrounds' && currentActiveRoomId) {
-                    set(ref(db, `audio_rooms/${currentActiveRoomId}/backgroundUrl`), url);
-                }
-
-                showToast(`Equipped ${name}!`);
-                closeModal();
-            }
 
             window.sendRoomGift = function(giftKey) {
                 if(!currentActiveRoomId) return;
@@ -1484,29 +1444,6 @@
                 document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
                 document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
                 
-                const muteBtn = document.getElementById('mute-user-btn');
-                if (currentActiveRoomId && currentRoomHost === currentUser && username !== currentUser) {
-                    muteBtn.style.display = 'inline-block';
-                    muteBtn.onclick = () => {
-                        get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(snap => {
-                            const seats = snap.val();
-                            if(seats) {
-                                for(let key in seats) {
-                                    if(seats[key].user === username) {
-                                        const currentMute = seats[key].isMuted;
-                                        set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), !currentMute);
-                                        showToast(username + (!currentMute ? " is now muted." : " is now unmuted."));
-                                        closeModal();
-                                        return;
-                                    }
-                                }
-                            }
-                        });
-                    };
-                } else {
-                    muteBtn.style.display = 'none';
-                }
-
                 openModal('profile-popup');
             };
 
@@ -1770,14 +1707,7 @@
                 leaveSeat: () => {
                     if (!currentActiveRoomId || mySeatIndex === -1) return;
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
-                    remove(seatRef).then(() => {
-                        push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                            user: currentUser,
-                            text: 'left the seat.',
-                            timestamp: serverTimestamp(),
-                            isSystem: true
-                        });
-                    });
+                    remove(seatRef);
                 }
             };
             
@@ -1866,18 +1796,7 @@
                 });
             });
 
-            document.getElementById('close-room-btn').addEventListener('click', () => {
-                if(confirm("Are you sure you want to leave the room?")) {
-                    leaveCurrentRoom();
-                }
-            });
-
-            document.getElementById('lobby-back-btn').addEventListener('click', () => {
-                if(confirm("Are you sure you want to go back?")) {
-                    window.location.href = 'home.html';
-                }
-            });
-
+            document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
             document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
@@ -1907,25 +1826,6 @@
                     });
                 } else {
                     showToast("Only the host can mute all!");
-                }
-                closeModal();
-            });
-
-            document.getElementById('menu-unmute-all-btn').addEventListener('click', () => {
-                if(currentActiveRoomId && currentRoomHost === currentUser) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
-                        const seats = seatSnap.val();
-                        if(seats) {
-                            Object.keys(seats).forEach(key => {
-                                if(seats[key].user !== currentUser) {
-                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), false);
-                                }
-                            });
-                            showToast("Unmuted all users.");
-                        }
-                    });
-                } else {
-                    showToast("Only the host can unmute all!");
                 }
                 closeModal();
             });
