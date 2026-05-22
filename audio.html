@@ -1,4 +1,4 @@
-:
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -196,17 +196,41 @@
         .fab-create:hover { transform: scale(1.1); }
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
-        #live-room-screen { display: none; }
+        #live-room-screen { 
+            display: none; 
+            background-image: url('https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #1a0b2e; /* Fallback */
+        }
         .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: transparent; } /* Made transparent */
+        
+        /* ADDED FOR VISIBILITY ON DARK BACKGROUND IMAGE */
+        #live-room-screen .zh-info h1, #live-room-screen .speaker-seat p, #live-room-screen .logo-text, #live-room-screen .offer-price, #live-room-screen .warning-text h5, #live-room-screen .s-gift-item p { color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        #live-room-screen .zh-info p, #live-room-screen .logo-sub, #live-room-screen .offer-sub, #live-room-screen .warning-text p { color: #cccccc; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        #live-room-screen .zh-btn { color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        #live-room-screen .zh-btn:hover { color: var(--hot-pink); }
+        #live-room-screen .offer-box, #live-room-screen .warning-box, #live-room-screen .gift-scroll-bar { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border-color: rgba(255,255,255,0.2); }
+        #live-room-screen .offer-box { border: 1px solid var(--hot-pink); }
+        #live-room-screen .quick-buy-100 { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); }
+        #live-room-screen .quick-buy-100 span { color: #dddddd; }
+        #live-room-screen .chat-open-btn { background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
+        #chat-panel-overlay { background: rgba(0, 0, 0, 0.7); border-top: 1px solid rgba(255,255,255,0.2); }
+        #chat-panel-overlay .chat-panel-header h3 { color: #ffffff; }
+        #chat-panel-overlay .close-btn { color: #ffffff; background: rgba(255,255,255,0.2); }
+        #chat-panel-overlay .chat-input { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; }
+        #chat-panel-overlay .chat-input:focus { border-color: var(--hot-pink); background: rgba(0,0,0,0.8); }
+        /* ------------------------------------------- */
+
         .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: none; background: transparent;} /* Made transparent */
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
-        .zh-info h1 { font-size: 1em; font-weight: 700; color: #111; margin-bottom: 2px; }
-        .zh-info p { font-size: 0.75em; color: #888; display: flex; align-items: center; gap: 5px;}
+        .zh-info h1 { font-size: 1em; font-weight: 700; margin-bottom: 2px; }
+        .zh-info p { font-size: 0.75em; display: flex; align-items: center; gap: 5px;}
         .zh-info p i { font-size: 0.9em; }
         .zh-right { display: flex; align-items: center; gap: 12px; }
-        .zh-btn { background: transparent; border: none; color: #444; font-size: 1.3em; cursor: pointer; transition: color 0.2s ease; }
-        .zh-btn:hover { color: var(--hot-pink); }
+        .zh-btn { background: transparent; border: none; font-size: 1.3em; cursor: pointer; transition: color 0.2s ease; }
         .zh-btn.gold { color: #d97706; }
         .zh-btn.green { color: var(--green-live); }
         
@@ -218,7 +242,7 @@
         .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: linear-gradient(135deg, #eee, #ddd); transition: all 0.3s ease; }
         .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
-        .speaker-seat p { font-size: 0.7em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
+        .speaker-seat p { font-size: 0.7em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
         .admin-tag { background: rgba(255,0,76,0.1); color: var(--hot-pink); font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
         
         /* Custom Store Chair Frame Styling */
@@ -261,33 +285,33 @@
         
         .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
         .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #111; margin-bottom: 10px; }
-        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #111; }
-        .logo-sub { font-size: 0.7em; color: #888; display: flex; align-items: center; gap: 10px; margin-top: 5px;}
-        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: #ddd; }
+        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; }
+        .logo-sub { font-size: 0.7em; display: flex; align-items: center; gap: 10px; margin-top: 5px;}
+        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: rgba(255,255,255,0.3); }
         
         .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
-        .warning-box { flex: 1.5; background: rgba(255, 247, 247, 0.8); border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
+        .warning-box { flex: 1.5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
         .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
-        .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
-        .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
-        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
-        .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#888;}
-        .offer-title { font-size: 0.65em; color: var(--hot-pink); margin-bottom: 5px; font-weight: 700;}
-        .offer-price { font-size: 1.2em; font-weight: 800; color: #111; display: flex; justify-content: center; align-items: center; gap: 5px;}
+        .warning-text h5 { font-size: 0.75em; margin-bottom: 3px; font-weight: 700;}
+        .warning-text p { font-size: 0.65em; line-height: 1.3; }
+        .offer-box { flex: 1; border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
+        .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#fff;}
+        .offer-title { font-size: 0.65em; margin-bottom: 5px; font-weight: 700;}
+        .offer-price { font-size: 1.2em; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 5px;}
         .offer-price i { color: #00BFFF; }
-        .offer-sub { font-size: 0.6em; text-decoration: line-through; color: #888; }
+        .offer-sub { font-size: 0.6em; text-decoration: line-through; }
         .buy-btn { background: var(--hot-pink); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700;}
         
-        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.7); border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
-        .quick-buy-100 { background: rgba(249, 249, 249, 0.8); color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
+        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
+        .quick-buy-100 { border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
         .quick-buy-100 i { color: #00BFFF; }
-        .quick-buy-100 span { display: block; font-size: 0.8em; color: #888; font-weight: 400; text-decoration: line-through;}
+        .quick-buy-100 span { display: block; font-size: 0.8em; font-weight: 400; text-decoration: line-through;}
         .scrollable-gifts { display: flex; gap: 15px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px; }
         .scrollable-gifts::-webkit-scrollbar { display: none; }
         .s-gift-item { text-align: center; flex-shrink: 0; cursor: pointer; transition: transform 0.2s ease; }
         .s-gift-item:hover { transform: scale(1.1); }
         .s-gift-item img { width: 25px; height: 25px; object-fit: contain; margin: 0 auto; }
-        .s-gift-item p { font-size: 0.6em; color: #555; margin-top: 2px; font-weight: 600;}
+        .s-gift-item p { font-size: 0.6em; margin-top: 2px; font-weight: 600;}
         .s-gift-item p i { color: #00BFFF; }
         
         /* --- NEW FLOATING CHAT OVERLAY --- */
@@ -338,8 +362,7 @@
         }
 
         .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: transparent; border-top: none; z-index: 20;} /* Made transparent */
-        .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
-        .chat-open-btn:hover { background-color: #e5e5e5; }
+        .chat-open-btn { border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; padding: 10px 20px;}
         .footer-right-actions { display: flex; gap: 12px; }
         .zf-btn { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.1em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease;}
         .zf-btn:hover { transform: scale(1.1); }
@@ -350,15 +373,13 @@
         /* --- GLASSY CHAT PANEL OVERLAY --- */
         #chat-panel-overlay { 
             position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; 
-            background: rgba(255, 255, 255, 0.4); /* Made more transparent */
             backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(255,255,255,0.8); 
             border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
             z-index: 50; animation: slideUpModal 0.3s ease-out; 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
         }
         .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: none; }
-        .chat-panel-header h3 { font-size: 1.1em; color: #111; font-weight: 800;}
+        .chat-panel-header h3 { font-size: 1.1em; font-weight: 800;}
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
         .chat-messages::-webkit-scrollbar { display: none; }
         .chat-msg { background: rgba(255, 255, 255, 0.85); padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.03); font-weight: 500;}
@@ -366,8 +387,8 @@
         .chat-msg.system { background: transparent; box-shadow: none; font-style: italic; color: #666; text-align: center; align-self: center; font-size: 0.8em;}
         .chat-msg.gift-message { background: linear-gradient(135deg, #fff0f2, #ffe4e8); border: 1px solid var(--hot-pink); color: #111; font-weight: 700; align-self: flex-start; }
         .chat-input-area { padding: 15px; display: flex; gap: 10px; background: transparent; border-top: 1px solid rgba(0,0,0,0.05);}
-        .chat-input { flex-grow: 1; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
-        .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: #fff;}
+        .chat-input { flex-grow: 1; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
+        .chat-input:focus { outline: none;}
         #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;}
         #send-msg-btn:hover { transform: scale(1.1); }
 
@@ -579,7 +600,7 @@
                                 <h5>Welcome to Zingoo!</h5>
                                 <p>This room is being monitored. Please abide by the guidelines.</p>
                             </div>
-                            <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#ccc; cursor:pointer;"></i>
+                            <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; cursor:pointer;"></i>
                         </div>
                         <div class="offer-box" onclick="window.redirectToDiamondStore()">
                             <i class="fas fa-times close-x"></i>
@@ -855,7 +876,7 @@
             };
 
             window.redirectToDiamondStore = function() {
-                window.location.href = 'index.html?action=buy_diamonds';
+                window.location.href = 'zingoo-pay.html';
             };
 
 
