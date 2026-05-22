@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -656,7 +655,7 @@
             <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
         </div>
 
-        <div id="room-audio-container" style="display:none;"></div>
+        <div id="room-audio-container" style="visibility:hidden; width:0; height:0; position:absolute; z-index:-1;"></div>
 
     </div>
     
@@ -1172,7 +1171,7 @@
             let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
-            const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+            const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }, { urls: "turn:openrelay.metered.ca:80", username: "openrelayproject", credential: "openrelayproject" }, { urls: "turn:openrelay.metered.ca:443", username: "openrelayproject", credential: "openrelayproject" }, { urls: "turn:openrelay.metered.ca:443?transport=tcp", username: "openrelayproject", credential: "openrelayproject" }] };
 
             // WEBRTC ROOM AUDIO LOGIC
             let roomLocalStream = null;
@@ -1243,8 +1242,15 @@
                     });
                     
                     onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { 
-                        if(snap.val() && peerConnection1v1.remoteDescription) {
-                            peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                        if(snap.val()) {
+                            const addCandCall = () => {
+                                if(peerConnection1v1 && peerConnection1v1.remoteDescription) {
+                                    peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                                } else {
+                                    setTimeout(addCandCall, 500);
+                                }
+                            };
+                            addCandCall();
                         }
                     });
                 } catch(e) { stopWebRTC1v1(); showToast("Call Failed: Camera/Mic Access Denied."); }
@@ -1271,8 +1277,15 @@
                     set(ref(db, `${currentCallPath}/answer`), { type: answer.type, sdp: answer.sdp });
                     
                     onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { 
-                        if(snap.val() && peerConnection1v1.remoteDescription) {
-                            peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                        if(snap.val()) {
+                            const addCandCall2 = () => {
+                                if(peerConnection1v1 && peerConnection1v1.remoteDescription) {
+                                    peerConnection1v1.addIceCandidate(new RTCIceCandidate(snap.val())); 
+                                } else {
+                                    setTimeout(addCandCall2, 500);
+                                }
+                            };
+                            addCandCall2();
                         }
                     });
                 } catch(e) { stopWebRTC1v1(); showToast("Call Accept Failed. Allow Mic/Camera."); }
@@ -1315,9 +1328,14 @@
                         } else if (data.type === 'answer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
                         } else if (data.type === 'candidate') {
-                            if(roomPeers[sender].remoteDescription) {
-                                roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
-                            }
+                            const addCand = () => {
+                                if(roomPeers[sender] && roomPeers[sender].remoteDescription) {
+                                    roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                                } else {
+                                    setTimeout(addCand, 500);
+                                }
+                            };
+                            addCand();
                         }
                     });
 
@@ -1364,6 +1382,7 @@
                         audioEl = document.createElement('audio');
                         audioEl.id = `audio-${targetUser}`;
                         audioEl.autoplay = true;
+                        audioEl.playsInline = true;
                         audioEl.setAttribute('playsinline', 'true');
                         document.getElementById('room-audio-container').appendChild(audioEl);
                     }
