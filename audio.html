@@ -777,7 +777,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         let app;
         let db;
@@ -813,8 +813,8 @@
                 splashTimerEl.innerText = splashTime + "s";
                 if(splashTime <= 0) {
                     clearInterval(splashInterval);
-                    splashTimerEl.innerText = "Timeout. Refreshing...";
-                    setTimeout(() => { window.location.reload(); }, 1500);
+                    splashTimerEl.innerText = "Timeout. Please try again.";
+                    setTimeout(() => { splashScreen.style.display = 'none'; idLoginScreen.style.display = 'flex'; }, 1500);
                 }
             }, 1000);
 
@@ -924,7 +924,8 @@
             });
 
             function processDatabaseLogin(enteredId, isAutoLogin = false) {
-                get(ref(db, 'users')).then(snapshot => {
+                const userQuery = query(ref(db, 'users'), orderByChild('id'), equalTo(enteredId));
+                get(userQuery).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
                     let userKey = null;
