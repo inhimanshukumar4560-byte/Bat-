@@ -147,8 +147,27 @@
             width: 100%; padding: 15px; border-radius: 12px; border: none;
             background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
             cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
         #id-login-screen button:hover { transform: translateY(-2px); }
+        #id-login-screen button:disabled {
+            background: linear-gradient(135deg, #ff7b9f, #ff8da8);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loader-spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
 
         /* ---- LOBBY SCREEN STYLES ---- */
         #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; }
@@ -781,9 +800,10 @@
         </div>
     </div>
 
+    <!-- Firebase Imports Updated WITH query, orderByChild, equalTo for Extremely Fast Fetching -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, onDisconnect, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         let app;
         let db;
@@ -895,7 +915,8 @@
                 const enteredId = loginInput.value.trim();
                 if (!enteredId) { showToast("Please enter your Zingoo ID"); return; }
                 
-                loginBtn.innerText = "Please wait...";
+                // Advanced Verification Visual Loading
+                loginBtn.innerHTML = '<span class="loader-spinner"></span> Verifying ID...';
                 loginBtn.disabled = true;
 
                 if (selectedAvatarFile) {
@@ -923,37 +944,31 @@
                 }
             });
 
+            // OPTIMIZED FETCHING FUNCTION - Instead of entire database, querying exact ID fastly
             function processDatabaseLogin(enteredId, isAutoLogin = false) {
-                get(ref(db, 'users')).then(snapshot => {
-                    let userFound = false;
-                    const allUsers = snapshot.val();
-                    let userKey = null;
-                    
-                    if (allUsers) {
-                        for (let key in allUsers) {
-                            if (allUsers[key].id === enteredId) {
-                                currentUser = allUsers[key].name;
-                                userKey = key;
-                                userFound = true;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (userFound) {
-                        myEquippedChair = allUsers[userKey].equippedChair || null;
+                const usersRef = ref(db, 'users');
+                const idQuery = query(usersRef, orderByChild('id'), equalTo(enteredId.toString()));
+
+                get(idQuery).then(snapshot => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const userKey = Object.keys(userData)[0];
+                        const userObj = userData[userKey];
+                        
+                        currentUser = userObj.name;
+                        myEquippedChair = userObj.equippedChair || null;
 
                         if (selectedAvatarFile && !isAutoLogin) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
                         } else {
-                            currentAvatar = allUsers[userKey].avatar || currentAvatar;
+                            currentAvatar = userObj.avatar || currentAvatar;
                         }
 
                         localStorage.setItem("zingoo_user", currentUser);
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
-                        const userDiamonds = allUsers[userKey].diamonds || 0;
+                        const userDiamonds = userObj.diamonds || 0;
                         document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
                         localStorage.setItem("zingoo_diamonds", userDiamonds);
                         
@@ -966,7 +981,7 @@
                         listenForIncomingCalls(); 
                         listenForInvites(); 
                         fetchAdminGifts(); 
-                        fetchStoreChairs(); // NEW: Fetch Chairs for settings
+                        fetchStoreChairs();
                         
                         if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
                     } else {
@@ -975,17 +990,18 @@
                             hideSplashScreen();
                             idLoginScreen.style.display = 'flex';
                         } else {
-                            showToast("Invalid ID! User not found.");
+                            showToast("Invalid ID! Verification Failed.");
                             loginBtn.innerText = "Enter Rooms";
                             loginBtn.disabled = false;
                         }
                     }
                 }).catch(err => {
+                    console.error("Login Fetch Error:", err);
                     if(isAutoLogin) {
                         hideSplashScreen();
                         idLoginScreen.style.display = 'flex';
                     } else {
-                        showToast("Error connecting to database.");
+                        showToast("Network Error: Could not verify ID.");
                         loginBtn.innerText = "Enter Rooms";
                         loginBtn.disabled = false;
                     }
