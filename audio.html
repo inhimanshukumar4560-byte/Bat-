@@ -1,4 +1,4 @@
-:
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -212,7 +212,7 @@
         .zh-btn.gold { color: #ffd700 !important; }
         .zh-btn.green { color: #25D366 !important; }
         
-        .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
+        .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative; justify-content: flex-start;}
         .room-body::-webkit-scrollbar { display: none; }
         
         /* Fixed Responsive Grid For Mobile (vw based) */
@@ -220,7 +220,8 @@
             display: grid; 
             grid-template-columns: repeat(5, 1fr); 
             gap: 12px 2px; 
-            margin-top: 10px; 
+            margin-top: 20px; 
+            margin-bottom: auto; /* Pushes everything up securely */
             z-index: 5; 
             width: 100%; 
             justify-items: center; 
@@ -283,26 +284,6 @@
         }
         .speaker-seat.empty:hover .avatar-container { background: rgba(255, 255, 255, 0.25); border-color: #fff;}
         .speaker-seat.empty .avatar-container svg { width: 22px; height: 22px; fill: #fff; opacity: 0.8; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); }
-        
-        .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
-        .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.4); border-left-color: #fff; border-bottom-color: #fff; display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #fff !important; margin-bottom: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
-        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #fff !important; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .logo-sub { font-size: 0.7em; color: #eee !important; display: flex; align-items: center; gap: 10px; margin-top: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: rgba(255,255,255,0.5); }
-        
-        /* Glassy Banners */
-        .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
-        .warning-box { flex: 1.5; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
-        .warning-icon { color: #fff; font-size: 1.5em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));}
-        .warning-text h5 { font-size: 0.75em; color: #fff !important; margin-bottom: 3px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .warning-text p { font-size: 0.65em; color: #eee !important; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.8);}
-        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
-        .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#fff; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));}
-        .offer-title { font-size: 0.65em; color: #fff !important; margin-bottom: 5px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .offer-price { font-size: 1.2em; font-weight: 800; color: #fff !important; display: flex; justify-content: center; align-items: center; gap: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
-        .offer-price i { color: #00BFFF; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));}
-        .offer-sub { font-size: 0.6em; text-decoration: line-through; color: rgba(255,255,255,0.7) !important; text-shadow: 0 1px 1px rgba(0,0,0,0.8); }
-        .buy-btn { background: var(--gradient-main); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
         
         /* Glassy Gifts Scroll */
         .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
@@ -542,6 +523,7 @@
         <div id="lobby-screen">
             <header class="lobby-header-top">
                 <div class="logo">
+                    <button class="zh-btn" id="lobby-back-btn" style="color:#111 !important; margin-right: 10px; font-size: 1em; background: none; border: none; cursor: pointer;"><i class="fas fa-arrow-left"></i></button>
                     <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
                     ZINGOO
                 </div>
@@ -584,6 +566,7 @@
              <div class="live-room-container" id="live-room-bg">
                 <header class="zingoo-header">
                     <div class="zh-left">
+                        <button class="zh-btn" id="room-back-btn" style="margin-right: 10px;"><i class="fas fa-arrow-left"></i></button>
                         <div class="zh-mic-icon"><i class="fas fa-microphone-alt"></i></div>
                         <div class="zh-info">
                             <h1 id="live-room-title">Loading Room...</h1>
@@ -594,37 +577,15 @@
                         <button class="zh-btn gold" onclick="window.redirectToDiamondStore(20, 100)"><i class="fas fa-crown"></i></button>
                         <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
                         <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
-                        <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
                     </div>
                 </header>
                 <main class="room-body">
+                    <div id="room-center-display"></div> <!-- Used only for YouTube video if played -->
+
                     <div class="speaker-grid-zingoo" id="speaker-grid-container">
                         <!-- Speakers Injected Here -->
                     </div>
                     
-                    <div class="center-logo-area" id="room-center-display">
-                        <div class="logo-z">Z</div>
-                        <div class="logo-text">ZINGOO</div>
-                        <div class="logo-sub">Audio Room</div>
-                    </div>
-                    
-                    <div class="banners-container">
-                        <div class="warning-box">
-                            <div class="warning-icon"><i class="fas fa-shield-alt"></i></div>
-                            <div class="warning-text">
-                                <h5>Welcome to Zingoo!</h5>
-                                <p>This room is being monitored. Please abide by the guidelines.</p>
-                            </div>
-                            <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#fff; cursor:pointer;"></i>
-                        </div>
-                        <div class="offer-box" onclick="window.redirectToDiamondStore(20, 100)">
-                            <i class="fas fa-times close-x"></i>
-                            <div class="offer-title">+ Limited Offers +</div>
-                            <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
-                            <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn" onclick="event.stopPropagation(); window.redirectToDiamondStore(20, 100)">Buy Now</button>
-                        </div>
-                    </div>
                     <div class="gift-scroll-bar">
                          <div class="quick-buy-100" onclick="window.redirectToDiamondStore(100, 500)">
                             <i class="fas fa-gem"></i> 100
@@ -637,7 +598,7 @@
                 </main>
                 
                 <div id="floating-live-chat" class="floating-chat-container">
-                    <div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>
+                    <!-- Messages will appear here cleanly -->
                 </div>
 
                 <footer class="zingoo-footer">
@@ -656,7 +617,7 @@
                         <button class="close-btn" id="close-chat-btn"><i class="fas fa-times"></i></button>
                     </div>
                     <div id="chat-messages" class="chat-messages">
-                        <div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>
+                        <!-- Messages appended here dynamically -->
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
@@ -802,9 +763,13 @@
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
                 <div class="profile-actions" style="margin-top: 10px;">
-                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
-                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
-                    <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
+                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Call</button>
+                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video</button>
+                    <!-- Host specific buttons dynamically shown -->
+                    <button class="action-btn secondary host-control-btn" id="popup-btn-mute" style="display:none;"><i class="fas fa-microphone-slash"></i> Mute User</button>
+                    <button class="action-btn secondary host-control-btn" id="popup-btn-unmute" style="display:none; color:#25D366 !important; border-color:#25D366 !important;"><i class="fas fa-microphone"></i> Unmute</button>
+                    <button class="action-btn secondary host-control-btn" id="popup-btn-kick" style="display:none; color:#f59e0b !important; border-color:#f59e0b !important;"><i class="fas fa-user-times"></i> Kick Seat</button>
+                    <button class="action-btn host-control-btn" id="popup-btn-ban" style="display:none; background:#ef4444 !important; color:white !important; border:none !important;"><i class="fas fa-ban"></i> Ban</button>
                 </div>
             </div>
         </div>
@@ -1046,9 +1011,13 @@
             let currentActiveRoomId = null;
             let currentRoomHost = null;
             let mySeatIndex = -1;
+            let currentRoomSeatsCache = {}; // cached for host tools
+            
             let roomListener = null;
             let unsubscribeChat = null;
             let unsubscribeMedia = null;
+            let roomExistenceListener = null;
+            let banListener = null;
 
             let availableGifts = {};
             function fetchAdminGifts() {
@@ -1175,6 +1144,8 @@
                     return;
                 }
                 
+                if(!confirm(`Are you sure you want to send '${gift.name}' for ${gift.cost} diamonds?`)) return;
+
                 let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
                 if(currentBal >= gift.cost) {
                     let newBal = currentBal - gift.cost;
@@ -1468,6 +1439,7 @@
                 }
             };
 
+            // Enhanced User Profile inside Room with Host Privileges
             window.openUserProfile = function(username, avatar) {
                 document.getElementById('popup-username').innerText = username;
                 document.getElementById('popup-profile-img').src = avatar;
@@ -1476,6 +1448,75 @@
                 document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
                 document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
                 
+                // HOST CONTROL LOGIC
+                const isHost = (currentActiveRoomId && currentRoomHost === currentUser);
+                const isTargetNotHost = (username !== currentRoomHost);
+                
+                let targetSeatIndex = -1;
+                let targetIsMuted = false;
+                
+                Object.entries(currentRoomSeatsCache).forEach(([idx, seatInfo]) => {
+                    if(seatInfo.user === username) {
+                        targetSeatIndex = idx;
+                        targetIsMuted = seatInfo.isMuted;
+                    }
+                });
+
+                const muteBtn = document.getElementById('popup-btn-mute');
+                const unmuteBtn = document.getElementById('popup-btn-unmute');
+                const kickBtn = document.getElementById('popup-btn-kick');
+                const banBtn = document.getElementById('popup-btn-ban');
+
+                if (isHost && isTargetNotHost) {
+                    banBtn.style.display = 'inline-block';
+                    if (targetSeatIndex !== -1) {
+                        kickBtn.style.display = 'inline-block';
+                        if (targetIsMuted) {
+                            unmuteBtn.style.display = 'inline-block';
+                            muteBtn.style.display = 'none';
+                        } else {
+                            muteBtn.style.display = 'inline-block';
+                            unmuteBtn.style.display = 'none';
+                        }
+                    } else {
+                        kickBtn.style.display = 'none';
+                        muteBtn.style.display = 'none';
+                        unmuteBtn.style.display = 'none';
+                    }
+                } else {
+                    muteBtn.style.display = 'none';
+                    unmuteBtn.style.display = 'none';
+                    kickBtn.style.display = 'none';
+                    banBtn.style.display = 'none';
+                }
+
+                // Bind Host Actions
+                muteBtn.onclick = () => {
+                    if(!confirm(`Mute ${username}?`)) return;
+                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${targetSeatIndex}/isMuted`), true);
+                    showToast(`Muted ${username}`);
+                    closeModal();
+                };
+                unmuteBtn.onclick = () => {
+                    if(!confirm(`Unmute ${username}?`)) return;
+                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${targetSeatIndex}/isMuted`), false);
+                    showToast(`Unmuted ${username}`);
+                    closeModal();
+                };
+                kickBtn.onclick = () => {
+                    if(!confirm(`Kick ${username} from their seat?`)) return;
+                    remove(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${targetSeatIndex}`));
+                    showToast(`Kicked ${username}`);
+                    closeModal();
+                };
+                banBtn.onclick = () => {
+                    if(!confirm(`BAN ${username} from the room completely?`)) return;
+                    set(ref(db, `audio_rooms/${currentActiveRoomId}/banned/${username}`), true);
+                    if (targetSeatIndex !== -1) remove(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${targetSeatIndex}`));
+                    showToast(`Banned ${username}`);
+                    closeModal();
+                };
+
                 openModal('profile-popup');
             };
 
@@ -1536,95 +1577,124 @@
 
             function joinAudioRoom(roomId, roomTitle, fee) {
                 const proceed = () => {
-                    currentActiveRoomId = roomId;
-                    document.getElementById('live-room-title').innerText = roomTitle;
-                    lobbyScreen.style.display = 'none';
-                    liveRoomScreen.style.display = 'flex';
+                    // Pre-check for ban before entering
+                    get(ref(db, `audio_rooms/${roomId}/banned/${currentUser}`)).then(banSnap => {
+                        if(banSnap.exists()) {
+                            alert("You have been banned from this room by the host.");
+                            return;
+                        }
+                        
+                        currentActiveRoomId = roomId;
+                        document.getElementById('live-room-title').innerText = roomTitle;
+                        lobbyScreen.style.display = 'none';
+                        liveRoomScreen.style.display = 'flex';
+                        
+                        // Push joined message to chat
+                        push(ref(db, `audio_rooms/${roomId}/chats`), {
+                            user: currentUser,
+                            text: 'joined the room.',
+                            isSystem: true,
+                            timestamp: serverTimestamp()
+                        });
 
-                    // Listen for Dynamic Room Background Updates
-                    if(bgListener) bgListener();
-                    bgListener = onValue(ref(db, `audio_rooms/${roomId}/backgroundUrl`), (snap) => {
-                        const bgUrl = snap.val();
-                        const defaultBg = "https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png";
-                        document.getElementById('live-room-bg').style.backgroundImage = `url('${bgUrl || defaultBg}')`;
-                    });
-
-                    get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
-                        currentRoomHost = hostSnap.val();
-
-                        if (unsubscribeMedia) unsubscribeMedia();
-                        unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
-                            const videoId = snap.val();
-                            const display = document.getElementById('room-center-display');
-                            if(videoId) {
-                                let closeBtn = (currentRoomHost === currentUser) 
-                                    ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
-                                    : '';
-                                
-                                display.innerHTML = `<div style="position:relative; width:100%;">
-                                    ${closeBtn}
-                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
-                                </div>`;
-                            } else {
-                                display.innerHTML = `
-                                    <div class="logo-z">Z</div>
-                                    <div class="logo-text">ZINGOO</div>
-                                    <div class="logo-sub">Audio Room</div>
-                                `;
+                        // Listen for dynamic room deletion (if host leaves)
+                        roomExistenceListener = onValue(ref(db, `audio_rooms/${roomId}`), (snap) => {
+                            if (!snap.exists() && currentActiveRoomId === roomId) {
+                                showToast("The host has ended the broadcast.");
+                                forceLeaveCleanup();
                             }
                         });
-                    });
 
-                    const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
-                    if (roomListener) roomListener(); 
-                    roomListener = onValue(roomSeatsRef, (snapshot) => {
-                        renderSeats(snapshot.val() || {});
-                    });
-
-                    const chatContainer = document.getElementById('chat-messages');
-                    const floatingContainer = document.getElementById('floating-live-chat');
-                    
-                    chatContainer.innerHTML = '<div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>';
-                    floatingContainer.innerHTML = '<div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>';
-                    
-                    if (unsubscribeChat) unsubscribeChat();
-                    const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
-                    
-                    unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
-                        const msgData = snapshot.val();
-                        if(msgData) {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = 'chat-msg';
-                            if(msgData.user === currentUser && !msgData.isSystem) {
-                                msgDiv.style.alignSelf = 'flex-end';
-                                msgDiv.style.background = 'rgba(255, 0, 76, 0.2)';
+                        // Listen if I get banned dynamically
+                        banListener = onValue(ref(db, `audio_rooms/${roomId}/banned/${currentUser}`), (snap) => {
+                            if (snap.exists() && currentActiveRoomId === roomId) {
+                                showToast("You have been banned and removed from this room.");
+                                forceLeaveCleanup();
                             }
+                        });
 
-                            if(msgData.isSystem) {
-                                msgDiv.className = 'chat-msg system';
-                                msgDiv.innerHTML = `${msgData.user} ${msgData.text}`;
-                            } else if(msgData.giftUrl) {
-                                triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
-                                msgDiv.classList.add('gift-message');
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:30px; vertical-align:middle; margin-left:5px;">`;
-                            } else if(msgData.stickerUrl) {
-                                triggerGrandGiftAnimation(msgData.stickerUrl, msgData.user + " joined the room!");
-                            } else {
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
-                            }
+                        // Listen for Dynamic Room Background Updates
+                        if(bgListener) bgListener();
+                        bgListener = onValue(ref(db, `audio_rooms/${roomId}/backgroundUrl`), (snap) => {
+                            const bgUrl = snap.val();
+                            const defaultBg = "https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png";
+                            document.getElementById('live-room-bg').style.backgroundImage = `url('${bgUrl || defaultBg}')`;
+                        });
 
-                            chatContainer.appendChild(msgDiv);
-                            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
-                            
-                            if(!msgData.isSystem) {
-                                const floatDiv = document.createElement('div');
-                                floatDiv.className = 'floating-chat-msg';
-                                floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
-                                floatingContainer.appendChild(floatDiv);
-                                setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
-                                setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
+                        get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
+                            currentRoomHost = hostSnap.val();
+
+                            if (unsubscribeMedia) unsubscribeMedia();
+                            unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
+                                const videoId = snap.val();
+                                const display = document.getElementById('room-center-display');
+                                if(videoId) {
+                                    let closeBtn = (currentRoomHost === currentUser) 
+                                        ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
+                                        : '';
+                                    
+                                    display.innerHTML = `<div style="position:relative; width:100%;">
+                                        ${closeBtn}
+                                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
+                                    </div>`;
+                                } else {
+                                    display.innerHTML = ``;
+                                }
+                            });
+                        });
+
+                        const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
+                        if (roomListener) roomListener(); 
+                        roomListener = onValue(roomSeatsRef, (snapshot) => {
+                            renderSeats(snapshot.val() || {});
+                        });
+
+                        const chatContainer = document.getElementById('chat-messages');
+                        const floatingContainer = document.getElementById('floating-live-chat');
+                        
+                        // Clear chat area so "Welcome to Zingoo" defaults are totally gone
+                        chatContainer.innerHTML = '';
+                        floatingContainer.innerHTML = '';
+                        
+                        if (unsubscribeChat) unsubscribeChat();
+                        const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
+                        
+                        unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
+                            const msgData = snapshot.val();
+                            if(msgData) {
+                                const msgDiv = document.createElement('div');
+                                msgDiv.className = 'chat-msg';
+                                if(msgData.user === currentUser && !msgData.isSystem) {
+                                    msgDiv.style.alignSelf = 'flex-end';
+                                    msgDiv.style.background = 'rgba(255, 0, 76, 0.2)';
+                                }
+
+                                if(msgData.isSystem) {
+                                    msgDiv.className = 'chat-msg system';
+                                    msgDiv.innerHTML = `${msgData.user} ${msgData.text}`;
+                                } else if(msgData.giftUrl) {
+                                    triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
+                                    msgDiv.classList.add('gift-message');
+                                    msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:30px; vertical-align:middle; margin-left:5px;">`;
+                                } else if(msgData.stickerUrl) {
+                                    triggerGrandGiftAnimation(msgData.stickerUrl, msgData.user + " joined the room!");
+                                } else {
+                                    msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+                                }
+
+                                chatContainer.appendChild(msgDiv);
+                                setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
+                                
+                                if(!msgData.isSystem) {
+                                    const floatDiv = document.createElement('div');
+                                    floatDiv.className = 'floating-chat-msg';
+                                    floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
+                                    floatingContainer.appendChild(floatDiv);
+                                    setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
+                                    setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
+                                }
                             }
-                        }
+                        });
                     });
                 };
 
@@ -1651,6 +1721,7 @@
 
             function renderSeats(seatsData) {
                 speakerGrid.innerHTML = '';
+                currentRoomSeatsCache = seatsData || {}; // Cache for host actions
                 
                 let wasInSeat = mySeatIndex !== -1;
                 mySeatIndex = -1;
@@ -1727,13 +1798,15 @@
                         iconUrl: myEquippedIcon
                     }).then(() => {
                         // Publish Entry Sticker to chat if equipped
-                        push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                            user: currentUser,
-                            text: 'took a seat.',
-                            stickerUrl: myEquippedSticker || null,
-                            timestamp: serverTimestamp(),
-                            isSystem: true
-                        });
+                        if(myEquippedSticker) {
+                            push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                                user: currentUser,
+                                text: 'took a seat.',
+                                stickerUrl: myEquippedSticker,
+                                timestamp: serverTimestamp(),
+                                isSystem: true
+                            });
+                        }
                     });
                 },
                 leaveSeat: () => {
@@ -1743,14 +1816,16 @@
                 }
             };
             
-            function leaveCurrentRoom() {
-                if (mySeatIndex !== -1) {
-                    window.audioRoomAPI.leaveSeat();
-                }
+            // Clean up without any confirmation prompt (used when kicked, banned, or room auto-deletes)
+            function forceLeaveCleanup() {
+                if (mySeatIndex !== -1) window.audioRoomAPI.leaveSeat();
+                
                 if (roomListener) { roomListener(); roomListener = null; }
                 if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
                 if (unsubscribeMedia) { unsubscribeMedia(); unsubscribeMedia = null; }
                 if (bgListener) { bgListener(); bgListener = null; }
+                if (roomExistenceListener) { roomExistenceListener(); roomExistenceListener = null; }
+                if (banListener) { banListener(); banListener = null; }
                 
                 stopRoomAudio();
                 
@@ -1759,6 +1834,31 @@
                 mySeatIndex = -1;
                 liveRoomScreen.style.display = 'none';
                 lobbyScreen.style.display = 'flex';
+            }
+
+            // Normal leave with confirmations
+            function leaveCurrentRoom() {
+                if(!confirm("Are you sure you want to go back/leave this room?")) return;
+
+                if (currentRoomHost === currentUser) {
+                    if(!confirm("You are the host! Leaving will completely close and delete this broadcast for everyone. Do you wish to continue?")) return;
+                    
+                    // Host ending the broadcast
+                    remove(ref(db, 'audio_rooms/' + currentActiveRoomId));
+                    forceLeaveCleanup();
+                    return;
+                }
+
+                // Push Left Message before cleaning up (only if not host closing everything)
+                if (currentActiveRoomId) {
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                        user: currentUser,
+                        text: 'left the room.',
+                        isSystem: true,
+                        timestamp: serverTimestamp()
+                    });
+                }
+                forceLeaveCleanup();
             }
 
             function sendRoomMessage() {
@@ -1795,7 +1895,21 @@
                     showToast("Please login first to create a room!");
                     return;
                 }
-                openModal('create-room-modal');
+
+                // Check if user already has an active broadcast
+                get(ref(db, 'audio_rooms')).then(snap => {
+                    let hasActiveRoom = false;
+                    if (snap.exists()) {
+                        snap.forEach(roomSnap => {
+                            if (roomSnap.val().host === currentUser) hasActiveRoom = true;
+                        });
+                    }
+                    if (hasActiveRoom) {
+                        alert("You already have an active broadcast running. You can only create 1 broadcast per ID.");
+                        return;
+                    }
+                    openModal('create-room-modal');
+                });
             });
             
             document.getElementById('start-new-room-btn').addEventListener('click', () => {
@@ -1809,7 +1923,7 @@
                     host: currentUser,
                     hostAvatar: currentAvatar,
                     createdAt: serverTimestamp(),
-                    seats: {}
+                    seats: {} // Banned lists will be dynamically added as needed
                 }).then(() => {
                     pendingInvites.forEach(user => {
                         push(ref(db, `invites/${user}`), {
@@ -1825,7 +1939,14 @@
                 });
             });
 
-            document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
+            // Back Buttons Event Listeners
+            document.getElementById('lobby-back-btn').addEventListener('click', () => {
+                if(confirm("Are you sure you want to logout?")) {
+                    localStorage.removeItem("zingoo_id");
+                    window.location.reload();
+                }
+            });
+            document.getElementById('room-back-btn').addEventListener('click', leaveCurrentRoom);
             
             document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
