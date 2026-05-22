@@ -802,6 +802,19 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
+            // --- CRITICAL FIX: UNLOCK AUDIO ON MOBILE ---
+            // Browsers block audio until the user interacts with the screen. This solves the "Voice nhi aa rha h" problem.
+            document.body.addEventListener('click', () => {
+                document.querySelectorAll('audio').forEach(audioEl => {
+                    if(audioEl.paused && audioEl.srcObject) {
+                        let playPromise = audioEl.play();
+                        if(playPromise !== undefined) {
+                            playPromise.catch(e => console.log("Unlock audio failed", e));
+                        }
+                    }
+                });
+            });
+
             // --- SPLASH SCREEN 30s TIMER LOGIC ---
             let splashTime = 30;
             const splashTimerEl = document.getElementById('splash-timer');
@@ -924,15 +937,16 @@
             });
 
             function processDatabaseLogin(enteredId, isAutoLogin = false) {
-                const userQuery = query(ref(db, 'users'), orderByChild('id'), equalTo(enteredId));
-                get(userQuery).then(snapshot => {
+                // Changed from query(..., orderByChild, equalTo) to a direct get to prevent indexing errors and type mismatches.
+                get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
                     let userKey = null;
                     
                     if (allUsers) {
                         for (let key in allUsers) {
-                            if (allUsers[key].id === enteredId) {
+                            // Using == instead of === solves type mismatch if ID was stored as String but searched as Number
+                            if (allUsers[key].id == enteredId) {
                                 currentUser = allUsers[key].name;
                                 userKey = key;
                                 userFound = true;
@@ -1436,7 +1450,17 @@
                     audioEl.srcObject = event.streams[0];
                     audioEl.muted = false;
                     audioEl.volume = 1.0;
-                    audioEl.play().catch(e => console.log("Audio play issue", e));
+                    
+                    // FIXED: Handle Autoplay Blocking which stops voice from coming
+                    let playPromise = audioEl.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("Audio play blocked by browser, waiting for user click", error);
+                            document.body.addEventListener('click', () => {
+                                audioEl.play().catch(e => console.log("Retry play issue", e));
+                            }, { once: true });
+                        });
+                    }
                 };
                 
                 roomPeers[targetUser] = pc;
