@@ -1,3 +1,4 @@
+:
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +16,7 @@
             --dark-bg: #f8f9fa;
             --dark-secondary: #ffffff; 
             --dark-card: #ffffff;
-            --glass-border: 1px solid #eeeeee;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.4);
             
             --baby-pink: #FFB3B3;
             --hot-pink: #ff004c;
@@ -47,14 +48,32 @@
         .main-container {
             max-width: 500px;
             margin: 0 auto;
-            height: 100dvh; /* Changed to 100dvh for better mobile scrolling */
+            height: 100dvh; 
             position: relative;
             background-color: #ffffff;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Contains the scroll inside */
+            overflow: hidden; 
         }
+
+        /* --- NEW: White Splash Screen Loading Overlay --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 999999; /* Highest priority */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease;
+        }
+        
+        #splash-screen .logo-z {
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 50px; font-weight: 900; font-style: italic; color: #111; margin-bottom: 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- Toast Notification --- */
         .toast-notification {
@@ -83,13 +102,13 @@
             100% { top: 25px; opacity: 1; transform: translateX(-50%) scale(1); }
         }
 
-        /* --- NEW: ID LOGIN SCREEN --- */
+        /* --- ID LOGIN SCREEN --- */
         #id-login-screen {
             position: absolute;
             inset: 0;
             background: #ffffff;
             z-index: 9999;
-            display: flex;
+            display: none; /* Initially hidden, splash screen handles the flow */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -134,7 +153,6 @@
         /* ---- LOBBY SCREEN STYLES ---- */
         #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; }
         
-        /* Top Header */
         .lobby-header-top { padding: 15px 20px 10px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
         .lobby-header-top .logo { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 1.2em; font-style: italic;}
         .lobby-header-top .logo svg { width: 24px; height: 24px; fill: var(--hot-pink); }
@@ -142,7 +160,6 @@
         .lobby-header-top .actions i { font-size: 1.2em; color: #444; }
         .diamond-badge { background: #f3e8ff; color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 700; display: flex; align-items: center; gap: 4px; }
         
-        /* Search Bar */
         .lobby-search-container { padding: 0 20px 10px; }
         .lobby-search-box { display: flex; background: #f5f5f5; border-radius: 12px; overflow: hidden; align-items: center; padding: 0 15px;}
         .lobby-search-box i { color: #888; }
@@ -150,15 +167,13 @@
         .lobby-search-box input:focus { outline: none; }
         .filter-btn { color: var(--hot-pink); background: none; border: none; font-size: 1.1em; cursor: pointer; }
 
-        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; } /* Adjusted padding to fix scroll and remove bottom-nav gap */
+        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; } 
         .lobby-body::-webkit-scrollbar { display: none; }
 
-        /* Section Title */
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 10px;}
         .section-title { font-size: 1.1em; font-weight: 800; color: #111; }
         .view-all { font-size: 0.8em; color: var(--hot-pink); font-weight: 600; cursor: pointer; }
 
-        /* Room List Row Layout */
         .room-list-row { display: flex; align-items: center; gap: 15px; background: #fff; padding: 10px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
         .room-list-row:hover { background: #fdfdfd; }
         .room-list-img { position: relative; width: 70px; height: 70px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
@@ -177,14 +192,13 @@
         .join-btn-outline { background: transparent; border: 1px solid var(--hot-pink); color: var(--hot-pink); padding: 5px 18px; border-radius: 20px; font-size: 0.8em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .join-btn-outline:hover { background: var(--hot-pink); color: white; }
 
-        /* Floating Action Button (Create Room) */
         .fab-create { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
         .fab-create:hover { transform: scale(1.1); }
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
         #live-room-screen { display: none; }
-        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: #fdfdfd; }
-        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eee; background: #fff;}
+        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: transparent; } /* Made transparent */
+        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: none; background: transparent;} /* Made transparent */
         .zh-left { display: flex; align-items: center; gap: 10px; }
         .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: #ffe4e8; display: flex; justify-content: center; align-items: center; color: var(--hot-pink); }
         .zh-info h1 { font-size: 1em; font-weight: 700; color: #111; margin-bottom: 2px; }
@@ -199,28 +213,51 @@
         .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
         .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 10px; z-index: 5;}
-        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .avatar-container { position: relative; width: 55px; height: 55px; border-radius: 50%; margin-bottom: 5px; }
-        .speaker-seat img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-        .speaker-seat p { font-size: 0.65em; color: #333; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .admin-tag { background: #eee; color: #555; font-size: 0.55em; padding: 2px 6px; border-radius: 10px; margin-top: 3px; font-weight: 700;}
         
-        .speaker-seat.is-speaking img {
-            border-color: var(--green-live);
-            box-shadow: var(--glow-green);
-            animation: pulse-green 1.5s infinite;
+        /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
+        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: linear-gradient(135deg, #eee, #ddd); transition: all 0.3s ease; }
+        .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
+        .speaker-seat p { font-size: 0.7em; color: #333; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px;}
+        .admin-tag { background: rgba(255,0,76,0.1); color: var(--hot-pink); font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800;}
+        
+        /* Custom Store Chair Frame Styling */
+        .custom-chair-frame {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 5px 15px rgba(255, 0, 76, 0.4));
+            object-fit: contain;
         }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(37, 211, 102, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.4); }
+        @keyframes floatChair {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-chair {
+            animation: floatChair 3s ease-in-out infinite;
         }
 
-        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-size: 0.55em; border: 1px solid #ddd; }
-        .mic-icon-status.muted { color: #888; }
-        .speaker-seat.empty .avatar-container { border: 1.5px dashed #ccc; display: flex; justify-content: center; align-items: center; background: #f9f9f9; transition: background-color 0.2s ease; }
-        .speaker-seat.empty:hover .avatar-container { background-color: #ffe4e8; border-color: var(--hot-pink); }
-        .speaker-seat.empty .avatar-container svg { width: 20px; height: 20px; fill: #ccc; }
+        .speaker-seat.is-speaking .avatar-container {
+            background: linear-gradient(135deg, var(--green-live), #00e676);
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 15;}
+        .mic-icon-status.muted { color: #ff004c; }
+        
+        .speaker-seat.empty .avatar-container { 
+            border: 2px dashed rgba(255, 0, 76, 0.4); 
+            background: rgba(255, 0, 76, 0.05); 
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .speaker-seat.empty:hover .avatar-container { background: rgba(255, 0, 76, 0.15); border-style: solid; border-color: var(--hot-pink);}
+        .speaker-seat.empty .avatar-container svg { width: 24px; height: 24px; fill: var(--hot-pink); opacity: 0.7; }
         
         .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
         .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 2px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #111; margin-bottom: 10px; }
@@ -229,11 +266,11 @@
         .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: #ddd; }
         
         .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
-        .warning-box { flex: 1.5; background: #fff7f7; border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
+        .warning-box { flex: 1.5; background: rgba(255, 247, 247, 0.8); border: 1px solid #ffccd5; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
         .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
         .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
         .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
-        .offer-box { flex: 1; background: #fff; border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
+        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.8); border: 1px solid var(--hot-pink); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
         .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#888;}
         .offer-title { font-size: 0.65em; color: var(--hot-pink); margin-bottom: 5px; font-weight: 700;}
         .offer-price { font-size: 1.2em; font-weight: 800; color: #111; display: flex; justify-content: center; align-items: center; gap: 5px;}
@@ -241,8 +278,8 @@
         .offer-sub { font-size: 0.6em; text-decoration: line-through; color: #888; }
         .buy-btn { background: var(--hot-pink); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700;}
         
-        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
-        .quick-buy-100 { background: #f9f9f9; color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
+        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.7); border: 1px solid #eee; padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
+        .quick-buy-100 { background: rgba(249, 249, 249, 0.8); color: #111; border: 1px solid #eee; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer;}
         .quick-buy-100 i { color: #00BFFF; }
         .quick-buy-100 span { display: block; font-size: 0.8em; color: #888; font-weight: 400; text-decoration: line-through;}
         .scrollable-gifts { display: flex; gap: 15px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px; }
@@ -265,15 +302,16 @@
             flex-direction: column;
             justify-content: flex-end;
             z-index: 15;
-            pointer-events: none; /* Allows clicks to pass through to main content */
+            pointer-events: none; 
         }
         .floating-chat-msg {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
+            padding: 8px 14px;
+            border-radius: 18px;
             font-size: 0.85em;
-            margin-top: 6px;
+            margin-top: 8px;
             width: max-content;
             max-width: 100%;
             word-wrap: break-word;
@@ -283,7 +321,7 @@
         }
         .floating-chat-msg .username { color: #ffeb3b; font-weight: bold; margin-right: 5px; }
         .floating-system-msg {
-            background: rgba(255, 0, 76, 0.6);
+            background: rgba(255, 0, 76, 0.8);
             color: white;
             padding: 6px 12px;
             border-radius: 15px;
@@ -299,7 +337,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #eee; z-index: 20;}
+        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: transparent; border-top: none; z-index: 20;} /* Made transparent */
         .chat-open-btn { background: #f5f5f5; border: 1px solid #eee; color: #333; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; }
         .chat-open-btn:hover { background-color: #e5e5e5; }
         .footer-right-actions { display: flex; gap: 12px; }
@@ -309,36 +347,50 @@
         .zf-gift { background: #ffeb3b; color: #b45309; }
         .zf-mic { background: var(--hot-pink); }
 
-        /* --- CHAT PANEL OVERLAY (Hidden full chat) --- */
-        #chat-panel-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: rgba(255, 255, 255, 0.98); border-top: 1px solid #eee; border-radius: 20px 20px 0 0; display: none; flex-direction: column; z-index: 50; animation: slideUpModal 0.3s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.05);}
-        .chat-panel-header { padding: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
-        .chat-panel-header h3 { font-size: 1em; color: #111; font-weight: 700;}
-        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { background: #f5f5f5; padding: 8px 12px; border-radius: 15px; font-size: 0.85em; align-self: flex-start; max-width: 85%; color: #333; }
-        .chat-msg .username { color: var(--hot-pink); font-weight: 700; margin-right: 5px; }
-        .chat-msg.system { background: transparent; font-style: italic; color: #888; text-align: center; align-self: center; font-size: 0.75em;}
-        .chat-msg.gift { background: var(--gradient-main); color: white; align-self: center; }
-        .chat-input-area { padding: 10px 15px; display: flex; gap: 10px; background: #fff; border-top: 1px solid #eee;}
-        .chat-input { flex-grow: 1; background: #f5f5f5; border: none; color: #111; padding: 10px 15px; border-radius: 20px; font-size: 0.9em; }
-        .chat-input:focus { outline: none; border: 1px solid #ddd;}
-        #send-msg-btn { background: var(--hot-pink); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+        /* --- GLASSY CHAT PANEL OVERLAY --- */
+        #chat-panel-overlay { 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; 
+            background: rgba(255, 255, 255, 0.4); /* Made more transparent */
+            backdrop-filter: blur(20px); 
+            border-top: 1px solid rgba(255,255,255,0.8); 
+            border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
+            z-index: 50; animation: slideUpModal 0.3s ease-out; 
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+        }
+        .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: none; }
+        .chat-panel-header h3 { font-size: 1.1em; color: #111; font-weight: 800;}
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-messages::-webkit-scrollbar { display: none; }
+        .chat-msg { background: rgba(255, 255, 255, 0.85); padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.03); font-weight: 500;}
+        .chat-msg .username { color: var(--hot-pink); font-weight: 800; margin-right: 5px; }
+        .chat-msg.system { background: transparent; box-shadow: none; font-style: italic; color: #666; text-align: center; align-self: center; font-size: 0.8em;}
+        .chat-msg.gift-message { background: linear-gradient(135deg, #fff0f2, #ffe4e8); border: 1px solid var(--hot-pink); color: #111; font-weight: 700; align-self: flex-start; }
+        .chat-input-area { padding: 15px; display: flex; gap: 10px; background: transparent; border-top: 1px solid rgba(0,0,0,0.05);}
+        .chat-input { flex-grow: 1; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
+        .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: #fff;}
+        #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;}
+        #send-msg-btn:hover { transform: scale(1.1); }
 
         /* --- Modals / Popups --- */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 100; display: none; justify-content: center; align-items: flex-end; }
         .modal-content { background: #ffffff; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; animation: slideUpModal 0.3s; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        .modal-header h3 { color: #111; font-weight: 700; font-size: 1.2em;}
-        .close-btn { background: #f5f5f5; width: 30px; height: 30px; border-radius: 50%; border: none; color: #555; cursor: pointer; display: flex; justify-content: center; align-items: center;}
+        .modal-header h3 { color: #111; font-weight: 800; font-size: 1.2em;}
+        .close-btn { background: #f5f5f5; width: 32px; height: 32px; border-radius: 50%; border: none; color: #555; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s;}
+        .close-btn:hover { background: #e0e0e0; }
         @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        #footer-action-modal .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; margin-top: 10px; margin-bottom: 15px; }
-        .action-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .action-icon-circle { width: 50px; height: 50px; border-radius: 50%; background: #fff0f2; border: 1px solid var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 1.3em; color: var(--hot-pink); transition: background-color 0.2s ease; }
-        .action-item:hover .action-icon-circle { background-color: #ffe4e8; }
-        .action-item p { font-size: 0.75em; color: #555; font-weight: 600;}
-        .action-item.mic-off-state .action-icon-circle { background: #eee; border-color: transparent; color: #888; }
+        /* UPGRADED ACTION MODAL (LIST STYLE LIKE IMAGE) */
+        #footer-action-modal .modal-content { padding: 20px 20px 30px; }
+        #footer-action-modal .action-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .action-item { display: flex; flex-direction: row; align-items: center; gap: 15px; cursor: pointer; background: #f9f9f9; padding: 12px 15px; border-radius: 15px; transition: all 0.2s ease; border: 1px solid transparent; }
+        .action-item:hover { background-color: #fff0f2; border-color: rgba(255,0,76,0.2); transform: translateY(-2px); }
+        .action-icon-circle { width: 40px; height: 40px; border-radius: 50%; background: #ffe4e8; color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 1.1em; flex-shrink: 0; }
+        .action-item p { font-size: 1em; color: #111; font-weight: 700; flex-grow: 1;}
+        .action-item .arrow { color: #ccc; font-size: 0.9em; }
+        .action-item.mic-off-state .action-icon-circle { background: #eee; color: #888; }
         
-        #gift-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
+        #gift-modal .gift-grid, #room-settings-modal .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; }
         .gift-item { text-align: center; background: #f9f9f9; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #eee; transition: background-color 0.2s ease; }
         .gift-item:hover { background-color: #fff0f2; border-color: var(--hot-pink);}
         .gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
@@ -370,17 +422,68 @@
         #youtube-modal .modal-content { max-height: 40vh; }
         .youtube-btn { margin-top: 10px; width: 100%; background: #FF0000; color: white; border: none; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: 700;}
         
-        .gift-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 70%; pointer-events: none; z-index: 99; overflow: hidden; }
-        .gift-animation-container img { position: absolute; opacity: 0; width: 100px; height: 100px; }
+        /* GRAND GIFT ANIMATION CSS */
+        .grand-gift-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 9999;
+            pointer-events: none;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: grandGiftPop 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .grand-gift-popup img { 
+            width: 180px; height: 180px; 
+            object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(255, 0, 76, 0.6));
+            animation: pulse-gift 1s infinite alternate;
+        }
+        .grand-gift-popup p {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 900;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--hot-pink);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        @keyframes grandGiftPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-30deg); opacity: 0; }
+            15% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1) translateY(0); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+        }
+        @keyframes pulse-gift {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
     </style>
 </head>
 <body>
 
     <div class="main-container">
 
+        <!-- NEW: White Page Splash Screen Timer -->
+        <div id="splash-screen">
+            <div class="logo-z">Z</div>
+            <h2 style="color:#111; font-weight:800; font-size:26px; letter-spacing:2px;">ZINGOO</h2>
+            <p style="color:#888; font-size:14px; margin-top:5px; font-weight:600;">Secure Connection Setup...</p>
+            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">30s</div>
+        </div>
+
         <div id="global-toast" class="toast-notification">Notification text here</div>
 
-        <!-- NEW: ID LOGIN OVERLAY (Enforces ID check and ImgBB Upload before entering) -->
+        <!-- ID LOGIN OVERLAY -->
         <div id="id-login-screen">
             <div class="logo-container">
                 <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
@@ -401,7 +504,7 @@
             </div>
         </div>
 
-        <!-- LOBBY SCREEN (Zingoo Light Theme) -->
+        <!-- LOBBY SCREEN -->
         <div id="lobby-screen">
             <header class="lobby-header-top">
                 <div class="logo">
@@ -410,7 +513,7 @@
                 </div>
                 <div class="actions">
                     <i class="far fa-bell"></i>
-                    <div class="diamond-badge" onclick="window.location.href='index.html?action=buy_diamonds'" style="cursor:pointer;">
+                    <div class="diamond-badge" onclick="window.redirectToDiamondStore()" style="cursor:pointer;">
                         <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span>
                     </div>
                 </div>
@@ -433,21 +536,18 @@
 
                 <div id="lobby-rooms-list">
                     <p id="no-rooms-message" style="color: #aaa; text-align: center; margin-top: 30px;">Fetching active rooms...</p>
-                    <!-- Rooms injected here by JS -->
                 </div>
                 
             </main>
             
-            <!-- Create Room Floating Action Button -->
             <button class="fab-create" id="open-create-room-btn">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
 
-        <!-- LIVE ROOM SCREEN (Maintained layout, adjusted to Light Theme colors) -->
+        <!-- LIVE ROOM SCREEN -->
         <div id="live-room-screen">
              <div class="live-room-container">
-                <div id="gift-animation-container" class="gift-animation-container"></div>
                 <header class="zingoo-header">
                     <div class="zh-left">
                         <div class="zh-mic-icon"><i class="fas fa-microphone-alt"></i></div>
@@ -457,7 +557,7 @@
                         </div>
                     </div>
                     <div class="zh-right">
-                        <button class="zh-btn gold" onclick="window.location.href='index.html?action=buy_diamonds'"><i class="fas fa-crown"></i></button>
+                        <button class="zh-btn gold" onclick="window.redirectToDiamondStore()"><i class="fas fa-crown"></i></button>
                         <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
                         <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
@@ -468,43 +568,38 @@
                         <!-- Speakers Injected Here -->
                     </div>
                     
-                    <!-- Center Logo / YouTube Area -->
                     <div class="center-logo-area" id="room-center-display">
-                        <div class="logo-z">Z</div>
-                        <div class="logo-text">ZINGOO</div>
-                        <div class="logo-sub">Audio Room</div>
+                        <!-- Removed Zingoo Logo from here as per instructions -->
                     </div>
                     
                     <div class="banners-container">
                         <div class="warning-box">
                             <div class="warning-icon"><i class="fas fa-shield-alt"></i></div>
                             <div class="warning-text">
-                                <h5>Welcome to Zingoo Audio Room!</h5>
+                                <h5>Welcome to Zingoo!</h5>
                                 <p>This room is being monitored. Please abide by the guidelines.</p>
                             </div>
                             <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#ccc; cursor:pointer;"></i>
                         </div>
-                        <div class="offer-box" onclick="window.location.href='index.html?action=buy_diamonds'">
+                        <div class="offer-box" onclick="window.redirectToDiamondStore()">
                             <i class="fas fa-times close-x"></i>
                             <div class="offer-title">+ Limited Offers +</div>
                             <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
                             <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn" onclick="window.location.href='index.html?action=buy_diamonds'">Buy Now</button>
+                            <button class="buy-btn" onclick="window.redirectToDiamondStore()">Buy Now</button>
                         </div>
                     </div>
                     <div class="gift-scroll-bar">
-                         <div class="quick-buy-100" onclick="window.location.href='index.html?action=buy_diamonds'">
+                         <div class="quick-buy-100" onclick="window.redirectToDiamondStore()">
                             <i class="fas fa-gem"></i> 100
                             <span>₹100 ₹33.05</span>
                         </div>
                         <div class="scrollable-gifts" id="bottom-scrollable-gifts">
-                            <!-- Dynamic Gifts Fetched from Admin will appear here -->
                             <p style="font-size:10px; color:#888; padding-top:10px;">Loading gifts...</p>
                         </div>
                     </div>
                 </main>
                 
-                <!-- NEW: FLOATING LIVE CHAT OVERLAY -->
                 <div id="floating-live-chat" class="floating-chat-container">
                     <div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>
                 </div>
@@ -518,24 +613,24 @@
                     </div>
                 </footer>
                 
-                <!-- CHAT PANEL OVERLAY -->
+                <!-- GLASSY CHAT PANEL OVERLAY -->
                 <div id="chat-panel-overlay">
                     <div class="chat-panel-header">
-                        <h3>Room Chat</h3>
+                        <h3>Live Chat</h3>
                         <button class="close-btn" id="close-chat-btn"><i class="fas fa-times"></i></button>
                     </div>
                     <div id="chat-messages" class="chat-messages">
                         <div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>
                     </div>
                     <div class="chat-input-area">
-                        <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something...">
+                        <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
                         <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- INCOMING / WEBRTC CALL OVERLAYS -->
+        <!-- WEBRTC OVERLAYS -->
         <div id="incoming-call-overlay" class="modal-overlay" style="z-index:10000; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.9);">
             <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
             <h2 id="incoming-caller-name" style="color:white; font-size:24px; font-weight:bold; margin-bottom:10px;">Caller Name</h2>
@@ -547,12 +642,10 @@
         </div>
 
         <div id="video-overlay" style="position:fixed; inset:0; background:black; z-index:10000; display:none;">
-            <!-- Remote Video Unmirrored, Local Video Mirrored -->
             <video id="remote-video" style="width:100%; height:100%; object-fit:cover;" autoplay playsinline></video>
             <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
                 <div style="background:rgba(0,0,0,0.5); color:white; padding:10px 20px; border-radius:30px; align-self:flex-start;" id="video-partner-name">Waiting...</div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
-                    <!-- Mirrored Local Video properly styled -->
                     <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink); transform: scaleX(-1);" autoplay playsinline muted></video>
                     <button id="btn-end-video" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
                 </div>
@@ -568,12 +661,55 @@
             <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
         </div>
 
-        <!-- Hidden container for Room WebRTC Mesh Audio -->
         <div id="room-audio-container" style="display:none;"></div>
 
     </div>
     
-    <!-- MODALS (Updated to Light Theme) -->
+    <!-- UPGRADED LIST STYLE ACTION MODAL -->
+    <div id="footer-action-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
+            <div class="action-grid">
+                <div class="action-item" id="menu-mic-btn">
+                    <div class="action-icon-circle"><i class="fas fa-microphone"></i></div>
+                    <p>Toggle Microphone</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-hand-btn">
+                    <div class="action-icon-circle" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-hand-paper"></i></div>
+                    <p>Raise Hand</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-youtube-btn">
+                    <div class="action-icon-circle" style="background: #ffedd5; color: #ea580c;"><i class="fab fa-youtube"></i></div>
+                    <p>Play Media</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-mute-all-btn">
+                    <div class="action-icon-circle" style="background: #f3e8ff; color: #9333ea;"><i class="fas fa-volume-mute"></i></div>
+                    <p>Mute All Users</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-settings-btn">
+                    <div class="action-icon-circle" style="background: #e2e8f0; color: #475569;"><i class="fas fa-cog"></i></div>
+                    <p>Room Settings (Store)</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: ROOM SETTINGS (CHAIR STORE) MODAL -->
+    <div id="room-settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Room Settings (Host)</h3><button class="close-btn">&times;</button></div>
+            <p style="font-size:13px; color:#666; margin-bottom:15px; text-align:center; font-weight:600;">Decorate your room seat with Premium Admin Chairs.</p>
+            <div class="gift-grid" id="store-chairs-grid">
+                <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading premium chairs...</p>
+            </div>
+        </div>
+    </div>
+    
     <div id="create-room-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Create Room & Invite</h3><button class="close-btn">&times;</button></div>
@@ -590,20 +726,7 @@
             <button id="start-new-room-btn" class="start-room-btn">Start & Enter Room</button>
         </div>
     </div>
-    
-    <div id="footer-action-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
-            <div class="action-grid">
-                <div class="action-item" id="menu-mic-btn"><div class="action-icon-circle"><i class="fas fa-microphone"></i></div><p>Mic On/Off</p></div>
-                <div class="action-item" id="menu-hand-btn"><div class="action-icon-circle"><i class="fas fa-hand-paper"></i></div><p>Raise Hand</p></div>
-                <div class="action-item" id="menu-youtube-btn"><div class="action-icon-circle"><i class="fab fa-youtube"></i></div><p>Play Media</p></div>
-                <div class="action-item" id="menu-mute-all-btn"><div class="action-icon-circle"><i class="fas fa-volume-mute"></i></div><p>Mute All</p></div>
-                <div class="action-item" id="menu-settings-btn"><div class="action-icon-circle"><i class="fas fa-cog"></i></div><p>Settings</p></div>
-            </div>
-        </div>
-    </div>
-    
+
     <div id="youtube-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Share YouTube Video</h3><button class="close-btn">&times;</button></div>
@@ -616,7 +739,7 @@
         <div class="modal-content">
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
             <div class="gift-grid" id="modal-gift-grid">
-                <!-- Populated dynamically via Firebase (Admin upload) -->
+                 <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading gifts from admin panel...</p>
             </div>
         </div>
     </div>
@@ -629,7 +752,6 @@
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
                 <div class="profile-actions" style="margin-top: 10px;">
-                    <!-- Updated Buttons for WebRTC Implementation -->
                     <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
                     <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
                     <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
@@ -640,9 +762,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- ROBUST FIREBASE INITIALIZATION ---
         let app;
         let db;
 
@@ -658,40 +779,85 @@
                 storageBucket: "benchtopinnovations12.firebasestorage.app",
                 messagingSenderId: "113274194106",
                 appId: "1:113274194106:web:c2548c12c1ea20c5b69a83",
-                measurementId: "G-NSW3S36XMP"
             };
             app = initializeApp(firebaseConfig);
             db = getDatabase(app);
+            window.zingooApp = app; 
         }
 
-        // --- SCRIPT START ---
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- ID LOGIN & IMGBB LOGIC ---
-            const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c"; 
+            // --- NEW: SPLASH SCREEN 30s TIMER LOGIC ---
+            let splashTime = 30;
+            const splashTimerEl = document.getElementById('splash-timer');
+            const splashScreen = document.getElementById('splash-screen');
             const idLoginScreen = document.getElementById('id-login-screen');
+            
+            const splashInterval = setInterval(() => {
+                splashTime--;
+                splashTimerEl.innerText = splashTime + "s";
+                if(splashTime <= 0) {
+                    clearInterval(splashInterval);
+                    splashTimerEl.innerText = "Timeout. Refreshing...";
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                }
+            }, 1000);
+
+            function hideSplashScreen() {
+                clearInterval(splashInterval);
+                splashScreen.style.display = 'none';
+            }
+
+
+            const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
             const lobbyScreen = document.getElementById('lobby-screen');
             const loginBtn = document.getElementById('btn-login-id');
             const loginInput = document.getElementById('login-zingoo-id');
             const globalToast = document.getElementById('global-toast');
             let selectedAvatarFile = null;
-            let pendingInvites = []; // Used for room creation invites
+            let pendingInvites = [];
 
             let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             
-            const storedId = localStorage.getItem("zingoo_id");
-            if (storedId) {
-                loginInput.value = storedId;
-                const storedAv = localStorage.getItem("zingoo_avatar");
-                if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
-            }
+            let myEquippedChair = null;
 
             const showToast = (message) => {
                 globalToast.innerText = message;
                 globalToast.style.display = 'block';
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
+
+            // AUTO-LOGIN DIRECT ENTRY
+            const storedId = localStorage.getItem("zingoo_id");
+            if (storedId) {
+                // Background verification while 30s timer runs on white page
+                processDatabaseLogin(storedId, true); 
+            } else {
+                // If no stored ID, immediately hide splash and show login screen
+                hideSplashScreen();
+                idLoginScreen.style.display = 'flex';
+            }
+
+            window.triggerGrandGiftAnimation = function(imgUrl, senderName) {
+                const container = document.body;
+                const giftDiv = document.createElement('div');
+                giftDiv.className = 'grand-gift-popup';
+                giftDiv.innerHTML = `
+                    <img src="${imgUrl}" alt="Gift">
+                    <p>✨ ${senderName} Sent a Gift! ✨</p>
+                `;
+                container.appendChild(giftDiv);
+                
+                setTimeout(() => {
+                    if(giftDiv.parentNode) { giftDiv.parentNode.removeChild(giftDiv); }
+                }, 3500);
+            };
+
+            window.redirectToDiamondStore = function() {
+                window.location.href = 'index.html?action=buy_diamonds';
+            };
+
 
             document.getElementById('login-profile-upload').addEventListener('change', function(e) {
                 if(e.target.files[0]) {
@@ -709,9 +875,10 @@
                 if (!enteredId) { showToast("Please enter your Zingoo ID"); return; }
                 
                 loginBtn.innerText = "Please wait...";
+                loginBtn.disabled = true;
 
                 if (selectedAvatarFile) {
-                    showToast("Uploading profile image to server...");
+                    showToast("Uploading profile image...");
                     const formData = new FormData();
                     formData.append("image", selectedAvatarFile);
 
@@ -721,18 +888,21 @@
                     }).then(res => res.json()).then(data => {
                         if (data.success) {
                             currentAvatar = data.data.url;
+                            processDatabaseLogin(enteredId, false);
+                        } else {
+                            showToast("Image upload failed. Please try another image.");
+                            processDatabaseLogin(enteredId, false); 
                         }
-                        processDatabaseLogin(enteredId);
                     }).catch(err => {
                         showToast("Image upload failed, using default.");
-                        processDatabaseLogin(enteredId);
+                        processDatabaseLogin(enteredId, false);
                     });
                 } else {
-                    processDatabaseLogin(enteredId);
+                    processDatabaseLogin(enteredId, false);
                 }
             });
 
-            function processDatabaseLogin(enteredId) {
+            function processDatabaseLogin(enteredId, isAutoLogin = false) {
                 get(ref(db, 'users')).then(snapshot => {
                     let userFound = false;
                     const allUsers = snapshot.val();
@@ -750,7 +920,9 @@
                     }
                     
                     if (userFound) {
-                        if (selectedAvatarFile) {
+                        myEquippedChair = allUsers[userKey].equippedChair || null;
+
+                        if (selectedAvatarFile && !isAutoLogin) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
                         } else {
                             currentAvatar = allUsers[userKey].avatar || currentAvatar;
@@ -760,25 +932,42 @@
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
-                        if(allUsers[userKey].diamonds !== undefined) {
-                            document.getElementById('lobby-diamond-balance').innerText = allUsers[userKey].diamonds;
-                            localStorage.setItem("zingoo_diamonds", allUsers[userKey].diamonds);
-                        }
+                        const userDiamonds = allUsers[userKey].diamonds || 0;
+                        document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
+                        localStorage.setItem("zingoo_diamonds", userDiamonds);
                         
+                        // Successfully logged in -> hide Splash and Login, show Lobby
+                        hideSplashScreen();
                         idLoginScreen.style.display = 'none';
                         lobbyScreen.style.display = 'flex';
+                        
                         listenForAudioRooms(); 
                         listenForIncomingCalls(); 
                         listenForInvites(); 
-                        fetchAdminGifts(); // Fetch dynamically added gifts
-                        showToast(`Welcome back, ${currentUser}!`);
+                        fetchAdminGifts(); 
+                        fetchStoreChairs(); // NEW: Fetch Chairs for settings
+                        
+                        if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
                     } else {
-                        showToast("Invalid ID! User not found.");
-                        loginBtn.innerText = "Enter Rooms";
+                        if(isAutoLogin) {
+                            localStorage.removeItem("zingoo_id");
+                            hideSplashScreen();
+                            idLoginScreen.style.display = 'flex';
+                        } else {
+                            showToast("Invalid ID! User not found.");
+                            loginBtn.innerText = "Enter Rooms";
+                            loginBtn.disabled = false;
+                        }
                     }
                 }).catch(err => {
-                    showToast("Error connecting to database.");
-                    loginBtn.innerText = "Enter Rooms";
+                    if(isAutoLogin) {
+                        hideSplashScreen();
+                        idLoginScreen.style.display = 'flex';
+                    } else {
+                        showToast("Error connecting to database.");
+                        loginBtn.innerText = "Enter Rooms";
+                        loginBtn.disabled = false;
+                    }
                 });
             }
 
@@ -792,15 +981,13 @@
                 });
             }
 
-            // --- App State ---
             let currentActiveRoomId = null;
-            let currentRoomHost = null; // Important for video controls
+            let currentRoomHost = null;
             let mySeatIndex = -1;
             let roomListener = null;
             let unsubscribeChat = null;
             let unsubscribeMedia = null;
 
-            // --- DYNAMIC GIFTS LOGIC (Admin Panel Integration) ---
             let availableGifts = {};
             function fetchAdminGifts() {
                 onValue(ref(db, 'gifts'), (snap) => {
@@ -810,17 +997,15 @@
                     modalGridContainer.innerHTML = '';
                     
                     const data = snap.val();
-                    if(data) {
+                    if(data && Object.keys(data).length > 0) {
                         availableGifts = data;
                         Object.entries(data).forEach(([key, gift]) => {
-                            // Bottom Scrollable Bar item
                             scrollContainer.innerHTML += `
                                 <div class="s-gift-item" onclick="sendRoomGift('${key}')">
                                     <img src="${gift.imageUrl}" alt="${gift.name}">
                                     <p><i class="fas fa-gem"></i> ${gift.cost}</p>
                                 </div>
                             `;
-                            // Modal Grid item
                             modalGridContainer.innerHTML += `
                                 <div class="gift-item" onclick="sendRoomGift('${key}')">
                                     <img src="${gift.imageUrl}" alt="${gift.name}">
@@ -830,75 +1015,128 @@
                             `;
                         });
                     } else {
-                        scrollContainer.innerHTML = '<p style="font-size:10px; color:#888;">No gifts uploaded yet.</p>';
-                        modalGridContainer.innerHTML = '<p style="font-size:12px; color:#888;">No gifts available from admin.</p>';
+                        const noGiftMsg = '<p style="font-size:10px; color:#888;">No gifts available.</p>';
+                        scrollContainer.innerHTML = noGiftMsg;
+                        modalGridContainer.innerHTML = noGiftMsg;
                     }
                 });
             }
+
+            // --- NEW: FETCH STORE CHAIRS ---
+            function fetchStoreChairs() {
+                onValue(ref(db, 'store_items/chairs'), (snap) => {
+                    const grid = document.getElementById('store-chairs-grid');
+                    grid.innerHTML = '';
+                    const data = snap.val();
+                    if(data && Object.keys(data).length > 0) {
+                        Object.entries(data).forEach(([key, chair]) => {
+                            grid.innerHTML += `
+                                <div class="gift-item" onclick="buyAndEquipChair('${chair.imageUrl}', ${chair.cost}, '${chair.name}')">
+                                    <img src="${chair.imageUrl}" alt="${chair.name}">
+                                    <p>${chair.name}</p>
+                                    <p class="price"><i class="fas fa-gem"></i> ${chair.cost}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        grid.innerHTML = '<p style="font-size:12px; color:#888; text-align:center; grid-column:1/-1;">No chairs available in store.</p>';
+                    }
+                });
+            }
+
+            // --- NEW: BUY AND EQUIP CHAIR LOGIC ---
+            window.buyAndEquipChair = function(chairUrl, cost, name) {
+                if(currentRoomHost !== currentUser) {
+                    showToast("Only the Room Host can buy/equip room decorations here!");
+                    return;
+                }
+
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= cost) {
+                    if(confirm(`Buy and equip '${name}' for ${cost} diamonds?`)) {
+                        let newBal = currentBal - cost;
+                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                        localStorage.setItem('zingoo_diamonds', newBal);
+                        document.getElementById('lobby-diamond-balance').innerText = newBal;
+                        
+                        // Save to DB User Profile
+                        get(ref(db, 'users')).then(snap => {
+                            let uKey = null;
+                            const users = snap.val();
+                            for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                            if(uKey) set(ref(db, `users/${uKey}/equippedChair`), chairUrl);
+                        });
+
+                        myEquippedChair = chairUrl;
+                        
+                        // Instantly update current seat
+                        if(mySeatIndex !== -1 && currentActiveRoomId) {
+                            set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), chairUrl);
+                        }
+
+                        showToast(`Successfully equipped ${name}!`);
+                        closeModal();
+                    }
+                } else {
+                    if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
+                        window.redirectToDiamondStore();
+                    }
+                }
+            };
 
             window.sendRoomGift = function(giftKey) {
                 if(!currentActiveRoomId) return;
                 const gift = availableGifts[giftKey];
                 if(!gift) return;
 
-                get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                    const hostName = snap.val();
-                    if(hostName === currentUser) {
-                        showToast("You cannot send gifts to your own room!");
-                        return;
-                    }
+                if(currentRoomHost === currentUser) {
+                    showToast("You cannot send gifts to your own room!");
+                    return;
+                }
+                
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= gift.cost) {
+                    let newBal = currentBal - gift.cost;
+                    set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                    localStorage.setItem('zingoo_diamonds', newBal);
+                    document.getElementById('lobby-diamond-balance').innerText = newBal;
                     
-                    let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-                    if(currentBal >= gift.cost) {
-                        // 1. Deduct from Sender
-                        let newBal = currentBal - gift.cost;
-                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                        localStorage.setItem('zingoo_diamonds', newBal);
-                        document.getElementById('lobby-diamond-balance').innerText = newBal;
-                        
-                        // 2. Add to Host Profile
-                        get(ref(db, `users/${hostName}/diamonds`)).then((hSnap) => {
-                            let hBal = hSnap.val() || 0;
-                            set(ref(db, `users/${hostName}/diamonds`), hBal + gift.cost);
-                        });
+                    get(ref(db, `users/${currentRoomHost}/diamonds`)).then((hSnap) => {
+                        let hBal = hSnap.val() || 0;
+                        set(ref(db, `users/${currentRoomHost}/diamonds`), hBal + gift.cost);
+                    });
 
-                        // 3. Send visually appealing chat message
-                        push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                            user: currentUser,
-                            text: `Sent ${gift.name}! <img src="${gift.imageUrl}" style="width:25px; height:25px; vertical-align:middle; display:inline-block; margin-left:5px;">`,
-                            timestamp: serverTimestamp()
-                        });
-                        
-                        showToast(`Successfully sent ${gift.name}!`);
-                        closeModal(); // Close modal if open
-                    } else {
-                        // REDIRECT IF INSUFFICIENT DIAMONDS
-                        if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store?`)) {
-                            window.location.href = 'index.html?action=buy_diamonds';
-                        }
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                        user: currentUser,
+                        text: `Sent ${gift.name}!`,
+                        giftUrl: gift.imageUrl, 
+                        timestamp: serverTimestamp()
+                    });
+                    
+                    showToast(`Successfully sent ${gift.name}!`);
+                    closeModal();
+                } else {
+                    if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store to buy more?`)) {
+                        window.redirectToDiamondStore();
                     }
-                });
+                }
             };
 
-            // Global removal for Admin/Host Video Control
             window.removeRoomMedia = function(roomId) {
                 remove(ref(db, 'audio_rooms/' + roomId + '/media'));
             };
 
 
-            // --- WEBRTC CALLING LOGIC (1v1) ---
             let localStream1v1 = null;
             let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
             const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
-            // --- WEBRTC ROOM AUDIO (Mesh) ---
             let roomLocalStream = null;
             let roomPeers = {}; 
             let signalUnsubscribe = null;
 
-            // --- UI Elements ---
             const liveRoomScreen = document.getElementById('live-room-screen');
             const modals = document.querySelectorAll('.modal-overlay');
             const closeButtons = document.querySelectorAll('.close-btn');
@@ -915,7 +1153,6 @@
                 modals.forEach(modal => modal.style.display = 'none');
             };
 
-            // --- WebRTC 1v1 Functions ---
             function listenForIncomingCalls() {
                 if(!currentUser) return;
                 onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
@@ -1013,8 +1250,6 @@
             document.getElementById("btn-end-video").addEventListener("click", stopWebRTC1v1);
             document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC1v1);
 
-
-            // --- ROOM WEBRTC MESH LOGIC ---
             async function startRoomAudio() {
                 try {
                     roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
@@ -1034,11 +1269,25 @@
                             push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
                                 sender: currentUser, type: 'answer', sdp: answer
                             });
+                            
+                            if (roomPeers[sender].pendingCandidates) {
+                                roomPeers[sender].pendingCandidates.forEach(c => roomPeers[sender].addIceCandidate(c).catch(e=>console.log(e)));
+                                roomPeers[sender].pendingCandidates = [];
+                            }
                         } else if (data.type === 'answer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            
+                            if (roomPeers[sender].pendingCandidates) {
+                                roomPeers[sender].pendingCandidates.forEach(c => roomPeers[sender].addIceCandidate(c).catch(e=>console.log(e)));
+                                roomPeers[sender].pendingCandidates = [];
+                            }
                         } else if (data.type === 'candidate') {
-                            if(roomPeers[sender].remoteDescription) {
-                                roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                            const candidate = new RTCIceCandidate(data.candidate);
+                            if (roomPeers[sender].remoteDescription && roomPeers[sender].remoteDescription.type) {
+                                roomPeers[sender].addIceCandidate(candidate).catch(e=>console.log(e));
+                            } else {
+                                if (!roomPeers[sender].pendingCandidates) roomPeers[sender].pendingCandidates = [];
+                                roomPeers[sender].pendingCandidates.push(candidate);
                             }
                         }
                     });
@@ -1068,6 +1317,7 @@
 
             function createRoomPeerConnection(targetUser) {
                 const pc = new RTCPeerConnection(servers);
+                pc.pendingCandidates = [];
                 if(roomLocalStream) {
                     roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
                 }
@@ -1109,7 +1359,6 @@
                 }
             }
 
-            // --- UI Search & Invite Functions ---
             document.getElementById('btn-search-users').addEventListener('click', () => {
                 const query = document.getElementById('user-search-input').value.trim().toLowerCase();
                 if(!query) return;
@@ -1155,8 +1404,6 @@
                 }
             };
 
-
-            // --- Audio Rooms UI Functions ---
             window.openUserProfile = function(username, avatar) {
                 document.getElementById('popup-username').innerText = username;
                 document.getElementById('popup-profile-img').src = avatar;
@@ -1228,11 +1475,9 @@
                     lobbyScreen.style.display = 'none';
                     liveRoomScreen.style.display = 'flex';
 
-                    // Track host for YouTube control visibility
                     get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
                         currentRoomHost = hostSnap.val();
 
-                        // Render Youtube if exists (Host check applied)
                         if (unsubscribeMedia) unsubscribeMedia();
                         unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
                             const videoId = snap.val();
@@ -1247,11 +1492,7 @@
                                     <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
                                 </div>`;
                             } else {
-                                display.innerHTML = `
-                                    <div class="logo-z">Z</div>
-                                    <div class="logo-text">ZINGOO</div>
-                                    <div class="logo-sub">Audio Room</div>
-                                `;
+                                display.innerHTML = ``;
                             }
                         });
                     });
@@ -1262,7 +1503,6 @@
                         renderSeats(snapshot.val() || {});
                     });
 
-                    // Setup Chat Listeners
                     const chatContainer = document.getElementById('chat-messages');
                     const floatingContainer = document.getElementById('floating-live-chat');
                     
@@ -1279,17 +1519,25 @@
                             msgDiv.className = 'chat-msg';
                             if(msgData.user === currentUser) {
                                 msgDiv.style.alignSelf = 'flex-end';
-                                msgDiv.style.backgroundColor = '#ffe4e8';
+                                msgDiv.style.background = 'rgba(255, 0, 76, 0.05)';
                             }
-                            msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+
+                            if(msgData.giftUrl) {
+                                triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
+                                msgDiv.classList.add('gift-message');
+                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:30px; vertical-align:middle; margin-left:5px;">`;
+                            } else {
+                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+                            }
+
                             chatContainer.appendChild(msgDiv);
-                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
                             
                             const floatDiv = document.createElement('div');
                             floatDiv.className = 'floating-chat-msg';
-                            floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
+                            floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
                             floatingContainer.appendChild(floatDiv);
-                            floatingContainer.scrollTop = floatingContainer.scrollHeight;
+                            setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
                             
                             setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
                         }
@@ -1310,7 +1558,7 @@
                         }
                     } else {
                         alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
-                        window.location.href = 'index.html?action=buy_diamonds';
+                        window.redirectToDiamondStore();
                     }
                 } else {
                     proceed();
@@ -1347,9 +1595,15 @@
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
                         if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
+                        let chairHTML = '';
+                        if (seatInfo.chairUrl) {
+                            chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
+                        }
+
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
-                                <img src="${seatInfo.avatar}" alt="Speaker">
+                                ${chairHTML}
+                                <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
                                 <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
                                 </div>
@@ -1363,8 +1617,7 @@
                             <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
                                 <svg viewBox="0 0 24 24"><path d="M20,10V7A2,2 0 0,0 18,5H6A2,2 0 0,0 4,7V10A2,2 0 0,0 2,12V15A2,2 0 0,0 4,17H5V20H7V17H17V20H19V17H20A2,2 0 0,0 22,15V12A2,2 0 0,0 20,10M6,7H18V10H6V7M20,15H4V12H20V15Z" fill="currentColor"/></svg>
                             </div>
-                            <p>Join</p>
-                            <span class="admin-tag">Seat ${i + 1}</span>
+                            <p>Seat ${i + 1}</p>
                         `;
                     }
                     speakerGrid.appendChild(seatDiv);
@@ -1379,11 +1632,20 @@
                         return;
                     }
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
-                    set(seatRef, { user: currentUser, avatar: currentAvatar, isMuted: false, timestamp: serverTimestamp() });
+                    onDisconnect(seatRef).remove().then(() => {
+                        set(seatRef, { 
+                            user: currentUser, 
+                            avatar: currentAvatar, 
+                            isMuted: false, 
+                            timestamp: serverTimestamp(),
+                            chairUrl: myEquippedChair 
+                        });
+                    });
                 },
                 leaveSeat: () => {
                     if (!currentActiveRoomId || mySeatIndex === -1) return;
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                    onDisconnect(seatRef).cancel();
                     remove(seatRef);
                 }
             };
@@ -1415,7 +1677,7 @@
                     text: text,
                     timestamp: serverTimestamp()
                 });
-                input.value = '';
+                input.value = ''; 
             }
             document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
             document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
@@ -1443,36 +1705,58 @@
             });
             
             document.getElementById('start-new-room-btn').addEventListener('click', () => {
-                const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
-                const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
-                
-                const newRoomRef = push(ref(db, 'audio_rooms'));
-                set(newRoomRef, {
-                    name: topic,
-                    fee: fee,
-                    host: currentUser,
-                    hostAvatar: currentAvatar,
-                    createdAt: serverTimestamp(),
-                    seats: {}
-                }).then(() => {
-                    // Send pending invites
-                    pendingInvites.forEach(user => {
-                        push(ref(db, `invites/${user}`), {
-                            sender: currentUser,
-                            roomName: topic,
-                            timestamp: serverTimestamp()
-                        });
-                    });
-                    pendingInvites = []; // Clear array
+                get(ref(db, 'audio_rooms')).then(snap => {
+                    let alreadyHosting = false;
+                    let existingRoomId = null;
+                    let existingRoomTitle = null;
+                    if(snap.exists()){
+                        const rooms = snap.val();
+                        for(let id in rooms){
+                            if(rooms[id].host === currentUser){
+                                alreadyHosting = true;
+                                existingRoomId = id;
+                                existingRoomTitle = rooms[id].name;
+                                break;
+                            }
+                        }
+                    }
                     
-                    closeModal();
-                    joinAudioRoom(newRoomRef.key, topic, 0);
+                    if(alreadyHosting){
+                        showToast("You already have an active room! Joining it...");
+                        closeModal();
+                        joinAudioRoom(existingRoomId, existingRoomTitle, 0);
+                        return;
+                    }
+                    
+                    const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
+                    const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
+                    
+                    const newRoomRef = push(ref(db, 'audio_rooms'));
+                    set(newRoomRef, {
+                        name: topic,
+                        fee: fee,
+                        host: currentUser,
+                        hostAvatar: currentAvatar,
+                        createdAt: serverTimestamp(),
+                        seats: {}
+                    }).then(() => {
+                        pendingInvites.forEach(user => {
+                            push(ref(db, `invites/${user}`), {
+                                sender: currentUser,
+                                roomName: topic,
+                                timestamp: serverTimestamp()
+                            });
+                        });
+                        pendingInvites = [];
+                        
+                        closeModal();
+                        joinAudioRoom(newRoomRef.key, topic, 0);
+                    });
                 });
             });
 
             document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
             
-            // --- Action Menu Buttons ---
             document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
@@ -1482,45 +1766,41 @@
                 closeModal();
             });
 
+            // UPDATED: Settings now opens Chair Shop
             document.getElementById('menu-settings-btn').addEventListener('click', () => {
-                showToast("Opening settings...");
                 closeModal();
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    openModal('room-settings-modal');
+                } else {
+                    showToast("Only the room host can access Room Settings!");
+                }
             });
 
             document.getElementById('menu-mute-all-btn').addEventListener('click', () => {
-                if(currentActiveRoomId) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                        if(snap.val() === currentUser) {
-                            get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
-                                const seats = seatSnap.val();
-                                if(seats) {
-                                    Object.keys(seats).forEach(key => {
-                                        if(seats[key].user !== currentUser) {
-                                            set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
-                                        }
-                                    });
-                                    showToast("Muted all users.");
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
+                        const seats = seatSnap.val();
+                        if(seats) {
+                            Object.keys(seats).forEach(key => {
+                                if(seats[key].user !== currentUser) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
                                 }
                             });
-                        } else {
-                            showToast("Only the host can mute all!");
+                            showToast("Muted all users.");
                         }
                     });
+                } else {
+                    showToast("Only the host can mute all!");
                 }
                 closeModal();
             });
 
-            // YouTube Media Sync 
             document.getElementById('menu-youtube-btn').addEventListener('click', () => {
                 closeModal();
-                if(currentActiveRoomId) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}/host`)).then(snap => {
-                        if(snap.val() === currentUser) {
-                            openModal('youtube-modal');
-                        } else {
-                            showToast("Only host can play media.");
-                        }
-                    });
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    openModal('youtube-modal');
+                } else {
+                    showToast("Only host can play media.");
                 }
             });
 
@@ -1541,7 +1821,6 @@
                 }
             });
             
-            // Mic Toggle functionality physically mutes the Local Stream Track
             document.getElementById('main-mic-btn').addEventListener('click', () => {
                  if(currentActiveRoomId && mySeatIndex !== -1) {
                      const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
@@ -1564,7 +1843,6 @@
                  }
             });
 
-            // Re-use logic for the mic button inside the Action Menu
             document.getElementById('menu-mic-btn').addEventListener('click', () => {
                 document.getElementById('main-mic-btn').click();
                 closeModal();
