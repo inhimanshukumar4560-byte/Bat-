@@ -1,10 +1,9 @@
-:
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Audio Live Room - Zingoo</title>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,7 +20,7 @@
             --baby-pink: #FFB3B3;
             --hot-pink: #ff004c;
             --red-accent: #ff3b6b;
-            --text-light: #888888;
+            --text-light: #ffffff; 
             --text-white: #111111; /* Flipped for light theme */
             --text-pure-white: #ffffff; /* For buttons and dark cards */
 
@@ -30,12 +29,19 @@
             --gradient-main: linear-gradient(135deg, #ff004c, #ff3b6b);
             --glow-red: 0 4px 15px rgba(255, 0, 76, 0.3);
             --glow-green: 0 0 20px rgba(37, 211, 102, 0.7);
+
+            /* Audio Room New Theme Colors (From Code A) */
+            --theme-color: #ff8a65;
+            --text-dim: #b3a0cc;
+            --seat-bg: rgba(255, 255, 255, 0.9);
+            --panel-bg: #ffffff;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -43,15 +49,21 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-white);
+            height: 100dvh; /* Modern fix for mobile bottom bar */
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+            position: fixed; /* Stops body from scrolling entirely */
+            width: 100%;
         }
 
         .main-container {
+            width: 100%;
             max-width: 500px;
             margin: 0 auto;
-            height: 100dvh; 
+            height: 100%;
             position: relative;
             background-color: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden; 
@@ -195,45 +207,130 @@
         .fab-create { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
         .fab-create:hover { transform: scale(1.1); }
 
-        /* ---- ZINGOO LIVE ROOM SCREEN STYLES (GLASS UI APPLIED) ---- */
-        #live-room-screen { display: none; }
-        .live-room-container { display: flex; flex-direction: column; height: 100dvh; position: relative; background: url('https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png') no-repeat center center / cover; }
-        
-        /* Glassy Header */
-        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; background: rgba(255, 255, 255, 0.25) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .zh-left { display: flex; align-items: center; gap: 10px; }
-        .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; justify-content: center; align-items: center; color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .zh-info h1 { font-size: 1em; font-weight: 800; color: #fff !important; margin-bottom: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
-        .zh-info p { font-size: 0.75em; color: #eee !important; display: flex; align-items: center; gap: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.6);}
-        .zh-info p i { font-size: 0.9em; color: #fff;}
-        .zh-right { display: flex; align-items: center; gap: 12px; }
-        .zh-btn { background: transparent; border: none; color: #fff !important; font-size: 1.3em; cursor: pointer; transition: transform 0.2s ease; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .zh-btn:hover { transform: scale(1.1); }
-        .zh-btn.gold { color: #ffd700 !important; }
-        .zh-btn.green { color: #25D366 !important; }
-        
-        .room-body { flex-grow: 1; padding: 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
-        .room-body::-webkit-scrollbar { display: none; }
-        
-        /* Fixed Responsive Grid For Mobile (vw based) */
-        .speaker-grid-zingoo { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 12px 2px; 
-            margin-top: 10px; 
-            z-index: 5; 
-            width: 100%; 
-            justify-items: center; 
+        /* ==========================================
+           AUDIO ROOM UI (NEW CHINGARI STYLE FROM CODE A)
+           ========================================== */
+        #live-room-screen {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 70;
         }
+
+        .live-room-container {
+            width: 100%;
+            height: 100%;
+            background: url('https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Large Background Logo Overlay */
+        .big-bg-logo {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            text-align: center;
+        }
+        .big-bg-logo svg {
+            width: 100px;
+            height: 100px;
+            fill: #ff5722;
+            margin-bottom: 10px;
+        }
+        .big-bg-logo h1 {
+            color: #ff8a65;
+            font-size: 40px;
+            font-family: 'Brush Script MT', cursive;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .room-header-a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            z-index: 10;
+        }
+
+        .host-info {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            padding: 5px 15px 5px 5px;
+            max-width: 60%;
+        }
+
+        .host-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            border: 2px solid #ffd700;
+            overflow: hidden;
+        }
+        .host-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .host-details { display: flex; flex-direction: column; overflow: hidden; }
+        .host-name { color: var(--text-light); font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .viewers { color: var(--text-dim); font-size: 10px; display: flex; align-items: center; gap: 3px; }
         
-        /* UPGRADED SEATS UI WITH PREMIUM CHAIRS, FRAMES, ICONS */
-        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .avatar-container { position: relative; width: 14vw; max-width: 55px; height: 14vw; max-height: 55px; border-radius: 50%; margin-bottom: 5px; padding: 2px; background: rgba(255,255,255,0.4); backdrop-filter: blur(5px); transition: all 0.3s ease; }
-        .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
-        .speaker-seat p { font-size: 0.7em; color: #fff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 4px;}
-        .admin-tag { background: rgba(255,0,76,0.8); color: #fff; font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800; text-shadow: none; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
+        .header-actions { display: flex; gap: 15px; align-items: center; color: var(--text-light); font-size: 20px; }
+        .header-icon { cursor: pointer; }
+        .leave-btn { background: rgba(255,0,0,0.5); font-size: 12px; padding: 5px 10px; border-radius: 10px; }
+
+        .seats-container {
+            padding: 20px 10px; 
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 15px 5px;
+            z-index: 10;
+        }
+
+        .seat { display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
         
-        /* Custom Store Assets Overlays */
+        .seat-avatar {
+            width: 50px; 
+            height: 50px;
+            border-radius: 50%;
+            background: var(--seat-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 5px;
+            border: 2px solid transparent;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .seat.empty .seat-avatar {
+            background: white;
+            color: #9c27b0;
+            font-size: 20px;
+            border: 2px solid #9c27b0;
+            overflow: hidden;
+        }
+
+        .seat.occupied .seat-avatar { color: white; font-size: 24px; }
+        .seat-name { color: var(--text-light); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 60px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.8);}
+
+        /* Store Asset Overlays Applied to New Design */
         .custom-chair-frame {
             position: absolute;
             top: -25%; left: -25%;
@@ -267,142 +364,199 @@
         }
         .float-chair { animation: floatChair 3s ease-in-out infinite; }
 
-        .speaker-seat.is-speaking .avatar-container {
-            background: rgba(37, 211, 102, 0.5);
-            box-shadow: 0 0 15px rgba(37, 211, 102, 0.8);
-            animation: pulse-green 1.5s infinite;
-        }
-
-        .mic-icon-status { position: absolute; bottom: -2px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-size: 0.55em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 5;}
-        .mic-icon-status.muted { color: #ff004c; }
-        
-        .speaker-seat.empty .avatar-container { 
-            border: 2px dashed rgba(255, 255, 255, 0.6); 
-            background: rgba(0, 0, 0, 0.15); 
-            display: flex; justify-content: center; align-items: center; 
-        }
-        .speaker-seat.empty:hover .avatar-container { background: rgba(255, 255, 255, 0.25); border-color: #fff;}
-        .speaker-seat.empty .avatar-container svg { width: 22px; height: 22px; fill: #fff; opacity: 0.8; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); }
-        
-        .center-logo-area { text-align: center; margin: 30px 0; display: flex; flex-direction: column; align-items: center; z-index: 5;}
-        .logo-z { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.4); border-left-color: #fff; border-bottom-color: #fff; display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 800; font-style: italic; color: #fff !important; margin-bottom: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
-        .logo-text { font-size: 1.5em; font-weight: 800; letter-spacing: 2px; color: #fff !important; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
-        .logo-sub { font-size: 0.7em; color: #eee !important; display: flex; align-items: center; gap: 10px; margin-top: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .logo-sub::before, .logo-sub::after { content: ''; width: 30px; height: 1px; background: rgba(255,255,255,0.5); }
-        
-        /* Glassy Banners */
-        .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
-        .warning-box { flex: 1.5; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
-        .warning-icon { color: #fff; font-size: 1.5em; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));}
-        .warning-text h5 { font-size: 0.75em; color: #fff !important; margin-bottom: 3px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .warning-text p { font-size: 0.65em; color: #eee !important; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.8);}
-        .offer-box { flex: 1; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 10px; padding: 10px; text-align: center; position: relative; cursor: pointer; }
-        .offer-box .close-x { position: absolute; top: 5px; right: 5px; font-size: 0.6em; cursor: pointer; color:#fff; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));}
-        .offer-title { font-size: 0.65em; color: #fff !important; margin-bottom: 5px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
-        .offer-price { font-size: 1.2em; font-weight: 800; color: #fff !important; display: flex; justify-content: center; align-items: center; gap: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
-        .offer-price i { color: #00BFFF; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));}
-        .offer-sub { font-size: 0.6em; text-decoration: line-through; color: rgba(255,255,255,0.7) !important; text-shadow: 0 1px 1px rgba(0,0,0,0.8); }
-        .buy-btn { background: var(--gradient-main); color: white; border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
-        
-        /* Glassy Gifts Scroll */
-        .gift-scroll-bar { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.2) !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 8px; border-radius: 30px; margin-bottom: 10px; z-index: 5;}
-        .quick-buy-100 { background: rgba(0, 0, 0, 0.3) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 20px; padding: 5px 12px; text-align: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; cursor: pointer; backdrop-filter: blur(5px);}
-        .quick-buy-100 i { color: #00BFFF; }
-        .quick-buy-100 span { display: block; font-size: 0.8em; color: rgba(255,255,255,0.7); font-weight: 400; text-decoration: line-through;}
-        .scrollable-gifts { display: flex; gap: 15px; overflow-x: auto; flex-grow: 1; padding-bottom: 5px; }
-        .scrollable-gifts::-webkit-scrollbar { display: none; }
-        .s-gift-item { text-align: center; flex-shrink: 0; cursor: pointer; transition: transform 0.2s ease; }
-        .s-gift-item:hover { transform: scale(1.1); }
-        .s-gift-item img { width: 25px; height: 25px; object-fit: contain; margin: 0 auto; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));}
-        .s-gift-item p { font-size: 0.6em; color: #fff !important; margin-top: 2px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.8);}
-        .s-gift-item p i { color: #00BFFF; }
-        
-        /* --- NEW FLOATING CHAT OVERLAY --- */
-        .floating-chat-container {
-            position: absolute;
-            bottom: 75px; 
-            left: 15px;
-            width: 80%;
-            height: 180px;
-            overflow-y: hidden;
+        .chat-container {
+            flex: 1;
+            padding: 10px 15px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            z-index: 15;
-            pointer-events: none; 
+            gap: 10px;
+            z-index: 10;
+            margin-bottom: 160px; 
         }
-        .floating-chat-msg {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 18px;
-            font-size: 0.85em;
-            margin-top: 8px;
-            width: max-content;
-            max-width: 100%;
-            word-wrap: break-word;
-            pointer-events: auto;
-            animation: slideInLeft 0.3s ease-out;
-            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+        .chat-container::-webkit-scrollbar { display: none; }
+        
+        .sys-message {
+            color: #ffffff;
+            font-size: 13px;
+            line-height: 1.4;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 15px;
+            border-radius: 10px;
+            align-self: flex-start;
+            max-width: 90%;
         }
-        .floating-chat-msg .username { color: #ffeb3b; font-weight: bold; margin-right: 5px; }
-        .floating-system-msg {
-            background: rgba(255, 0, 76, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 6px 12px;
+
+        .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; }
+        .msg-avatar { width: 25px; height: 25px; border-radius: 50%; background: #ccc; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; }
+        .msg-content { background: rgba(0, 0, 0, 0.5); padding: 8px 12px; border-radius: 12px; border-top-left-radius: 0; }
+        .msg-name { color: #ffeb3b; font-size: 11px; font-weight: bold; margin-bottom: 3px; }
+        .msg-text { color: white; font-size: 13px; }
+
+        .limited-offers {
+            position: absolute;
+            bottom: 140px;
+            right: 15px;
+            background: linear-gradient(135deg, #b388ff, #7c4dff);
             border-radius: 15px;
-            font-size: 0.8em;
-            margin-top: 6px;
+            padding: 10px;
+            color: white;
+            text-align: center;
+            z-index: 20;
+            box-shadow: 0 0 15px rgba(124, 77, 255, 0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+        }
+        .limited-offers h5 { font-size: 10px; font-weight: normal; margin-bottom: 5px; }
+        .limited-offers .offer-content { display: flex; align-items: center; gap: 5px; font-size: 16px; font-weight: bold; justify-content: center; }
+        .limited-offers .offer-price { font-size: 9px; color: #e0e0e0; margin-top: 5px; text-decoration: line-through; }
+        .limited-offers button { background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 10px; padding: 4px 10px; font-size: 10px; margin-top: 5px; cursor: pointer; width: 100%;}
+
+        .bottom-ui-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 15px 15px 15px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); 
+            z-index: 20;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .upper-bottom-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .balance-pill {
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
             font-weight: bold;
-            width: max-content;
-            animation: slideInLeft 0.3s ease-out;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .balance-pill span { font-size: 8px; color: #666; font-weight: normal; margin-top: 2px;}
+
+        .horizontal-gifts {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            flex: 1;
+            scrollbar-width: none;
+            padding-bottom: 5px;
+        }
+        .horizontal-gifts::-webkit-scrollbar { display: none; }
+        
+        .h-gift-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            min-width: 40px;
+            transition: transform 0.2s ease;
+        }
+        .h-gift-item:hover { transform: scale(1.1); }
+        .h-gift-price { font-size: 9px; color: white; margin-top: 2px; display: flex; align-items: center; gap: 2px; font-weight:bold;}
+
+        .lower-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+        .chat-pill-btn {
+            background: #ff8a65;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 138, 101, 0.4);
         }
 
-        /* Glassy Footer */
-        .zingoo-footer { padding: 10px 15px 20px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.25) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.2); z-index: 20;}
-        .chat-open-btn { background: rgba(0, 0, 0, 0.2) !important; border: 1px solid rgba(255,255,255,0.3) !important; color: #fff !important; padding: 10px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .chat-open-btn:hover { background-color: rgba(255, 255, 255, 0.3) !important; }
-        .footer-right-actions { display: flex; gap: 12px; }
-        .zf-btn { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.1em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
-        .zf-btn:hover { transform: scale(1.1); }
-        .zf-dots { background: rgba(255,255,255,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.4);}
-        .zf-gift { background: #ffeb3b; color: #b45309; }
-        .zf-mic { background: var(--hot-pink); }
-
-        /* --- GLASSY CHAT PANEL OVERLAY --- */
-        #chat-panel-overlay { 
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; 
-            background: rgba(30, 30, 30, 0.8); /* Dark Glass */
-            backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
-            z-index: 50; animation: slideUpModal 0.3s ease-out; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+        .action-circles {
+            display: flex;
+            gap: 12px;
         }
-        .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .chat-panel-header h3 { font-size: 1.1em; color: #fff; font-weight: 800;}
-        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .chat-messages::-webkit-scrollbar { display: none; }
-        .chat-msg { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 500;}
-        .chat-msg .username { color: var(--hot-pink); font-weight: 800; margin-right: 5px; }
-        .chat-msg.system { background: transparent; box-shadow: none; border: none; font-style: italic; color: #aaa; text-align: center; align-self: center; font-size: 0.8em;}
-        .chat-msg.gift-message { background: linear-gradient(135deg, rgba(255,0,76,0.2), rgba(255,59,107,0.2)); border: 1px solid var(--hot-pink); color: #fff; font-weight: 700; align-self: flex-start; }
-        .chat-input-area { padding: 15px; display: flex; gap: 10px; background: transparent; border-top: 1px solid rgba(255,255,255,0.1);}
-        .chat-input { flex-grow: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500;}
-        .chat-input::placeholder { color: #aaa; }
-        .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: rgba(255,255,255,0.2);}
-        #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;}
-        #send-msg-btn:hover { transform: scale(1.1); }
+
+        .circle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        .circle-btn:hover { transform: scale(1.1); }
+        .menu-circle { background: #ab47bc; }
+        .gift-circle { background: #26a69a; }
+        .flame-circle { background: #ff004c; } /* Adjusting flame circle to code B mic style */
+
+        .chat-input-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+            background: linear-gradient(to top, rgba(26, 15, 46, 1) 50%, rgba(26, 15, 46, 0.8));
+            display: none;
+            z-index: 40;
+        }
+        .chat-input-overlay.active { display: block; }
+        
+        .chat-input-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ff8a65;
+            border-radius: 30px;
+            padding: 5px 15px;
+            background: transparent;
+        }
+        .chat-input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 0;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input-box input::placeholder { color: rgba(255,255,255,0.5); }
+        .chat-send-icon {
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 5px;
+        }
+
+        .bottom-sheet-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 35; display: none; }
+        .bottom-sheet-overlay.active { display: block; }
 
         /* --- Modals / Popups --- */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: flex-end; }
@@ -579,90 +733,81 @@
             </button>
         </div>
 
-        <!-- LIVE ROOM SCREEN -->
+        <!-- LIVE ROOM SCREEN (Updated to Premium Chingari Style) -->
         <div id="live-room-screen">
-             <div class="live-room-container" id="live-room-bg">
-                <header class="zingoo-header">
-                    <div class="zh-left">
-                        <div class="zh-mic-icon"><i class="fas fa-microphone-alt"></i></div>
-                        <div class="zh-info">
-                            <h1 id="live-room-title">Loading Room...</h1>
-                            <p><i class="fas fa-user-friends"></i> <span id="listener-count-num">1</span></p>
-                        </div>
-                    </div>
-                    <div class="zh-right">
-                        <button class="zh-btn gold" onclick="window.redirectToDiamondStore(20, 100)"><i class="fas fa-crown"></i></button>
-                        <button class="zh-btn green"><i class="fab fa-whatsapp"></i></button>
-                        <button class="zh-btn" id="header-more-btn"><i class="fas fa-ellipsis-v"></i></button>
-                        <button class="zh-btn" id="close-room-btn"><i class="fas fa-sign-out-alt"></i></button>
-                    </div>
-                </header>
-                <main class="room-body">
-                    <div class="speaker-grid-zingoo" id="speaker-grid-container">
-                        <!-- Speakers Injected Here -->
-                    </div>
-                    
-                    <div class="center-logo-area" id="room-center-display">
-                        <div class="logo-z">Z</div>
-                        <div class="logo-text">ZINGOO</div>
-                        <div class="logo-sub">Audio Room</div>
-                    </div>
-                    
-                    <div class="banners-container">
-                        <div class="warning-box">
-                            <div class="warning-icon"><i class="fas fa-shield-alt"></i></div>
-                            <div class="warning-text">
-                                <h5>Welcome to Zingoo!</h5>
-                                <p>This room is being monitored. Please abide by the guidelines.</p>
-                            </div>
-                            <i class="fas fa-times close-x" style="position:absolute; right:10px; top:10px; font-size:10px; color:#fff; cursor:pointer;"></i>
-                        </div>
-                        <div class="offer-box" onclick="window.redirectToDiamondStore(20, 100)">
-                            <i class="fas fa-times close-x"></i>
-                            <div class="offer-title">+ Limited Offers +</div>
-                            <div class="offer-price"><i class="fas fa-gem"></i> 20</div>
-                            <div class="offer-sub">₹20 ₹6.78</div>
-                            <button class="buy-btn" onclick="event.stopPropagation(); window.redirectToDiamondStore(20, 100)">Buy Now</button>
-                        </div>
-                    </div>
-                    <div class="gift-scroll-bar">
-                         <div class="quick-buy-100" onclick="window.redirectToDiamondStore(100, 500)">
-                            <i class="fas fa-gem"></i> 100
-                            <span>₹100 ₹33.05</span>
-                        </div>
-                        <div class="scrollable-gifts" id="bottom-scrollable-gifts">
-                            <p style="font-size:10px; color:#fff; text-shadow:0 1px 2px #000; padding-top:10px;">Loading gifts...</p>
-                        </div>
-                    </div>
-                </main>
+            <div class="live-room-container" id="live-room-bg">
                 
-                <div id="floating-live-chat" class="floating-chat-container">
-                    <div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>
+                <div class="big-bg-logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C12 2 7 7 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 7 12 2 12 2ZM12 22C6.48 22 2 17.52 2 12C2 10.88 2.19 9.8 2.54 8.8C3.12 11.23 5.3 13 8 13C8 13 8 10 10.5 7.5C11.66 6.34 13.5 6.34 14.66 7.5C17.16 10 17.16 13 17.16 13C19.86 13 22 10.86 22 8.16C22 9.38 22 10.66 22 12C22 17.52 17.52 22 12 22Z"/>
+                    </svg>
+                    <h1>Chingari</h1>
                 </div>
 
-                <footer class="zingoo-footer">
-                    <button class="chat-open-btn" id="open-chat-btn"><i class="fas fa-comment-dots"></i> Chat</button>
-                    <div class="footer-right-actions">
-                        <button class="zf-btn zf-dots" id="bottom-more-btn"><i class="fas fa-ellipsis-v"></i></button>
-                        <button class="zf-btn zf-gift" id="gift-btn-footer"><i class="fas fa-gift"></i></button>
-                        <button class="zf-btn zf-mic" id="main-mic-btn"><i class="fas fa-microphone"></i></button>
+                <header class="room-header-a">
+                    <div class="host-info">
+                        <div class="host-avatar"><img id="header-host-avatar" src="https://via.placeholder.com/35" onerror="this.src='https://via.placeholder.com/35'"></div>
+                        <div class="host-details">
+                            <span class="host-name" id="live-room-title">Loading Room...</span>
+                            <span class="viewers">👥 <span id="listener-count-num">0</span></span>
+                        </div>
                     </div>
-                </footer>
-                
-                <!-- GLASSY CHAT PANEL OVERLAY -->
-                <div id="chat-panel-overlay">
-                    <div class="chat-panel-header">
-                        <h3>Live Chat</h3>
-                        <button class="close-btn" id="close-chat-btn"><i class="fas fa-times"></i></button>
+                    <div class="header-actions">
+                        <span class="header-icon leave-btn" id="close-room-btn">Leave</span>
                     </div>
-                    <div id="chat-messages" class="chat-messages">
-                        <div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>
+                </header>
+
+                <div id="room-center-display" style="width: 90%; margin: 10px auto; border-radius: 10px; overflow: hidden; z-index: 15; box-shadow: 0 5px 15px rgba(0,0,0,0.5);"></div>
+
+                <div class="seats-container" id="speaker-grid-container">
+                    <!-- WebRTC Seats Injected Here via JS -->
+                </div>
+
+                <div class="chat-container" id="chat-messages-a">
+                    <div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>
+                </div>
+
+                <div class="limited-offers" onclick="window.redirectToDiamondStore(20, 100)">
+                    <h5>Limited Offers</h5>
+                    <div class="offer-content">💎 <span>20</span></div>
+                    <div class="offer-price">₹20</div>
+                    <button onclick="event.stopPropagation(); window.redirectToDiamondStore(20, 100)">Buy Now</button>
+                </div>
+
+                <div class="bottom-ui-wrapper" id="mainBottomUI">
+                    <div class="upper-bottom-row">
+                        <div class="balance-pill" onclick="window.redirectToDiamondStore(100, 500)">
+                            <div>💎 <span id="room-my-diamonds" style="font-size:11px; color:black; font-weight:bold;">0</span></div>
+                            <span>Buy More</span>
+                        </div>
+                        
+                        <div class="horizontal-gifts" id="bottom-scrollable-gifts-a">
+                            <span style="color:white; font-size:10px;">Loading gifts...</span>
+                        </div>
                     </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
-                        <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
+
+                    <div class="lower-bottom-row">
+                        <button class="chat-pill-btn" id="open-chat-btn-a">
+                            💬 Chat
+                        </button>
+                        
+                        <div class="action-circles">
+                            <button class="circle-btn menu-circle" id="bottom-more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            <button class="circle-btn gift-circle" id="gift-btn-footer">🎁</button>
+                            <button class="circle-btn flame-circle" id="main-mic-btn"><i class="fas fa-microphone"></i></button>
+                        </div>
                     </div>
                 </div>
+
+                <div class="chat-input-overlay" id="chat-input-area-a">
+                    <div class="chat-input-box">
+                        <input type="text" id="live-chat-input-a" placeholder="Add comment...">
+                        <button class="chat-send-icon" id="send-msg-btn-a">➤</button>
+                    </div>
+                </div>
+
+                <div class="bottom-sheet-overlay" id="chat-overlay-bg-a"></div>
+
             </div>
         </div>
 
@@ -996,6 +1141,7 @@
                         onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
                             const d = snap.val() || 0;
                             document.getElementById('lobby-diamond-balance').innerText = d;
+                            document.getElementById('room-my-diamonds').innerText = d; // update new design pill
                             localStorage.setItem("zingoo_diamonds", d);
                         });
                         
@@ -1053,7 +1199,7 @@
             let availableGifts = {};
             function fetchAdminGifts() {
                 onValue(ref(db, 'gifts'), (snap) => {
-                    const scrollContainer = document.getElementById('bottom-scrollable-gifts');
+                    const scrollContainer = document.getElementById('bottom-scrollable-gifts-a');
                     const modalGridContainer = document.getElementById('modal-gift-grid');
                     scrollContainer.innerHTML = '';
                     modalGridContainer.innerHTML = '';
@@ -1063,9 +1209,9 @@
                         availableGifts = data;
                         Object.entries(data).forEach(([key, gift]) => {
                             scrollContainer.innerHTML += `
-                                <div class="s-gift-item" onclick="sendRoomGift('${key}')">
-                                    <img src="${gift.imageUrl}" alt="${gift.name}">
-                                    <p><i class="fas fa-gem"></i> ${gift.cost}</p>
+                                <div class="h-gift-item" onclick="sendRoomGift('${key}')">
+                                    <img src="${gift.imageUrl}" style="width:30px; height:30px; object-fit:contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+                                    <span class="h-gift-price">💎 ${gift.cost}</span>
                                 </div>
                             `;
                             modalGridContainer.innerHTML += `
@@ -1541,11 +1687,18 @@
                     lobbyScreen.style.display = 'none';
                     liveRoomScreen.style.display = 'flex';
 
+                    // Update Header avatar
+                    get(ref(db, `audio_rooms/${roomId}/hostAvatar`)).then(snap => {
+                        if (snap.val()) {
+                            document.getElementById('header-host-avatar').src = snap.val();
+                        }
+                    });
+
                     // Listen for Dynamic Room Background Updates
                     if(bgListener) bgListener();
                     bgListener = onValue(ref(db, `audio_rooms/${roomId}/backgroundUrl`), (snap) => {
                         const bgUrl = snap.val();
-                        const defaultBg = "https://i.ibb.co/XkjDTtYF/file-00000000484c71f8880494edee7225e8.png";
+                        const defaultBg = "https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png";
                         document.getElementById('live-room-bg').style.backgroundImage = `url('${bgUrl || defaultBg}')`;
                     });
 
@@ -1557,20 +1710,18 @@
                             const videoId = snap.val();
                             const display = document.getElementById('room-center-display');
                             if(videoId) {
+                                display.style.display = 'block';
                                 let closeBtn = (currentRoomHost === currentUser) 
                                     ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
                                     : '';
                                 
                                 display.innerHTML = `<div style="position:relative; width:100%;">
                                     ${closeBtn}
-                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
+                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen playsinline style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
                                 </div>`;
                             } else {
-                                display.innerHTML = `
-                                    <div class="logo-z">Z</div>
-                                    <div class="logo-text">ZINGOO</div>
-                                    <div class="logo-sub">Audio Room</div>
-                                `;
+                                display.style.display = 'none';
+                                display.innerHTML = ``;
                             }
                         });
                     });
@@ -1581,11 +1732,8 @@
                         renderSeats(snapshot.val() || {});
                     });
 
-                    const chatContainer = document.getElementById('chat-messages');
-                    const floatingContainer = document.getElementById('floating-live-chat');
-                    
-                    chatContainer.innerHTML = '<div class="chat-msg system">Welcome to the Zingoo Room! Be respectful.</div>';
-                    floatingContainer.innerHTML = '<div class="floating-system-msg">Welcome to the Zingoo Room! Be respectful.</div>';
+                    const chatContainer = document.getElementById('chat-messages-a');
+                    chatContainer.innerHTML = '<div class="sys-message">Welcome to Zingoo Audio Room! Please follow community guidelines.</div>';
                     
                     if (unsubscribeChat) unsubscribeChat();
                     const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
@@ -1594,36 +1742,31 @@
                         const msgData = snapshot.val();
                         if(msgData) {
                             const msgDiv = document.createElement('div');
-                            msgDiv.className = 'chat-msg';
-                            if(msgData.user === currentUser && !msgData.isSystem) {
-                                msgDiv.style.alignSelf = 'flex-end';
-                                msgDiv.style.background = 'rgba(255, 0, 76, 0.2)';
+                            
+                            if(msgData.isSystem) {
+                                msgDiv.className = 'sys-message';
+                                msgDiv.innerHTML = `${msgData.user} ${msgData.text}`;
+                            } else {
+                                msgDiv.className = 'user-message';
+                                let contentHTML = msgData.giftUrl 
+                                    ? `Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:25px; vertical-align:middle; margin-left:5px;">` 
+                                    : msgData.text;
+                                
+                                let avatarColor = (msgData.user === currentUser) ? '#ff5722' : '#9c27b0';
+                                msgDiv.innerHTML = `
+                                    <div class="msg-avatar" style="background:${avatarColor}">🧑</div>
+                                    <div class="msg-content">
+                                        <div class="msg-name">${msgData.user}</div>
+                                        <div class="msg-text">${contentHTML}</div>
+                                    </div>
+                                `;
                             }
 
-                            if(msgData.isSystem) {
-                                msgDiv.className = 'chat-msg system';
-                                msgDiv.innerHTML = `${msgData.user} ${msgData.text}`;
-                            } else if(msgData.giftUrl) {
-                                triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
-                                msgDiv.classList.add('gift-message');
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:30px; vertical-align:middle; margin-left:5px;">`;
-                            } else if(msgData.stickerUrl) {
-                                triggerGrandGiftAnimation(msgData.stickerUrl, msgData.user + " joined the room!");
-                            } else {
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
-                            }
+                            if(msgData.giftUrl) triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
+                            if(msgData.stickerUrl) triggerGrandGiftAnimation(msgData.stickerUrl, msgData.user + " joined the room!");
 
                             chatContainer.appendChild(msgDiv);
                             setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
-                            
-                            if(!msgData.isSystem) {
-                                const floatDiv = document.createElement('div');
-                                floatDiv.className = 'floating-chat-msg';
-                                floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
-                                floatingContainer.appendChild(floatDiv);
-                                setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
-                                setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
-                            }
                         }
                     });
                 };
@@ -1636,6 +1779,7 @@
                             set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
                                 localStorage.setItem("zingoo_diamonds", newBal);
                                 document.getElementById('lobby-diamond-balance').innerText = newBal;
+                                document.getElementById('room-my-diamonds').innerText = newBal;
                                 showToast(`Paid ${fee} diamonds. Welcome!`);
                                 proceed();
                             });
@@ -1672,37 +1816,35 @@
                 for (let i = 0; i < 10; i++) {
                     const seatInfo = seatsData[i];
                     const seatDiv = document.createElement('div');
-                    seatDiv.className = 'speaker-seat';
                     
                     if (seatInfo) {
+                        seatDiv.className = 'seat occupied';
                         seatDiv.dataset.username = seatInfo.user;
-                        seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
-                        if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
 
                         let chairHTML = seatInfo.chairUrl ? `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Chair">` : '';
                         let frameHTML = seatInfo.frameUrl ? `<img src="${seatInfo.frameUrl}" class="custom-profile-frame" alt="Frame">` : '';
                         let iconHTML = seatInfo.iconUrl ? `<img src="${seatInfo.iconUrl}" class="custom-profile-icon" alt="Icon">` : '';
 
+                        let borderStyle = (seatInfo.user === currentUser) ? 'border-color: #00e676;' : (i === 0 ? 'border-color: #ffd700;' : '');
+
                         seatDiv.innerHTML = `
-                            <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
+                            <div class="seat-avatar" style="${borderStyle}" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
                                 ${chairHTML}
                                 ${frameHTML}
-                                <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
+                                <img src="${seatInfo.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; position:relative; z-index:2;" onerror="this.src='https://via.placeholder.com/50'">
                                 ${iconHTML}
-                                <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
-                                    <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
-                                </div>
                             </div>
-                            <p>${seatInfo.user}</p>
-                            ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : `<span class="admin-tag">User</span>`}
+                            <span class="seat-name">${seatInfo.user}</span>
+                            ${seatInfo.user === currentUser 
+                                ? `<span style="font-size:8px; background:red; color:white; border-radius:5px; padding:1px 4px; position:absolute; top:-5px; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</span>` 
+                                : (i === 0 ? `<span class="seat-role" style="background:#ff9800; color:white; font-size:9px; padding:2px 6px; border-radius:10px; position:absolute; bottom:18px;">Owner</span>` : '')}
                         `;
                     } else {
-                        seatDiv.classList.add('empty');
+                        seatDiv.className = 'seat empty';
+                        seatDiv.onclick = () => window.audioRoomAPI.takeSeat(i);
                         seatDiv.innerHTML = `
-                            <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
-                                <svg viewBox="0 0 24 24"><path d="M20,10V7A2,2 0 0,0 18,5H6A2,2 0 0,0 4,7V10A2,2 0 0,0 2,12V15A2,2 0 0,0 4,17H5V20H7V17H17V20H19V17H20A2,2 0 0,0 22,15V12A2,2 0 0,0 20,10M6,7H18V10H6V7M20,15H4V12H20V15Z" fill="currentColor"/></svg>
-                            </div>
-                            <p>Seat ${i + 1}</p>
+                            <div class="seat-avatar">🔒</div>
+                            <span class="seat-name">..</span>
                         `;
                     }
                     speakerGrid.appendChild(seatDiv);
@@ -1762,7 +1904,7 @@
             }
 
             function sendRoomMessage() {
-                const input = document.getElementById('live-chat-input');
+                const input = document.getElementById('live-chat-input-a');
                 const text = input.value.trim();
                 if(!text || !currentActiveRoomId) return;
                 
@@ -1772,9 +1914,10 @@
                     timestamp: serverTimestamp()
                 });
                 input.value = ''; 
+                document.getElementById('chat-overlay-bg-a').click(); // close input
             }
-            document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
-            document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
+            document.getElementById('send-msg-btn-a').addEventListener('click', sendRoomMessage);
+            document.getElementById('live-chat-input-a').addEventListener('keypress', (e) => {
                 if(e.key === 'Enter') sendRoomMessage();
             });
 
@@ -1827,7 +1970,6 @@
 
             document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
             
-            document.getElementById('header-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
             
@@ -1914,8 +2056,19 @@
                 closeModal();
             });
 
-            document.getElementById('open-chat-btn').addEventListener('click', () => document.getElementById('chat-panel-overlay').style.display = 'flex');
-            document.getElementById('close-chat-btn').addEventListener('click', () => document.getElementById('chat-panel-overlay').style.display = 'none');
+            document.getElementById('open-chat-btn-a').addEventListener('click', () => { 
+                document.getElementById('mainBottomUI').style.display = 'none'; 
+                document.getElementById('chat-input-area-a').classList.add('active'); 
+                document.getElementById('chat-overlay-bg-a').classList.add('active'); 
+                document.getElementById('live-chat-input-a').focus(); 
+            });
+
+            document.getElementById('chat-overlay-bg-a').addEventListener('click', () => {
+                document.getElementById('chat-input-area-a').classList.remove('active');
+                document.getElementById('chat-overlay-bg-a').classList.remove('active');
+                document.getElementById('mainBottomUI').style.display = 'block';
+            });
+            
         });
     </script>
 </body>
