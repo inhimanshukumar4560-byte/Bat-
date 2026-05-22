@@ -1,4 +1,4 @@
-
+:
 
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
@@ -377,7 +377,7 @@
                     </h2>
                     <p class="text-sm text-white/80 flex items-center gap-1 mt-0.5">
                         <span id="profile-header-id">ID: 00000000</span>
-                        <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="alert('ID Copied')">content_copy</span>
+                        <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="navigator.clipboard.writeText(currentId); alert('ID Copied: ' + currentId)">content_copy</span>
                     </p>
                     <p class="text-xs text-white/90 mt-2 leading-tight">Welcome to Zingoo 🎙️<br>Let's connect and vibe together! ✨</p>
                 </div>
@@ -1644,20 +1644,25 @@
       }
 
       if (name && ageNum >= 18 && phone && gender && state) {
-          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+          // FIX: Keep existing ID if editing profile, else create new
+          const finalId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
+          
+          // FIX: Keep existing balances if editing
+          const existingDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+          const existingWallet = parseFloat(localStorage.getItem('zingoo_wallet') || '0');
           
           set(ref(db, 'users/' + name), {
-              name: name, id: newId, phone: phone, gender: gender, state: state, avatar: currentAvatar, diamonds: 0, wallet: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
+              name: name, id: finalId, phone: phone, gender: gender, state: state, avatar: currentAvatar, diamonds: existingDiamonds, wallet: existingWallet, status: 'online', golden: false, timestamp: serverTimestamp(),
               services: { video: true, audio: true, chat: true }
           });
 
           localStorage.setItem("zingoo_user", name);
-          localStorage.setItem("zingoo_id", newId);
+          localStorage.setItem("zingoo_id", finalId);
           localStorage.setItem("zingoo_avatar", currentAvatar);
-          localStorage.setItem("zingoo_diamonds", "0");
-          localStorage.setItem("zingoo_wallet", "0"); 
+          localStorage.setItem("zingoo_diamonds", existingDiamonds.toString());
+          localStorage.setItem("zingoo_wallet", existingWallet.toString()); 
           
-          currentUser = name; currentId = newId;
+          currentUser = name; currentId = finalId;
           
           listenToUserData(); 
           authOverlay.style.display = "none";
