@@ -3,308 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Audio Live Room (WebRTC Mesh)</title>
-    <style>
-        /* =========================================
-           CSS STYLES & THEMING (Black / Gold / Hot Pink)
-           ========================================= */
-        :root {
-            --bg-color: #0d0d12;
-            --surface-color: #1a1a24;
-            --gold: #FFD700;
-            --pink: #FF1493;
-            --text-main: #FFFFFF;
-            --text-muted: #888899;
-            --border-radius: 16px;
+    <title>Zingoo - Premium Live Audio Room</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'zingoo-red': '#ff004c',
+                        'zingoo-gold': '#FFD700',
+                        'zingoo-purple': '#8b5cf6',
+                        'zingoo-dark': '#0d0d12'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        display: ['Syne', 'sans-serif']
+                    }
+                }
+            }
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </script>
+    
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
         
-        body, html {
-            width: 100%;
-            height: 100dvh;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+        /* Custom Scrollbars */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Premium Golden Dream Backdrop */
+        .golden-bg {
+            background: radial-gradient(circle at top, #FFF9E6 0%, #FAD961 40%, #F76B1C 100%);
+            position: relative;
             overflow: hidden;
         }
 
-        /* Screen Management */
-        .screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
+        /* Ambient floating golden hearts & bokeh sparkles */
+        .decor-heart {
             position: absolute;
-            top: 0; left: 0;
+            color: rgba(253, 184, 19, 0.45);
+            font-variation-settings: 'FILL' 1;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 10px rgba(247, 107, 28, 0.3));
         }
-        .screen.active { display: flex; }
 
-        /* UI Components */
-        .btn {
-            background: linear-gradient(45deg, var(--pink), var(--gold));
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
+        /* Glassmorphism elements */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .btn:hover { opacity: 0.8; }
-        .btn:disabled { filter: grayscale(100%); cursor: not-allowed; }
+
+        .chat-bubble-glass {
+            background: rgba(141, 98, 22, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Metallic text styling for ZINGOO background logo */
+        .metallic-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 900;
+            font-size: 8rem;
+            background: linear-gradient(135deg, #FFE89C 0%, #F5AF19 40%, #E65C00 80%, #FFE89C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 8px 15px rgba(230, 92, 0, 0.65));
+            letter-spacing: -0.04em;
+            opacity: 0.85;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Keyframe micro-animations */
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: floatUpDown 4s ease-in-out infinite;
+        }
         
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
+        /* Pulse ring for active speakers */
+        .speaking-ring {
+            box-shadow: 0 0 0 4px #ff004c, 0 0 20px rgba(255, 0, 76, 0.8);
+            animation: speaker-pulse 1.5s infinite alternate;
         }
-
-        input[type="text"], input[type="number"], input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 16px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background: var(--surface-color);
-            color: white;
-            font-size: 16px;
+        @keyframes speaker-pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
-
-        /* Login Screen */
-        #login-screen { justify-content: center; align-items: center; padding: 20px; }
-        .login-box {
-            background: var(--surface-color);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .login-box h1 { margin-bottom: 20px; color: var(--gold); }
-        .avatar-preview {
-            width: 100px; height: 100px; border-radius: 50%;
-            background: #333; margin: 0 auto 15px;
-            object-fit: cover; display: block; border: 2px solid var(--pink);
-        }
-
-        /* Lobby Screen */
-        .header {
-            padding: 20px; display: flex; justify-content: space-between; align-items: center;
-            background: var(--surface-color); border-bottom: 1px solid #333;
-        }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-info img { width: 40px; height: 40px; border-radius: 50%; }
-        .diamond-balance { color: var(--gold); font-weight: bold; }
-        
-        .room-list { flex: 1; overflow-y: auto; padding: 20px; }
-        .room-card {
-            background: var(--surface-color); padding: 20px;
-            border-radius: var(--border-radius); margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--pink);
-        }
-        .room-info h3 { margin-bottom: 5px; color: var(--gold); }
-        .room-info p { color: var(--text-muted); font-size: 14px; }
-        
-        .floating-add-btn {
-            position: absolute; bottom: 30px; right: 30px;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: var(--pink); color: white;
-            font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(255,20,147,0.4);
-            cursor: pointer;
-        }
-
-        /* Live Room Screen */
-        .room-header { padding: 15px; background: var(--surface-color); text-align: center; }
-        .seats-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 15px; padding: 20px;
-        }
-        .seat {
-            display: flex; flex-direction: column; align-items: center; cursor: pointer;
-        }
-        .seat-avatar {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: #2a2a35; border: 2px dashed #555;
-            display: flex; justify-content: center; align-items: center;
-            position: relative; object-fit: cover;
-        }
-        .seat.occupied .seat-avatar { border: 2px solid var(--gold); border-style: solid; }
-        .seat.speaking .seat-avatar { border-color: var(--pink); box-shadow: 0 0 15px var(--pink); }
-        .seat-name { font-size: 12px; margin-top: 5px; color: var(--text-muted); text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .mic-muted-icon {
-            position: absolute; bottom: 0; right: 0;
-            background: red; color: white; border-radius: 50%;
-            width: 20px; height: 20px; font-size: 12px; display: flex; justify-content: center; align-items: center;
-        }
-
-        /* Floating Chat */
-        .chat-container {
-            position: absolute; bottom: 80px; left: 10px; right: 10px;
-            max-height: 200px; overflow-y: auto; pointer-events: none;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding-bottom: 10px;
-        }
-        .chat-message {
-            background: rgba(0,0,0,0.5); padding: 8px 12px;
-            border-radius: 12px; margin-bottom: 5px; width: fit-content;
-            max-width: 80%; pointer-events: auto; font-size: 14px;
-        }
-        .chat-message span.sender { color: var(--gold); font-weight: bold; margin-right: 5px; }
-
-        /* Bottom Action Bar */
-        .bottom-bar {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            height: 70px; background: var(--surface-color);
-            display: flex; justify-content: space-around; align-items: center;
-            border-top: 1px solid #333;
-        }
-        .icon-btn {
-            background: #333; border: none; color: white;
-            width: 45px; height: 45px; border-radius: 50%;
-            font-size: 18px; cursor: pointer;
-        }
-        .icon-btn.active { background: var(--pink); }
-        .leave-btn { background: #ff4444; }
-
-        /* Modals */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: none;
-            justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--surface-color); padding: 25px;
-            border-radius: var(--border-radius); width: 90%; max-width: 350px;
-            position: relative;
-        }
-        .close-modal {
-            position: absolute; top: 15px; right: 15px;
-            background: transparent; border: none; color: white; font-size: 20px; cursor: pointer;
-        }
-
-        #audio-container { display: none; }
-        
-        /* Utility Classes */
-        .d-none { display: none !important; }
-        .d-flex { display: flex !important; }
     </style>
 </head>
-<body>
+<body class="golden-bg text-gray-900 w-full h-[100dvh] flex flex-col justify-between overflow-hidden select-none font-sans">
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="login-screen" class="screen active">
-        <div class="login-box">
-            <h1>AudioLive</h1>
-            <img id="avatar-preview" class="avatar-preview" src="https://i.ibb.co/6HvwbJ0/default-avatar.png" alt="Avatar">
-            <input type="file" id="avatar-input" accept="image/*">
-            <input type="text" id="username-input" placeholder="Enter your Unique ID/Name">
-            <button id="login-btn" class="btn">Login & Enter</button>
-            <p id="login-status" style="color:var(--gold); margin-top:10px; font-size:14px;"></p>
-        </div>
+    <!-- Ambient floating hearts container -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <span class="material-symbols-outlined decor-heart text-[120px] top-[5%] left-[-5%] rotate-12 animate-float">favorite</span>
+        <span class="material-symbols-outlined decor-heart text-[80px] top-[20%] right-[-2%] -rotate-12 animate-float" style="animation-delay: 1.5s;">favorite</span>
+        <span class="material-symbols-outlined decor-heart text-[50px] bottom-[30%] left-[8%] rotate-45 animate-float" style="animation-delay: 0.5s;">favorite</span>
+        <span class="material-symbols-outlined decor-heart text-[40px] top-[45%] right-[25%] rotate-[15deg] animate-float" style="animation-delay: 2s;">favorite</span>
+        <span class="material-symbols-outlined decor-heart text-[70px] bottom-[15%] right-[10%] -rotate-45 animate-float" style="animation-delay: 1s;">favorite</span>
     </div>
 
-    <!-- 2. LOBBY SCREEN -->
-    <div id="lobby-screen" class="screen">
-        <div class="header">
-            <div class="user-info">
-                <img id="my-lobby-avatar" src="" alt="Me">
+    <!-- MAIN LOBBY SCREEN (Displayed if not currently inside an audio room) -->
+    <div id="lobby-screen" class="relative z-10 w-full h-full flex flex-col justify-between hidden p-4">
+        <!-- Lobby Header -->
+        <header class="w-full flex justify-between items-center bg-white/70 backdrop-blur-md px-4 py-3 rounded-2xl shadow-md border border-white/40">
+            <div class="flex items-center gap-3">
+                <img id="my-lobby-avatar" src="https://api.dicebear.com/7.x/avataaars/svg" class="w-12 h-12 rounded-full border-2 border-zingoo-red bg-white object-cover shadow-sm">
                 <div>
-                    <h4 id="my-lobby-name">Name</h4>
-                    <div class="diamond-balance">💎 <span id="my-diamonds">1000</span></div>
+                    <h4 id="my-lobby-name" class="font-bold text-gray-900 text-sm">Guest User</h4>
+                    <div class="flex items-center gap-1 text-purple-700 font-extrabold text-xs">
+                        <span class="material-symbols-outlined text-[14px]">diamond</span>
+                        <span id="my-lobby-diamonds">0</span>
+                    </div>
                 </div>
             </div>
-            <button id="logout-btn" class="btn-outline btn" style="padding: 8px 15px; font-size: 14px;">Logout</button>
-        </div>
-        <div class="room-list" id="room-list">
-            <!-- Rooms will be dynamically injected here -->
-        </div>
-        <button class="floating-add-btn" onclick="showModal('create-room-modal')">+</button>
-    </div>
+            <button id="logout-btn" class="bg-red-50 text-red-500 font-extrabold px-4 py-2 rounded-xl text-xs hover:bg-red-100 transition shadow-sm">Logout</button>
+        </header>
 
-    <!-- 3. LIVE ROOM SCREEN -->
-    <div id="room-screen" class="screen">
-        <div class="room-header">
-            <h2 id="room-title">Room Name</h2>
-            <p style="color:var(--text-muted); font-size:12px;">Host: <span id="room-host-name">Host</span> | Entry: 💎<span id="room-entry-fee">0</span></p>
-        </div>
-        
-        <div class="seats-grid" id="seats-grid">
-            <!-- Seats dynamically generated -->
-        </div>
-
-        <div class="chat-container" id="chat-container">
-            <!-- Chat messages dynamically generated -->
-        </div>
-
-        <div class="bottom-bar">
-            <button class="icon-btn" onclick="showModal('chat-modal')">💬</button>
-            <button class="icon-btn" onclick="alert('Gift Feature Coming Soon!')">🎁</button>
-            <button class="icon-btn" id="mic-toggle-btn" disabled>🎤</button>
-            <button class="icon-btn leave-btn" id="leave-room-btn">✖</button>
-        </div>
-    </div>
-
-    <!-- MODALS -->
-
-    <!-- Create Room Modal -->
-    <div class="modal-overlay" id="create-room-modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="hideModal('create-room-modal')">✖</button>
-            <h2 style="margin-bottom:20px; color:var(--gold);">Create Room</h2>
-            <input type="text" id="new-room-name" placeholder="Room Topic (e.g. Chill Beats)">
-            <input type="number" id="new-room-fee" placeholder="Entry Fee in Diamonds (default 0)" value="0">
-            <input type="number" id="new-room-seats" placeholder="Max Seats (default 10)" value="10">
-            <button class="btn" id="create-room-submit" style="width:100%;">Create & Join</button>
-        </div>
-    </div>
-
-    <!-- Chat Input Modal (For mobile friendly typing) -->
-    <div class="modal-overlay" id="chat-modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="hideModal('chat-modal')">✖</button>
-            <h3 style="margin-bottom:15px;">Send Message</h3>
-            <input type="text" id="chat-input" placeholder="Type something nice...">
-            <button class="btn" id="send-chat-btn" style="width:100%;">Send</button>
-        </div>
-    </div>
-
-    <!-- Profile Popup Modal -->
-    <div class="modal-overlay" id="profile-modal">
-        <div class="modal-content" style="text-align: center;">
-            <button class="close-modal" onclick="hideModal('profile-modal')">✖</button>
-            <img id="profile-modal-avatar" src="" style="width:80px;height:80px;border-radius:50%;margin-bottom:10px;">
-            <h2 id="profile-modal-name" style="color:var(--gold); margin-bottom: 20px;">User Name</h2>
-            
-            <div id="host-controls" class="d-none" style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn btn-outline" id="kick-user-btn" style="color:red; border-color:red;">Kick User</button>
-                <button class="btn btn-outline" id="mute-user-btn">Mute User</button>
+        <!-- Room Feed List -->
+        <main class="flex-1 overflow-y-auto no-scrollbar py-6">
+            <h2 class="font-display font-black text-2xl text-orange-900 tracking-wide mb-4">Live Audio Rooms</h2>
+            <div id="room-list-container" class="grid grid-cols-1 gap-4">
+                <div class="text-center py-10 text-orange-950/60 font-semibold text-sm">No live rooms found. Create one to get started!</div>
             </div>
-            <button class="btn" style="width:100%; margin-top:15px;" onclick="alert('1-on-1 Call Request Sent!')">Request 1-on-1 Call</button>
+        </main>
+
+        <!-- Floating Create Room Action Button -->
+        <button onclick="window.showModal('create-room-modal')" class="absolute bottom-6 right-6 w-16 h-16 rounded-full bg-gradient-to-tr from-zingoo-red to-pink-600 text-white font-bold flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition z-20">
+            <span class="material-symbols-outlined text-[32px]">add</span>
+        </button>
+    </div>
+
+    <!-- MAIN ACTIVE ROOM SCREEN (Matches layout elements of Image 1) -->
+    <div id="room-screen" class="relative z-10 w-full h-full flex flex-col justify-between hidden p-4">
+        
+        <!-- Room Header Bar -->
+        <header class="w-full flex justify-between items-center z-10">
+            <!-- Room Info Pill -->
+            <div class="bg-black/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                <img id="room-host-avatar" src="https://api.dicebear.com/7.x/avataaars/svg" class="w-8 h-8 rounded-full object-cover bg-white/50">
+                <div class="flex flex-col">
+                    <span id="room-title" class="text-white font-bold text-xs leading-none">Room</span>
+                    <span class="text-white/80 text-[9px] mt-0.5 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[10px]">group</span>
+                        <span id="room-participant-count">0</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Leave Button -->
+            <button id="leave-room-btn" class="bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold px-6 py-2 rounded-full text-xs tracking-wider shadow-md hover:opacity-90 active:scale-95 transition">
+                Leave
+            </button>
+        </header>
+
+        <!-- Giant Centered Background Metallic Logo -->
+        <div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+            <h1 class="metallic-text">ZINGOO</h1>
+        </div>
+
+        <!-- 10 Seats Grid Layout (Image 1 Style: 5 Columns, 2 Rows) -->
+        <div class="w-full z-10 my-auto">
+            <div id="seats-grid" class="grid grid-cols-5 gap-y-8 gap-x-2 justify-items-center w-full max-w-lg mx-auto">
+                <!-- Programmatically generated seats go here -->
+            </div>
+        </div>
+
+        <!-- Floating Chat & Bottom Widgets Area -->
+        <div class="w-full z-10 flex flex-col gap-4">
+            
+            <div class="flex justify-between items-end gap-3 w-full">
+                <!-- Custom Floating Stacked Chat (Matches Image 1 layout) -->
+                <div id="chat-container" class="flex-1 max-h-48 overflow-y-auto no-scrollbar flex flex-col gap-2 justify-end pointer-events-auto">
+                    <!-- Chat bubbles inject here -->
+                </div>
+
+                <!-- Right Side Widget: Limited Offers Box (Direct visual match with Image 1) -->
+                <div class="w-32 bg-gradient-to-br from-violet-600 to-indigo-800 rounded-3xl p-3 shadow-xl border border-white/10 flex flex-col items-center shrink-0">
+                    <p class="text-white/90 text-[8px] font-black tracking-widest uppercase mb-1">Limited Offers</p>
+                    <div class="flex items-center gap-0.5 text-white font-black text-sm mb-1">
+                        <span class="material-symbols-outlined text-yellow-400 text-[14px]">diamond</span>
+                        <span>300</span>
+                    </div>
+                    <p class="text-white/40 text-[9px] line-through mb-2">₹100</p>
+                    <button onclick="triggerPurchase(100, 300)" class="w-full bg-violet-500 hover:bg-violet-600 text-white font-black py-1.5 rounded-full text-[9px] shadow-md transition active:scale-95">
+                        Buy Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating Purchase/Balance Pill (Matches Image 1 bottom-left above bar) -->
+            <div class="flex justify-between items-center w-full">
+                <div onclick="triggerPurchase(50, 150)" class="bg-white rounded-full px-4 py-1.5 shadow-md flex items-center gap-2 border border-yellow-200 cursor-pointer hover:scale-105 transition shrink-0">
+                    <span class="material-symbols-outlined text-yellow-500 text-[16px]">diamond</span>
+                    <div class="flex flex-col leading-none">
+                        <span id="my-room-diamonds" class="text-gray-900 font-extrabold text-xs">0</span>
+                        <span class="text-gray-400 text-[8px] font-bold">Buy More</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Actions Bar (Matches Image 1 controls layout) -->
+            <footer class="w-full flex justify-between items-center gap-3">
+                <!-- Chat pill button -->
+                <button onclick="window.showModal('chat-modal')" class="flex-1 bg-[#FF6B53] hover:bg-orange-600 text-white font-extrabold px-6 py-3 rounded-full flex items-center justify-center gap-2 shadow-md transition active:scale-95">
+                    <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                    <span class="text-xs">Chat</span>
+                </button>
+
+                <!-- Options circle menu button -->
+                <button onclick="toggleOptionsMenu()" class="w-12 h-12 rounded-full bg-[#A896FE] hover:bg-[#907bfc] text-white flex items-center justify-center shadow-md transition active:scale-95">
+                    <span class="material-symbols-outlined text-[22px]">more_vert</span>
+                </button>
+
+                <!-- Gift circle shop button -->
+                <button onclick="openGiftShop()" class="w-12 h-12 rounded-full bg-[#1BD3D3] hover:bg-[#15afaf] text-white flex items-center justify-center shadow-md transition active:scale-95">
+                    <span class="material-symbols-outlined text-[22px]">redeem</span>
+                </button>
+
+                <!-- Mic circle hardware toggle -->
+                <button id="mic-toggle-btn" disabled class="w-12 h-12 rounded-full bg-[#2F4F4F] text-white flex items-center justify-center shadow-md transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[22px]" id="mic-icon">mic_off</span>
+                </button>
+            </footer>
+
         </div>
     </div>
 
-    <!-- Audio Element Container for WebRTC Tracks -->
-    <div id="audio-container"></div>
+    <!-- MODAL OVERLAYS -->
 
+    <!-- Create Audio Room Modal -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex justify-center items-center hidden px-4" id="create-room-modal">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-sm relative shadow-2xl border border-white/20 animate-float">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="window.hideModal('create-room-modal')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="font-display font-black text-xl text-orange-950 mb-4">Establish Audio Room</h2>
+            
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Topic / Subject</label>
+            <input type="text" id="new-room-name" placeholder="e.g. Chill Lounge 🎧" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 mb-4 focus:ring-1 focus:ring-zingoo-red focus:outline-none">
 
-    <!-- =========================================
-         JAVASCRIPT LOGIC (Firebase V9 + WebRTC)
-         ========================================= -->
+            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Entry Fee (Diamonds)</label>
+            <input type="number" id="new-room-fee" placeholder="0" value="0" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 mb-6 focus:ring-1 focus:ring-zingoo-red focus:outline-none">
+
+            <button class="w-full bg-gradient-to-r from-zingoo-red to-pink-600 text-white font-bold py-4 rounded-2xl shadow-lg transition active:scale-95" id="create-room-submit">
+                Initialize Room
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Keyboard Chat Input Modal -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex justify-center items-center hidden px-4" id="chat-modal">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-sm relative shadow-2xl">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="window.hideModal('chat-modal')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 class="font-display font-bold text-lg text-orange-950 mb-3">Send Message</h3>
+            <input type="text" id="chat-input" placeholder="Say something nice..." class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 mb-4 focus:ring-1 focus:ring-zingoo-red focus:outline-none">
+            <button class="w-full bg-[#FF6B53] text-white font-bold py-3.5 rounded-2xl shadow-md" id="send-chat-btn">Send</button>
+        </div>
+    </div>
+
+    <!-- Gift Shop Inventory Modal (Connects directly with Admin panel custom gifts node) -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex justify-center items-center hidden px-4" id="gift-modal">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-md relative shadow-2xl flex flex-col max-h-[80vh]">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="window.hideModal('gift-modal')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 class="font-display font-black text-xl text-orange-950 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-yellow-500">redeem</span> Gift Shop
+            </h3>
+
+            <div id="gift-inventory-grid" class="flex-1 overflow-y-auto no-scrollbar grid grid-cols-3 gap-4 py-2">
+                <!-- Dynamically populated from database node `gifts` and `store_items` -->
+                <p class="col-span-full text-center text-gray-400 text-xs py-10">Fetching active assets...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Action Modal -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex justify-center items-center hidden px-4" id="profile-modal">
+        <div class="bg-white rounded-[32px] p-6 w-full max-w-xs relative shadow-2xl text-center">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" onclick="window.hideModal('profile-modal')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <img id="profile-modal-avatar" src="" class="w-20 h-20 rounded-full mx-auto border-4 border-yellow-400 shadow-md object-cover bg-gray-50 mb-3">
+            <h3 id="profile-modal-name" class="font-display font-extrabold text-lg text-orange-950">User Profile</h3>
+            <p id="profile-modal-id" class="text-gray-400 text-[10px] tracking-wider mb-6 font-mono">ID: 00000000</p>
+            
+            <div id="host-controls" class="hidden flex-col gap-2 w-full">
+                <button id="mute-user-btn" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs transition">Mute Participant</button>
+                <button id="kick-user-btn" class="w-full bg-red-50 hover:bg-red-100 text-red-500 font-bold py-2.5 rounded-xl text-xs transition">Kick Participant</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements Container for WebRTC Tracks -->
+    <div id="audio-container" class="hidden"></div>
+
+    <!-- JAVASCRIPT APP MODULE -->
     <script type="module">
-        // 1. IMPORT FIREBASE MODULAR SDK
+        // 1. IMPORT FIREBASE modular SDK (V10 matches other system files)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getDatabase, ref, set, get, onValue, push, update, remove, 
             onChildAdded, onChildChanged, onChildRemoved, onDisconnect, off 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // 2. CONFIGURATIONS
-        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
-        
+        // 2. CONFIGURATION & FIREBASE BOOTSTRAP
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -315,337 +335,360 @@
             appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // STUN Servers for WebRTC
+        // STUN / TURN Servers for high stability multi-peer mesh connections
         const rtcConfig = {
             iceServers: [
                 { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun1.l.google.com:19302" },
+                { urls: "stun:stun2.l.google.com:19302" },
                 { urls: "stun:global.stun.twilio.com:3478" }
             ]
         };
 
-        // 3. GLOBAL STATE
+        // 3. SECURE SESSION RETRIEVAL (Bypasses login automatically if home dashboard details exist)
         let currentUser = null; 
         let currentRoomId = null;
         let mySeatIndex = null;
         let roomDataCache = null;
-        
-        // WebRTC States
+
+        // WebRTC Mesh Global States
         let localStream = null;
         let peerConnections = {}; // Map: userId -> RTCPeerConnection
-        let iceCandidateQueues = {}; // Map: userId -> Array of ICE Candidates (RACE CONDITION FIX)
-        
-        // Firebase Listeners references (to detach later)
+        let iceCandidateQueues = {}; // Map: userId -> Array of ICE Candidates (Prevents candidate race condition)
+
+        // Listeners
         let roomSeatsRef = null;
         let mySignalRef = null;
         let chatRef = null;
         let myDisconnectRef = null;
 
-        // 4. UI UTILITIES
-        window.showModal = (id) => document.getElementById(id).classList.add('active');
-        window.hideModal = (id) => document.getElementById(id).classList.remove('active');
-        const showScreen = (id) => {
-            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        };
+        // UI Helpers
+        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
+        
+        function showScreen(id) {
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('room-screen').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        }
 
-        // 5. LOGIN & IMGBB UPLOAD LOGIC
-        const avatarInput = document.getElementById('avatar-input');
-        const avatarPreview = document.getElementById('avatar-preview');
-        const loginBtn = document.getElementById('login-btn');
-        let uploadedAvatarUrl = "https://i.ibb.co/6HvwbJ0/default-avatar.png";
+        // Automatic Session Transport
+        window.addEventListener('load', () => {
+            const storedName = localStorage.getItem("zingoo_user");
+            const storedId = localStorage.getItem("zingoo_id") || "user_" + Math.random().toString(36).substr(2, 9);
+            const storedAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg";
+            const storedDiamonds = parseInt(localStorage.getItem("zingoo_diamonds") || "0");
 
-        avatarInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if(!file) return;
-            
-            document.getElementById('login-status').innerText = "Uploading Avatar...";
-            loginBtn.disabled = true;
+            if(storedName) {
+                // User credentials retrieved successfully. Fast-tracking to main screen.
+                currentUser = {
+                    id: storedId,
+                    name: storedName,
+                    avatar: storedAvatar,
+                    diamonds: storedDiamonds
+                };
 
-            const formData = new FormData();
-            formData.append("image", file);
+                // Sync UI elements
+                document.getElementById('my-lobby-avatar').src = currentUser.avatar;
+                document.getElementById('my-lobby-name').innerText = currentUser.name;
+                document.getElementById('my-lobby-diamonds').innerText = currentUser.diamonds.toLocaleString();
+                document.getElementById('my-room-diamonds').innerText = currentUser.diamonds.toLocaleString();
 
-            try {
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if(data.success) {
-                    uploadedAvatarUrl = data.data.url;
-                    avatarPreview.src = uploadedAvatarUrl;
-                    document.getElementById('login-status').innerText = "Avatar Uploaded!";
+                // Check query parameters to see if we should auto-enter a specific room
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryRoomId = urlParams.get('room');
+                
+                if (queryRoomId) {
+                    joinRoom(queryRoomId);
                 } else {
-                    alert("Upload failed. Using default.");
+                    showScreen('lobby-screen');
+                    fetchRooms();
                 }
-            } catch (err) {
-                console.error("ImgBB Error:", err);
-                alert("Upload failed.");
+            } else {
+                // If no session exists, redirect to home dashboard for identity authorization
+                alert("Please log in or create a profile on the home screen first.");
+                window.location.href = 'index.html';
             }
-            loginBtn.disabled = false;
         });
 
-        loginBtn.addEventListener('click', () => {
-            const username = document.getElementById('username-input').value.trim();
-            if(!username) return alert("Enter Unique ID/Name!");
-
-            // Check if user exists in local storage, else create
-            const storedUser = JSON.parse(localStorage.getItem('audioUser') || '{}');
-            let userId = storedUser.id || 'user_' + Math.random().toString(36).substr(2, 9);
-            let diamonds = storedUser.diamonds || 1000;
-
-            currentUser = { id: userId, name: username, avatar: uploadedAvatarUrl, diamonds: diamonds };
-            localStorage.setItem('audioUser', JSON.stringify(currentUser));
-
-            // Update UI
-            document.getElementById('my-lobby-avatar').src = currentUser.avatar;
-            document.getElementById('my-lobby-name').innerText = currentUser.name;
-            document.getElementById('my-diamonds').innerText = currentUser.diamonds;
-
-            showScreen('lobby-screen');
-            fetchRooms();
-        });
-
-        // Auto-login check
-        window.onload = () => {
-            const storedUser = JSON.parse(localStorage.getItem('audioUser'));
-            if(storedUser && storedUser.id) {
-                document.getElementById('username-input').value = storedUser.name;
-                avatarPreview.src = storedUser.avatar;
-                uploadedAvatarUrl = storedUser.avatar;
-            }
-        };
-
+        // Logout
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('audioUser');
-            location.reload();
+            localStorage.clear();
+            window.location.href = 'index.html';
         });
 
-        // 6. LOBBY & ROOM MANAGEMENT
+        // 4. LOBBY & ROOM MANAGEMENT
         function fetchRooms() {
-            const roomsRef = ref(db, 'rooms');
+            const roomsRef = ref(db, 'audio_rooms');
             onValue(roomsRef, (snapshot) => {
-                // Only update if we are on lobby screen
-                if(!document.getElementById('lobby-screen').classList.contains('active')) return;
-                
-                const roomList = document.getElementById('room-list');
-                roomList.innerHTML = '';
-                const rooms = snapshot.val();
-                
-                if(!rooms) {
-                    roomList.innerHTML = '<p style="text-align:center; color:#888;">No active rooms. Create one!</p>';
-                    return;
-                }
+                if(!document.getElementById('lobby-screen').classList.contains('hidden')) {
+                    const listContainer = document.getElementById('room-list-container');
+                    listContainer.innerHTML = '';
+                    const rooms = snapshot.val();
 
-                for(let roomId in rooms) {
-                    const room = rooms[roomId];
-                    const seatCount = room.seats ? Object.keys(room.seats).length : 0;
-                    
-                    const div = document.createElement('div');
-                    div.className = 'room-card';
-                    div.innerHTML = `
-                        <div class="room-info">
-                            <h3>${room.name}</h3>
-                            <p>Host: ${room.hostName} | Seats: ${seatCount}/${room.maxSeats}</p>
-                            <p style="color:var(--gold)">Entry: 💎${room.entryFee}</p>
-                        </div>
-                        <button class="btn" onclick="joinRoom('${roomId}')">Join</button>
-                    `;
-                    roomList.appendChild(div);
+                    if(!rooms) {
+                        listContainer.innerHTML = '<p class="text-center py-10 text-orange-950/60 font-semibold text-sm">No live rooms found. Create one to get started!</p>';
+                        return;
+                    }
+
+                    for(let roomId in rooms) {
+                        const room = rooms[roomId];
+                        const seatCount = room.seats ? Object.keys(room.seats).length : 0;
+                        
+                        const div = document.createElement('div');
+                        div.className = 'bg-white/90 backdrop-blur-md p-4 rounded-3xl border border-white/50 flex justify-between items-center shadow-md';
+                        div.innerHTML = `
+                            <div class="flex flex-col">
+                                <h3 class="font-display font-black text-orange-950 text-base">${room.name}</h3>
+                                <p class="text-gray-500 text-xs mt-1 font-semibold flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">person</span> Host: ${room.host}
+                                </p>
+                                <p class="text-purple-600 font-extrabold text-xs mt-1.5 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">diamond</span> Entry: ${room.fee || 0}
+                                </p>
+                            </div>
+                            <button onclick="window.joinRoom('${roomId}')" class="bg-gradient-to-tr from-zingoo-red to-pink-600 text-white font-black px-6 py-2.5 rounded-2xl text-xs shadow-md transition active:scale-95">
+                                Join Room
+                            </button>
+                        `;
+                        listContainer.appendChild(div);
+                    }
                 }
             });
         }
 
+        // Room Creation Submit Handler
         document.getElementById('create-room-submit').addEventListener('click', async () => {
-            const name = document.getElementById('new-room-name').value || 'Chill Room';
+            const name = document.getElementById('new-room-name').value.trim() || 'Zingoo Vibe Room';
             const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
-            const maxSeats = parseInt(document.getElementById('new-room-seats').value) || 10;
 
-            if(currentUser.diamonds < fee) return alert("Not enough diamonds to set this fee!");
+            if(currentUser.diamonds < fee) {
+                alert("You do not hold enough diamonds to instantiate this entry fee.");
+                return;
+            }
 
             const roomId = 'room_' + Date.now();
-            const newRoomRef = ref(db, `rooms/${roomId}`);
-            
+            const newRoomRef = ref(db, `audio_rooms/${roomId}`);
+
             await set(newRoomRef, {
                 id: roomId,
                 name: name,
-                entryFee: fee,
-                maxSeats: maxSeats,
+                fee: fee,
+                host: currentUser.name,
                 hostId: currentUser.id,
-                hostName: currentUser.name,
+                hostAvatar: currentUser.avatar,
                 createdAt: Date.now()
             });
 
-            hideModal('create-room-modal');
+            window.hideModal('create-room-modal');
             joinRoom(roomId);
         });
 
+        // Join Room Method
         window.joinRoom = async (roomId) => {
-            const roomRef = ref(db, `rooms/${roomId}`);
+            const roomRef = ref(db, `audio_rooms/${roomId}`);
             const snapshot = await get(roomRef);
-            if(!snapshot.exists()) return alert("Room no longer exists!");
+            if(!snapshot.exists()) {
+                alert("Room is no longer active.");
+                return;
+            }
 
             const room = snapshot.val();
-            if(currentUser.diamonds < room.entryFee) return alert("Not enough diamonds to enter!");
+            if(currentUser.diamonds < (room.fee || 0)) {
+                alert("Insufficient diamonds. Please purchase more.");
+                triggerPurchase(50, 150);
+                return;
+            }
 
-            // Deduct diamonds locally (for production, do this server-side securely)
-            if(room.entryFee > 0 && currentUser.id !== room.hostId) {
-                currentUser.diamonds -= room.entryFee;
-                localStorage.setItem('audioUser', JSON.stringify(currentUser));
-                document.getElementById('my-diamonds').innerText = currentUser.diamonds;
+            // Deduct entry fee if required
+            if((room.fee || 0) > 0 && currentUser.id !== room.hostId) {
+                currentUser.diamonds -= room.fee;
+                localStorage.setItem('zingoo_diamonds', currentUser.diamonds);
+                
+                // Update User Node on Firebase
+                await update(ref(db, `users/${currentUser.name}`), {
+                    diamonds: currentUser.diamonds
+                });
+
+                document.getElementById('my-lobby-diamonds').innerText = currentUser.diamonds.toLocaleString();
+                document.getElementById('my-room-diamonds').innerText = currentUser.diamonds.toLocaleString();
             }
 
             currentRoomId = roomId;
             roomDataCache = room;
-            
-            // Setup UI
+
+            // Render Header UI Elements
             document.getElementById('room-title').innerText = room.name;
-            document.getElementById('room-host-name').innerText = room.hostName;
-            document.getElementById('room-entry-fee').innerText = room.entryFee;
-            document.getElementById('chat-container').innerHTML = ''; // Clear chat
-            
+            document.getElementById('room-host-avatar').src = room.hostAvatar || 'https://api.dicebear.com/7.x/avataaars/svg';
+            document.getElementById('chat-container').innerHTML = '';
+
             showScreen('room-screen');
-            
-            // Attach Listeners
+
+            // Attach Firebase Subscriptions
             attachRoomListeners();
             setupChat();
         };
 
-        // 7. SEAT LOGIC & UI
+        // 5. SEAT GRID RENDERER (Supports 10 simultaneous audio seats)
         function attachRoomListeners() {
-            roomSeatsRef = ref(db, `rooms/${currentRoomId}/seats`);
-            
+            roomSeatsRef = ref(db, `audio_rooms/${currentRoomId}/seats`);
+
             onValue(roomSeatsRef, (snapshot) => {
                 const seatsData = snapshot.val() || {};
-                renderSeatsGrid(roomDataCache.maxSeats, seatsData);
+                renderSeatsGrid(seatsData);
             });
-            
-            // Listen for signaling (WebRTC)
-            mySignalRef = ref(db, `rooms/${currentRoomId}/signals/${currentUser.id}`);
+
+            // Signaling listener for active peer connection mesh
+            mySignalRef = ref(db, `audio_rooms/${currentRoomId}/signals/${currentUser.id}`);
             onChildAdded(mySignalRef, handleIncomingSignal);
         }
 
-        function renderSeatsGrid(maxSeats, seatsData) {
+        function renderSeatsGrid(seatsData) {
             const grid = document.getElementById('seats-grid');
             grid.innerHTML = '';
-            
-            // Check if I am currently sitting
+
             let amISitting = false;
 
-            for(let i = 0; i < maxSeats; i++) {
+            // Fixed 10-seat grid matches design of Image 1
+            for(let i = 0; i < 10; i++) {
                 const seatUser = seatsData[i];
                 const seatDiv = document.createElement('div');
-                seatDiv.className = 'seat';
-                
+                seatDiv.className = 'flex flex-col items-center select-none w-16';
+
                 if(seatUser) {
                     if(seatUser.id === currentUser.id) {
                         amISitting = true;
                         mySeatIndex = i;
                     }
 
-                    seatDiv.classList.add('occupied');
-                    if(seatUser.isSpeaking) seatDiv.classList.add('speaking'); // Voice activity UI
+                    // Active Speaking Ring check
+                    const ringClass = seatUser.isSpeaking ? 'speaking-ring' : 'border-white';
+                    const muteOverlay = seatUser.isMuted ? `<div class="absolute bottom-0 right-0 bg-red-600 text-white rounded-full p-0.5 border border-white flex items-center justify-center w-5 h-5"><span class="material-symbols-outlined text-[10px]">mic_off</span></div>` : '';
 
                     seatDiv.innerHTML = `
-                        <div class="seat-avatar" onclick="openProfile('${seatUser.id}', '${seatUser.name}', '${seatUser.avatar}')">
-                            <img src="${seatUser.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
-                            ${seatUser.isMuted ? '<div class="mic-muted-icon">🔇</div>' : ''}
+                        <div class="relative w-14 h-14 rounded-full border-2 ${ringClass} bg-white/20 shadow-md flex items-center justify-center cursor-pointer" onclick="openProfile('${seatUser.id}', '${seatUser.name}', '${seatUser.avatar}')">
+                            <img src="${seatUser.avatar}" class="w-full h-full rounded-full object-cover">
+                            ${muteOverlay}
                         </div>
-                        <div class="seat-name">${seatUser.name}</div>
+                        <span class="text-orange-950 font-black text-[10px] mt-1.5 truncate w-full text-center drop-shadow-md">${seatUser.name}</span>
                     `;
                 } else {
+                    // Empty lock-slot representation matching Image 1
                     seatDiv.innerHTML = `
-                        <div class="seat-avatar" onclick="takeEmptySeat(${i})">
-                            <span style="color:#555;font-size:24px;">+</span>
+                        <div onclick="takeEmptySeat(${i})" class="relative w-14 h-14 rounded-full border-2 border-[#A896FE] bg-white flex items-center justify-center shadow-inner cursor-pointer hover:scale-105 active:scale-95 transition">
+                            <span class="material-symbols-outlined text-[#F5AF19] text-[20px]">lock</span>
                         </div>
-                        <div class="seat-name">Empty</div>
+                        <span class="text-orange-900/50 font-bold text-[9px] mt-1.5 truncate w-full text-center">Seat ${i + 1}</span>
                     `;
                 }
                 grid.appendChild(seatDiv);
             }
 
-            // Enable/Disable Mic button based on sitting status
+            // Update Control Elements
             const micBtn = document.getElementById('mic-toggle-btn');
+            const micIcon = document.getElementById('mic-icon');
             if(amISitting) {
                 micBtn.disabled = false;
+                micBtn.classList.remove('bg-[#2F4F4F]');
+                micBtn.classList.add('bg-zinc-800');
                 if(localStream && localStream.getAudioTracks()[0]) {
-                    micBtn.innerText = localStream.getAudioTracks()[0].enabled ? '🎤' : '🔇';
-                    micBtn.classList.toggle('active', !localStream.getAudioTracks()[0].enabled);
+                    const isMicEnabled = localStream.getAudioTracks()[0].enabled;
+                    micIcon.innerText = isMicEnabled ? 'mic' : 'mic_off';
+                    if (isMicEnabled) {
+                        micBtn.classList.remove('bg-red-500');
+                        micBtn.classList.add('bg-green-600');
+                    } else {
+                        micBtn.classList.remove('bg-green-600');
+                        micBtn.classList.add('bg-red-500');
+                    }
                 }
             } else {
                 micBtn.disabled = true;
-                micBtn.innerText = '🎤';
-                micBtn.classList.remove('active');
+                micBtn.classList.add('bg-[#2F4F4F]');
+                micBtn.classList.remove('bg-green-600', 'bg-red-500');
+                micIcon.innerText = 'mic_off';
             }
         }
 
+        // Action when a seat is taken
         window.takeEmptySeat = async (index) => {
-            if(mySeatIndex !== null) return alert("You already have a seat!");
+            if(mySeatIndex !== null) {
+                alert("You are currently sitting in another seat slot.");
+                return;
+            }
 
             try {
-                // 1. Request Microphone permission first!
-                localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-                
-                // 2. Register seat in Firebase
+                // Initialize premium high-fidelity audio stream configurations
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+
                 mySeatIndex = index;
-                const mySeatPath = `rooms/${currentRoomId}/seats/${index}`;
-                const seatRef = ref(db, mySeatPath);
-                
+                const seatRef = ref(db, `audio_rooms/${currentRoomId}/seats/${index}`);
+
                 const seatData = {
                     id: currentUser.id,
                     name: currentUser.name,
                     avatar: currentUser.avatar,
                     isMuted: false,
-                    isSpeaking: false // Can implement Hark.js later for real activity
+                    isSpeaking: false
                 };
 
                 await set(seatRef, seatData);
 
-                // Setup disconnect hook so seat clears if window closes
+                // Set automatic disconnect cleanup in case of sudden tab exit
                 myDisconnectRef = onDisconnect(seatRef);
                 myDisconnectRef.remove();
 
-                // 3. Initiate WebRTC Mesh Connections (Offerer Role)
-                // Fetch current users on seats to call them
+                // Setup audio local activity indicator (Simulated Hark activity check)
+                setupVoiceActivity();
+
+                // WebRTC mesh initialization with all other sitting participants
                 const snapshot = await get(roomSeatsRef);
                 const currentSeats = snapshot.val() || {};
-                
+
                 for(let i in currentSeats) {
                     const peer = currentSeats[i];
-                    // Don't call yourself
                     if(peer.id !== currentUser.id) {
                         initiateCall(peer.id);
                     }
                 }
 
+                // Append local seat log directly into live chat
+                await push(ref(db, `audio_rooms/${currentRoomId}/chat`), {
+                    senderName: currentUser.name,
+                    senderAvatar: currentUser.avatar,
+                    text: "took a seat.",
+                    timestamp: Date.now()
+                });
+
             } catch (err) {
-                console.error("Mic error:", err);
-                alert("Microphone permission required to take a seat!");
+                console.error("Hardware Permission Refused:", err);
+                alert("Unable to capture microphone. Please check system permissions.");
             }
         };
 
-
-        // 8. WEBRTC MESH NETWORK LOGIC (HEAVILY OPTIMIZED)
-
-        // Function to create standard RTCPeerConnection
+        // 6. HIGH-PERFORMANCE WEBRTC MESH ENGINE
         function createPeerConnection(peerId) {
             if(peerConnections[peerId]) return peerConnections[peerId];
 
             const pc = new RTCPeerConnection(rtcConfig);
             peerConnections[peerId] = pc;
-            iceCandidateQueues[peerId] = []; // Initialize empty queue for ICE race condition
+            iceCandidateQueues[peerId] = []; // Queue for incoming ice candidates to prevent race conditions
 
-            // Add local audio track to connection
-            if (localStream) {
+            if(localStream) {
                 localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
             }
 
-            // Handle ICE Candidates generated locally -> send to Firebase
             pc.onicecandidate = (event) => {
-                if (event.candidate) {
+                if(event.candidate) {
                     sendSignal(peerId, {
                         type: 'ice',
                         candidate: event.candidate.toJSON()
@@ -653,29 +696,23 @@
                 }
             };
 
-            // Handle incoming remote audio track -> Attach to HTML Audio element
             pc.ontrack = (event) => {
-                console.log(`Received track from ${peerId}`);
-                
-                // FIX FOR MOBILE SAFARI/CHROME: Use new MediaStream([event.track])
                 const stream = new MediaStream([event.track]);
-                
                 const audioId = `audio_${peerId}`;
                 let audioEl = document.getElementById(audioId);
-                if (!audioEl) {
+                
+                if(!audioEl) {
                     audioEl = document.createElement('audio');
                     audioEl.id = audioId;
                     audioEl.autoplay = true;
-                    // FIX: playsInline for iOS
-                    audioEl.playsInline = true; 
+                    audioEl.playsInline = true;
                     document.getElementById('audio-container').appendChild(audioEl);
                 }
                 audioEl.srcObject = stream;
             };
 
             pc.onconnectionstatechange = () => {
-                console.log(`Connection with ${peerId}: ${pc.connectionState}`);
-                if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+                if(pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
                     cleanupPeer(peerId);
                 }
             };
@@ -683,51 +720,42 @@
             return pc;
         }
 
-        // Send signaling message via Firebase
         async function sendSignal(targetId, data) {
-            const targetSignalRef = ref(db, `rooms/${currentRoomId}/signals/${targetId}`);
+            const targetSignalRef = ref(db, `audio_rooms/${currentRoomId}/signals/${targetId}`);
             await push(targetSignalRef, {
                 senderId: currentUser.id,
                 ...data
             });
         }
 
-        // Initiator (Newcomer) creates Offer
         async function initiateCall(peerId) {
-            console.log(`Initiating call to ${peerId}`);
             const pc = createPeerConnection(peerId);
-            
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
-            
+
             sendSignal(peerId, {
                 type: 'offer',
                 sdp: offer.sdp
             });
         }
 
-        // Handle incoming signaling messages from Firebase
         async function handleIncomingSignal(snapshot) {
             const data = snapshot.val();
             const senderId = data.senderId;
             const signalKey = snapshot.key;
-            
-            // Immediately remove the signal from DB after reading to keep DB clean
-            remove(ref(db, `rooms/${currentRoomId}/signals/${currentUser.id}/${signalKey}`));
 
-            if (senderId === currentUser.id) return; // Ignore own signals (safety)
+            // Remove signal immediately to clear database overhead
+            remove(ref(db, `audio_rooms/${currentRoomId}/signals/${currentUser.id}/${signalKey}`));
+
+            if(senderId === currentUser.id) return;
 
             let pc = peerConnections[senderId];
 
             try {
-                if (data.type === 'offer') {
-                    console.log(`Received offer from ${senderId}`);
-                    // Existing user receives offer from newcomer
+                if(data.type === 'offer') {
                     pc = createPeerConnection(senderId);
-                    
                     await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: data.sdp }));
                     
-                    // Process any ICE candidates that arrived before the offer
                     processIceQueue(senderId, pc);
 
                     const answer = await pc.createAnswer();
@@ -737,42 +765,34 @@
                         type: 'answer',
                         sdp: answer.sdp
                     });
-
-                } else if (data.type === 'answer') {
-                    console.log(`Received answer from ${senderId}`);
-                    if (pc) {
+                } else if(data.type === 'answer') {
+                    if(pc) {
                         await pc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: data.sdp }));
                         processIceQueue(senderId, pc);
                     }
-
-                } else if (data.type === 'ice') {
-                    // ICE CANDIDATE RACE CONDITION FIX
-                    // If remote description isn't set yet, queue the candidate!
-                    if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+                } else if(data.type === 'ice') {
+                    if(pc && pc.remoteDescription && pc.remoteDescription.type) {
                         await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
                     } else {
-                        console.log(`Queueing ICE candidate for ${senderId}`);
                         if(!iceCandidateQueues[senderId]) iceCandidateQueues[senderId] = [];
                         iceCandidateQueues[senderId].push(data.candidate);
                     }
                 }
-            } catch (err) {
-                console.error("WebRTC Signaling Error:", err);
+            } catch(e) {
+                console.error("WebRTC Protocol Failure:", e);
             }
         }
 
-        // Process queued ICE candidates after remote description is set
         async function processIceQueue(peerId, pc) {
-            if (iceCandidateQueues[peerId] && iceCandidateQueues[peerId].length > 0) {
-                console.log(`Processing ${iceCandidateQueues[peerId].length} queued ICE candidates for ${peerId}`);
-                for (let candidate of iceCandidateQueues[peerId]) {
+            if(iceCandidateQueues[peerId] && iceCandidateQueues[peerId].length > 0) {
+                for(let candidate of iceCandidateQueues[peerId]) {
                     try {
                         await pc.addIceCandidate(new RTCIceCandidate(candidate));
                     } catch(e) {
-                        console.error("Error adding queued ICE", e);
+                        console.error("ICE Injection Failure:", e);
                     }
                 }
-                iceCandidateQueues[peerId] = []; // clear queue
+                iceCandidateQueues[peerId] = [];
             }
         }
 
@@ -785,39 +805,86 @@
             if(audioEl) audioEl.remove();
         }
 
-        // 9. HARDWARE CONTROLS (MIC TOGGLE)
+        // Mic hardware toggler
         document.getElementById('mic-toggle-btn').addEventListener('click', async (e) => {
             if(!localStream || mySeatIndex === null) return;
-            
+
             const audioTrack = localStream.getAudioTracks()[0];
             if(audioTrack) {
-                // Toggle physical hardware track
                 audioTrack.enabled = !audioTrack.enabled;
                 const isMuted = !audioTrack.enabled;
-                
-                // UI update
-                e.target.innerText = isMuted ? '🔇' : '🎤';
-                e.target.classList.toggle('active', isMuted);
 
-                // Firebase sync (updates UI for everyone)
-                await update(ref(db, `rooms/${currentRoomId}/seats/${mySeatIndex}`), {
+                // Sync status to database
+                await update(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`), {
                     isMuted: isMuted
                 });
             }
         });
 
-        // 10. CHAT SYSTEM
+        // Simple real-time voice activity analyzer
+        let voiceInterval = null;
+        function setupVoiceActivity() {
+            if(!localStream) return;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(localStream);
+                source.connect(analyser);
+                analyser.fftSize = 512;
+                
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                let isSpeakingActive = false;
+
+                voiceInterval = setInterval(async () => {
+                    if(mySeatIndex === null) {
+                        clearInterval(voiceInterval);
+                        return;
+                    }
+
+                    analyser.getByteFrequencyData(dataArray);
+                    let sum = 0;
+                    for(let i=0; i<bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    let average = sum / bufferLength;
+
+                    // Speaking threshold value (typical: 20-30 depending on environment)
+                    const isCurrentlySpeaking = average > 25 && localStream.getAudioTracks()[0].enabled;
+
+                    if(isCurrentlySpeaking !== isSpeakingActive) {
+                        isSpeakingActive = isCurrentlySpeaking;
+                        await update(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`), {
+                            isSpeaking: isCurrentlySpeaking
+                        });
+                    }
+                }, 400);
+
+            } catch (err) {
+                console.error("Web Audio API Error:", err);
+            }
+        }
+
+        // 7. REAL-TIME MULTI-USER CHAT
         function setupChat() {
-            chatRef = ref(db, `rooms/${currentRoomId}/chat`);
-            const chatContainer = document.getElementById('chat-container');
-            
+            chatRef = ref(db, `audio_rooms/${currentRoomId}/chat`);
+            const container = document.getElementById('chat-container');
+
             onChildAdded(chatRef, (snapshot) => {
                 const msg = snapshot.val();
-                const div = document.createElement('div');
-                div.className = 'chat-message';
-                div.innerHTML = `<span class="sender">${msg.senderName}:</span> ${msg.text}`;
-                chatContainer.appendChild(div);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble-glass p-3 flex items-start gap-2 max-w-[85%] self-start animate-float';
+                
+                bubble.innerHTML = `
+                    <img src="${msg.senderAvatar || 'https://api.dicebear.com/7.x/avataaars/svg'}" class="w-8 h-8 rounded-full border border-yellow-300 bg-white object-cover shadow-sm shrink-0">
+                    <div class="flex flex-col">
+                        <span class="text-yellow-400 font-extrabold text-[11px] leading-none">${msg.senderName}</span>
+                        <p class="text-white text-xs font-semibold mt-1 leading-snug">${msg.text}</p>
+                    </div>
+                `;
+                container.appendChild(bubble);
+                container.scrollTop = container.scrollHeight;
             });
         }
 
@@ -826,92 +893,198 @@
             const text = input.value.trim();
             if(!text || !currentRoomId) return;
 
-            await push(ref(db, `rooms/${currentRoomId}/chat`), {
-                senderId: currentUser.id,
+            await push(ref(db, `audio_rooms/${currentRoomId}/chat`), {
                 senderName: currentUser.name,
+                senderAvatar: currentUser.avatar,
                 text: text,
                 timestamp: Date.now()
             });
 
             input.value = '';
-            hideModal('chat-modal');
+            window.hideModal('chat-modal');
         });
 
-        // 11. PROFILE & MODERATION (KICK/MUTE)
+        // 8. ADMIN PANEL COMPATIBLE GIFT & STICKERS VAULT
+        window.openGiftShop = async () => {
+            window.showModal('gift-modal');
+            const grid = document.getElementById('gift-inventory-grid');
+            grid.innerHTML = '<p class="col-span-full text-center text-gray-400 text-xs py-10">Fetching active assets...</p>';
+
+            try {
+                // Fetch direct from 'gifts' (Admin panel configured gift stickers node)
+                const giftsSnap = await get(ref(db, 'gifts'));
+                const storeItemsSnap = await get(ref(db, 'store_items/entry_stickers'));
+
+                let itemsHTML = '';
+
+                if(giftsSnap.exists()) {
+                    Object.entries(giftsSnap.val()).forEach(([key, gift]) => {
+                        itemsHTML += `
+                            <div onclick="purchaseAndSendGift('${gift.name}', ${gift.cost}, '${gift.imageUrl}')" class="bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 rounded-3xl p-3 text-center flex flex-col items-center justify-between cursor-pointer transition active:scale-95 shadow-sm">
+                                <img src="${gift.imageUrl}" class="w-12 h-12 object-contain mb-2 drop-shadow-md">
+                                <h5 class="text-[10px] font-extrabold text-orange-950 truncate w-full">${gift.name}</h5>
+                                <p class="text-purple-600 font-black text-xs mt-1 flex items-center gap-0.5">
+                                    <span class="material-symbols-outlined text-[12px]">diamond</span> ${gift.cost}
+                                </p>
+                            </div>
+                        `;
+                    });
+                }
+
+                if(storeItemsSnap.exists()) {
+                    Object.entries(storeItemsSnap.val()).forEach(([key, asset]) => {
+                        itemsHTML += `
+                            <div onclick="purchaseAndSendGift('${asset.name}', ${asset.cost}, '${asset.imageUrl}')" class="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-3xl p-3 text-center flex flex-col items-center justify-between cursor-pointer transition active:scale-95 shadow-sm">
+                                <img src="${asset.imageUrl}" class="w-12 h-12 object-contain mb-2 drop-shadow-md">
+                                <h5 class="text-[10px] font-extrabold text-purple-950 truncate w-full">${asset.name}</h5>
+                                <p class="text-purple-600 font-black text-xs mt-1 flex items-center gap-0.5">
+                                    <span class="material-symbols-outlined text-[12px]">diamond</span> ${asset.cost}
+                                </p>
+                            </div>
+                        `;
+                    });
+                }
+
+                if(itemsHTML === '') {
+                    grid.innerHTML = '<p class="col-span-full text-center text-gray-400 text-xs py-10">No active shop inventory.</p>';
+                } else {
+                    grid.innerHTML = itemsHTML;
+                }
+
+            } catch (err) {
+                console.error("Shop Query Error:", err);
+                grid.innerHTML = '<p class="col-span-full text-center text-red-400 text-xs py-10">Trouble retrieving asset store.</p>';
+            }
+        };
+
+        // Purchase and Spend Gift Stick Logic
+        window.purchaseAndSendGift = async (name, cost, url) => {
+            if(currentUser.diamonds < cost) {
+                alert("Insufficient diamonds. Opening Zingoo Pay.");
+                window.hideModal('gift-modal');
+                triggerPurchase(100, 300);
+                return;
+            }
+
+            // Deduct diamonds
+            currentUser.diamonds -= cost;
+            localStorage.setItem('zingoo_diamonds', currentUser.diamonds);
+            
+            // Sync user profile diamonds with Firebase
+            await update(ref(db, `users/${currentUser.name}`), {
+                diamonds: currentUser.diamonds
+            });
+
+            // Sync Lobby & room labels
+            document.getElementById('my-lobby-diamonds').innerText = currentUser.diamonds.toLocaleString();
+            document.getElementById('my-room-diamonds').innerText = currentUser.diamonds.toLocaleString();
+
+            window.hideModal('gift-modal');
+
+            // Send gift sticker inside live chat bubble
+            await push(ref(db, `audio_rooms/${currentRoomId}/chat`), {
+                senderName: currentUser.name,
+                senderAvatar: currentUser.avatar,
+                text: `sent a gift: <strong class="text-yellow-300">${name}</strong> <img src="${url}" class="w-12 h-12 inline-block object-contain ml-2 drop-shadow-md">`,
+                timestamp: Date.now()
+            });
+        };
+
+        // 9. COHERENT MODERATION SYSTEM (KICK/MUTE/PROFILE ACTION)
         let selectedUserId = null;
         window.openProfile = (userId, name, avatar) => {
             selectedUserId = userId;
             document.getElementById('profile-modal-avatar').src = avatar;
             document.getElementById('profile-modal-name').innerText = name;
-            
+            document.getElementById('profile-modal-id').innerText = `ID: ${userId}`;
+
             const hostControls = document.getElementById('host-controls');
-            // If I am host, and I clicked someone else
+            // Show moderator controls only if current user is the host
             if(roomDataCache.hostId === currentUser.id && userId !== currentUser.id) {
-                hostControls.classList.remove('d-none');
+                hostControls.classList.remove('hidden');
             } else {
-                hostControls.classList.add('d-none');
+                hostControls.classList.add('hidden');
             }
 
-            showModal('profile-modal');
+            window.showModal('profile-modal');
         };
 
-        document.getElementById('kick-user-btn').addEventListener('click', async () => {
-            if(!selectedUserId || !roomDataCache) return;
-            
-            // Find the seat index of the user to kick
-            const snapshot = await get(roomSeatsRef);
-            const seats = snapshot.val() || {};
-            for(let i in seats) {
-                if(seats[i].id === selectedUserId) {
-                    await remove(ref(db, `rooms/${currentRoomId}/seats/${i}`));
-                    alert("User Kicked from seat!");
-                    hideModal('profile-modal');
-                    break;
-                }
-            }
-        });
-
+        // Mute Seat Action
         document.getElementById('mute-user-btn').addEventListener('click', async () => {
-            if(!selectedUserId || !roomDataCache) return;
-            
-            // Update the user's mute state in DB
+            if(!selectedUserId || !currentRoomId) return;
             const snapshot = await get(roomSeatsRef);
             const seats = snapshot.val() || {};
             for(let i in seats) {
                 if(seats[i].id === selectedUserId) {
-                    await update(ref(db, `rooms/${currentRoomId}/seats/${i}`), { isMuted: true });
-                    alert("User Muted (State Updated in DB)");
-                    hideModal('profile-modal');
+                    await update(ref(db, `audio_rooms/${currentRoomId}/seats/${i}`), {
+                        isMuted: true
+                    });
+                    alert(`${seats[i].name} has been muted.`);
+                    window.hideModal('profile-modal');
                     break;
                 }
             }
         });
 
-        // 12. LEAVE ROOM LOGIC
+        // Kick Seat Action
+        document.getElementById('kick-user-btn').addEventListener('click', async () => {
+            if(!selectedUserId || !currentRoomId) return;
+            const snapshot = await get(roomSeatsRef);
+            const seats = snapshot.val() || {};
+            for(let i in seats) {
+                if(seats[i].id === selectedUserId) {
+                    await remove(ref(db, `audio_rooms/${currentRoomId}/seats/${i}`));
+                    alert(`${seats[i].name} has been kicked from the seat slot.`);
+                    window.hideModal('profile-modal');
+                    break;
+                }
+            }
+        });
+
+        // Left Options Popover toggle menu
+        window.toggleOptionsMenu = () => {
+            const opt = confirm("Would you like to review active room details?");
+            if (opt) {
+                alert(`Room Topic: ${roomDataCache.name}\nHost Broadcaster: ${roomDataCache.host}\nEntry Charge: 💎 ${roomDataCache.fee}`);
+            }
+        };
+
+        // 10. LEAVE AUDIO ROOM HOOK
         document.getElementById('leave-room-btn').addEventListener('click', async () => {
-            if(confirm("Are you sure you want to leave the room?")) {
+            if(confirm("Exit this audio room?")) {
                 
-                // Remove self from seat if sitting
+                // Clear active seat slot if occupying one
                 if(mySeatIndex !== null) {
-                    await remove(ref(db, `rooms/${currentRoomId}/seats/${mySeatIndex}`));
+                    await remove(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`));
                     if(myDisconnectRef) myDisconnectRef.cancel();
+                    
+                    // Add departure log inside room chats
+                    await push(ref(db, `audio_rooms/${currentRoomId}/chat`), {
+                        senderName: currentUser.name,
+                        senderAvatar: currentUser.avatar,
+                        text: "left the room.",
+                        timestamp: Date.now()
+                    });
+
                     mySeatIndex = null;
                 }
 
-                // Stop local microphone
+                // Stop hardware media stream captures
                 if(localStream) {
                     localStream.getTracks().forEach(track => track.stop());
                     localStream = null;
                 }
 
-                // Close all WebRTC Peer Connections
+                if(voiceInterval) clearInterval(voiceInterval);
+
+                // Tear down active RTC connections
                 for(let peerId in peerConnections) {
                     cleanupPeer(peerId);
                 }
                 peerConnections = {};
                 iceCandidateQueues = {};
 
-                // Detach Firebase Listeners
+                // Unsubscribe active database nodes
                 if(roomSeatsRef) off(roomSeatsRef);
                 if(mySignalRef) off(mySignalRef);
                 if(chatRef) off(chatRef);
@@ -919,12 +1092,20 @@
                 currentRoomId = null;
                 roomDataCache = null;
 
-                // Clear audio elements
                 document.getElementById('audio-container').innerHTML = '';
 
+                // Restore Lobby parameters
                 showScreen('lobby-screen');
+                fetchRooms();
             }
         });
+
+        // 11. REDIRECT INTEGRATOR TO SECURE CHECKOUT (zingoo-pay.html)
+        window.triggerPurchase = (amount, diamonds) => {
+            if(!currentUser) return;
+            // Forwards directly to your payment page with active session credentials
+            window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser.name)}&amount=${amount}&diamonds=${diamonds}`;
+        };
 
     </script>
 </body>
