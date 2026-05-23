@@ -61,12 +61,13 @@
             pointer-events: none;
         }
 
-        /* Glass capsule for bottom-left chat overlay */
+        /* Glass capsule for bottom-left chat overlay - Background removed as requested */
         .chat-capsule {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            text-shadow: 0px 1px 3px rgba(0,0,0,0.9);
         }
 
         /* Ambient Pulsing Glow for Speaking Users */
@@ -137,11 +138,12 @@
             
             <!-- Room Header Row -->
             <div class="p-4 flex justify-between items-center z-20">
-                <div class="bg-black/35 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/10 shadow-md">
-                    <img id="room-host-avatar" src="https://i.ibb.co/6HvwbJ0/default-avatar.png" class="w-7 h-7 rounded-full object-cover border border-zingoo-gold">
+                <!-- Background transparent patti removed as requested, using drop shadows to maintain text visibility -->
+                <div class="px-3 py-1.5 flex items-center gap-2 drop-shadow-md">
+                    <img id="room-host-avatar" src="https://i.ibb.co/6HvwbJ0/default-avatar.png" class="w-7 h-7 rounded-full object-cover border border-zingoo-gold drop-shadow">
                     <div class="flex flex-col">
-                        <span id="room-title" class="text-xs font-black text-white leading-tight">Room Title</span>
-                        <span class="text-[9px] text-white/70 flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">group</span> <span id="viewer-count">1</span> joined</span>
+                        <span id="room-title" class="text-xs font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Room Title</span>
+                        <span class="text-[9px] text-white/90 flex items-center gap-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"><span class="material-symbols-outlined text-[10px]">group</span> <span id="viewer-count">1</span> joined</span>
                     </div>
                 </div>
                 <button id="leave-room-btn" class="bg-red-500/90 hover:bg-red-600 text-white font-extrabold text-xs px-6 py-2 rounded-full shadow-lg transition active:scale-95">Leave</button>
@@ -152,9 +154,9 @@
                 <iframe id="yt-iframe" class="w-full h-full border-none pointer-events-auto" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
 
-            <!-- WATERMARK TITLE IN CENTER (Hidden dynamically if YT Video is active) -->
+            <!-- WATERMARK TITLE IN CENTER (Zingoo Text removed entirely based on request) -->
             <div id="zingoo-watermark" class="absolute top-[38%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0 text-center w-full px-4 transition-opacity">
-                <span class="font-black text-6xl md:text-7xl tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-b from-yellow-100 via-yellow-400 to-yellow-600 drop-shadow-[0_4px_12px_rgba(218,165,32,0.8)] font-display">ZINGOO</span>
+                <!-- Zingoo Text removed safely -->
             </div>
 
             <!-- Seats Grid Layout (10 seats) -->
@@ -190,8 +192,8 @@
                 </div>
             </div>
 
-            <!-- Bottom Action Navigation Bar (Updated for Inline Chat & Realtime Reactions) -->
-            <div class="p-4 bg-black/40 backdrop-blur-lg border-t border-white/10 flex justify-between items-center z-30 pb-6 transition-all" id="bottom-action-bar">
+            <!-- Bottom Action Navigation Bar (Transparent bg & Expandable Input) -->
+            <div class="p-4 bg-transparent flex justify-between items-center z-30 pb-6 transition-all w-full" id="bottom-action-bar">
                 
                 <!-- Chat / Inline Input Wrapper -->
                 <div class="flex items-center gap-2 flex-1 mr-3 transition-all duration-300 z-10">
@@ -200,16 +202,16 @@
                         <span>Chat</span>
                     </button>
 
-                    <!-- Persistent Inline Chat Input (No Modal Needed) -->
-                    <div id="inline-chat-box" class="hidden flex-1 items-center bg-black/60 border border-white/20 rounded-full pl-4 pr-1 py-1 w-full max-w-[220px]">
+                    <!-- Persistent Inline Chat Input (Expands fully when activated) -->
+                    <div id="inline-chat-box" class="hidden flex-1 items-center bg-black/60 border border-white/20 rounded-full pl-4 pr-1 py-1 w-full max-w-[220px] transition-all duration-300">
                         <input type="text" id="inline-chat-input" placeholder="Say something..." class="bg-transparent border-none text-white text-xs w-full focus:outline-none focus:ring-0 placeholder-white/60">
                         <button onclick="sendChatMessageInline()" class="w-8 h-8 rounded-full bg-gradient-to-r from-orange-400 to-rose-500 flex items-center justify-center text-white shrink-0 ml-1 shadow-md active:scale-95"><span class="material-symbols-outlined text-[14px]">send</span></button>
                         <button onclick="toggleInlineChat()" class="text-zinc-400 p-1 hover:text-white"><span class="material-symbols-outlined text-[16px]">close</span></button>
                     </div>
                 </div>
 
-                <!-- Action Controls -->
-                <div class="flex items-center gap-3 relative z-10 shrink-0">
+                <!-- Action Controls (Hides when typing to make room for full width chat) -->
+                <div id="action-controls" class="flex items-center gap-3 relative z-10 shrink-0 transition-all duration-300">
                     <!-- 3-Dots Host Authority Option -->
                     <button onclick="openOptionsModal()" class="w-11 h-11 bg-indigo-600/90 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
                         <span class="material-symbols-outlined text-[20px]">more_vert</span>
@@ -725,19 +727,36 @@
             }
         };
 
-        // INLINE CHAT TOGGLE (Avoids New Box Popups)
+        // INLINE CHAT TOGGLE (Expands Chat footer and hides other action buttons for massive typing space)
         window.toggleInlineChat = () => {
             const btn = document.getElementById('chat-open-btn');
             const box = document.getElementById('inline-chat-box');
+            const actionControls = document.getElementById('action-controls');
+            
             if(box.classList.contains('hidden')) {
+                // Expanding layout
                 btn.classList.add('hidden');
+                if(actionControls) actionControls.classList.add('hidden'); // Completely hide other bottom buttons
+                
                 box.classList.remove('hidden');
                 box.classList.add('flex');
+                
+                // Making the box full-width
+                box.classList.remove('max-w-[220px]'); 
+                box.classList.add('w-full'); 
+                
                 document.getElementById('inline-chat-input').focus();
             } else {
+                // Shrinking and restoring layout
                 box.classList.add('hidden');
                 box.classList.remove('flex');
+                
+                // Restore classes
+                box.classList.add('max-w-[220px]');
+                box.classList.remove('w-full');
+                
                 btn.classList.remove('hidden');
+                if(actionControls) actionControls.classList.remove('hidden'); // Unhide bottom buttons
             }
         };
 
@@ -767,20 +786,20 @@
             const messageElement = document.createElement('div');
 
             if(data.type === 'system') {
-                // Formatting matches "Aman room took a seat" bubble architecture tightly
-                messageElement.className = 'chat-capsule rounded-2xl py-1.5 px-3 flex items-center gap-2 w-fit max-w-[95%] shrink-0 opacity-90 border-transparent';
+                // Formatting matches "Aman room took a seat" bubble architecture tightly (Background transparent applied via CSS class)
+                messageElement.className = 'chat-capsule rounded-2xl py-1.5 px-3 flex items-center gap-2 w-fit max-w-[95%] shrink-0';
                 messageElement.innerHTML = `
-                    <img src="${data.senderAvatar}" class="w-5 h-5 rounded-full object-cover shrink-0">
-                    <span class="text-white text-[11px] leading-tight font-semibold"><span class="text-zingoo-gold font-bold">${data.sender}</span> ${data.msg}</span>
+                    <img src="${data.senderAvatar}" class="w-5 h-5 rounded-full object-cover shrink-0 drop-shadow">
+                    <span class="text-white text-[11px] leading-tight font-semibold drop-shadow"><span class="text-zingoo-gold font-bold">${data.sender}</span> ${data.msg}</span>
                 `;
             } else {
-                // Standard Chat formatting
+                // Standard Chat formatting (Background transparent applied via CSS class)
                 messageElement.className = 'chat-capsule rounded-2xl py-2 px-3.5 flex items-start gap-2 max-w-[95%] shrink-0';
                 messageElement.innerHTML = `
-                    <img src="${data.senderAvatar}" class="w-6 h-6 rounded-full object-cover border border-white/20 mt-0.5 shrink-0">
+                    <img src="${data.senderAvatar}" class="w-6 h-6 rounded-full object-cover border border-white/20 mt-0.5 shrink-0 drop-shadow">
                     <div class="flex flex-col">
-                        <span class="text-zingoo-gold font-black text-[11px] leading-tight">${data.sender}</span>
-                        <span class="text-white text-xs leading-[1.3] mt-0.5 font-medium">${data.msg}</span>
+                        <span class="text-zingoo-gold font-black text-[11px] leading-tight drop-shadow">${data.sender}</span>
+                        <span class="text-white text-xs leading-[1.3] mt-0.5 font-medium drop-shadow">${data.msg}</span>
                     </div>
                 `;
             }
