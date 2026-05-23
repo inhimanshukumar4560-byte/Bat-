@@ -1,69 +1,138 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zingoo - Live Streaming</title>
-    
-    <!-- Google Fonts for Modern Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Audio Live Room - Zingoo</title>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- ZEGOCLOUD SDKS (Added for Super Server Live Audio/Video) -->
+    <script src="https://unpkg.com/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js"></script>
+    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
 
     <style>
+        /* --- Global Styles & Fonts --- */
         :root {
-            --baby-pink: #FFF0F5;
-            --pink-dark: #FFB6C1;
-            --primary-red: #FF3366;
-            --dark-text: #2c2c2c;
-            --white: #FFFFFF;
-            --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
-            --gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e);
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --chat-bg: rgba(0, 0, 0, 0.45);
+            /* Zingoo Specific Light Theme Variables */
+            --dark-bg: #000000; /* Fixed right side white gap issue */
+            --dark-secondary: #ffffff; 
+            --dark-card: #ffffff;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+            
+            --baby-pink: #FFB3B3;
+            --hot-pink: #ff004c;
+            --red-accent: #ff3b6b;
+            --text-light: #888888;
+            --text-white: #111111; 
+            --text-pure-white: #ffffff; 
+
+            --green-live: #25D366;
+            
+            --gradient-main: linear-gradient(135deg, #ff004c, #ff3b6b);
+            --glow-red: 0 4px 15px rgba(255, 0, 76, 0.3);
+            --glow-green: 0 0 20px rgba(37, 211, 102, 0.7);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: var(--baby-pink);
-            background-attachment: fixed;
-            color: var(--dark-text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            /* --- Security: Prevent Text Selection and Image Dragging --- */
-            user-select: none;
+            /* SECURITY: Prevent text selection and long-press image saving */
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             -webkit-touch-callout: none;
-            transition: filter 0.3s ease;
+            user-select: none;
         }
 
-        /* --- Security Blur Filter --- */
-        body.security-blur {
-            filter: blur(25px);
-            pointer-events: none;
+        /* Allow typing in inputs */
+        input, textarea {
+            -webkit-user-select: auto;
+            user-select: auto;
         }
 
-        /* --- Custom Scrollbar for App --- */
-        ::-webkit-scrollbar { width: 6px; display: none; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--pink-dark); border-radius: 10px; }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+        }
 
-        /* --- LOGIN SCREEN (ID Enforced) --- */
-        #id-login-screen {
+        .main-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            height: 100dvh; 
+            position: relative;
+            background-color: #000000; /* Ensure no white gaps bleed through */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- NEW: White Splash Screen Loading Overlay --- */
+        #splash-screen {
             position: fixed;
             inset: 0;
-            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
-            z-index: 99999;
+            background: #ffffff;
+            z-index: 999999; /* Highest priority */
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease;
+        }
+        
+        #splash-screen .logo-z {
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid #eee; border-left-color: var(--hot-pink); border-bottom-color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 50px; font-weight: 900; font-style: italic; color: #111; margin-bottom: 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Toast Notification --- */
+        .toast-notification {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: var(--glass-border);
+            color: var(--text-white);
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-size: 0.9em;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            animation: islandDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid var(--hot-pink);
+        }
+
+        @keyframes islandDrop {
+            0% { top: -30px; opacity: 0; transform: translateX(-50%) scale(0.8); }
+            100% { top: 25px; opacity: 1; transform: translateX(-50%) scale(1); }
+        }
+
+        /* --- ID LOGIN SCREEN --- */
+        #id-login-screen {
+            position: absolute;
+            inset: 0;
+            background: #ffffff;
+            z-index: 9999;
+            display: none; /* Initially hidden, splash screen handles the flow */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -71,1240 +140,1853 @@
         }
         
         #id-login-screen .logo-container {
-            font-size: 38px;
-            font-weight: 800;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 40px;
-            letter-spacing: 2.5px;
-            text-shadow: 0px 4px 15px rgba(255, 51, 102, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
         }
+        
+        #id-login-screen .logo-container svg { width: 40px; height: 40px; fill: var(--hot-pink); }
+        #id-login-screen .logo-container h1 { font-size: 28px; font-weight: 900; letter-spacing: 1px; color: #111; }
         
         #id-login-screen .login-card {
             width: 100%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px 30px;
-            border-radius: 25px;
-            box-shadow: 0 15px 50px rgba(255, 51, 102, 0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
-            border: 1px solid var(--white);
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
             text-align: center;
         }
 
-        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; color: #111; font-weight: 800; }
-        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 30px; font-weight: 500; }
-        
-        .avatar-upload-box {
-            cursor: pointer; margin-bottom: 25px; display: inline-block; position: relative;
-        }
-        .avatar-upload-box img {
-            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
-            border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,51,102,0.3);
-            transition: transform 0.3s ease;
-        }
-        .avatar-upload-box:hover img { transform: scale(1.05); }
-        .avatar-upload-box p { font-size: 12px; color: var(--primary-red); margin-top: 10px; font-weight: 700; background: rgba(255, 51, 102, 0.1); padding: 5px 15px; border-radius: 20px; }
-
+        #id-login-screen .login-card h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
+        #id-login-screen .login-card p { font-size: 13px; color: #666; margin-bottom: 25px; }
         #id-login-screen input[type="number"] {
-            width: 100%; padding: 16px; border-radius: 15px; border: 2px solid transparent;
-            background: #f0f2f5; font-size: 16px; margin-bottom: 25px; font-weight: 600; text-align: center;
-            outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
+            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
+            outline: none; transition: border 0.3s;
         }
-        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.1); }
+        #id-login-screen input[type="number"]:focus { border-color: var(--hot-pink); background: #fff; }
         #id-login-screen button {
-            width: 100%; padding: 16px; border-radius: 15px; border: none;
-            background: var(--gradient-main); color: #fff; font-size: 18px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 8px 25px rgba(255,51,102,0.4); transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
+            cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;
         }
-        #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,51,102,0.5); }
+        #id-login-screen button:hover { transform: translateY(-2px); }
 
-        /* --- NEW UI: Header Styling --- */
-        #main-app { padding-bottom: 80px; } /* Prevent bottom nav from hiding content */
+        /* ---- LOBBY SCREEN STYLES ---- */
+        #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; animation: fadeIn 0.4s ease-out; }
         
-        .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(255, 240, 245, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        .lobby-header-top { padding: 15px 20px 10px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .lobby-header-top .logo { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 1.2em; font-style: italic;}
+        .lobby-header-top .logo svg { width: 24px; height: 24px; fill: var(--hot-pink); }
+        .lobby-header-top .actions { display: flex; align-items: center; gap: 15px; }
+        .lobby-header-top .actions i { font-size: 1.2em; color: #444; }
+        .diamond-badge { background: #f3e8ff; color: #9333ea; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        
+        .lobby-search-container { padding: 0 20px 10px; }
+        .lobby-search-box { display: flex; background: #f5f5f5; border-radius: 12px; overflow: hidden; align-items: center; padding: 0 15px;}
+        .lobby-search-box i { color: #888; }
+        .lobby-search-box input { flex-grow: 1; background: transparent; border: none; padding: 12px 10px; color: #111; font-family: 'Outfit', sans-serif; font-size: 0.9em;}
+        .lobby-search-box input:focus { outline: none; }
+        .filter-btn { color: var(--hot-pink); background: none; border: none; font-size: 1.1em; cursor: pointer; }
+
+        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; overflow-x: hidden; } 
+        .lobby-body::-webkit-scrollbar { display: none; }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 10px;}
+        .section-title { font-size: 1.1em; font-weight: 800; color: #111; }
+        .view-all { font-size: 0.8em; color: var(--hot-pink); font-weight: 600; cursor: pointer; }
+
+        .room-list-row { display: flex; align-items: center; gap: 15px; background: #fff; padding: 10px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+        .room-list-row:hover { background: #fdfdfd; }
+        .room-list-img { position: relative; width: 70px; height: 70px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
+        .room-list-img img { width: 100%; height: 100%; object-fit: cover; }
+        .live-badge { position: absolute; top: 4px; left: 4px; background: red; color: white; font-size: 0.55em; font-weight: 800; padding: 2px 5px; border-radius: 4px; z-index: 2; }
+        .room-list-info { flex-grow: 1; overflow: hidden; }
+        .room-list-info h4 { font-size: 1em; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+        .room-list-info p { font-size: 0.75em; color: #888; margin-top: 2px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .room-row-avatars { display: flex; align-items: center; }
+        .room-row-avatars img { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #fff; margin-left: -6px; }
+        .room-row-avatars img:first-child { margin-left: 0; }
+        .room-row-avatars span { font-size: 0.65em; color: var(--hot-pink); margin-left: 5px; font-weight: bold; background: #ffe4e8; padding: 1px 5px; border-radius: 10px;}
+        
+        .room-list-action { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .room-list-viewers { font-size: 0.75em; color: var(--hot-pink); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .join-btn-outline { background: transparent; border: 1px solid var(--hot-pink); color: var(--hot-pink); padding: 5px 18px; border-radius: 20px; font-size: 0.8em; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .join-btn-outline:hover { background: var(--hot-pink); color: white; }
+
+        .fab-create { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; border-radius: 50%; background: var(--gradient-main); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5em; box-shadow: var(--glow-red); border: none; cursor: pointer; z-index: 100; transition: transform 0.2s;}
+        .fab-create:hover { transform: scale(1.1); }
+
+        /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
+        #live-room-screen { display: none; animation: fadeIn 0.4s ease-out; }
+        .live-room-container { 
+            display: flex; flex-direction: column; height: 100dvh; position: relative; width: 100%;
+            /* Transparent to allow dynamic background */
+            background-color: #fdfdfd; 
+            background-size: cover; 
+            background-position: center;
+            overflow-x: hidden;
+        }
+        
+        /* Updated Header for Image match */
+        .zingoo-header { padding: 15px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; background: transparent; border: none; position: absolute; width: 100%; top: 0;}
+        .zh-left { display: flex; align-items: center; gap: 10px; }
+        .zh-mic-icon { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; overflow: hidden; border: 2px solid rgba(255,255,255,0.8); }
+        .zh-info h1 { font-size: 1.1em; font-weight: 800; color: white; margin-bottom: 2px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        .zh-info p { font-size: 0.75em; color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);}
+        .zh-info p i { font-size: 0.9em; }
+        
+        .zh-right { display: flex; align-items: center; gap: 12px; }
+        .leave-btn-custom { background: #ff4757; color: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(255,71,87,0.4); transition: transform 0.2s; font-size: 0.9em;}
+        .leave-btn-custom:hover { transform: scale(1.05); }
+
+        .zh-btn { background: rgba(0,0,0,0.3); border: none; color: white; font-size: 1.1em; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: all 0.2s ease; }
+        .zh-btn:hover { background: rgba(0,0,0,0.5); }
+        
+        .room-body { flex-grow: 1; padding: 75px 15px 10px 15px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; position: relative;}
+        .room-body::-webkit-scrollbar { display: none; }
+        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 20px; z-index: 5; width: 100%; box-sizing: border-box;}
+        
+        /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
+        .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; transition: all 0.3s ease; }
+        .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
+        .speaker-seat p { font-size: 0.75em; color: white; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.9);}
+        .admin-tag { background: rgba(255,0,76,0.8); color: white; font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800; border: 1px solid #fff;}
+        
+        /* Custom Store Chair Frame Styling */
+        .custom-chair-frame {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.4));
+            object-fit: contain;
+        }
+        @keyframes floatChair {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-chair {
+            animation: floatChair 3s ease-in-out infinite;
         }
 
-        .logo-nav {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--primary-red);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.5px;
+        .speaker-seat.is-speaking .avatar-container {
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.8);
+            animation: pulse-green 1.5s infinite;
         }
-        .logo-nav span {
-            background: var(--primary-red);
+
+        .mic-icon-status { position: absolute; bottom: 0px; right: -5px; background: #fff; color: var(--green-live); border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 0.6em; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 15;}
+        .mic-icon-status.muted { color: #ff004c; }
+        
+        /* Empty Seat Design - Matches image padlock */
+        .speaker-seat.empty .avatar-container { 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex; justify-content: center; align-items: center; 
+        }
+        .speaker-seat.empty:hover .avatar-container { background: rgba(0, 0, 0, 0.5); }
+        .speaker-seat.empty .avatar-container i { color: rgba(255, 255, 255, 0.6); font-size: 20px; }
+        
+        /* Removed Center Logo Styles entirely but keeping ID for logic */
+        .center-logo-area { display: none; } 
+        
+        .banners-container { display: flex; gap: 10px; margin-bottom: 15px; z-index: 5;}
+        .warning-box { flex: 1.5; background: rgba(255,255,255,0.9); border: none; border-radius: 10px; padding: 10px; display: flex; align-items: flex-start; gap: 8px; position: relative;}
+        .warning-icon { color: var(--hot-pink); font-size: 1.5em; }
+        .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
+        .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
+        
+        /* UPDATED: Smaller Fixed position Limited offers with Close button */
+        .offer-box { 
+            position: absolute; bottom: 85px; right: 15px; 
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe); 
+            border: none; border-radius: 12px; padding: 10px; 
+            text-align: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            z-index: 25; width: 110px;
+        }
+        .offer-box .close-offer {
+            position: absolute; top: 2px; right: 6px; color: white; font-size: 14px; font-weight: bold; cursor: pointer;
+        }
+        .offer-title { font-size: 0.55em; color: white; margin-bottom: 3px; font-weight: 800; letter-spacing: 0.5px;}
+        .offer-price { font-size: 1.2em; font-weight: 900; color: white; display: flex; justify-content: center; align-items: center; gap: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .offer-price i { color: #f1c40f; }
+        .offer-sub { font-size: 0.65em; text-decoration: line-through; color: rgba(255,255,255,0.7); }
+        .buy-btn { background: white; color: #6c5ce7; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 800; width: 100%;}
+        
+        .gift-scroll-bar { display: none; } 
+        
+        /* --- FLOATING CHAT OVERLAY (Transparent Background, Smooth Flow) --- */
+        .floating-chat-container {
+            position: absolute;
+            bottom: 85px; 
+            left: 15px;
+            width: 70%;
+            max-width: 300px;
+            height: 250px; /* Increased Height */
+            overflow-y: auto; /* Fixed disappearing bug */
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            z-index: 15;
+            pointer-events: none; 
+        }
+        .floating-chat-container::-webkit-scrollbar { display: none; }
+        /* Fixes items cutting off at top when scrolling in flex */
+        .floating-chat-container::before {
+            content: "";
+            flex: 1;
+        }
+        
+        .floating-chat-msg {
+            background: transparent; 
+            backdrop-filter: none;
             color: white;
-            font-size: 10px;
-            padding: 3px 6px;
-            border-radius: 8px;
-            vertical-align: middle;
-            margin-bottom: 2px;
+            padding: 4px 10px;
+            font-size: 0.9em;
+            margin-top: 4px;
+            width: max-content;
+            max-width: 100%;
+            word-wrap: break-word;
+            white-space: normal;
+            pointer-events: auto;
+            animation: slideInLeft 0.3s ease-out;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9), -1px -1px 3px rgba(0,0,0,0.9);
+            border: none;
+        }
+        .floating-chat-msg .username { color: #f1c40f; font-weight: 800; margin-right: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-
-        .diamond-bal {
-            background: rgba(255,255,255,0.9); border-radius: 20px; 
-            padding: 5px 6px 5px 12px; display: flex; align-items: center; gap: 8px; 
-            font-weight: 700; font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); cursor: pointer; color: var(--dark-text);
-        }
-        .diamond-bal i { color: #ff4070; font-size: 14px; }
-        .plus-btn { background: var(--primary-red); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        /* Updated Footer to match Image */
+        .zingoo-footer { position: absolute; bottom: 0; width: 100%; padding: 10px 15px 25px 15px; display: flex; justify-content: center; gap: 12px; align-items: center; background: transparent; border: none; z-index: 30;}
         
-        .notification-bell {
-            position: relative; width: 35px; height: 35px; border-radius: 50%; background: white; 
-            display: flex; align-items: center; justify-content: center; color: #555; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 18px; cursor: pointer;
-        }
-        .notification-bell .badge {
-            position: absolute; top: -2px; right: -2px; background: var(--primary-red); color: white;
-            font-size: 9px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; border: 2px solid var(--baby-pink);
-        }
-
-        /* --- NEW UI: Hero Banner --- */
-        .hero-banner {
-            margin: 10px 20px 20px; border-radius: 20px; background: var(--gradient-main);
-            padding: 20px; display: flex; align-items: center; justify-content: space-between;
-            color: white; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(255,51,102,0.3);
-        }
-        .hero-banner::after {
-            content: '\f3a5'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            position: absolute; right: -20px; top: 10px; font-size: 120px; color: rgba(255,255,255,0.15); transform: rotate(15deg); pointer-events: none;
-        }
-        .banner-left { display: flex; align-items: center; gap: 12px; z-index: 2; }
-        .banner-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-        .banner-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-        .banner-text p { font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 500; }
-        .go-live-banner-btn {
-            background: white; color: var(--primary-red); border: none; padding: 6px 15px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* --- NEW UI: Categories Tabs --- */
-        .category-tabs {
-            display: flex; gap: 12px; overflow-x: auto; padding: 0 20px; margin-bottom: 20px;
-        }
-        .category-tabs::-webkit-scrollbar { display: none; }
-        .tab {
-            background: white; border-radius: 20px; padding: 8px 18px; font-size: 13px; font-weight: 600; 
-            color: var(--primary-red); white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer;
-            display: flex; align-items: center; gap: 6px; transition: all 0.3s;
-        }
-        .tab.active { background: var(--gradient-main); color: white; box-shadow: 0 5px 15px rgba(255,51,102,0.3); }
-
-        /* --- NEW UI: Section Header --- */
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 15px;
-        }
-        .section-header h2 { font-size: 18px; font-weight: 800; color: #111; display: flex; align-items: center; gap: 8px; }
-        .live-count-badge { background: #ffe4e8; color: var(--primary-red); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-        .see-all { font-size: 12px; color: var(--primary-red); font-weight: 600; cursor: pointer; }
-
-        /* --- NEW UI: 3-Column Grid --- */
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 0 20px;
-        }
-
-        .live-card {
-            position: relative; border-radius: 15px; overflow: hidden; aspect-ratio: 4/5; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); background: #fff; transform: translateZ(0);
-        }
-
-        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-        .live-card:hover img { transform: scale(1.1); }
-        .live-card::after {
-            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);
-            z-index: 1; pointer-events: none;
-        }
-
-        .card-top-info {
-            position: absolute; top: 8px; left: 8px; right: 8px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 2;
-        }
-
-        .live-badge { background: var(--primary-red); color: white; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite; }
-        .scheduled-badge { background: #f39c12; color: white; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px; }
-
-        .viewers { background: rgba(0, 0, 0, 0.5); color: white; font-size: 9px; font-weight: 600; padding: 3px 6px; border-radius: 6px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 3px; }
-
-        .card-bottom-info {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 8px 8px;
-            color: white; z-index: 2; display: flex; flex-direction: column; gap: 2px;
-        }
-
-        .user-name { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .verified-icon { color: white; font-size: 9px; background: #3498db; border-radius: 50%; padding: 2px; }
-        .live-title { font-size: 9px; font-weight: 500; color: #ddd; text-shadow: 0 1px 2px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; justify-content: space-between; }
-        .live-diamond-stat { color: #ff9fb3; font-weight: 700; display: flex; align-items: center; gap: 3px; }
-
-        /* --- NEW UI: Promo Bar --- */
-        .promo-bar {
-            margin: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; padding: 12px 15px;
-            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 5px 15px rgba(255,182,193,0.2);
-        }
-        .promo-item { display: flex; align-items: center; gap: 8px; }
-        .promo-item i { font-size: 20px; color: var(--primary-red); }
-        .promo-text h4 { font-size: 11px; font-weight: 700; color: var(--dark-text); }
-        .promo-text p { font-size: 9px; color: #888; font-weight: 500; }
-        .promo-divider { width: 1px; height: 30px; background: #eee; }
-
-        /* --- NEW UI: Bottom Navigation Bar --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff;
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 90; border-top-left-radius: 25px; border-top-right-radius: 25px;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px; color: #a0a0a0; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.3s;
-        }
-        .nav-item.active { color: var(--primary-red); }
-        .nav-item i { font-size: 20px; }
+        .chat-pill-btn { background: #ff4757; color: white; padding: 12px 25px; border-radius: 25px; border: none; font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 0.95em; cursor: pointer; box-shadow: 0 5px 15px rgba(255,71,87,0.4); transition: transform 0.2s; }
+        .chat-pill-btn:hover { transform: scale(1.05); }
         
-        .nav-center-btn {
-            background: var(--gradient-main); color: white; width: 55px; height: 55px;
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transform: translateY(-20px); box-shadow: 0 8px 20px rgba(255,51,102,0.4); border: 4px solid #fff; cursor: pointer;
-        }
-        .nav-center-btn i { font-size: 20px; margin-bottom: 2px; }
-        .nav-center-btn span { font-size: 9px; font-weight: 700; }
+        .zf-btn { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2em; cursor: pointer; color: white; transition: transform 0.2s ease, box-shadow 0.3s ease;}
+        .zf-btn:hover { transform: scale(1.1); }
+        
+        .zf-btn.purple { background: #70a1ff; box-shadow: 0 5px 15px rgba(112,161,255,0.4); }
+        .zf-btn.teal { background: #1abc9c; box-shadow: 0 5px 15px rgba(26,188,156,0.4); }
+        .zf-btn.orange { background: #ff7f50; box-shadow: 0 5px 15px rgba(255,127,80,0.4); }
+        .zf-btn.grey { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* --- Start Live Modal --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        /* --- CHAT PANEL OVERLAY (Updated to floating bottom bar WITHOUT X icon) --- */
+        #chat-panel-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: auto; 
+            background: transparent;
+            backdrop-filter: none;
+            border-top: none; 
+            border-radius: 0; display: none; flex-direction: column; 
+            z-index: 60; animation: slideUpModal 0.2s ease-out; 
+            box-shadow: none;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .chat-panel-header { display: none !important; }
+        .chat-messages { display: none !important; }
+        .chat-input-area { padding: 10px 15px 20px 15px; display: flex; align-items:center; gap: 10px; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.15);}
+        .chat-input { flex-grow: 1; background: #f5f5f5; border: 1px solid transparent; color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; }
+        .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: #fff;}
+        #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s; flex-shrink: 0;}
+        #send-msg-btn:hover { transform: scale(1.1); }
 
-        .modal-box {
-            background: white; padding: 35px 25px; border-radius: 30px; text-align: center;
-            width: 90%; max-width: 400px; transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        /* --- Modals / Popups --- */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 100; display: none; justify-content: center; align-items: flex-end; }
+        .modal-content { background: #ffffff; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; animation: slideUpModal 0.3s; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h3 { color: #111; font-weight: 800; font-size: 1.2em;}
+        .close-btn { background: #f5f5f5; width: 32px; height: 32px; border-radius: 50%; border: none; color: #555; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s;}
+        .close-btn:hover { background: #e0e0e0; }
+        @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        /* UPGRADED ACTION MODAL (LIST STYLE LIKE IMAGE) */
+        #footer-action-modal .modal-content { padding: 20px 20px 30px; }
+        #footer-action-modal .action-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .action-item { display: flex; flex-direction: row; align-items: center; gap: 15px; cursor: pointer; background: #f9f9f9; padding: 12px 15px; border-radius: 15px; transition: all 0.2s ease; border: 1px solid transparent; }
+        .action-item:hover { background-color: #fff0f2; border-color: rgba(255,0,76,0.2); transform: translateY(-2px); }
+        .action-icon-circle { width: 40px; height: 40px; border-radius: 50%; background: #ffe4e8; color: var(--hot-pink); display: flex; justify-content: center; align-items: center; font-size: 1.1em; flex-shrink: 0; }
+        .action-item p { font-size: 1em; color: #111; font-weight: 700; flex-grow: 1;}
+        .action-item .arrow { color: #ccc; font-size: 0.9em; }
+        .action-item.mic-off-state .action-icon-circle { background: #eee; color: #888; }
+        
+        /* Store Items Grid Update */
+        .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-height: 40vh; overflow-y: auto; padding-top: 10px;}
+        .gift-grid::-webkit-scrollbar { display: none; }
+        .gift-item { text-align: center; background: #f9f9f9; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #eee; transition: background-color 0.2s ease; }
+        .gift-item:hover { background-color: #fff0f2; border-color: var(--hot-pink);}
+        .gift-item img { width: 45px; height: 45px; object-fit: contain; margin: 0 auto; }
+        .gift-item p { font-size: 0.8em; margin-top: 5px; color: #333; font-weight: 600;}
+        .gift-item .price { font-size: 0.7em; color: #d97706; margin-top: 2px; font-weight: bold;}
+        
+        #profile-popup .profile-content { text-align: center; }
+        #profile-popup img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--hot-pink); margin-bottom: 10px; object-fit: cover;}
+        #profile-popup h4 { font-size: 1.3em; color: #111; font-weight: 800;}
+        #profile-popup .user-id { font-size: 0.85em; color: #666; margin-bottom: 20px; font-weight: 500;}
+        #profile-popup .profile-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
+        #profile-popup .action-btn { background: var(--gradient-main); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600;}
+        #profile-popup .action-btn.secondary { background: transparent; border: 1px solid #ccc; color: #333;}
+        .host-control-btn { background: transparent !important; border: 1px solid var(--hot-pink) !important; color: var(--hot-pink) !important; }
+        
+        #create-room-modal .modal-content { height: 85vh; display: flex; flex-direction: column; }
+        .custom-input { width: 100%; background: #f9f9f9; border: 1px solid #ddd; color: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.9em; font-family: 'Outfit'; font-weight: 500; outline: none; transition: 0.3s;}
+        .custom-input:focus { border-color: var(--hot-pink); background: #fff;}
+        .invite-user-list { flex-grow: 1; overflow-y: auto; margin-bottom: 15px; }
+        .user-card { display: flex; align-items: center; padding: 10px; background: #fff; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
+        .user-card img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
+        .user-info { flex-grow: 1; }
+        .user-info h4 { font-size: 0.9em; color: #111; font-weight: 700;}
+        .user-info p { font-size: 0.7em; color: #888; }
+        .invite-action-btn { background: transparent; border: 1px solid var(--hot-pink); color: var(--hot-pink); padding: 5px 15px; border-radius: 15px; cursor: pointer; font-size: 0.8em; font-weight: 600;}
+        .invite-action-btn.sent { background-color: var(--hot-pink); color: white; }
+        .start-room-btn { width: 100%; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 25px; font-size: 1.1em; cursor: pointer; font-weight: 700; box-shadow: var(--glow-red);}
+        
+        #youtube-modal .modal-content { max-height: 40vh; }
+        .youtube-btn { margin-top: 10px; width: 100%; background: #FF0000; color: white; border: none; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: 700;}
+        
+        /* GRAND GIFT ANIMATION CSS */
+        .grand-gift-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 9999;
+            pointer-events: none;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: grandGiftPop 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
-        
-        .modal-box h3 { color: var(--dark-text); font-size: 24px; margin-bottom: 20px; font-weight: 800; }
-        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee;
-            margin-bottom: 20px; font-family: 'Poppins'; font-size: 14px; outline: none; transition: border 0.3s;
-            background: #fafafa; font-weight: 500;
+        .grand-gift-popup img { 
+            width: 180px; height: 180px; 
+            object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(255, 0, 76, 0.6));
+            animation: pulse-gift 1s infinite alternate;
         }
-        .modal-box input:focus { border-color: var(--pink-dark); background: #fff; }
-        
-        .thumb-upload {
-            border: 2px dashed var(--pink-dark); padding: 20px; border-radius: 15px; background: var(--baby-pink);
-            margin-bottom: 15px; cursor: pointer; color: var(--primary-red); font-size: 14px; font-weight: 700;
-            transition: all 0.3s; display: flex; flex-direction: column; gap: 8px; align-items: center;
-        }
-        .thumb-upload:hover { background: #ffd1d9; border-color: var(--primary-red); }
-        .thumb-upload i { font-size: 24px; }
-        
-        .past-thumbs-wrapper { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
-        .past-thumbs-wrapper p { font-size: 12px; color: #555; margin-bottom: 10px; font-weight: 700; }
-        .past-thumbs-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
-        .past-thumbs-list::-webkit-scrollbar { height: 4px; display: block; }
-        .past-thumbs-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .past-thumbs-list img {
-            width: 60px; height: 60px; border-radius: 12px; object-fit: cover; cursor: pointer;
-            border: 3px solid transparent; transition: all 0.3s;
-        }
-        .past-thumbs-list img.selected { border: 3px solid var(--primary-red); transform: scale(1.1); box-shadow: 0 4px 10px rgba(255,51,102,0.3); }
-
-        .modal-btns { display: flex; gap: 15px; margin-top: 15px; }
-        .btn-confirm { flex: 1; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 15px rgba(255,51,102,0.3); transition: transform 0.2s; }
-        .btn-confirm:hover { transform: translateY(-2px); }
-        .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-        .btn-cancel:hover { background: #e0e0e0; color: #333; }
-
-        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
-        #live-view-screen {
-            position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
-        }
-        
-        .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
-        
-        #remote-live-video, #local-live-video {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
-            transform: scaleX(-1);
-            -webkit-transform: scaleX(-1);
-        }
-        
-        /* AUDIO FIX: Unmute Button Overlay */
-        #unmute-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(255, 51, 102, 0.95); color: white; padding: 15px 30px;
-            border-radius: 30px; font-weight: 800; cursor: pointer; z-index: 50; display: none;
-            box-shadow: 0 8px 25px rgba(255,51,102,0.5); font-size: 16px;
-            align-items: center; gap: 10px; animation: pulse-bg 1.5s infinite;
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-        }
-
-        .live-overlay-top {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
-            background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
-        }
-        
-        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
-        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; }
-        .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        
-        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s; }
-        .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
-        
-        .live-overlay-bottom {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
-            display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
-        }
-        
-        .chat-box { 
-            pointer-events: auto; max-height: 45vh; overflow-y: auto; margin-bottom: 20px; 
-            display: flex; flex-direction: column; gap: 12px; padding-right: 10px;
-            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-        }
-        .chat-box::-webkit-scrollbar { width: 4px; display: block; }
-        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
-
-        .chat-msg { 
-            color: #fff; font-size: 14px; font-weight: 500; background: var(--chat-bg); 
-            padding: 10px 16px; border-radius: 20px; width: max-content; max-width: 85%; 
-            backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.05);
-            word-wrap: break-word; white-space: normal; line-height: 1.4;
-            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; transform-origin: bottom left;
-        }
-        .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
-        .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
-        .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
-        .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-
-        .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
-        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
-        .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
-        
-        .gift-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,51,102,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
-        .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,51,102,0.7); }
-        
-        /* Loading Overlay */
-        #loading-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
-            display: none; justify-content: center; align-items: center; z-index: 9999;
-            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px);
+        .grand-gift-popup p {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 900;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--hot-pink);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* --- Animations --- */
-        @keyframes pulse-bg { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
-        @keyframes pulse-icon { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-        .toast {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 255, 255, 0.95); color: var(--dark-text); padding: 14px 28px; border-radius: 30px;
-            font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-left: 5px solid var(--primary-red); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100000;
-            backdrop-filter: blur(10px);
+        @keyframes grandGiftPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-30deg); opacity: 0; }
+            15% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1) translateY(0); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
         }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+        @keyframes pulse-gift {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* --- FIRE ANIMATION CSS --- */
+        @keyframes fireFloat {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--x-dir), -300px) scale(1.5); opacity: 0; }
+        }
+        .fire-anim {
+            position: absolute;
+            bottom: 80px;
+            right: 80px;
+            font-size: 28px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: fireFloat 1.2s ease-out forwards;
+            filter: drop-shadow(0 2px 5px rgba(255, 100, 0, 0.5));
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Global Toast Notification -->
-    <div class="toast" id="toastMsg">Action Successful!</div>
+    <div class="main-container">
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="id-login-screen">
-        <div class="logo-container"><i class="fas fa-fire" style="color:var(--primary-red);"></i> ZINGOO LIVE</div>
-        <div class="login-card">
-            <h2>Live Room Access</h2>
-            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
-            
-            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
-            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
-                <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <p><i class="fas fa-camera"></i> Upload Photo</p>
-            </div>
-
-            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
-            <button id="btn-login-id">Enter App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+        <!-- UPDATED: Splash Screen Timer Reduced -->
+        <div id="splash-screen">
+            <div class="logo-z">Z</div>
+            <h2 style="color:#111; font-weight:800; font-size:26px; letter-spacing:2px;">ZINGOO</h2>
+            <p style="color:#888; font-size:14px; margin-top:5px; font-weight:600;">Secure Connection Setup...</p>
+            <div style="margin-top:25px; font-size:22px; font-weight:900; color:var(--hot-pink);" id="splash-timer">Connecting...</div>
         </div>
-    </div>
 
-    <!-- 2. MAIN HEADER & HOME PAGE (NEW UI) -->
-    <div id="main-app" style="display: none;">
-        
-        <!-- App Header -->
-        <header class="app-header">
-            <div class="logo-nav">ZINGOO <span>LIVE</span></div>
-            <div class="header-actions">
-                <div class="diamond-bal" onclick="redirectToDiamondStore()">
-                    <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
-                    <div class="plus-btn"><i class="fas fa-plus"></i></div>
+        <div id="global-toast" class="toast-notification">Notification text here</div>
+
+        <!-- ID LOGIN OVERLAY -->
+        <div id="id-login-screen">
+            <div class="logo-container">
+                <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
+                <h1>ZINGOO</h1>
+            </div>
+            <div class="login-card">
+                <h2>Welcome Back!</h2>
+                <p>Please enter your unique Zingoo ID and set a profile picture to access live rooms.</p>
+                
+                <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+                <div style="cursor:pointer; margin-bottom:20px; display:inline-block;" onclick="document.getElementById('login-profile-upload').click()">
+                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--hot-pink); box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <p style="font-size:11px; color:var(--hot-pink); margin-top:8px; font-weight:bold;">Tap to upload picture</p>
                 </div>
-                <div class="notification-bell">
+
+                <input type="number" id="login-zingoo-id" placeholder="e.g. 14873198">
+                <button id="btn-login-id">Enter Rooms</button>
+            </div>
+        </div>
+
+        <!-- LOBBY SCREEN -->
+        <div id="lobby-screen">
+            <header class="lobby-header-top">
+                <div class="logo">
+                    <svg viewBox="0 0 100 100"><path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm15 35L45 65h-5l20-30h-15l-5 10h-5l10-20h20v15z"/></svg>
+                    ZINGOO
+                </div>
+                <div class="actions">
                     <i class="far fa-bell"></i>
-                    <div class="badge">8</div>
+                    <div class="diamond-badge" onclick="window.redirectToDiamondStore()" style="cursor:pointer;">
+                        <i class="fas fa-gem"></i> <span id="lobby-diamond-balance">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="lobby-search-container">
+                <div class="lobby-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="lobby-room-search" placeholder="Search people, rooms, games...">
+                    <button class="filter-btn"><i class="fas fa-filter"></i></button>
                 </div>
             </div>
-        </header>
 
-        <!-- Hero Banner -->
-        <div class="hero-banner">
-            <div class="banner-left">
-                <img id="ui-hero-avatar" class="banner-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <div class="banner-text">
-                    <h3 id="ui-hero-name">Hi, Zingoo Star ✨</h3>
-                    <p>Let's go live & connect</p>
-                    <button class="go-live-banner-btn" onclick="openStartLiveModal()">
-                        <i class="fas fa-video"></i> Go Live Now
-                    </button>
+            <main class="lobby-body">
+                
+                <div class="section-header">
+                    <h2 class="section-title">Live Rooms</h2>
+                    <span class="view-all">View All</span>
                 </div>
-            </div>
-        </div>
 
-        <!-- Category Tabs -->
-        <div class="category-tabs">
-            <div class="tab active"><i class="fas fa-broadcast-tower"></i> Live Now</div>
-            <div class="tab"><i class="fas fa-fire"></i> Popular</div>
-            <div class="tab"><i class="fas fa-map-marker-alt"></i> Nearby</div>
-            <div class="tab"><i class="fas fa-star"></i> New Star</div>
-        </div>
-
-        <!-- Section Title -->
-        <div class="section-header">
-            <h2>Live Now <span class="live-count-badge">Active</span></h2>
-            <span class="see-all">See All <i class="fas fa-chevron-right" style="font-size: 10px;"></i></span>
-        </div>
-
-        <!-- Dynamic Grid (3-Column) -->
-        <div class="live-grid" id="liveGrid">
-            <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 13px; font-weight: 600; margin-top: 20px; padding: 20px;">Fetching active streams...</p>
-        </div>
-
-        <!-- Promo Bar -->
-        <div class="promo-bar">
-            <div class="promo-item">
-                <i class="fas fa-gift" style="color: #ff3366;"></i>
-                <div class="promo-text">
-                    <h4>Daily Bonus</h4>
-                    <p>Claim Now</p>
+                <div id="lobby-rooms-list">
+                    <p id="no-rooms-message" style="color: #aaa; text-align: center; margin-top: 30px;">Fetching active rooms...</p>
                 </div>
-            </div>
-            <div class="promo-divider"></div>
-            <div class="promo-item">
-                <i class="far fa-gem" style="color: #f39c12;"></i>
-                <div class="promo-text">
-                    <h4>Diamond Pass</h4>
-                    <p>Level Up</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation Bar -->
-        <div class="bottom-nav">
-            <div class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-search"></i>
-                <span>Explore</span>
-            </div>
-            <div class="nav-center-btn" onclick="openStartLiveModal()">
-                <i class="fas fa-video"></i>
-                <span>Go Live</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-comment-dots"></i>
-                <span>Message</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-user"></i>
-                <span>Profile</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. START LIVE MODAL -->
-    <div class="modal-overlay" id="startLiveModal">
-        <div class="modal-box">
-            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px;"></i>
-            <h3>Ready to Stream?</h3>
-            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
+                
+            </main>
             
-            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
-            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
-                <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
-            </div>
-            
-            <!-- Past Thumbnails & Schedule -->
-            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
-                <p>Or choose previous thumbnail:</p>
-                <div class="past-thumbs-list" id="past-thumbs-container"></div>
-            </div>
-
-            <div style="text-align: left; margin-bottom: 10px;">
-                <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;"><i class="far fa-clock"></i> Schedule Live (Optional):</label>
-                <input type="datetime-local" id="live-schedule-time">
-            </div>
-
-            <div class="modal-btns">
-                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
-                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
-            </div>
+            <button class="fab-create" id="open-create-room-btn">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
-    </div>
 
-    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
-    <div id="live-view-screen">
-        <div class="live-video-container">
-            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
-            <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
-            
-            <!-- THE FIX: Unmute Button -->
-            <div id="unmute-overlay">
-                <i class="fas fa-volume-up"></i> Tap to Unmute Voice
-            </div>
-        </div>
-        
-        <div class="live-overlay-top">
-            <div class="host-info">
-                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
-                <div class="host-text">
-                    <h4 id="live-host-name">Host Name</h4>
-                    <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
+        <!-- LIVE ROOM SCREEN -->
+        <div id="live-room-screen">
+             <div class="live-room-container" id="live-room-container-area">
+                
+                <!-- UPDATED HEADER -->
+                <header class="zingoo-header">
+                    <div class="zh-left">
+                        <div class="zh-mic-icon"><img id="room-host-avatar-top" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo" style="width:100%; height:100%; object-fit:cover;"></div>
+                        <div class="zh-info">
+                            <h1 id="live-room-title">Room</h1>
+                            <p><i class="fas fa-user-friends"></i> <span id="listener-count-num">1</span> joined</p>
+                        </div>
+                    </div>
+                    <div class="zh-right">
+                        <button class="leave-btn-custom" id="close-room-btn">Leave</button>
+                    </div>
+                </header>
+                
+                <main class="room-body" id="room-body-area">
+                    <div class="speaker-grid-zingoo" id="speaker-grid-container">
+                        <!-- Speakers Injected Here -->
+                    </div>
+                    
+                    <div class="center-logo-area" id="room-center-display"></div>
+                    
+                    <!-- UPDATED: Limited Offer Fixed Box at Bottom Right with Close Button -->
+                    <div class="offer-box" onclick="window.redirectToDiamondStore()">
+                        <div class="close-offer" onclick="event.stopPropagation(); this.parentElement.style.display='none';">&times;</div>
+                        <div class="offer-title">LIMITED OFFERS</div>
+                        <div class="offer-price"><i class="fas fa-gem"></i> 300</div>
+                        <div class="offer-sub">₹100</div>
+                        <button class="buy-btn" onclick="window.redirectToDiamondStore()">Buy Now</button>
+                    </div>
+
+                </main>
+                
+                <div id="floating-live-chat" class="floating-chat-container">
+                    <!-- Chat Messages Flow Here Naturally -->
+                </div>
+
+                <!-- UPDATED FOOTER -->
+                <footer class="zingoo-footer">
+                    <button class="chat-pill-btn" id="open-chat-btn"><i class="fas fa-comment"></i> Chat</button>
+                    <button class="zf-btn purple" id="bottom-more-btn"><i class="fas fa-ellipsis-v"></i></button>
+                    <button class="zf-btn teal" id="gift-btn-footer"><i class="fas fa-gift"></i></button>
+                    <button class="zf-btn orange" id="fire-reaction-btn"><i class="fas fa-fire"></i></button>
+                    <button class="zf-btn grey" id="main-mic-btn"><i class="fas fa-microphone-slash"></i></button>
+                </footer>
+                
+                <!-- CHAT PANEL OVERLAY (Without X button) -->
+                <div id="chat-panel-overlay">
+                    <div class="chat-panel-header" style="display:none;">
+                        <h3>Live Chat</h3>
+                    </div>
+                    <div id="chat-messages" class="chat-messages" style="display:none;">
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
+                        <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
-            <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-times"></i></button>
         </div>
-        
-        <div class="live-overlay-bottom">
-            <div class="chat-box" id="live-chat-box">
-                <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
+
+        <!-- WEBRTC OVERLAYS -->
+        <div id="incoming-call-overlay" class="modal-overlay" style="z-index:10000; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.9);">
+            <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <h2 id="incoming-caller-name" style="color:white; font-size:24px; font-weight:bold; margin-bottom:10px;">Caller Name</h2>
+            <p style="color:#ff3b6b; font-size:14px; margin-bottom:30px; animation:pulse-green 1s infinite;">Incoming Call...</p>
+            <div style="display:flex; gap:20px;">
+                <button id="btn-decline-call" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
+                <button id="btn-accept-call" style="width:60px; height:60px; border-radius:50%; background:#25D366; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone"></i></button>
             </div>
-            <div class="action-bar">
-                <div class="chat-input-wrapper">
-                    <input type="text" id="live-chat-input" placeholder="Say something nice...">
+        </div>
+
+        <div id="video-overlay" style="position:fixed; inset:0; background:black; z-index:10000; display:none;">
+            <video id="remote-video" style="width:100%; height:100%; object-fit:cover;" autoplay playsinline></video>
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
+                <div style="background:rgba(0,0,0,0.5); color:white; padding:10px 20px; border-radius:30px; align-self:flex-start;" id="video-partner-name">Waiting...</div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px;">
+                    <video id="local-video" style="width:100px; height:150px; border-radius:15px; object-fit:cover; border:2px solid var(--hot-pink); transform: scaleX(-1);" autoplay playsinline muted></video>
+                    <button id="btn-end-video" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
                 </div>
-                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+            </div>
+        </div>
+
+        <div id="audio-overlay" style="position:fixed; inset:0; background:#111; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+            <img id="audio-partner-img" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <h2 style="color:white; font-size:24px; font-weight:bold;" id="audio-partner-name">Partner</h2>
+            <p style="color:#ff3b6b; font-size:14px; margin-bottom:50px;" id="audio-status">Connecting...</p>
+            <audio id="remote-audio" autoplay></audio>
+            <audio id="local-audio" autoplay muted></audio>
+            <button id="btn-end-audio" style="width:60px; height:60px; border-radius:50%; background:red; color:white; border:none; font-size:24px; position:absolute; bottom:50px; cursor:pointer;"><i class="fas fa-phone-slash"></i></button>
+        </div>
+
+        <div id="room-audio-container" style="display:none;"></div>
+
+    </div>
+    
+    <!-- UPGRADED LIST STYLE ACTION MODAL -->
+    <div id="footer-action-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
+            <div class="action-grid">
+                <div class="action-item" id="menu-mic-btn">
+                    <div class="action-icon-circle"><i class="fas fa-microphone"></i></div>
+                    <p>Toggle Microphone</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-hand-btn">
+                    <div class="action-icon-circle" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-hand-paper"></i></div>
+                    <p>Raise Hand</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-youtube-btn">
+                    <div class="action-icon-circle" style="background: #ffedd5; color: #ea580c;"><i class="fab fa-youtube"></i></div>
+                    <p>Play Media</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-mute-all-btn">
+                    <div class="action-icon-circle" style="background: #f3e8ff; color: #9333ea;"><i class="fas fa-volume-mute"></i></div>
+                    <p>Mute All Users</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="action-item" id="menu-settings-btn">
+                    <div class="action-icon-circle" style="background: #e2e8f0; color: #475569;"><i class="fas fa-store"></i></div>
+                    <p>Room Settings (Store)</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <i class="fas fa-circle-notch fa-spin" style="font-size: 45px; margin-bottom: 20px; color: var(--primary-red);"></i>
-        <p id="loading-text">Connecting...</p>
+    <!-- ROOM SETTINGS & STORE MODAL WITH ALL CATEGORIES -->
+    <div id="room-settings-modal" class="modal-overlay">
+        <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+            <div class="modal-header"><h3>Room Store & Settings</h3><button class="close-btn">&times;</button></div>
+            <p style="font-size:13px; color:#666; margin-bottom:15px; text-align:center; font-weight:600;">Buy and Equip Premium Assets.</p>
+            
+            <select id="store-category-selector" class="custom-input" style="padding:12px; font-weight:700; cursor:pointer;" onchange="window.switchStoreCategory(this.value)">
+                <option value="chairs">Room Chairs / Seats</option>
+                <option value="backgrounds">Room Background Images</option>
+                <option value="frames">Profile Frames</option>
+                <option value="profile_icons">Profile Icons / Badges</option>
+                <option value="entry_stickers">Entry Stickers</option>
+            </select>
+
+            <div class="gift-grid" id="store-items-grid">
+                <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading store items...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="create-room-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Create Room & Invite</h3><button class="close-btn">&times;</button></div>
+            <div class="create-room-inputs">
+                <input type="text" id="new-room-topic" class="custom-input" placeholder="Enter Room Topic (e.g., Chill Vibes)">
+                <input type="number" id="new-room-fee" class="custom-input diamond-input" placeholder="Entry Fee (Diamonds) - Leave blank for Free">
+                
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="text" id="user-search-input" class="custom-input" placeholder="Search friends by Name or ID..." style="margin-bottom:0;">
+                    <button id="btn-search-users" style="background:var(--hot-pink); color:white; border:none; padding:0 20px; border-radius:12px; cursor:pointer; font-weight:700;"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="invite-user-list" id="invite-user-list"></div>
+            <button id="start-new-room-btn" class="start-room-btn">Start & Enter Room</button>
+        </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
-    <!-- ============================================== -->
+    <div id="youtube-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Share YouTube Video</h3><button class="close-btn">&times;</button></div>
+            <input type="text" id="youtube-link-input" class="custom-input" placeholder="Paste YouTube Link Here...">
+            <button id="play-youtube-btn" class="youtube-btn"><i class="fas fa-play"></i> Play Video in Room</button>
+        </div>
+    </div>
+    
+    <div id="gift-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
+            <div class="gift-grid" id="modal-gift-grid">
+                 <p style="font-size:12px; color:#888; text-align: center; grid-column: 1 / -1;">Loading gifts from admin panel...</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="profile-popup" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>User Profile</h3><button class="close-btn">&times;</button></div>
+            <div class="profile-content">
+                <img id="popup-profile-img" src="" alt="User Profile">
+                <h4 id="popup-username"></h4>
+                <p id="popup-userid" class="user-id"></p>
+                <div class="profile-actions" style="margin-top: 10px;">
+                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
+                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
+                    <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
+        // ---- SCREENSHOT & COPY SECURITY EVENTS ----
+        document.addEventListener('contextmenu', e => e.preventDefault()); // Disable Right Click
+        document.addEventListener('keyup', (e) => {
+            if (e.key == 'PrintScreen') {
+                navigator.clipboard.writeText(''); // Clear clipboard
+                alert("Screenshots are restricted!");
+            }
+        });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'PrintScreen' || 
-                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
-                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+            if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) {
                 e.preventDefault();
-                showToast("Security: Screenshots & recording are restricted!");
             }
         });
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                document.body.classList.add('security-blur');
-            } else {
-                document.body.classList.remove('security-blur');
-            }
-        });
+        let app;
+        let db;
 
-        // --- FIREBASE SETUP ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
-            authDomain: "benchtopinnovations12.firebaseapp.com",
-            databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
-            projectId: "benchtopinnovations12",
-            storageBucket: "benchtopinnovations12.firebasestorage.app",
-            messagingSenderId: "113274194106",
-            appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // --- APIS ---
-        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
-        const CLOUD_NAME = "dotjw6tep"; 
-        const UPLOAD_PRESET = "Zingoo"; 
-
-        // --- GLOBAL VARIABLES ---
-        let currentUser = null;
-        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
-        let currentUserId = null;
-        let userDiamonds = 0;
-        let selectedAvatarFile = null;
-        let selectedThumbFile = null;
-        let selectedPastThumb = null;
-
-        // WebRTC Variables
-        const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
-        let localStream = null;
-        let currentStreamId = null;
-        let isHost = false;
-        let hostPeerConnections = {};
-        let viewerPeerConnection = null;
-
-        // --- TOAST FUNCTION ---
-        function showToast(message) {
-            const toast = document.getElementById('toastMsg');
-            toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        if (window.zingooApp) {
+            app = window.zingooApp;
+            db = getDatabase(app);
+        } else {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
+                authDomain: "benchtopinnovations12.firebaseapp.com",
+                databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
+                projectId: "benchtopinnovations12",
+                storageBucket: "benchtopinnovations12.firebasestorage.app",
+                messagingSenderId: "113274194106",
+                appId: "1:113274194106:web:c2548c12c1ea20c5b69a83",
+            };
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            window.zingooApp = app; 
         }
 
-        function showLoading(text) {
-            document.getElementById('loading-text').innerText = text;
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-        function hideLoading() {
-            document.getElementById('loading-overlay').style.display = 'none';
-        }
-
-        // --- 1. ID LOGIN & IMGBB LOGIC ---
-        const loginScreen = document.getElementById('id-login-screen');
-        const mainApp = document.getElementById('main-app');
-
-        const storedId = localStorage.getItem("zingoo_id");
-        if (storedId) {
-            document.getElementById('login-zingoo-id').value = storedId;
-            const storedAv = localStorage.getItem("zingoo_avatar");
-            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+        document.addEventListener('DOMContentLoaded', () => {
             
-            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
-            validateDatabaseLogin(storedId);
-        }
-
-        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
-                reader.readAsDataURL(e.target.files[0]);
-                selectedAvatarFile = e.target.files[0];
-            }
-        });
-
-        document.getElementById('btn-login-id').addEventListener('click', () => {
-            const enteredId = document.getElementById('login-zingoo-id').value.trim();
-            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
+            // --- SPLASH SCREEN REDUCED TIMER LOGIC ---
+            let splashTime = 2; // Fast skip
+            const splashTimerEl = document.getElementById('splash-timer');
+            const splashScreen = document.getElementById('splash-screen');
+            const idLoginScreen = document.getElementById('id-login-screen');
             
-            const btn = document.getElementById('btn-login-id');
-            btn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
-
-            if (selectedAvatarFile) {
-                const formData = new FormData();
-                formData.append("image", selectedAvatarFile);
-                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
-                .then(res => res.json()).then(data => {
-                    if (data.success) currentAvatar = data.data.url;
-                    validateDatabaseLogin(enteredId);
-                }).catch(err => {
-                    showToast("Image upload failed, using default.");
-                    validateDatabaseLogin(enteredId);
-                });
-            } else {
-                validateDatabaseLogin(enteredId);
-            }
-        });
-
-        function validateDatabaseLogin(enteredId) {
-            get(ref(db, 'users')).then(snapshot => {
-                let userFound = false;
-                const allUsers = snapshot.val();
-                let userKey = null;
-                
-                if (allUsers) {
-                    for (let key in allUsers) {
-                        if (allUsers[key].id === enteredId) {
-                            currentUser = allUsers[key].name;
-                            currentUserId = enteredId;
-                            userKey = key;
-                            userFound = true;
-                            break;
-                        }
+            const splashInterval = setInterval(() => {
+                splashTime--;
+                if(splashTime <= 0) {
+                    clearInterval(splashInterval);
+                    if(!localStorage.getItem("zingoo_id")) {
+                        hideSplashScreen();
+                        idLoginScreen.style.display = 'flex';
                     }
                 }
-                
-                if (userFound) {
-                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
-                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+            }, 1000);
 
-                    localStorage.setItem("zingoo_user", currentUser);
-                    localStorage.setItem("zingoo_avatar", currentAvatar);
-                    localStorage.setItem("zingoo_id", enteredId);
-                    
-                    userDiamonds = allUsers[userKey].diamonds || 0;
-                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
-                    
-                    // Update Hero Banner Details dynamically
-                    document.getElementById('ui-hero-name').innerText = `Hi, ${currentUser} ✨`;
-                    document.getElementById('ui-hero-avatar').src = currentAvatar;
-                    
-                    loginScreen.style.display = 'none';
-                    mainApp.style.display = 'block';
-                    showToast(`Welcome, ${currentUser}!`);
-                    
-                    fetchLiveStreams();
-                    
-                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
-                        userDiamonds = snap.val() || 0;
-                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+            function hideSplashScreen() {
+                clearInterval(splashInterval);
+                splashScreen.style.display = 'none';
+            }
+
+
+            const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a"; 
+            const lobbyScreen = document.getElementById('lobby-screen');
+            const loginBtn = document.getElementById('btn-login-id');
+            const loginInput = document.getElementById('login-zingoo-id');
+            const globalToast = document.getElementById('global-toast');
+            let selectedAvatarFile = null;
+            let pendingInvites = [];
+
+            let currentUser = null;
+            let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
+            
+            // User Equipped Items
+            let myEquippedChair = null;
+            let myEquippedFrame = null;
+            window.myEquippedBackground = null;
+
+            const showToast = (message) => {
+                globalToast.innerText = message;
+                globalToast.style.display = 'block';
+                setTimeout(() => { globalToast.style.display = 'none'; }, 2000);
+            };
+
+            // AUTO-LOGIN DIRECT ENTRY
+            const storedId = localStorage.getItem("zingoo_id");
+            if (storedId) {
+                processDatabaseLogin(storedId, true); 
+            } else {
+                hideSplashScreen();
+                idLoginScreen.style.display = 'flex';
+            }
+
+            window.triggerGrandGiftAnimation = function(imgUrl, senderName) {
+                const container = document.body;
+                const giftDiv = document.createElement('div');
+                giftDiv.className = 'grand-gift-popup';
+                giftDiv.innerHTML = `
+                    <img src="${imgUrl}" alt="Gift">
+                    <p>✨ ${senderName} Sent a Gift! ✨</p>
+                `;
+                container.appendChild(giftDiv);
+                
+                setTimeout(() => {
+                    if(giftDiv.parentNode) { giftDiv.parentNode.removeChild(giftDiv); }
+                }, 3500);
+            };
+
+            window.spawnFireAnimation = function() {
+                const container = document.querySelector('.live-room-container');
+                for(let i=0; i<10; i++) {
+                    setTimeout(() => {
+                        const fire = document.createElement('div');
+                        fire.className = 'fire-anim';
+                        fire.innerHTML = '🔥';
+                        const xDir = (Math.random() - 0.5) * 150 + 'px';
+                        fire.style.setProperty('--x-dir', xDir);
+                        fire.style.right = (60 + Math.random() * 40) + 'px';
+                        fire.style.bottom = (80 + Math.random() * 20) + 'px';
+                        container.appendChild(fire);
+                        setTimeout(() => { if(fire.parentNode) fire.remove(); }, 1200);
+                    }, i * 80);
+                }
+            };
+
+            window.redirectToDiamondStore = function() {
+                window.location.href = 'index.html?action=buy_diamonds';
+            };
+
+
+            document.getElementById('login-profile-upload').addEventListener('change', function(e) {
+                if(e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        document.getElementById('login-avatar-preview').src = event.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                    selectedAvatarFile = e.target.files[0];
+                }
+            });
+
+            loginBtn.addEventListener('click', () => {
+                const enteredId = loginInput.value.trim();
+                if (!enteredId) { showToast("Please enter your Zingoo ID"); return; }
+                
+                loginBtn.innerText = "Please wait...";
+                loginBtn.disabled = true;
+
+                if (selectedAvatarFile) {
+                    showToast("Uploading profile image...");
+                    const formData = new FormData();
+                    formData.append("image", selectedAvatarFile);
+
+                    fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: "POST",
+                        body: formData
+                    }).then(res => res.json()).then(data => {
+                        if (data.success) {
+                            currentAvatar = data.data.url;
+                            processDatabaseLogin(enteredId, false);
+                        } else {
+                            showToast("Image upload failed. Please try another image.");
+                            processDatabaseLogin(enteredId, false); 
+                        }
+                    }).catch(err => {
+                        showToast("Image upload failed, using default.");
+                        processDatabaseLogin(enteredId, false);
                     });
                 } else {
-                    showToast("Invalid ID! User not found.");
-                    document.getElementById('btn-login-id').innerHTML = 'Enter App <i class="fas fa-arrow-right"></i>';
+                    processDatabaseLogin(enteredId, false);
                 }
-            }).catch(err => {
-                showToast("Connection error!");
-                document.getElementById('btn-login-id').innerHTML = 'Enter App <i class="fas fa-arrow-right"></i>';
             });
-        }
 
-        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
-        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
-            if(e.target.files[0]) {
-                selectedThumbFile = e.target.files[0];
-                selectedPastThumb = null; 
-                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
-                clearPastThumbSelection();
-            }
-        });
+            function processDatabaseLogin(enteredId, isAutoLogin = false) {
+                get(ref(db, 'users')).then(snapshot => {
+                    let userFound = false;
+                    const allUsers = snapshot.val();
+                    let userKey = null;
+                    
+                    if (allUsers) {
+                        for (let key in allUsers) {
+                            if (allUsers[key].id === enteredId) {
+                                currentUser = allUsers[key].name;
+                                userKey = key;
+                                userFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (userFound) {
+                        myEquippedChair = allUsers[userKey].equippedChair || null;
+                        myEquippedFrame = allUsers[userKey].equippedFrame || null;
+                        window.myEquippedBackground = allUsers[userKey].equippedBackground || null;
 
-        async function uploadToCloudinary(file) {
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', UPLOAD_PRESET); 
-                formData.append('cloud_name', CLOUD_NAME);
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-                const data = await res.json();
-                return data.secure_url || null;
-            } catch (err) { return null; }
-        }
+                        if (selectedAvatarFile && !isAutoLogin) {
+                            set(ref(db, `users/${userKey}/avatar`), currentAvatar);
+                        } else {
+                            currentAvatar = allUsers[userKey].avatar || currentAvatar;
+                        }
 
-        function loadPastThumbnails() {
-            const container = document.getElementById('past-thumbs-container');
-            const wrapper = document.getElementById('past-thumbs-wrapper');
-            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
-            
-            if(pastThumbs.length > 0) {
-                wrapper.style.display = 'block';
-                container.innerHTML = '';
-                pastThumbs.forEach(url => {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.onclick = () => {
-                        selectedPastThumb = url;
-                        selectedThumbFile = null; 
-                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
-                        clearPastThumbSelection();
-                        img.classList.add('selected');
-                    };
-                    container.appendChild(img);
+                        localStorage.setItem("zingoo_user", currentUser);
+                        localStorage.setItem("zingoo_avatar", currentAvatar);
+                        localStorage.setItem("zingoo_id", enteredId);
+                        
+                        const userDiamonds = allUsers[userKey].diamonds || 0;
+                        document.getElementById('lobby-diamond-balance').innerText = userDiamonds;
+                        localStorage.setItem("zingoo_diamonds", userDiamonds);
+                        
+                        // Successfully logged in -> hide Splash and Login, show Lobby
+                        hideSplashScreen();
+                        idLoginScreen.style.display = 'none';
+                        lobbyScreen.style.display = 'flex';
+                        
+                        listenForAudioRooms(); 
+                        listenForIncomingCalls(); 
+                        listenForInvites(); 
+                        fetchAdminGifts(); 
+                        fetchStoreItems(); 
+                        
+                        if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
+                    } else {
+                        if(isAutoLogin) {
+                            localStorage.removeItem("zingoo_id");
+                            hideSplashScreen();
+                            idLoginScreen.style.display = 'flex';
+                        } else {
+                            showToast("Invalid ID! User not found.");
+                            loginBtn.innerText = "Enter Rooms";
+                            loginBtn.disabled = false;
+                        }
+                    }
+                }).catch(err => {
+                    if(isAutoLogin) {
+                        hideSplashScreen();
+                        idLoginScreen.style.display = 'flex';
+                    } else {
+                        showToast("Error connecting to database.");
+                        loginBtn.innerText = "Enter Rooms";
+                        loginBtn.disabled = false;
+                    }
                 });
-            } else {
-                wrapper.style.display = 'none';
             }
-        }
 
-        function clearPastThumbSelection() {
-            const imgs = document.querySelectorAll('#past-thumbs-container img');
-            imgs.forEach(i => i.classList.remove('selected'));
-        }
-
-        function saveThumbToPast(url) {
-            if(url && url !== currentAvatar) {
-                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
-                if(!pastThumbs.includes(url)) {
-                    pastThumbs.unshift(url); 
-                    if(pastThumbs.length > 5) pastThumbs.pop(); 
-                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
-                }
+            function listenForInvites() {
+                onChildAdded(ref(db, `invites/${currentUser}`), (snap) => {
+                    const data = snap.val();
+                    if(data) {
+                        showToast(`💌 ${data.sender} invited you to room: ${data.roomName}`);
+                        remove(ref(db, `invites/${currentUser}/${snap.key}`));
+                    }
+                });
             }
-        }
 
-        // --- 3. FETCH LIVE STREAMS (GRID - NEW 3 COLUMN UI) ---
-        const gridContainer = document.getElementById('liveGrid');
+            let currentActiveRoomId = null;
+            let currentRoomHost = null;
+            let mySeatIndex = -1;
+            let roomListener = null;
+            let roomBgListener = null;
+            let unsubscribeChat = null;
+            let unsubscribeMedia = null;
+            let isJoining = false; // Throttling logic
 
-        function fetchLiveStreams() {
-            onValue(ref(db, 'live_streams'), (snapshot) => {
-                gridContainer.innerHTML = '';
-                const streams = snapshot.val();
-                let count = 0;
-                
-                if (streams) {
-                    Object.entries(streams).forEach(([streamId, data]) => {
-                        if (data.isLive || data.scheduledTime) {
-                            count++;
-                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
-                            const thumbUrl = data.thumbnail || data.hostAvatar; 
-                            
-                            const badgeHTML = data.isLive ? 
-                                `<span class="live-badge">LIVE</span>` : 
-                                `<span class="scheduled-badge">SCHED</span>`;
-
-                            // Generating random diamond count just like the image reference (for UI presentation)
-                            const fakeDiamonds = (Math.random() * (5.5 - 0.5) + 0.5).toFixed(1) + 'K';
-
-                            const card = document.createElement('div');
-                            card.className = 'live-card';
-                            
-                            card.onclick = () => {
-                                if (!data.isLive && data.hostName === currentUser) {
-                                    startScheduledLiveAsHost(streamId, data);
-                                } else if (!data.isLive) {
-                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
-                                    showToast(`This live starts later at: ${timeStr}`);
-                                } else {
-                                    joinLiveStream(streamId, data);
-                                }
-                            };
-                            
-                            card.innerHTML = `
-                                <img src="${thumbUrl}" alt="Live">
-                                <div class="card-top-info">
-                                    ${badgeHTML}
-                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
-                                </div>
-                                <div class="card-bottom-info">
-                                    <div class="user-name">${data.hostName} <i class="fas fa-check verified-icon"></i></div>
-                                    <div class="live-title">
-                                        <span>${data.title || "Let's talk ✨"}</span>
-                                        <span class="live-diamond-stat"><i class="fas fa-gem"></i> ${fakeDiamonds}</span>
-                                    </div>
+            let availableGifts = {};
+            function fetchAdminGifts() {
+                onValue(ref(db, 'gifts'), (snap) => {
+                    const modalGridContainer = document.getElementById('modal-gift-grid');
+                    modalGridContainer.innerHTML = '';
+                    
+                    const data = snap.val();
+                    if(data && Object.keys(data).length > 0) {
+                        availableGifts = data;
+                        Object.entries(data).forEach(([key, gift]) => {
+                            modalGridContainer.innerHTML += `
+                                <div class="gift-item" onclick="sendRoomGift('${key}')">
+                                    <img src="${gift.imageUrl}" alt="${gift.name}">
+                                    <p>${gift.name}</p>
+                                    <p class="price"><i class="fas fa-gem"></i> ${gift.cost}</p>
                                 </div>
                             `;
-                            gridContainer.appendChild(card);
+                        });
+                    } else {
+                        modalGridContainer.innerHTML = '<p style="font-size:10px; color:#888;">No gifts available.</p>';
+                    }
+                });
+            }
+
+            // --- FETCH ALL STORE ITEMS ---
+            let storeItemsData = { chairs: {}, backgrounds: {}, frames: {}, profile_icons: {}, entry_stickers: {} };
+
+            function fetchStoreItems() {
+                const categories = ['chairs', 'backgrounds', 'frames', 'profile_icons', 'entry_stickers'];
+                categories.forEach(cat => {
+                    onValue(ref(db, `store_items/${cat}`), (snap) => {
+                        storeItemsData[cat] = snap.val() || {};
+                        // Dynamically update UI if this category is currently open
+                        if(document.getElementById('store-category-selector').value === cat && document.getElementById('room-settings-modal').style.display === 'flex') {
+                            window.switchStoreCategory(cat);
                         }
                     });
+                });
+            }
+
+            window.switchStoreCategory = function(category) {
+                const grid = document.getElementById('store-items-grid');
+                grid.innerHTML = '';
+                const data = storeItemsData[category];
+                if(data && Object.keys(data).length > 0) {
+                    Object.entries(data).forEach(([key, item]) => {
+                        grid.innerHTML += `
+                            <div class="gift-item" onclick="buyAndEquipItem('${category}', '${item.imageUrl}', ${item.cost}, '${item.name}')">
+                                <img src="${item.imageUrl}" alt="${item.name}">
+                                <p>${item.name}</p>
+                                <p class="price"><i class="fas fa-gem"></i> ${item.cost}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    grid.innerHTML = '<p style="font-size:12px; color:#888; text-align:center; grid-column:1/-1;">No items available in this category.</p>';
                 }
+            };
+
+            // --- BUY AND EQUIP ANY STORE ITEM (Buy Once Logic) ---
+            window.buyAndEquipItem = function(category, itemUrl, cost, name) {
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                const safeKey = itemUrl.replace(/[^a-zA-Z0-9]/g, ''); // create safe firebase key
                 
-                if(count === 0) {
-                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 13px; font-weight: 600; padding: 20px;"><i class="fas fa-video-slash" style="display:block; font-size:25px; margin-bottom:8px; color:#ccc;"></i>No one is live. Be the first!</p>';
-                }
-            });
-        }
+                get(ref(db, `users/${currentUser}/ownedItems/${safeKey}`)).then(ownedSnap => {
+                    let isOwned = ownedSnap.exists();
+                    let finalCost = isOwned ? 0 : cost;
 
-        window.openStartLiveModal = () => {
-            loadPastThumbnails();
-            document.getElementById('live-schedule-time').value = '';
-            document.getElementById('startLiveModal').classList.add('active');
-        };
-        window.closeModal = (id) => {
-            document.getElementById(id).classList.remove('active');
-        };
+                    if(currentBal >= finalCost) {
+                        if(isOwned || confirm(`Buy and equip '${name}' for ${finalCost} diamonds?`)) {
+                            
+                            // Deduct and save ownership if not owned
+                            if(!isOwned) {
+                                let newBal = currentBal - finalCost;
+                                set(ref(db, `users/${currentUser}/ownedItems/${safeKey}`), true);
+                                set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                                localStorage.setItem('zingoo_diamonds', newBal);
+                                document.getElementById('lobby-diamond-balance').innerText = newBal;
+                            }
+                            
+                            // Save to DB User Profile
+                            get(ref(db, 'users')).then(snap => {
+                                let uKey = null;
+                                const users = snap.val();
+                                for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                                
+                                if(uKey) {
+                                    if(category === 'chairs') set(ref(db, `users/${uKey}/equippedChair`), itemUrl);
+                                    else if(category === 'frames') set(ref(db, `users/${uKey}/equippedFrame`), itemUrl);
+                                    else if(category === 'profile_icons') set(ref(db, `users/${uKey}/equippedIcon`), itemUrl);
+                                    else if(category === 'backgrounds') set(ref(db, `users/${uKey}/equippedBackground`), itemUrl);
+                                }
+                            });
 
-        // --- 4. WEBRTC BROADCASTING (HOST) ---
-        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
-            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
-            const scheduleInput = document.getElementById('live-schedule-time').value;
-            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
-            
-            closeModal('startLiveModal');
-            showLoading("Processing...");
+                            // Instantly update current room if applicable
+                            if(category === 'chairs') {
+                                myEquippedChair = itemUrl;
+                                if(mySeatIndex !== -1 && currentActiveRoomId) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), itemUrl);
+                                }
+                            } else if(category === 'frames') {
+                                myEquippedFrame = itemUrl;
+                                if(mySeatIndex !== -1 && currentActiveRoomId) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), itemUrl);
+                                }
+                            } else if(category === 'backgrounds') {
+                                if(currentRoomHost !== currentUser) return showToast("Only the Room Host can set the room background!");
+                                window.myEquippedBackground = itemUrl;
+                                if(currentActiveRoomId) set(ref(db, `audio_rooms/${currentActiveRoomId}/background`), itemUrl);
+                            } else if(category === 'entry_stickers') {
+                                if(currentActiveRoomId) {
+                                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                                        user: currentUser,
+                                        text: `Made a Grand Entry!`,
+                                        giftUrl: itemUrl, 
+                                        timestamp: serverTimestamp()
+                                    });
+                                }
+                            }
 
-            try {
-                let thumbUrl = currentAvatar; 
-                
-                if(selectedThumbFile) {
-                    showLoading("Uploading Thumbnail...");
-                    const uploaded = await uploadToCloudinary(selectedThumbFile);
-                    if(uploaded) {
-                        thumbUrl = uploaded;
-                        saveThumbToPast(thumbUrl);
+                            showToast(`Successfully equipped ${name}!`);
+                            closeModal();
+                        }
+                    } else {
+                        if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
+                            window.redirectToDiamondStore();
+                        }
                     }
-                } else if (selectedPastThumb) {
-                    thumbUrl = selectedPastThumb;
-                }
+                });
+            };
 
-                if(isScheduled) {
-                    const newStreamRef = push(ref(db, 'live_streams'));
-                    await set(newStreamRef, {
-                        hostName: currentUser,
-                        hostAvatar: currentAvatar,
-                        title: title,
-                        thumbnail: thumbUrl,
-                        isLive: false,
-                        scheduledTime: new Date(scheduleInput).getTime(),
+            window.sendRoomGift = function(giftKey) {
+                if(!currentActiveRoomId) return;
+                const gift = availableGifts[giftKey];
+                if(!gift) return;
+
+                if(currentRoomHost === currentUser) {
+                    showToast("You cannot send gifts to your own room!");
+                    return;
+                }
+                
+                let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                if(currentBal >= gift.cost) {
+                    let newBal = currentBal - gift.cost;
+                    set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                    localStorage.setItem('zingoo_diamonds', newBal);
+                    document.getElementById('lobby-diamond-balance').innerText = newBal;
+                    
+                    get(ref(db, `users/${currentRoomHost}/diamonds`)).then((hSnap) => {
+                        let hBal = hSnap.val() || 0;
+                        set(ref(db, `users/${currentRoomHost}/diamonds`), hBal + gift.cost);
+                    });
+
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                        user: currentUser,
+                        text: `Sent ${gift.name}!`,
+                        giftUrl: gift.imageUrl, 
                         timestamp: serverTimestamp()
                     });
-                    hideLoading();
-                    showToast("Live Scheduled Successfully! ⏰");
-                    return; 
+                    
+                    showToast(`Successfully sent ${gift.name}!`);
+                    closeModal();
+                } else {
+                    if(confirm(`Not enough diamonds. Cost is ${gift.cost}, you have ${currentBal}. Go to store to buy more?`)) {
+                        window.redirectToDiamondStore();
+                    }
                 }
+            };
 
-                showLoading("Accessing Camera & Mic...");
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
-                showLoading("Starting Stream...");
-                
-                const newStreamRef = push(ref(db, 'live_streams'));
-                currentStreamId = newStreamRef.key;
-                isHost = true;
+            window.removeRoomMedia = function(roomId) {
+                remove(ref(db, 'audio_rooms/' + roomId + '/media'));
+            };
 
-                await set(newStreamRef, {
-                    hostName: currentUser,
-                    hostAvatar: currentAvatar,
-                    title: title,
-                    thumbnail: thumbUrl,
-                    isLive: true,
-                    timestamp: serverTimestamp()
-                });
 
-                onDisconnect(newStreamRef).remove();
-                setupHostUIAndSignaling();
+            // ==========================================
+            // SUPER SERVER INTEGRATION: ZEGOCLOUD (Replaced Native WebRTC)
+            // ==========================================
+            let zg = new ZegoExpressEngine(557776684, "wss://webliveroom557776684-api.coolzcloud.com/ws");
+            let zegoLocalStream = null;
+            let zegoStreamId = "";
+            let currentCallPath = null;
+            let incomingCallData = null;
+            let callRoomId = "";
 
-            } catch (err) {
-                hideLoading();
-                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
-            }
-        });
+            const liveRoomScreen = document.getElementById('live-room-screen');
+            const modals = document.querySelectorAll('.modal-overlay');
+            const lobbyRoomsList = document.getElementById('lobby-rooms-list');
+            const noRoomsMsg = document.getElementById('no-rooms-message');
 
-        async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Accessing Camera & Mic...");
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
-                currentStreamId = streamId;
-                isHost = true;
+            const openModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if(modal) {
+                    modal.style.display = 'flex';
+                    if(modalId === 'room-settings-modal') {
+                        window.switchStoreCategory(document.getElementById('store-category-selector').value);
+                    }
+                }
+            };
 
-                await update(ref(db, `live_streams/${streamId}`), {
-                    isLive: true,
-                    scheduledTime: null,
-                    timestamp: serverTimestamp()
-                });
-                
-                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
-                setupHostUIAndSignaling();
-            } catch (err) {
-                hideLoading();
-                alert("Could not start live: " + err.message);
-            }
-        }
+            const closeModal = () => {
+                modals.forEach(modal => modal.style.display = 'none');
+            };
 
-        function setupHostUIAndSignaling() {
-            document.getElementById('main-app').style.display = 'none';
-            const liveScreen = document.getElementById('live-view-screen');
-            liveScreen.style.display = 'flex';
-            
-            const localVideo = document.getElementById('local-live-video');
-            localVideo.style.display = 'block';
-            document.getElementById('remote-live-video').style.display = 'none';
-            localVideo.srcObject = localStream;
-
-            document.getElementById('live-host-name').innerText = currentUser + " (You)";
-            document.getElementById('live-host-avatar').src = currentAvatar;
-
-            hideLoading();
-            showToast("You are now LIVE! 🔴");
-            setupLiveChat();
-
-            if (localStream && localStream.getVideoTracks().length > 0) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                videoTrack.onmute = () => {
-                    showToast("Warning: Camera interrupted (Screen Record/Call detected)!");
-                    document.body.classList.add('security-blur');
-                };
-                videoTrack.onunmute = () => {
-                    showToast("Camera restored.");
-                    document.body.classList.remove('security-blur');
-                };
-                videoTrack.onended = () => {
-                    showToast("Camera stopped unexpectedly!");
-                    leaveLiveStream();
-                };
-            }
-
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
-                const viewerId = snapshot.key;
-                const viewerData = snapshot.val();
-                
-                get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
-                    document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
-                });
-
-                if (viewerData.offer) {
-                    const pc = new RTCPeerConnection(iceServers);
-                    hostPeerConnections[viewerId] = pc;
-
-                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-                    pc.onicecandidate = e => {
-                        if (e.candidate) {
-                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
+            // ZegoCloud Listener for Incoming Streams (Handles both 1v1 and Live Room Audio/Video)
+            zg.on('roomStreamUpdate', async (roomID, updateType, streamList) => {
+                if (updateType === 'ADD') {
+                    for (const stream of streamList) {
+                        try {
+                            const remoteStream = await zg.startPlayingStream(stream.streamID);
+                            if (roomID === callRoomId) { // It's a 1v1 Call Stream
+                                const isVideo = incomingCallData ? incomingCallData.isVideo : (document.getElementById("video-overlay").style.display === "flex");
+                                const remoteMedia = document.getElementById(isVideo ? "remote-video" : "remote-audio");
+                                remoteMedia.srcObject = remoteStream;
+                            } else { // It's a Live Audio Room Stream
+                                let audioEl = document.getElementById(`audio-${stream.streamID}`);
+                                if (!audioEl) {
+                                    audioEl = document.createElement('audio');
+                                    audioEl.id = `audio-${stream.streamID}`;
+                                    audioEl.autoplay = true;
+                                    document.getElementById('room-audio-container').appendChild(audioEl);
+                                }
+                                audioEl.srcObject = remoteStream;
+                            }
+                        } catch(e) { console.error("Error playing Zego stream:", e); }
+                    }
+                } else if (updateType === 'DELETE') {
+                    for (const stream of streamList) {
+                        zg.stopPlayingStream(stream.streamID);
+                        if (roomID !== callRoomId) {
+                            let audioEl = document.getElementById(`audio-${stream.streamID}`);
+                            if (audioEl) audioEl.remove();
                         }
-                    };
+                    }
+                }
+            });
 
-                    const viewerCandidatesQueue = [];
-                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
-                        if(snap.val()) {
-                            if(pc.remoteDescription && pc.remoteDescription.type) {
-                                pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+            function listenForIncomingCalls() {
+                if(!currentUser) return;
+                onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.callRoomId && !zegoLocalStream) { // Zego check
+                        incomingCallData = data;
+                        document.getElementById('incoming-caller-name').innerText = data.caller;
+                        document.getElementById('incoming-caller-avatar').src = data.callerAvatar;
+                        document.getElementById('incoming-call-overlay').style.display = 'flex';
+                    } else if (!data && document.getElementById('incoming-call-overlay').style.display === 'flex') {
+                        document.getElementById('incoming-call-overlay').style.display = 'none'; 
+                        incomingCallData = null; 
+                        stopWebRTC1v1();
+                    }
+                });
+            }
+
+            window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
+                if(zegoLocalStream) return; // Prevent if already in a stream
+                if(targetUser === currentUser) { showToast("You cannot call yourself!"); return; }
+                
+                currentCallPath = `calls/${targetUser}`;
+                callRoomId = "call_" + Date.now(); // Unique 1v1 Room
+                document.getElementById('video-partner-name').innerText = targetUser;
+                document.getElementById('audio-partner-name').innerText = targetUser;
+                if(targetAvatar) document.getElementById('audio-partner-img').src = targetAvatar;
+                
+                try {
+                    // Generate Client Token for ZegoCloud
+                    const token = ZegoUIKitPrebuilt.generateKitTokenForTest(557776684, "d595b7c54719d1f52d8b1e8f0bb446c6", callRoomId, currentUser, currentUser);
+                    await zg.loginRoom(callRoomId, token, { userID: currentUser, userName: currentUser }, { userUpdate: true });
+                    
+                    zegoLocalStream = await zg.createStream({ camera: { audio: true, video: isVideo } });
+                    zegoStreamId = callRoomId + "_" + currentUser;
+
+                    document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                    const localMedia = document.getElementById(isVideo ? "local-video" : "local-audio");
+                    localMedia.srcObject = zegoLocalStream;
+
+                    zg.startPublishingStream(zegoStreamId, zegoLocalStream);
+
+                    // Alert other user via Firebase
+                    set(ref(db, currentCallPath), { 
+                        caller: currentUser, 
+                        callerAvatar: currentAvatar, 
+                        callRoomId: callRoomId, 
+                        isVideo: isVideo 
+                    });
+                } catch(e) { stopWebRTC1v1(); showToast("Call Failed: Camera/Mic Access Denied."); }
+            };
+
+            document.getElementById("btn-accept-call").addEventListener("click", async () => {
+                document.getElementById('incoming-call-overlay').style.display = 'none';
+                const isVideo = incomingCallData.isVideo; 
+                callRoomId = incomingCallData.callRoomId;
+                currentCallPath = `calls/${currentUser}`;
+                
+                try {
+                    const token = ZegoUIKitPrebuilt.generateKitTokenForTest(557776684, "d595b7c54719d1f52d8b1e8f0bb446c6", callRoomId, currentUser, currentUser);
+                    await zg.loginRoom(callRoomId, token, { userID: currentUser, userName: currentUser }, { userUpdate: true });
+
+                    zegoLocalStream = await zg.createStream({ camera: { audio: true, video: isVideo } });
+                    zegoStreamId = callRoomId + "_" + currentUser;
+
+                    document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
+                    const localMedia = document.getElementById(isVideo ? "local-video" : "local-audio");
+                    localMedia.srcObject = zegoLocalStream;
+
+                    zg.startPublishingStream(zegoStreamId, zegoLocalStream);
+                } catch(e) { stopWebRTC1v1(); showToast("Call Accept Failed. Allow Mic/Camera."); }
+            });
+
+            function stopWebRTC1v1() {
+                if(zegoLocalStream && callRoomId) {
+                    zg.stopPublishingStream(zegoStreamId);
+                    zg.destroyStream(zegoLocalStream);
+                    zegoLocalStream = null;
+                }
+                if(callRoomId) {
+                    zg.logoutRoom(callRoomId);
+                    callRoomId = "";
+                }
+                document.getElementById("video-overlay").style.display = "none";
+                document.getElementById("audio-overlay").style.display = "none";
+                document.getElementById("incoming-call-overlay").style.display = "none";
+                if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
+                incomingCallData = null;
+            }
+            
+            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC1v1(); });
+            document.getElementById("btn-end-video").addEventListener("click", stopWebRTC1v1);
+            document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC1v1);
+
+            // ZEGOCLOUD INSTANT LIVE AUDIO ROOM CONNECTION
+            async function startRoomAudio() {
+                if (zegoLocalStream) return; 
+                try {
+                    // Clear old Firebase signaling trash
+                    await set(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`), null);
+                    
+                    const token = ZegoUIKitPrebuilt.generateKitTokenForTest(557776684, "d595b7c54719d1f52d8b1e8f0bb446c6", currentActiveRoomId, currentUser, currentUser);
+                    await zg.loginRoom(currentActiveRoomId, token, { userID: currentUser, userName: currentUser }, { userUpdate: true });
+                    
+                    zegoLocalStream = await zg.createStream({ camera: { audio: true, video: false } });
+                    zegoStreamId = currentActiveRoomId + "_" + currentUser;
+                    
+                    zg.startPublishingStream(zegoStreamId, zegoLocalStream);
+                } catch (e) {
+                    console.error("Zego Server Error:", e);
+                    showToast("Microphone access denied! You can't speak.");
+                    if(mySeatIndex !== -1) window.audioRoomAPI.leaveSeat();
+                }
+            }
+
+            function stopRoomAudio() {
+                if (zegoLocalStream && !callRoomId) {
+                    zg.stopPublishingStream(zegoStreamId);
+                    zg.destroyStream(zegoLocalStream);
+                    zegoLocalStream = null;
+                }
+                if (currentActiveRoomId) {
+                    zg.logoutRoom(currentActiveRoomId);
+                }
+                document.getElementById('room-audio-container').innerHTML = '';
+            }
+
+            // ==========================================
+            // END OF ZEGOCLOUD INTEGRATION
+            // ==========================================
+
+            document.getElementById('btn-search-users').addEventListener('click', () => {
+                const query = document.getElementById('user-search-input').value.trim().toLowerCase();
+                if(!query) return;
+                
+                const list = document.getElementById('invite-user-list');
+                list.innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">Searching...</p>';
+                
+                get(ref(db, 'users')).then(snap => {
+                    list.innerHTML = '';
+                    const users = snap.val();
+                    let found = false;
+                    if(users) {
+                        Object.values(users).forEach(u => {
+                            if(u.name !== currentUser && (u.name.toLowerCase().includes(query) || u.id.includes(query))) {
+                                found = true;
+                                const isSent = pendingInvites.includes(u.name);
+                                list.innerHTML += `
+                                    <div class="user-card">
+                                        <img src="${u.avatar}">
+                                        <div class="user-info">
+                                            <h4>${u.name}</h4>
+                                            <p>ID: ${u.id}</p>
+                                        </div>
+                                        <button class="invite-action-btn ${isSent ? 'sent' : ''}" onclick="window.toggleInvite('${u.name}', this)">${isSent ? 'Selected' : 'Invite'}</button>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    if(!found) list.innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">No users found</p>';
+                });
+            });
+
+            window.toggleInvite = function(name, btn) {
+                if(!pendingInvites.includes(name)) {
+                    pendingInvites.push(name);
+                    btn.innerText = "Selected";
+                    btn.classList.add('sent');
+                } else {
+                    pendingInvites = pendingInvites.filter(n => n !== name);
+                    btn.innerText = "Invite";
+                    btn.classList.remove('sent');
+                }
+            };
+
+            window.openUserProfile = function(username, avatar) {
+                document.getElementById('popup-username').innerText = username;
+                document.getElementById('popup-profile-img').src = avatar;
+                document.getElementById('popup-userid').innerText = "ID: " + username;
+                
+                document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
+                document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
+                
+                openModal('profile-popup');
+            };
+
+            let myActiveRoomId = null;
+
+            function listenForAudioRooms() {
+                const roomsRef = ref(db, 'audio_rooms');
+                onValue(roomsRef, (snapshot) => {
+                    lobbyRoomsList.innerHTML = '';
+                    myActiveRoomId = null; // reset check
+                    const rooms = snapshot.val();
+                    if (rooms && Object.keys(rooms).length > 0) {
+                        if(noRoomsMsg) noRoomsMsg.style.display = 'none';
+                        Object.entries(rooms).forEach(([roomId, roomData]) => {
+                            if(roomData.host === currentUser) {
+                                myActiveRoomId = roomId;
+                            }
+
+                            const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
+                            const vacantSeats = 10 - seatCount;
+                            
+                            let joinedHTML = '';
+                            if(seatCount > 0) {
+                                joinedHTML = `
+                                <div class="room-row-avatars">
+                                    <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150'}">
+                                    <span>+${seatCount} joined</span>
+                                </div>`;
+                            }
+
+                            const roomCard = document.createElement('div');
+                            roomCard.className = `room-list-row`;
+                            roomCard.dataset.roomId = roomId;
+                            roomCard.dataset.roomTitle = roomData.name;
+                            roomCard.dataset.fee = roomData.fee || 0;
+
+                            roomCard.innerHTML = `
+                                <div class="room-list-img">
+                                    <span class="live-badge">+ LIVE</span>
+                                    <img src="${roomData.hostAvatar || 'https://i.pravatar.cc/150?img=50'}">
+                                </div>
+                                <div class="room-list-info">
+                                    <h4>${roomData.name} ${roomData.fee > 0 ? `<i class="fas fa-gem" style="color:#d97706; font-size: 0.8em; margin-left: 5px;"></i>${roomData.fee}` : ''}</h4>
+                                    <p>Host: ${roomData.host}</p>
+                                    ${joinedHTML}
+                                </div>
+                                <div class="room-list-action">
+                                    <span class="room-list-viewers"><i class="far fa-user"></i> ${vacantSeats} left</span>
+                                    <button class="join-btn-outline">Join</button>
+                                </div>
+                            `;
+                            lobbyRoomsList.appendChild(roomCard);
+                        });
+                    } else {
+                        if(noRoomsMsg) {
+                           noRoomsMsg.style.display = 'block';
+                           noRoomsMsg.innerText = "No active rooms. Create your own party!";
+                           lobbyRoomsList.appendChild(noRoomsMsg);
+                        }
+                    }
+                });
+            }
+
+            function joinAudioRoom(roomId, roomTitle, fee) {
+                if (isJoining) return;
+                isJoining = true;
+                setTimeout(() => { isJoining = false; }, 1000); // Throttler to prevent multiple connections
+
+                const proceed = () => {
+                    currentActiveRoomId = roomId;
+                    document.getElementById('live-room-title').innerText = roomTitle;
+                    lobbyScreen.style.display = 'none';
+                    liveRoomScreen.style.display = 'flex';
+
+                    get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
+                        currentRoomHost = hostSnap.val();
+                        
+                        get(ref(db, `audio_rooms/${roomId}/hostAvatar`)).then(avaSnap => {
+                           if(avaSnap.val()) document.getElementById('room-host-avatar-top').src = avaSnap.val();
+                        });
+
+                        if(roomBgListener) roomBgListener();
+                        roomBgListener = onValue(ref(db, `audio_rooms/${roomId}/background`), (snap) => {
+                            const bgUrl = snap.val();
+                            const container = document.getElementById('live-room-container-area');
+                            if(bgUrl) {
+                                container.style.backgroundImage = `url(${bgUrl})`;
                             } else {
-                                viewerCandidatesQueue.push(snap.val());
+                                container.style.backgroundImage = 'none';
+                                container.style.backgroundColor = '#fdfdfd'; 
+                            }
+                        });
+
+                        if (unsubscribeMedia) unsubscribeMedia();
+                        unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
+                            const videoId = snap.val();
+                            const display = document.getElementById('room-center-display');
+                            if(videoId) {
+                                display.style.display = 'flex';
+                                let closeBtn = (currentRoomHost === currentUser) 
+                                    ? `<button onclick="window.removeRoomMedia('${roomId}')" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-size:16px; font-weight:bold; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);">&times;</button>` 
+                                    : '';
+                                
+                                display.innerHTML = `<div style="position:relative; width:100%;">
+                                    ${closeBtn}
+                                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="border-radius:15px; border: 2px solid var(--hot-pink);"></iframe>
+                                </div>`;
+                            } else {
+                                display.style.display = 'none';
+                                display.innerHTML = ``;
+                            }
+                        });
+                    });
+
+                    if (roomListener) { roomListener(); roomListener = null; } 
+                    roomListener = onValue(ref(db, `audio_rooms/${roomId}`), (snapshot) => {
+                        if(!snapshot.exists()) {
+                            showToast("The Room has been closed.");
+                            leaveCurrentRoom();
+                            return;
+                        }
+                        const roomData = snapshot.val();
+                        renderSeats(roomData.seats || {});
+                    });
+
+                    const floatingContainer = document.getElementById('floating-live-chat');
+                    floatingContainer.innerHTML = '';
+                    
+                    if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+                    const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
+                    
+                    unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
+                        const msgData = snapshot.val();
+                        if(msgData) {
+                            const floatDiv = document.createElement('div');
+                            floatDiv.className = 'floating-chat-msg';
+                            floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
+                            floatingContainer.appendChild(floatDiv);
+                            
+                            setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
+                            
+                            setTimeout(() => { 
+                                if(floatDiv) {
+                                    floatDiv.style.transition = 'opacity 0.5s ease-out';
+                                    floatDiv.style.opacity = '0';
+                                    setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 500);
+                                }
+                            }, 10000);
+                        }
+                    });
+
+                    if (window.unsubscribeReactions) { window.unsubscribeReactions(); window.unsubscribeReactions = null; }
+                    window.unsubscribeReactions = onChildAdded(ref(db, `audio_rooms/${roomId}/reactions`), (snap) => {
+                        const data = snap.val();
+                        if(data && Date.now() - data.timestamp < 5000) {
+                            if(data.type === 'fire') {
+                                window.spawnFireAnimation();
                             }
                         }
                     });
-
-                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-
-                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
-                        type: answer.type, sdp: answer.sdp
-                    });
-
-                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
-                    viewerCandidatesQueue.length = 0;
-                }
-            });
-        }
-
-
-        // --- 5. WEBRTC VIEWING (VIEWER) - AUDIO FIX APPLIED HERE ---
-        async function joinLiveStream(streamId, streamData) {
-            showLoading("Joining Room...");
-            currentStreamId = streamId;
-            isHost = false;
-
-            document.getElementById('main-app').style.display = 'none';
-            const liveScreen = document.getElementById('live-view-screen');
-            liveScreen.style.display = 'flex';
-            
-            document.getElementById('local-live-video').style.display = 'none';
-            const remoteVideo = document.getElementById('remote-live-video');
-            remoteVideo.style.display = 'block';
-
-            document.getElementById('live-host-name').innerText = streamData.hostName;
-            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
-
-            try {
-                viewerPeerConnection = new RTCPeerConnection(iceServers);
-
-                viewerPeerConnection.ontrack = e => {
-                    if (!remoteVideo.srcObject) {
-                        remoteVideo.srcObject = new MediaStream();
-                    }
-                    remoteVideo.srcObject.addTrack(e.track);
-
-                    remoteVideo.muted = false;
-                    remoteVideo.volume = 1.0;
-
-                    const playPromise = remoteVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            console.warn("Autoplay policy blocked audio:", error);
-                            const unmuteBtn = document.getElementById('unmute-overlay');
-                            unmuteBtn.style.display = 'flex';
-                            unmuteBtn.onclick = () => {
-                                remoteVideo.muted = false;
-                                remoteVideo.play();
-                                unmuteBtn.style.display = 'none';
-                                showToast("Audio is now Live! 🔊");
-                            };
-                        });
-                    }
                 };
 
-                viewerPeerConnection.onicecandidate = e => {
-                    if (e.candidate) {
-                        push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
-                    }
-                };
-
-                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
-                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
-                
-                const offer = await viewerPeerConnection.createOffer();
-                await viewerPeerConnection.setLocalDescription(offer);
-
-                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
-                    username: currentUser,
-                    offer: { type: offer.type, sdp: offer.sdp }
-                });
-
-                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
-
-                const hostCandidatesQueue = [];
-                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
-                    if(snap.val()) {
-                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
-                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
-                        } else {
-                            hostCandidatesQueue.push(snap.val());
+                if (fee > 0) {
+                    let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                    if (currentDiamonds >= fee) {
+                        if (confirm(`This room costs ${fee} diamonds. Your balance: ${currentDiamonds}. Join?`)) {
+                            const newBal = currentDiamonds - fee;
+                            set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
+                                localStorage.setItem("zingoo_diamonds", newBal);
+                                document.getElementById('lobby-diamond-balance').innerText = newBal;
+                                showToast(`Paid ${fee} diamonds. Welcome!`);
+                                proceed();
+                            });
                         }
-                    }
-                });
-
-                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
-                    const answer = snap.val();
-                    if (answer && viewerPeerConnection.signalingState !== "closed") {
-                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-                        
-                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
-                        hostCandidatesQueue.length = 0;
-                    }
-                });
-
-                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
-                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
-                });
-
-                hideLoading();
-                setupLiveChat();
-                
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
-
-            } catch(e) {
-                hideLoading();
-                showToast("Failed to join stream.");
-                leaveLiveStream();
-            }
-        }
-
-
-        // --- 6. LEAVE/STOP STREAM ---
-        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
-
-        function leaveLiveStream() {
-            document.getElementById('live-view-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            
-            document.getElementById('unmute-overlay').style.display = 'none';
-
-            if (isHost && currentStreamId) {
-                if (localStream) localStream.getTracks().forEach(t => t.stop());
-                Object.values(hostPeerConnections).forEach(pc => pc.close());
-                hostPeerConnections = {};
-                remove(ref(db, `live_streams/${currentStreamId}`));
-            } else if (!isHost && currentStreamId) {
-                if (viewerPeerConnection) viewerPeerConnection.close();
-                viewerPeerConnection = null;
-                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
-            }
-
-            currentStreamId = null;
-            document.getElementById('local-live-video').srcObject = null;
-            document.getElementById('remote-live-video').srcObject = null;
-            document.getElementById('live-chat-box').innerHTML = ''; 
-        }
-
-
-        // --- 7. LIVE CHAT FUNCTIONALITY ---
-        function setupLiveChat() {
-            const chatBox = document.getElementById('live-chat-box');
-            chatBox.innerHTML = ''; 
-            
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
-                const data = snap.val();
-                if(data) {
-                    const msgDiv = document.createElement('div');
-                    
-                    if (data.user === 'System') {
-                        msgDiv.className = 'chat-msg system';
-                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
-                    } else if (data.isGift) {
-                        msgDiv.className = 'chat-msg gift';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎✨`;
                     } else {
-                        msgDiv.className = 'chat-msg';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+                        alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
+                        window.redirectToDiamondStore();
                     }
-                    
-                    chatBox.appendChild(msgDiv);
-                    
-                    chatBox.scrollTo({
-                        top: chatBox.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        }
-
-        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const text = this.value.trim();
-                if (text && currentStreamId) {
-                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
-                    this.value = '';
+                } else {
+                    proceed();
                 }
             }
-        });
 
+            // --- DOUBLE SEAT FIX applied here with bulletproof Document Fragment logic ---
+            function renderSeats(seatsData) {
+                const grid = document.getElementById('speaker-grid-container');
+                if(!grid) return;
 
-        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
-        window.handleGiftClick = function() {
-            if (isHost) {
-                showToast("You cannot send gifts to yourself!");
-                return;
-            }
+                grid.innerHTML = ''; // Safest way to avoid duplicate append bugs
+                
+                let wasInSeat = mySeatIndex !== -1;
+                mySeatIndex = -1;
 
-            const giftCost = 10; 
-
-            if (userDiamonds >= giftCost) {
-                const newBal = userDiamonds - giftCost;
-                get(ref(db, 'users')).then(snap => {
-                    const users = snap.val();
-                    for(let key in users) {
-                        if(users[key].name === currentUser) {
-                            set(ref(db, `users/${key}/diamonds`), newBal);
-                            break;
-                        }
+                Object.entries(seatsData).forEach(([index, seatInfo]) => {
+                    if (seatInfo.user === currentUser) {
+                        mySeatIndex = parseInt(index);
                     }
                 });
                 
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
-                showToast("Gift Sent! 💎");
-                
-            } else {
-                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
-                
-                if(confirmBuy) {
-                    leaveLiveStream();
-                    redirectToDiamondStore();
+                if(!wasInSeat && mySeatIndex !== -1) {
+                    startRoomAudio();
+                } else if(wasInSeat && mySeatIndex === -1) {
+                    stopRoomAudio();
                 }
+
+                document.getElementById('listener-count-num').innerText = Object.keys(seatsData).length;
+
+                // Create fragment to hold exact 10 items before appending to DOM
+                const fragment = document.createDocumentFragment();
+
+                for (let i = 0; i < 10; i++) {
+                    const seatInfo = seatsData[i];
+                    const seatDiv = document.createElement('div');
+                    seatDiv.className = 'speaker-seat';
+                    
+                    if (seatInfo) {
+                        seatDiv.dataset.username = seatInfo.user;
+                        seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
+                        if(!seatInfo.isMuted) seatDiv.classList.add('is-speaking');
+
+                        let chairHTML = '';
+                        if (seatInfo.chairUrl) {
+                            chairHTML = `<img src="${seatInfo.chairUrl}" class="custom-chair-frame float-chair" alt="Premium Chair">`;
+                        }
+                        
+                        let frameHTML = '';
+                        if (seatInfo.frameUrl) {
+                            frameHTML = `<img src="${seatInfo.frameUrl}" style="position:absolute; inset:-8px; width:calc(100% + 16px); height:calc(100% + 16px); z-index:5; object-fit:contain; pointer-events:none;" alt="Frame">`;
+                        }
+
+                        // Mobile Friendly Name Logic (Admin / User)
+                        let displayName = (seatInfo.user === currentRoomHost) ? "Admin" : "User";
+
+                        seatDiv.innerHTML = `
+                            <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
+                                ${chairHTML}
+                                ${frameHTML}
+                                <img src="${seatInfo.avatar}" class="user-avatar" alt="Speaker">
+                                <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
+                                    <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
+                                </div>
+                            </div>
+                            <p>${displayName}</p>
+                            ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : ``}
+                        `;
+                    } else {
+                        seatDiv.classList.add('empty');
+                        seatDiv.innerHTML = `
+                            <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
+                                <i class="fas fa-lock" style="color:rgba(255,255,255,0.6); font-size: 20px;"></i>
+                            </div>
+                            <p>Seat ${i + 1}</p>
+                        `;
+                    }
+                    fragment.appendChild(seatDiv);
+                }
+                
+                grid.appendChild(fragment); // Render strictly 10 items at once
             }
-        };
+            
+            window.audioRoomAPI = {
+                takeSeat: (index) => {
+                    if (!currentActiveRoomId) return;
+                    if (mySeatIndex !== -1) {
+                        showToast("You are already in a seat!");
+                        return;
+                    }
+                    showToast("Taking seat...");
+                    const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
+                    set(seatRef, { 
+                        user: currentUser, 
+                        avatar: currentAvatar, 
+                        isMuted: false, 
+                        timestamp: serverTimestamp(),
+                        chairUrl: myEquippedChair,
+                        frameUrl: myEquippedFrame 
+                    });
+                },
+                leaveSeat: () => {
+                    if (!currentActiveRoomId || mySeatIndex === -1) return;
+                    showToast("Leaving seat...");
+                    const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                    remove(seatRef);
+                    stopRoomAudio();
+                }
+            };
+            
+            function leaveCurrentRoom() {
+                if (mySeatIndex !== -1) {
+                    window.audioRoomAPI.leaveSeat();
+                }
+                if (roomListener) { roomListener(); roomListener = null; }
+                if (roomBgListener) { roomBgListener(); roomBgListener = null; }
+                if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+                if (unsubscribeMedia) { unsubscribeMedia(); unsubscribeMedia = null; }
+                if (window.unsubscribeReactions) { window.unsubscribeReactions(); window.unsubscribeReactions = null; }
+                
+                stopRoomAudio();
+                
+                currentActiveRoomId = null;
+                currentRoomHost = null;
+                mySeatIndex = -1;
+                liveRoomScreen.style.display = 'none';
+                lobbyScreen.style.display = 'flex';
+            }
 
-        window.redirectToDiamondStore = function() {
-            window.location.href = 'index.html?action=buy_diamonds';
-        };
+            function sendRoomMessage() {
+                const input = document.getElementById('live-chat-input');
+                const text = input.value.trim();
+                if(!text || !currentActiveRoomId) return;
+                
+                push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                    user: currentUser,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+                input.value = ''; 
+                // Close input footer right after sending to prevent screen clutter
+                document.getElementById('chat-panel-overlay').style.display = 'none';
+            }
+            document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
+            document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') sendRoomMessage();
+            });
 
+            // Close chat if tapping anywhere outside the input overlay on screen
+            document.getElementById('room-body-area').addEventListener('click', () => {
+                document.getElementById('chat-panel-overlay').style.display = 'none';
+            });
+            document.querySelector('.zingoo-header').addEventListener('click', () => {
+                document.getElementById('chat-panel-overlay').style.display = 'none';
+            });
+
+            document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', closeModal));
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            });
+            
+            lobbyRoomsList.addEventListener('click', (e) => {
+                const card = e.target.closest('.room-list-row');
+                if (card) {
+                    joinAudioRoom(card.dataset.roomId, card.dataset.roomTitle, parseInt(card.dataset.fee));
+                }
+            });
+            
+            document.getElementById('open-create-room-btn').addEventListener('click', () => {
+                if(!currentUser){
+                    showToast("Please login first to create a room!");
+                    return;
+                }
+                // Check if user already created a room
+                if(myActiveRoomId) {
+                    showToast("You already have an active room! Please close it first.");
+                    return;
+                }
+
+                openModal('create-room-modal');
+            });
+            
+            document.getElementById('start-new-room-btn').addEventListener('click', () => {
+                const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
+                const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
+                
+                const newRoomRef = push(ref(db, 'audio_rooms'));
+                set(newRoomRef, {
+                    name: topic,
+                    fee: fee,
+                    host: currentUser,
+                    hostAvatar: currentAvatar,
+                    createdAt: serverTimestamp(),
+                    background: window.myEquippedBackground || null,
+                    seats: {}
+                }).then(() => {
+                    pendingInvites.forEach(user => {
+                        push(ref(db, `invites/${user}`), {
+                            sender: currentUser,
+                            roomName: topic,
+                            timestamp: serverTimestamp()
+                        });
+                    });
+                    pendingInvites = [];
+                    
+                    closeModal();
+                    joinAudioRoom(newRoomRef.key, topic, 0);
+                });
+            });
+
+            // UPDATED: Delete Room Logic
+            document.getElementById('close-room-btn').addEventListener('click', () => {
+                if(currentRoomHost === currentUser && currentActiveRoomId) {
+                    if(confirm("You are the host. Do you want to DELETE this room for everyone?")) {
+                        remove(ref(db, `audio_rooms/${currentActiveRoomId}`));
+                        // Removing the room node triggers the "snapshot.exists() == false" in everyone's listener
+                    } else {
+                        // User canceled deletion. Do nothing or just leave seat
+                    }
+                } else {
+                    leaveCurrentRoom();
+                }
+            });
+            
+            document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
+            document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
+            
+            document.getElementById('fire-reaction-btn').addEventListener('click', () => {
+                if(currentActiveRoomId) {
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/reactions`), {
+                        user: currentUser,
+                        type: 'fire',
+                        timestamp: Date.now()
+                    });
+                }
+            });
+
+            document.getElementById('menu-hand-btn').addEventListener('click', () => {
+                showToast("You raised your hand! ✋");
+                closeModal();
+            });
+
+            document.getElementById('menu-settings-btn').addEventListener('click', () => {
+                closeModal();
+                if(currentActiveRoomId) {
+                    openModal('room-settings-modal');
+                }
+            });
+
+            document.getElementById('menu-mute-all-btn').addEventListener('click', () => {
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(seatSnap => {
+                        const seats = seatSnap.val();
+                        if(seats) {
+                            Object.keys(seats).forEach(key => {
+                                if(seats[key].user !== currentUser) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${key}/isMuted`), true);
+                                }
+                            });
+                            showToast("Muted all users.");
+                        }
+                    });
+                } else {
+                    showToast("Only the host can mute all!");
+                }
+                closeModal();
+            });
+
+            document.getElementById('menu-youtube-btn').addEventListener('click', () => {
+                closeModal();
+                if(currentActiveRoomId && currentRoomHost === currentUser) {
+                    openModal('youtube-modal');
+                } else {
+                    showToast("Only host can play media.");
+                }
+            });
+
+            function extractVideoID(url) {
+                let match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+                return (match && match[1]) ? match[1] : null;
+            }
+
+            document.getElementById('play-youtube-btn').addEventListener('click', () => {
+                const url = document.getElementById('youtube-link-input').value;
+                const vid = extractVideoID(url);
+                if(vid && currentActiveRoomId) {
+                    set(ref(db, `audio_rooms/${currentActiveRoomId}/media`), vid);
+                    showToast("Playing video for everyone!");
+                    closeModal();
+                } else {
+                    showToast("Invalid YouTube URL");
+                }
+            });
+            
+            document.getElementById('main-mic-btn').addEventListener('click', () => {
+                 if(currentActiveRoomId && mySeatIndex !== -1) {
+                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                     get(seatRef).then(snapshot => {
+                         if(snapshot.exists()){
+                             const currentMuteState = snapshot.val().isMuted;
+                             const newMuteState = !currentMuteState;
+                             
+                             set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), newMuteState);
+                             
+                             // ZEGOCLOUD MUTE MIC LOGIC
+                             if(zegoLocalStream) {
+                                 zg.mutePublishStreamAudio(zegoLocalStream, newMuteState);
+                             }
+                             
+                             showToast(newMuteState ? "Mic Muted" : "Mic Unmuted");
+                         }
+                     });
+                 } else {
+                     showToast("You must be in a seat to use the mic.");
+                 }
+            });
+
+            document.getElementById('menu-mic-btn').addEventListener('click', () => {
+                document.getElementById('main-mic-btn').click();
+                closeModal();
+            });
+
+            document.getElementById('open-chat-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('chat-panel-overlay').style.display = 'flex';
+                // Trigger auto-focus inside to open Keyboard
+                setTimeout(() => { document.getElementById('live-chat-input').focus(); }, 50);
+            });
+            
+        });
     </script>
 </body>
 </html>
+
