@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -352,20 +354,20 @@
         .zf-btn.orange { background: #ff7f50; box-shadow: 0 5px 15px rgba(255,127,80,0.4); }
         .zf-btn.grey { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* --- GLASSY CHAT PANEL OVERLAY --- */
-        #chat-panel-overlay { 
+        /* --- GLASSY CHAT PANEL OVERLAY (Updated to floating bottom bar) --- */
+        #chat-panel-overlay {
             position: absolute; bottom: 0; left: 0; width: 100%; height: auto; 
-            background: rgba(255, 255, 255, 0.9); /* Glassy Background */
-            backdrop-filter: blur(20px); /* Beautiful Blur */
-            border-top: 1px solid rgba(255,255,255,0.8); 
-            border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
-            z-index: 50; animation: slideUpModal 0.3s ease-out; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            background: transparent;
+            backdrop-filter: none;
+            border-top: none; 
+            border-radius: 0; display: none; flex-direction: column; 
+            z-index: 60; animation: slideUpModal 0.2s ease-out; 
+            box-shadow: none;
         }
-        .chat-panel-header { display: none; }
-        .chat-messages { display: none; }
-        .chat-input-area { padding: 15px; display: flex; align-items:center; gap: 10px; background: transparent; border-top: none;}
-        .chat-input { flex-grow: 1; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
+        .chat-panel-header { display: none !important; }
+        .chat-messages { display: none !important; }
+        .chat-input-area { padding: 10px 15px 20px 15px; display: flex; align-items:center; gap: 10px; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.15);}
+        .chat-input { flex-grow: 1; background: #f5f5f5; border: 1px solid transparent; color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; }
         .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: #fff;}
         #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s; flex-shrink: 0;}
         #send-msg-btn:hover { transform: scale(1.1); }
@@ -1197,8 +1199,11 @@
             let incomingCallData = null;
             // UPGRADED WEBRTC SERVERS FOR INSTANT CONNECTION
             const servers = { iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' },
                 { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
                 { urls: 'stun:global.stun.twilio.com:3478' }
             ] };
 
@@ -1327,12 +1332,13 @@
 
             // UPDATED: FASTER INSTANT AUDIO CONNECTION
             async function startRoomAudio() {
+                if (roomLocalStream) return; // FIX: Prevent duplicate start calls
                 try {
-                    roomSessionStartTime = Date.now();
+                    roomSessionStartTime = Date.now() - 5000; // FIX: 5 seconds buffer to catch immediate offers
                     // Clear old webRTC cache for my user to avoid junk connection
                     await set(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`), null);
                     
-                    roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+                    roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
                     
                     const signalRef = ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`);
                     signalUnsubscribe = onChildAdded(signalRef, async (snapshot) => {
@@ -1343,36 +1349,45 @@
                         const sender = data.sender;
                         if (!roomPeers[sender]) createRoomPeerConnection(sender);
 
-                        if (data.type === 'offer') {
-                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                            
-                            // Process queued candidates
-                            if(roomPeers[sender].candidateQueue) {
-                                roomPeers[sender].candidateQueue.forEach(c => roomPeers[sender].addIceCandidate(c));
-                                roomPeers[sender].candidateQueue = [];
-                            }
+                        try {
+                            if (data.type === 'offer') {
+                                await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                                
+                                // Process queued candidates safely
+                                if(roomPeers[sender].candidateQueue) {
+                                    for (const c of roomPeers[sender].candidateQueue) {
+                                        await roomPeers[sender].addIceCandidate(c);
+                                    }
+                                    roomPeers[sender].candidateQueue = [];
+                                }
 
-                            const answer = await roomPeers[sender].createAnswer();
-                            await roomPeers[sender].setLocalDescription(answer);
-                            push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
-                                sender: currentUser, type: 'answer', sdp: answer, timestamp: Date.now()
-                            });
-                        } else if (data.type === 'answer') {
-                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                            
-                            // Process queued candidates
-                            if(roomPeers[sender].candidateQueue) {
-                                roomPeers[sender].candidateQueue.forEach(c => roomPeers[sender].addIceCandidate(c));
-                                roomPeers[sender].candidateQueue = [];
-                            }
+                                const answer = await roomPeers[sender].createAnswer();
+                                await roomPeers[sender].setLocalDescription(answer);
+                                push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
+                                    sender: currentUser, type: 'answer', sdp: answer, timestamp: Date.now()
+                                });
+                            } else if (data.type === 'answer') {
+                                await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                                
+                                // Process queued candidates safely
+                                if(roomPeers[sender].candidateQueue) {
+                                    for (const c of roomPeers[sender].candidateQueue) {
+                                        await roomPeers[sender].addIceCandidate(c);
+                                    }
+                                    roomPeers[sender].candidateQueue = [];
+                                }
 
-                        } else if (data.type === 'candidate') {
-                            if(roomPeers[sender].remoteDescription && roomPeers[sender].remoteDescription.type) {
-                                roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
-                            } else {
-                                roomPeers[sender].candidateQueue = roomPeers[sender].candidateQueue || [];
-                                roomPeers[sender].candidateQueue.push(new RTCIceCandidate(data.candidate));
+                            } else if (data.type === 'candidate') {
+                                if(roomPeers[sender].signalingState === "closed") return;
+                                if(roomPeers[sender].remoteDescription && roomPeers[sender].remoteDescription.type) {
+                                    await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                                } else {
+                                    roomPeers[sender].candidateQueue = roomPeers[sender].candidateQueue || [];
+                                    roomPeers[sender].candidateQueue.push(new RTCIceCandidate(data.candidate));
+                                }
                             }
+                        } catch (err) {
+                            console.error("WebRTC Error:", err);
                         }
                     });
 
@@ -1382,13 +1397,17 @@
                         if(seats) {
                             Object.values(seats).forEach(async (seat) => {
                                 if(seat.user !== currentUser) {
-                                    const target = seat.user;
-                                    createRoomPeerConnection(target);
-                                    const offer = await roomPeers[target].createOffer();
-                                    await roomPeers[target].setLocalDescription(offer);
-                                    push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${target}`), {
-                                        sender: currentUser, type: 'offer', sdp: offer, timestamp: Date.now()
-                                    });
+                                    try {
+                                        const target = seat.user;
+                                        createRoomPeerConnection(target);
+                                        const offer = await roomPeers[target].createOffer();
+                                        await roomPeers[target].setLocalDescription(offer);
+                                        push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${target}`), {
+                                            sender: currentUser, type: 'offer', sdp: offer, timestamp: Date.now()
+                                        });
+                                    } catch (err) {
+                                        console.error("Offer creation failed", err);
+                                    }
                                 }
                             });
                         }
@@ -1423,6 +1442,8 @@
                         document.getElementById('room-audio-container').appendChild(audioEl);
                     }
                     audioEl.srcObject = event.streams[0];
+                    // FIX: Ensure audio plays immediately upon connection
+                    audioEl.play().catch(e => console.warn("Autoplay blocked:", e));
                 };
                 
                 roomPeers[targetUser] = pc;
