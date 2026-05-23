@@ -849,7 +849,7 @@
             const showToast = (message) => {
                 globalToast.innerText = message;
                 globalToast.style.display = 'block';
-                setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
+                setTimeout(() => { globalToast.style.display = 'none'; }, 2000);
             };
 
             // AUTO-LOGIN DIRECT ENTRY
@@ -1209,14 +1209,11 @@
             let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
-            // UPGRADED WEBRTC SERVERS FOR INSTANT CONNECTION
+            
+            // OPTIMIZED WEBRTC SERVERS FOR FAST CONNECTION
             const servers = { iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' },
-                { urls: 'stun:stun3.l.google.com:19302' },
-                { urls: 'stun:stun4.l.google.com:19302' },
-                { urls: 'stun:global.stun.twilio.com:3478' }
+                { urls: 'stun:stun1.l.google.com:19302' }
             ] };
 
             let roomLocalStream = null;
@@ -1342,10 +1339,9 @@
 
             // UPDATED: FASTER INSTANT AUDIO CONNECTION
             async function startRoomAudio() {
-                if (roomLocalStream) return; // FIX: Prevent duplicate start calls
+                if (roomLocalStream) return; 
                 try {
-                    roomSessionStartTime = Date.now() - 5000; // FIX: 5 seconds buffer to catch immediate offers
-                    // Clear old webRTC cache for my user to avoid junk connection
+                    roomSessionStartTime = Date.now() - 10000; 
                     await set(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`), null);
                     
                     roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
@@ -1353,7 +1349,6 @@
                     const signalRef = ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`);
                     signalUnsubscribe = onChildAdded(signalRef, async (snapshot) => {
                         const data = snapshot.val();
-                        // Ignore old junk data before I joined
                         if(!data || data.timestamp < roomSessionStartTime) return; 
                         
                         const sender = data.sender;
@@ -1363,7 +1358,6 @@
                             if (data.type === 'offer') {
                                 await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
                                 
-                                // Process queued candidates safely
                                 if(roomPeers[sender].candidateQueue) {
                                     for (const c of roomPeers[sender].candidateQueue) {
                                         await roomPeers[sender].addIceCandidate(c);
@@ -1379,7 +1373,6 @@
                             } else if (data.type === 'answer') {
                                 await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
                                 
-                                // Process queued candidates safely
                                 if(roomPeers[sender].candidateQueue) {
                                     for (const c of roomPeers[sender].candidateQueue) {
                                         await roomPeers[sender].addIceCandidate(c);
@@ -1401,7 +1394,6 @@
                         }
                     });
 
-                    // Send offers to everyone already sitting
                     get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(snap => {
                         const seats = snap.val();
                         if(seats) {
@@ -1452,7 +1444,6 @@
                         document.getElementById('room-audio-container').appendChild(audioEl);
                     }
                     audioEl.srcObject = event.streams[0];
-                    // FIX: Ensure audio plays immediately upon connection
                     audioEl.play().catch(e => console.warn("Autoplay blocked:", e));
                 };
                 
@@ -1541,7 +1532,6 @@
                     if (rooms && Object.keys(rooms).length > 0) {
                         if(noRoomsMsg) noRoomsMsg.style.display = 'none';
                         Object.entries(rooms).forEach(([roomId, roomData]) => {
-                            // Check if I am host of any room
                             if(roomData.host === currentUser) {
                                 myActiveRoomId = roomId;
                             }
@@ -1605,12 +1595,10 @@
                     get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
                         currentRoomHost = hostSnap.val();
                         
-                        // Set Host Avatar in Header
                         get(ref(db, `audio_rooms/${roomId}/hostAvatar`)).then(avaSnap => {
                            if(avaSnap.val()) document.getElementById('room-host-avatar-top').src = avaSnap.val();
                         });
 
-                        // Dynamic Background Handling
                         if(roomBgListener) roomBgListener();
                         roomBgListener = onValue(ref(db, `audio_rooms/${roomId}/background`), (snap) => {
                             const bgUrl = snap.val();
@@ -1644,7 +1632,6 @@
                         });
                     });
 
-                    // LISTEN TO ENTIRE ROOM SO IF IT IS DELETED WE KNOW
                     if (roomListener) { roomListener(); roomListener = null; } 
                     roomListener = onValue(ref(db, `audio_rooms/${roomId}`), (snapshot) => {
                         if(!snapshot.exists()) {
@@ -1670,10 +1657,8 @@
                             floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
                             floatingContainer.appendChild(floatDiv);
                             
-                            // Scroll naturally to bottom
                             setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
                             
-                            // Fade out individual messages gracefully rather than hard remove
                             setTimeout(() => { 
                                 if(floatDiv) {
                                     floatDiv.style.transition = 'opacity 0.5s ease-out';
@@ -1716,15 +1701,12 @@
                 }
             }
 
-            // --- DOUBLE SEAT FIX applied here with bulletproof clear method ---
+            // --- DOUBLE SEAT FIX applied here with bulletproof Document Fragment logic ---
             function renderSeats(seatsData) {
                 const grid = document.getElementById('speaker-grid-container');
                 if(!grid) return;
 
-                // Bulletproof inner content clear
-                while(grid.firstChild) {
-                    grid.removeChild(grid.firstChild);
-                }
+                grid.innerHTML = ''; // Safest way to avoid duplicate append bugs
                 
                 let wasInSeat = mySeatIndex !== -1;
                 mySeatIndex = -1;
@@ -1742,6 +1724,9 @@
                 }
 
                 document.getElementById('listener-count-num').innerText = Object.keys(seatsData).length;
+
+                // Create fragment to hold exact 10 items before appending to DOM
+                const fragment = document.createDocumentFragment();
 
                 for (let i = 0; i < 10; i++) {
                     const seatInfo = seatsData[i];
@@ -1763,6 +1748,9 @@
                             frameHTML = `<img src="${seatInfo.frameUrl}" style="position:absolute; inset:-8px; width:calc(100% + 16px); height:calc(100% + 16px); z-index:5; object-fit:contain; pointer-events:none;" alt="Frame">`;
                         }
 
+                        // Mobile Friendly Name Logic (Admin / User)
+                        let displayName = (seatInfo.user === currentRoomHost) ? "Admin" : "User";
+
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
                                 ${chairHTML}
@@ -1772,7 +1760,7 @@
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
                                 </div>
                             </div>
-                            <p>${seatInfo.user}</p>
+                            <p>${displayName}</p>
                             ${seatInfo.user === currentUser ? `<button class="admin-tag" style="background:var(--red-accent); color:white; cursor:pointer;" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</button>` : ``}
                         `;
                     } else {
@@ -1784,8 +1772,10 @@
                             <p>Seat ${i + 1}</p>
                         `;
                     }
-                    grid.appendChild(seatDiv);
+                    fragment.appendChild(seatDiv);
                 }
+                
+                grid.appendChild(fragment); // Render strictly 10 items at once
             }
             
             window.audioRoomAPI = {
@@ -1795,6 +1785,7 @@
                         showToast("You are already in a seat!");
                         return;
                     }
+                    showToast("Taking seat...");
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
                     set(seatRef, { 
                         user: currentUser, 
@@ -1807,8 +1798,10 @@
                 },
                 leaveSeat: () => {
                     if (!currentActiveRoomId || mySeatIndex === -1) return;
+                    showToast("Leaving seat...");
                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
                     remove(seatRef);
+                    stopRoomAudio();
                 }
             };
             
