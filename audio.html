@@ -1,565 +1,160 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zingoo - Live Streaming</title>
+    <title>Premium Live Audio Room</title>
     
-    <!-- Google Fonts for Modern Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Syne:wght@600;800&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'outfit': ['Outfit', 'sans-serif'], 'syne': ['Syne', 'sans-serif'] },
+                    colors: { primary: '#ff758c', secondary: '#ff7eb3', dark: '#2b1029' }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --baby-pink: #FFE4E8;
-            --pink-dark: #FFB6C1;
-            --primary-red: #FF3366;
-            --dark-text: #2c2c2c;
-            --white: #FFFFFF;
-            --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
-            --gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e);
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --chat-bg: rgba(0, 0, 0, 0.45);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--baby-pink) 0%, #FFF0F5 100%);
-            background-attachment: fixed;
-            color: var(--dark-text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            /* --- Security: Prevent Text Selection and Image Dragging --- */
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -webkit-touch-callout: none;
-            transition: filter 0.3s ease;
-        }
-
-        /* --- Security Blur Filter --- */
-        body.security-blur {
-            filter: blur(25px);
-            pointer-events: none;
-        }
-
-        /* --- Custom Scrollbar for App --- */
-        ::-webkit-scrollbar { width: 6px; display: none; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--pink-dark); border-radius: 10px; }
-
-        /* --- LOGIN SCREEN (ID Enforced) --- */
-        #id-login-screen {
-            position: fixed;
-            inset: 0;
-            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+        body { font-family: 'Outfit', sans-serif; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); background-attachment: fixed; color: white; overflow-x: hidden; }
+        .font-syne { font-family: 'Syne', sans-serif; }
         
-        #id-login-screen .logo-container {
-            font-size: 38px;
-            font-weight: 800;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 40px;
-            letter-spacing: 2.5px;
-            text-shadow: 0px 4px 15px rgba(255, 51, 102, 0.2);
-        }
+        /* Glassmorphism */
+        .glass { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
+        .glass-light { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
         
-        #id-login-screen .login-card {
-            width: 100%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px 30px;
-            border-radius: 25px;
-            box-shadow: 0 15px 50px rgba(255, 51, 102, 0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
-            border: 1px solid var(--white);
-            text-align: center;
-        }
-
-        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; color: #111; font-weight: 800; }
-        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 30px; font-weight: 500; }
+        /* Animations */
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-150px) scale(1.5); } }
+        .animate-float { animation: floatUp 2s ease-out forwards; position: absolute; pointer-events: none; font-size: 2rem; z-index: 50;}
         
-        .avatar-upload-box {
-            cursor: pointer; margin-bottom: 25px; display: inline-block; position: relative;
-        }
-        .avatar-upload-box img {
-            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
-            border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,51,102,0.3);
-            transition: transform 0.3s ease;
-        }
-        .avatar-upload-box:hover img { transform: scale(1.05); }
-        .avatar-upload-box p { font-size: 12px; color: var(--primary-red); margin-top: 10px; font-weight: 700; background: rgba(255, 51, 102, 0.1); padding: 5px 15px; border-radius: 20px; }
+        @keyframes bounceGift { 0% { transform: scale(0); } 50% { transform: scale(1.5); } 100% { transform: scale(0); } }
+        .animate-gift { animation: bounceGift 3s ease-in-out forwards; position: fixed; top: 40%; left: 50%; margin-left: -75px; z-index: 100; filter: drop-shadow(0 0 20px #ffea00); }
 
-        #id-login-screen input[type="number"] {
-            width: 100%; padding: 16px; border-radius: 15px; border: 2px solid transparent;
-            background: #f0f2f5; font-size: 16px; margin-bottom: 25px; font-weight: 600; text-align: center;
-            outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-        }
-        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.1); }
-        #id-login-screen button {
-            width: 100%; padding: 16px; border-radius: 15px; border: none;
-            background: var(--gradient-main); color: #fff; font-size: 18px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 8px 25px rgba(255,51,102,0.4); transition: transform 0.2s, box-shadow 0.2s;
-        }
-        #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,51,102,0.5); }
-
-        /* --- Header Styling (Glassmorphism) --- */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.2);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
-
-        .header-actions { display: flex; align-items: center; gap: 15px; }
-
-        .diamond-bal {
-            background: linear-gradient(135deg, #fff, #f9f9f9); border: 1px solid var(--pink-dark); color: #d97706; 
-            padding: 8px 16px; border-radius: 25px; font-size: 14px; font-weight: 800;
-            display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .diamond-bal i { font-size: 16px; animation: shine 2s infinite linear; }
-
-        .start-live-btn {
-            background: var(--primary-red);
-            color: var(--white);
-            border: none;
-            padding: 10px 22px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .start-live-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
-            background: linear-gradient(135deg, #ff4070, #ff2055);
-        }
-
-        .start-live-btn i { animation: pulse-icon 1.5s infinite; }
-
-        /* --- Main Content & Grid (2-2 Layout) --- */
-        main { padding: 25px; max-width: 900px; margin: 0 auto; }
-        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--primary-red); display: flex; align-items: center; gap: 10px; }
-
-        .live-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .live-card {
-            position: relative;
-            border-radius: 25px;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
-            background: #fff;
-            transform: translateZ(0);
-        }
-
-        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-        .live-card:hover img { transform: scale(1.1); }
-        .live-card::after {
-            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-            z-index: 1; pointer-events: none;
-        }
-
-        .card-top-info {
-            position: absolute; top: 12px; left: 12px; right: 12px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 2;
-        }
-
-        .live-badge {
-            background: var(--primary-red); color: white; font-size: 11px; font-weight: 800;
-            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; animation: pulse-bg 1.5s infinite;
-        }
-        
-        .scheduled-badge {
-            background: #f39c12; color: white; font-size: 11px; font-weight: 800;
-            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
-        }
-
-        .viewers {
-            background: rgba(0, 0, 0, 0.6); color: white; font-size: 12px; font-weight: 600; padding: 5px 10px;
-            border-radius: 10px; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 5px;
-        }
-
-        .card-bottom-info {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 15px 15px;
-            color: white; z-index: 2; display: flex; flex-direction: column; gap: 4px;
-        }
-
-        .user-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .live-title { font-size: 12px; font-weight: 500; color: #f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-        /* --- Start Live Modal --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-
-        .modal-box {
-            background: white; padding: 35px 25px; border-radius: 30px; text-align: center;
-            width: 90%; max-width: 400px; transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
-        
-        .modal-box h3 { color: var(--dark-text); font-size: 24px; margin-bottom: 20px; font-weight: 800; }
-        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee;
-            margin-bottom: 20px; font-family: 'Poppins'; font-size: 14px; outline: none; transition: border 0.3s;
-            background: #fafafa; font-weight: 500;
-        }
-        .modal-box input:focus { border-color: var(--pink-dark); background: #fff; }
-        
-        .thumb-upload {
-            border: 2px dashed var(--pink-dark); padding: 20px; border-radius: 15px; background: var(--baby-pink);
-            margin-bottom: 15px; cursor: pointer; color: var(--primary-red); font-size: 14px; font-weight: 700;
-            transition: all 0.3s; display: flex; flex-direction: column; gap: 8px; align-items: center;
-        }
-        .thumb-upload:hover { background: #ffd1d9; border-color: var(--primary-red); }
-        .thumb-upload i { font-size: 24px; }
-        
-        .past-thumbs-wrapper { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
-        .past-thumbs-wrapper p { font-size: 12px; color: #555; margin-bottom: 10px; font-weight: 700; }
-        .past-thumbs-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
-        .past-thumbs-list::-webkit-scrollbar { height: 4px; display: block; }
-        .past-thumbs-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .past-thumbs-list img {
-            width: 60px; height: 60px; border-radius: 12px; object-fit: cover; cursor: pointer;
-            border: 3px solid transparent; transition: all 0.3s;
-        }
-        .past-thumbs-list img.selected { border: 3px solid var(--primary-red); transform: scale(1.1); box-shadow: 0 4px 10px rgba(255,51,102,0.3); }
-
-        .modal-btns { display: flex; gap: 15px; margin-top: 15px; }
-        .btn-confirm { flex: 1; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 15px rgba(255,51,102,0.3); transition: transform 0.2s; }
-        .btn-confirm:hover { transform: translateY(-2px); }
-        .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-        .btn-cancel:hover { background: #e0e0e0; color: #333; }
-
-        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) - REDESIGNED FOR BETTER CHAT --- */
-        #live-view-screen {
-            position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
-        }
-        
-        .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
-        
-        #remote-live-video, #local-live-video {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
-            transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
-            -webkit-transform: scaleX(-1);
-        }
-        
-        .live-overlay-top {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
-            background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
-        }
-        
-        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
-        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        
-        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
-        .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
-        
-        /* --- HIGHLY IMPROVED CHAT UI SECTION --- */
-        .live-overlay-bottom {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
-            display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
-        }
-        
-        /* Massive Chat Area Upgrade */
-        .chat-box { 
-            pointer-events: auto;
-            max-height: 45vh; /* Allows chat to take up almost half the screen nicely */
-            overflow-y: auto; 
-            margin-bottom: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            padding-right: 10px;
-            /* Fade effect at the top of chat */
-            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-        }
-        
-        /* Custom scrollbar just for chat to make it neat */
-        .chat-box::-webkit-scrollbar { width: 4px; display: block; }
-        .chat-box::-webkit-scrollbar-track { background: transparent; }
-        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
-
-        .chat-msg { 
-            color: #fff; 
-            font-size: 14px; 
-            font-weight: 500;
-            background: var(--chat-bg); 
-            padding: 10px 16px; 
-            border-radius: 20px; 
-            width: max-content; 
-            max-width: 85%; 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.05);
-            word-wrap: break-word;
-            white-space: normal;
-            line-height: 1.4;
-            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-            transform-origin: bottom left;
-        }
-        .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
-        
-        /* System message style */
-        .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
-        
-        /* Gift message style */
-        .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
-        .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-
-        .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
-        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
-        .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
-        
-        .gift-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,51,102,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
-        .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,51,102,0.7); }
-        
-        /* Loading Overlay */
-        #loading-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
-            display: none; justify-content: center; align-items: center; z-index: 9999;
-            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-        }
-
-        /* --- Animations --- */
-        @keyframes pulse-bg {
-            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
-        }
-        @keyframes pulse-icon {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes shine {
-            0% { color: #d97706; text-shadow: none; }
-            50% { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.8); }
-            100% { color: #d97706; text-shadow: none; }
-        }
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(15px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .toast {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 255, 255, 0.95); color: var(--dark-text); padding: 14px 28px; border-radius: 30px;
-            font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-left: 5px solid var(--primary-red); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100000;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+        .hidden-audio { display: none; }
     </style>
 </head>
-<body>
+<body class="min-h-screen relative">
 
-    <!-- Global Toast Notification -->
-    <div class="toast" id="toastMsg">Action Successful!</div>
+    <!-- Global Alerts/Toasts -->
+    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2"></div>
 
-    <!-- 1. LOGIN SCREEN -->
-    <div id="id-login-screen">
-        <div class="logo-container"><i class="fas fa-fire" style="color:var(--primary-red);"></i> ZINGOO LIVE</div>
-        <div class="login-card">
-            <h2>Live Room Access</h2>
-            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
+    <!-- ================= AUTH SCREEN ================= -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-5 hidden">
+        <div class="glass w-full max-w-md p-8 rounded-3xl text-center">
+            <h1 class="font-syne text-4xl mb-2 text-white drop-shadow-lg">Join the Elite</h1>
+            <p class="text-sm text-gray-200 mb-8">Setup your premium profile</p>
             
-            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
-            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
-                <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <p><i class="fas fa-camera"></i> Upload Photo</p>
+            <div class="relative w-32 h-32 mx-auto mb-6">
+                <img id="auth-preview" src="https://via.placeholder.com/150/000000/FFFFFF/?text=Upload" class="w-full h-full object-cover rounded-full border-4 border-primary shadow-[0_0_15px_#ff758c]">
+                <label class="absolute bottom-0 right-0 bg-white text-primary p-2 rounded-full cursor-pointer shadow-lg hover:scale-110 transition">
+                    <span class="material-symbols-outlined text-sm">photo_camera</span>
+                    <input type="file" id="auth-file" class="hidden" accept="image/*">
+                </label>
             </div>
-
-            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
-            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+            
+            <input type="text" id="auth-name" placeholder="Enter Display Name" class="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-primary placeholder-gray-300">
+            
+            <button id="auth-btn" class="w-full bg-gradient-to-r from-primary to-red-500 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(255,117,140,0.6)] hover:scale-105 transition">
+                Enter App
+            </button>
         </div>
     </div>
 
-    <!-- 2. MAIN HEADER & HOME PAGE -->
-    <div id="main-app" style="display: none;">
-        <header>
-            <div class="logo" onclick="window.location.href='index.html'">Zingoo</div>
-            <div class="header-actions">
-                <div class="diamond-bal" onclick="redirectToDiamondStore()">
-                    <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
+    <!-- ================= LOBBY SCREEN ================= -->
+    <div id="lobby-screen" class="min-h-screen flex-col hidden pb-20">
+        <!-- Header -->
+        <div class="glass flex items-center justify-between p-4 sticky top-0 z-40">
+            <div class="flex items-center gap-3">
+                <img id="lobby-user-img" src="" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md">
+                <div>
+                    <h2 id="lobby-user-name" class="font-bold text-lg leading-tight text-white shadow-black drop-shadow-md">User Name</h2>
+                    <div class="flex items-center text-xs text-yellow-300 font-bold drop-shadow">
+                        <span class="material-symbols-outlined text-[16px] mr-1">diamond</span> <span id="lobby-diamonds">1000</span>
+                    </div>
                 </div>
-                <button class="start-live-btn" onclick="openStartLiveModal()">
-                    <i class="fas fa-video"></i> Go Live
-                </button>
             </div>
-        </header>
+            <button class="material-symbols-outlined text-3xl hover:text-primary transition shadow-black drop-shadow-md">notifications</button>
+        </div>
 
-        <main>
-            <h2 class="section-title"><i class="fas fa-fire-flame-curved"></i> Trending Now</h2>
-            <!-- Dynamic Grid -->
-            <div class="live-grid" id="liveGrid">
-                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;">Fetching active streams...</p>
-            </div>
-        </main>
-    </div>
-
-    <!-- 3. START LIVE MODAL -->
-    <div class="modal-overlay" id="startLiveModal">
-        <div class="modal-box">
-            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(255,51,102,0.3));"></i>
-            <h3>Ready to Stream?</h3>
-            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
-            
-            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
-            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
-                <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
-            </div>
-            
-            <!-- NEW: Past Thumbnails & Schedule Options -->
-            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
-                <p>Or choose previous thumbnail:</p>
-                <div class="past-thumbs-list" id="past-thumbs-container"></div>
-            </div>
-
-            <div style="text-align: left; margin-bottom: 10px;">
-                <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;"><i class="far fa-clock"></i> Schedule Live (Optional):</label>
-                <input type="datetime-local" id="live-schedule-time">
-            </div>
-
-            <div class="modal-btns">
-                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
-                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
+        <!-- Rooms List -->
+        <div class="p-5 flex-1">
+            <h2 class="font-syne text-2xl mb-4 drop-shadow-md text-white">Active Rooms</h2>
+            <div id="room-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Rooms injected via JS -->
             </div>
         </div>
+
+        <!-- Floating Create Button -->
+        <button id="btn-create-room" class="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-tr from-red-500 to-pink-500 rounded-full shadow-[0_0_20px_#ff7eb3] flex items-center justify-center text-white hover:scale-110 transition z-40">
+            <span class="material-symbols-outlined text-4xl">add</span>
+        </button>
     </div>
 
-    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
-    <div id="live-view-screen">
-        <div class="live-video-container">
-            <!-- Broadcaster Video -->
-            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
-            <!-- Viewer Video -->
-            <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
-        </div>
+    <!-- ================= LIVE AUDIO ROOM SCREEN ================= -->
+    <div id="room-screen" class="min-h-screen flex flex-col hidden bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm z-0"></div> <!-- Overlay -->
         
-        <div class="live-overlay-top">
-            <div class="host-info">
-                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
-                <div class="host-text">
-                    <h4 id="live-host-name">Host Name</h4>
-                    <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
-                </div>
+        <!-- Room Header -->
+        <div class="glass flex items-center justify-between p-4 z-10">
+            <div class="flex items-center gap-2">
+                <button id="btn-leave-room" class="material-symbols-outlined text-2xl bg-white/20 p-2 rounded-full hover:bg-white/40 transition">arrow_back</button>
+                <h2 id="room-title" class="font-syne text-xl text-white ml-2 drop-shadow-md">Luxury Lounge</h2>
             </div>
-            <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-times"></i></button>
+            <button class="bg-red-500/80 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg hover:bg-red-600 transition" id="btn-power">
+                <span class="material-symbols-outlined text-sm align-middle">power_settings_new</span> End
+            </button>
         </div>
-        
-        <div class="live-overlay-bottom">
-            <div class="chat-box" id="live-chat-box">
-                <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
-            </div>
-            <div class="action-bar">
-                <div class="chat-input-wrapper">
-                    <input type="text" id="live-chat-input" placeholder="Say something nice...">
-                </div>
-                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+
+        <!-- YouTube Embed Container (Hidden by default) -->
+        <div id="yt-container" class="z-10 w-full px-4 mt-4 hidden">
+            <div class="aspect-video w-full rounded-xl overflow-hidden glass shadow-2xl border-2 border-white/20">
+                <iframe id="yt-iframe" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
+
+        <!-- 10-Seat Grid Engine -->
+        <div class="flex-1 flex flex-col justify-center p-4 z-10">
+            <div class="grid grid-cols-5 gap-x-2 gap-y-8 max-w-2xl mx-auto w-full" id="seat-grid">
+                <!-- 10 Seats injected via JS -->
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="glass p-3 z-10 mt-auto rounded-t-3xl flex justify-around items-center">
+            <button id="btn-chat" class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"><span class="material-symbols-outlined">chat</span></button>
+            <button id="btn-react-heart" class="p-3 bg-white/10 rounded-full hover:bg-white/20 text-pink-400 transition"><span class="material-symbols-outlined">favorite</span></button>
+            
+            <!-- Main Mic Toggle -->
+            <button id="btn-toggle-mic" class="p-5 bg-gradient-to-t from-green-400 to-green-600 rounded-full shadow-[0_0_15px_#4ade80] hover:scale-110 transition -translate-y-4 border-4 border-black/20">
+                <span id="mic-icon" class="material-symbols-outlined text-3xl">mic</span>
+            </button>
+
+            <button id="btn-react-fire" class="p-3 bg-white/10 rounded-full hover:bg-white/20 text-orange-400 transition"><span class="material-symbols-outlined">local_fire_department</span></button>
+            <button id="btn-gift" class="p-3 bg-white/10 rounded-full hover:bg-white/20 text-yellow-300 transition"><span class="material-symbols-outlined">featured_seasonal_and_gifts</span></button>
+        </div>
+
+        <!-- Animation Containers -->
+        <div id="reaction-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+        <img id="gift-popup" src="https://cdn-icons-png.flaticon.com/512/4213/4213665.png" class="w-36 h-36 hidden animate-gift">
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <i class="fas fa-circle-notch fa-spin" style="font-size: 45px; margin-bottom: 20px; color: var(--primary-red);"></i>
-        <p id="loading-text">Connecting...</p>
-    </div>
+    <!-- Hidden Audio Elements for WebRTC -->
+    <div id="remote-audios" class="hidden-audio"></div>
 
-
-    <!-- ============================================== -->
-    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
-    <!-- ============================================== -->
+    <!-- ================= FIREBASE & APP LOGIC ================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, remove, update, onDisconnect, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
-        // 1. Disable Right Click (Context Menu)
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'PrintScreen' || 
-                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
-                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
-                e.preventDefault();
-                showToast("Security: Screenshots & recording are restricted!");
-            }
-        });
-
-        // 3. Blur screen if app loses focus (minimizing screen recording/screenshot risk)
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                document.body.classList.add('security-blur');
-            } else {
-                document.body.classList.remove('security-blur');
-            }
-        });
-
-        // --- FIREBASE SETUP ---
+        // Firebase Configuration (Provided in prompt)
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -571,695 +166,423 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const IMGBB_API_KEY = "7ea229f30d98aebf6b1302b6d3576f9a";
 
-        // --- APIS ---
-        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
-        const CLOUD_NAME = "dotjw6tep"; 
-        const UPLOAD_PRESET = "Zingoo"; 
-
-        // --- GLOBAL VARIABLES ---
+        // Global State
         let currentUser = null;
-        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
-        let currentUserId = null;
-        let userDiamonds = 0;
-        let selectedAvatarFile = null;
-        let selectedThumbFile = null;
-        let selectedPastThumb = null; // New variable for previous thumbs
-
-        // WebRTC Variables
-        const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+        let currentRoomId = null;
+        let mySeatIndex = null;
         let localStream = null;
-        let currentStreamId = null;
-        let isHost = false;
-        let hostPeerConnections = {}; // For 1-to-Many broadcasting
-        let viewerPeerConnection = null; // For watching
+        let peerConnections = {}; // WebRTC PCs
 
-        // --- TOAST FUNCTION ---
-        function showToast(message) {
-            const toast = document.getElementById('toastMsg');
-            toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        // DOM Elements
+        const screens = {
+            auth: document.getElementById('auth-screen'),
+            lobby: document.getElementById('lobby-screen'),
+            room: document.getElementById('room-screen')
+        };
+
+        // Utility: Show Toast
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'glass-light px-4 py-2 rounded-xl text-white text-sm shadow-lg font-bold transition-all';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        function showLoading(text) {
-            document.getElementById('loading-text').innerText = text;
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-        function hideLoading() {
-            document.getElementById('loading-overlay').style.display = 'none';
+        // Switch Screens
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
         }
 
-        // --- 1. ID LOGIN & IMGBB LOGIC ---
-        const loginScreen = document.getElementById('id-login-screen');
-        const mainApp = document.getElementById('main-app');
-
-        const storedId = localStorage.getItem("zingoo_id");
-        if (storedId) {
-            document.getElementById('login-zingoo-id').value = storedId;
-            const storedAv = localStorage.getItem("zingoo_avatar");
-            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
-            
-            // Auto-login trigger
-            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
-            validateDatabaseLogin(storedId);
-        }
-
-        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
-                reader.readAsDataURL(e.target.files[0]);
-                selectedAvatarFile = e.target.files[0];
-            }
-        });
-
-        document.getElementById('btn-login-id').addEventListener('click', () => {
-            const enteredId = document.getElementById('login-zingoo-id').value.trim();
-            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
-            
-            const btn = document.getElementById('btn-login-id');
-            btn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
-
-            if (selectedAvatarFile) {
-                const formData = new FormData();
-                formData.append("image", selectedAvatarFile);
-                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
-                .then(res => res.json()).then(data => {
-                    if (data.success) currentAvatar = data.data.url;
-                    validateDatabaseLogin(enteredId);
-                }).catch(err => {
-                    showToast("Image upload failed, using default.");
-                    validateDatabaseLogin(enteredId);
-                });
+        // ================= AUTHENTICATION =================
+        async function initAuth() {
+            const storedUser = localStorage.getItem('premiumUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+                loadLobby();
             } else {
-                validateDatabaseLogin(enteredId);
+                showScreen('auth');
+            }
+        }
+
+        // Preview Image Selection
+        let selectedFile = null;
+        document.getElementById('auth-file').addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if(selectedFile) {
+                const reader = new FileReader();
+                reader.onload = (e) => document.getElementById('auth-preview').src = e.target.result;
+                reader.readAsDataURL(selectedFile);
             }
         });
 
-        function validateDatabaseLogin(enteredId) {
-            get(ref(db, 'users')).then(snapshot => {
-                let userFound = false;
-                const allUsers = snapshot.val();
-                let userKey = null;
-                
-                if (allUsers) {
-                    for (let key in allUsers) {
-                        if (allUsers[key].id === enteredId) {
-                            currentUser = allUsers[key].name;
-                            currentUserId = enteredId;
-                            userKey = key;
-                            userFound = true;
-                            break;
-                        }
-                    }
-                }
-                
-                if (userFound) {
-                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
-                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+        // Submit Auth
+        document.getElementById('auth-btn').addEventListener('click', async () => {
+            const name = document.getElementById('auth-name').value.trim();
+            if(!name) return showToast("Enter Display Name!");
+            
+            const btn = document.getElementById('auth-btn');
+            btn.innerText = "Loading...";
+            btn.disabled = true;
 
-                    localStorage.setItem("zingoo_user", currentUser);
-                    localStorage.setItem("zingoo_avatar", currentAvatar);
-                    localStorage.setItem("zingoo_id", enteredId);
-                    
-                    userDiamonds = allUsers[userKey].diamonds || 0;
-                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
-                    
-                    loginScreen.style.display = 'none';
-                    mainApp.style.display = 'block';
-                    showToast(`Welcome, ${currentUser}!`);
-                    
-                    // Start fetching active live streams
-                    fetchLiveStreams();
-                    
-                    // Listen for diamond updates live
-                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
-                        userDiamonds = snap.val() || 0;
-                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+            let photoUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"; // Default
+            
+            // Upload to ImgBB
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append("image", selectedFile);
+                try {
+                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                    const json = await res.json();
+                    if(json.success) photoUrl = json.data.url;
+                } catch(e) {
+                    showToast("Image upload failed, using default.");
+                }
+            }
+
+            const uid = "user_" + Date.now() + Math.random().toString(36).substring(2);
+            currentUser = { uid, name, photoUrl, diamonds: 500 };
+            
+            // Save to Firebase & LocalStorage
+            await set(ref(db, `users/${uid}`), currentUser);
+            localStorage.setItem('premiumUser', JSON.stringify(currentUser));
+            
+            btn.innerText = "Enter App";
+            btn.disabled = false;
+            loadLobby();
+        });
+
+        // ================= LOBBY LOGIC =================
+        function loadLobby() {
+            showScreen('lobby');
+            document.getElementById('lobby-user-img').src = currentUser.photoUrl;
+            document.getElementById('lobby-user-name').innerText = currentUser.name;
+            document.getElementById('lobby-diamonds').innerText = currentUser.diamonds;
+
+            // Fetch Rooms Realtime
+            const roomsRef = ref(db, 'rooms');
+            onValue(roomsRef, (snapshot) => {
+                const roomList = document.getElementById('room-list');
+                roomList.innerHTML = '';
+                const data = snapshot.val();
+                if(data) {
+                    Object.entries(data).forEach(([roomId, room]) => {
+                        const count = room.seats ? Object.keys(room.seats).length : 0;
+                        const card = document.createElement('div');
+                        card.className = "glass p-4 rounded-2xl cursor-pointer hover:-translate-y-1 transition duration-300 relative overflow-hidden";
+                        card.innerHTML = `
+                            <div class="absolute -right-4 -top-4 w-16 h-16 bg-gradient-to-br from-primary to-transparent rounded-full opacity-50 blur-lg"></div>
+                            <h3 class="font-syne text-xl text-white mb-1 shadow-black drop-shadow">${room.name}</h3>
+                            <p class="text-xs text-gray-300 mb-3">Host: ${room.hostName}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold text-white"><span class="material-symbols-outlined text-[12px] align-middle">group</span> ${count}/10 Seated</span>
+                                <button class="bg-primary px-4 py-1 rounded-full text-sm font-bold text-white shadow-[0_0_10px_#ff758c]">Join</button>
+                            </div>
+                        `;
+                        card.onclick = () => joinRoom(roomId, room);
+                        roomList.appendChild(card);
                     });
                 } else {
-                    showToast("Invalid ID! User not found.");
-                    document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
+                    roomList.innerHTML = `<p class="text-gray-300 text-center w-full col-span-2">No active rooms. Create one!</p>`;
                 }
-            }).catch(err => {
-                showToast("Connection error!");
-                document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
-
-        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
-        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
-            if(e.target.files[0]) {
-                selectedThumbFile = e.target.files[0];
-                selectedPastThumb = null; // Clear past selection if new uploaded
-                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
-                clearPastThumbSelection();
-            }
+        // Create Room
+        document.getElementById('btn-create-room').addEventListener('click', async () => {
+            const roomName = prompt("Enter Room Name:");
+            if(!roomName) return;
+            const roomId = "room_" + Date.now();
+            const newRoom = {
+                id: roomId,
+                name: roomName,
+                hostId: currentUser.uid,
+                hostName: currentUser.name,
+                bg: 'default',
+                seats: {} // 0-9 indices
+            };
+            await set(ref(db, `rooms/${roomId}`), newRoom);
+            joinRoom(roomId, newRoom);
         });
 
-        async function uploadToCloudinary(file) {
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', UPLOAD_PRESET); 
-                formData.append('cloud_name', CLOUD_NAME);
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-                const data = await res.json();
-                return data.secure_url || null;
-            } catch (err) { return null; }
+        // ================= ROOM & SEATING LOGIC =================
+        let roomDataListener = null;
+
+        function renderSeats(roomData) {
+            const grid = document.getElementById('seat-grid');
+            grid.innerHTML = '';
+            for(let i=0; i<10; i++) {
+                const isOccupied = roomData.seats && roomData.seats[i];
+                const seatDiv = document.createElement('div');
+                seatDiv.className = "flex flex-col items-center justify-center gap-1 cursor-pointer relative";
+                
+                if(isOccupied) {
+                    const user = roomData.seats[i];
+                    const isMe = user.uid === currentUser.uid;
+                    seatDiv.innerHTML = `
+                        <div class="w-16 h-16 rounded-full p-1 ${isMe ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' : 'bg-white/30'} shadow-lg relative">
+                            <img src="${user.photoUrl}" class="w-full h-full rounded-full object-cover">
+                            ${user.isMuted ? '<div class="absolute bottom-0 right-0 bg-gray-800 rounded-full w-5 h-5 flex items-center justify-center"><span class="material-symbols-outlined text-[12px] text-red-500">mic_off</span></div>' : ''}
+                        </div>
+                        <span class="text-xs text-white bg-black/50 px-2 py-0.5 rounded shadow w-full text-center truncate ${isMe ? 'text-yellow-300 font-bold' : ''}">${user.name}</span>
+                    `;
+                    seatDiv.onclick = () => handleSeatClick(i, user, roomData.hostId);
+                } else {
+                    seatDiv.innerHTML = `
+                        <div class="w-16 h-16 rounded-full border-2 border-dashed border-white/40 flex items-center justify-center bg-black/10 hover:bg-white/10 transition">
+                            <span class="material-symbols-outlined text-white/50 text-2xl">add</span>
+                        </div>
+                        <span class="text-xs text-transparent">Empty</span>
+                    `;
+                    seatDiv.onclick = () => takeSeat(i);
+                }
+                grid.appendChild(seatDiv);
+            }
         }
 
-        // Add Past Thumbnails rendering logic
-        function loadPastThumbnails() {
-            const container = document.getElementById('past-thumbs-container');
-            const wrapper = document.getElementById('past-thumbs-wrapper');
-            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+        async function joinRoom(roomId, roomObj) {
+            currentRoomId = roomId;
+            mySeatIndex = null;
+            showScreen('room');
+            document.getElementById('room-title').innerText = roomObj.name;
             
-            if(pastThumbs.length > 0) {
-                wrapper.style.display = 'block';
-                container.innerHTML = '';
-                pastThumbs.forEach(url => {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.onclick = () => {
-                        selectedPastThumb = url;
-                        selectedThumbFile = null; // Reset new file
-                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
-                        clearPastThumbSelection();
-                        img.classList.add('selected');
-                    };
-                    container.appendChild(img);
-                });
+            // Listen to Room Changes
+            roomDataListener = onValue(ref(db, `rooms/${roomId}`), (snap) => {
+                const data = snap.val();
+                if(!data) return leaveRoom(); // Room deleted
+                renderSeats(data);
+                // Sync YouTube if host sets it
+                if(data.ytLink) {
+                    document.getElementById('yt-container').classList.remove('hidden');
+                    document.getElementById('yt-iframe').src = data.ytLink;
+                }
+            });
+
+            // Listen for Reactions
+            onChildAdded(ref(db, `events/${roomId}`), (snap) => {
+                const event = snap.val();
+                if(event.type === 'gift') triggerGift();
+                else triggerReaction(event.type); // 'fire' or 'heart'
+            });
+
+            // Set Disconnect Hook (Remove from seat if app closed)
+            onDisconnect(ref(db, `rooms/${roomId}/seats`)).cancel();
+        }
+
+        async function takeSeat(index) {
+            if(mySeatIndex !== null) return showToast("Already seated!");
+            
+            // WebRTC: Request Mic
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                document.getElementById('mic-icon').innerText = 'mic';
+                document.getElementById('btn-toggle-mic').classList.replace('from-red-500', 'from-green-400');
+                document.getElementById('btn-toggle-mic').classList.replace('to-red-700', 'to-green-600');
+            } catch(e) {
+                return showToast("Microphone access required to sit!");
+            }
+
+            mySeatIndex = index;
+            const seatData = { ...currentUser, isMuted: false };
+            await set(ref(db, `rooms/${currentRoomId}/seats/${index}`), seatData);
+            
+            // Remove seat on disconnect
+            onDisconnect(ref(db, `rooms/${currentRoomId}/seats/${index}`)).remove();
+
+            // Init WebRTC mesh (simplified auto-connect conceptually)
+            initWebRTCMesh();
+        }
+
+        function handleSeatClick(index, seatUser, hostId) {
+            if(seatUser.uid === currentUser.uid) {
+                // Self Mute Toggle
+                toggleMic(index);
+            } else if (currentUser.uid === hostId) {
+                // Host Actions
+                if(confirm(`Kick ${seatUser.name} from seat?`)) {
+                    remove(ref(db, `rooms/${currentRoomId}/seats/${index}`));
+                }
             } else {
-                wrapper.style.display = 'none';
-            }
-        }
-
-        function clearPastThumbSelection() {
-            const imgs = document.querySelectorAll('#past-thumbs-container img');
-            imgs.forEach(i => i.classList.remove('selected'));
-        }
-
-        function saveThumbToPast(url) {
-            if(url && url !== currentAvatar) {
-                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
-                if(!pastThumbs.includes(url)) {
-                    pastThumbs.unshift(url); // Add to beginning
-                    if(pastThumbs.length > 5) pastThumbs.pop(); // Keep only last 5
-                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
+                // 1-on-1 Call Intent
+                if(confirm(`Request private call with ${seatUser.name}?`)) {
+                    showToast("Call signaling sent (Simulated)");
                 }
             }
         }
 
-
-        // --- 3. FETCH LIVE STREAMS (GRID) ---
-        const gridContainer = document.getElementById('liveGrid');
-
-        function fetchLiveStreams() {
-            onValue(ref(db, 'live_streams'), (snapshot) => {
-                gridContainer.innerHTML = '';
-                const streams = snapshot.val();
-                let count = 0;
+        async function toggleMic(index) {
+            if(localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                audioTrack.enabled = !audioTrack.enabled;
+                const isMuted = !audioTrack.enabled;
                 
-                if (streams) {
-                    Object.entries(streams).forEach(([streamId, data]) => {
-                        // Include both active AND scheduled lives
-                        if (data.isLive || data.scheduledTime) {
-                            count++;
-                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
-                            const thumbUrl = data.thumbnail || data.hostAvatar; // Fallback to avatar if no thumb
-                            
-                            // Badge logic based on status
-                            const badgeHTML = data.isLive ? 
-                                `<span class="live-badge"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i>LIVE</span>` : 
-                                `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
-
-                            const card = document.createElement('div');
-                            card.className = 'live-card';
-                            
-                            // Logic for clicking card
-                            card.onclick = () => {
-                                if (!data.isLive && data.hostName === currentUser) {
-                                    startScheduledLiveAsHost(streamId, data);
-                                } else if (!data.isLive) {
-                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
-                                    showToast(`This live starts later at: ${timeStr}`);
-                                } else {
-                                    joinLiveStream(streamId, data);
-                                }
-                            };
-                            
-                            card.innerHTML = `
-                                <img src="${thumbUrl}" alt="Live">
-                                <div class="card-top-info">
-                                    ${badgeHTML}
-                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
-                                </div>
-                                <div class="card-bottom-info">
-                                    <div class="user-name">${data.hostName}</div>
-                                    <div class="live-title">${data.title}</div>
-                                </div>
-                            `;
-                            gridContainer.appendChild(card);
-                        }
-                    });
+                // Update UI Button
+                const btn = document.getElementById('btn-toggle-mic');
+                const icon = document.getElementById('mic-icon');
+                if(isMuted) {
+                    icon.innerText = 'mic_off';
+                    btn.classList.replace('from-green-400', 'from-red-500');
+                    btn.classList.replace('to-green-600', 'to-red-700');
+                } else {
+                    icon.innerText = 'mic';
+                    btn.classList.replace('from-red-500', 'from-green-400');
+                    btn.classList.replace('to-red-700', 'to-green-600');
                 }
                 
-                if(count === 0) {
-                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;"><i class="fas fa-video-slash" style="display:block; font-size:30px; margin-bottom:10px; color:#ccc;"></i>No one is currently live. Be the first!</p>';
-                }
-            });
+                // Update Firebase
+                await update(ref(db, `rooms/${currentRoomId}/seats/${index}`), { isMuted });
+            }
         }
 
-        // --- MODAL FUNCTIONS ---
-        window.openStartLiveModal = () => {
-            loadPastThumbnails();
-            document.getElementById('live-schedule-time').value = '';
-            document.getElementById('startLiveModal').classList.add('active');
-        };
-        window.closeModal = (id) => {
-            document.getElementById(id).classList.remove('active');
-        };
-
-        // --- 4. WEBRTC BROADCASTING (HOST) ---
-        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
-            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
-            const scheduleInput = document.getElementById('live-schedule-time').value;
-            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
-            
-            closeModal('startLiveModal');
-            showLoading("Processing...");
-
-            try {
-                let thumbUrl = currentAvatar; // Start with fallback
-                
-                if(selectedThumbFile) {
-                    showLoading("Uploading Thumbnail...");
-                    const uploaded = await uploadToCloudinary(selectedThumbFile);
-                    if(uploaded) {
-                        thumbUrl = uploaded;
-                        saveThumbToPast(thumbUrl);
-                    }
-                } else if (selectedPastThumb) {
-                    thumbUrl = selectedPastThumb;
-                }
-
-                // If scheduled, just write to DB and exit
-                if(isScheduled) {
-                    const newStreamRef = push(ref(db, 'live_streams'));
-                    await set(newStreamRef, {
-                        hostName: currentUser,
-                        hostAvatar: currentAvatar,
-                        title: title,
-                        thumbnail: thumbUrl,
-                        isLive: false,
-                        scheduledTime: new Date(scheduleInput).getTime(),
-                        timestamp: serverTimestamp()
-                    });
-                    hideLoading();
-                    showToast("Live Scheduled Successfully! ⏰");
-                    return; 
-                }
-
-                showLoading("Accessing Camera...");
-                // Get Camera & Mic (Added strict audio constraints to ensure audio starts cleanly)
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
-                showLoading("Starting Stream...");
-                
-                // Create Node in Firebase
-                const newStreamRef = push(ref(db, 'live_streams'));
-                currentStreamId = newStreamRef.key;
-                isHost = true;
-
-                await set(newStreamRef, {
-                    hostName: currentUser,
-                    hostAvatar: currentAvatar,
-                    title: title,
-                    thumbnail: thumbUrl,
-                    isLive: true,
-                    timestamp: serverTimestamp()
-                });
-
-                // Remove stream on disconnect
-                onDisconnect(newStreamRef).remove();
-
-                setupHostUIAndSignaling();
-
-            } catch (err) {
-                hideLoading();
-                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
+        // Leave Room Flow
+        async function leaveRoom() {
+            if(mySeatIndex !== null && currentRoomId) {
+                await remove(ref(db, `rooms/${currentRoomId}/seats/${mySeatIndex}`));
             }
+            if(localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+            // Cleanup WebRTC connections
+            Object.values(peerConnections).forEach(pc => pc.close());
+            peerConnections = {};
+            document.getElementById('remote-audios').innerHTML = '';
+
+            currentRoomId = null;
+            mySeatIndex = null;
+            loadLobby();
+        }
+        document.getElementById('btn-leave-room').addEventListener('click', leaveRoom);
+        document.getElementById('btn-power').addEventListener('click', leaveRoom);
+
+        // ================= ANIMATIONS & BOTTOM BAR =================
+        function sendEvent(type) {
+            if(!currentRoomId) return;
+            push(ref(db, `events/${currentRoomId}`), { type, sender: currentUser.uid, ts: Date.now() });
+        }
+
+        document.getElementById('btn-react-heart').addEventListener('click', () => sendEvent('heart'));
+        document.getElementById('btn-react-fire').addEventListener('click', () => sendEvent('fire'));
+        document.getElementById('btn-gift').addEventListener('click', () => {
+            if(currentUser.diamonds < 100) return showToast("Not enough diamonds!");
+            currentUser.diamonds -= 100;
+            update(ref(db, `users/${currentUser.uid}`), { diamonds: currentUser.diamonds });
+            sendEvent('gift');
+            showToast("Gift Sent! -100 Diamonds");
+        });
+        document.getElementById('btn-toggle-mic').addEventListener('click', () => {
+            if(mySeatIndex !== null) toggleMic(mySeatIndex);
+            else showToast("Take a seat first!");
         });
 
-        // Function created to allow Host to start their pre-scheduled live directly
-        async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Accessing Camera...");
-            try {
-                // Added strict audio constraints to ensure audio starts cleanly
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
-                currentStreamId = streamId;
-                isHost = true;
-
-                // Update DB to mark as live and clear schedule
-                await update(ref(db, `live_streams/${streamId}`), {
-                    isLive: true,
-                    scheduledTime: null,
-                    timestamp: serverTimestamp()
-                });
-                
-                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
-                setupHostUIAndSignaling();
-            } catch (err) {
-                hideLoading();
-                alert("Could not start live: " + err.message);
-            }
+        function triggerReaction(type) {
+            const layer = document.getElementById('reaction-layer');
+            const emoji = document.createElement('div');
+            emoji.className = 'animate-float';
+            emoji.innerText = type === 'heart' ? '💖' : '🔥';
+            emoji.style.left = Math.random() * 80 + 10 + '%';
+            emoji.style.bottom = '100px';
+            layer.appendChild(emoji);
+            setTimeout(() => emoji.remove(), 2000);
         }
 
-        // Extracted Host logic to reuse for Normal Live & Scheduled Live without breaking anything
-        function setupHostUIAndSignaling() {
-            // Setup UI
-            document.getElementById('main-app').style.display = 'none';
-            const liveScreen = document.getElementById('live-view-screen');
-            liveScreen.style.display = 'flex';
-            
-            const localVideo = document.getElementById('local-live-video');
-            localVideo.style.display = 'block';
-            document.getElementById('remote-live-video').style.display = 'none';
-            localVideo.srcObject = localStream;
+        function triggerGift() {
+            const popup = document.getElementById('gift-popup');
+            popup.classList.remove('hidden');
+            // Re-trigger animation
+            popup.style.animation = 'none';
+            popup.offsetHeight; 
+            popup.style.animation = null;
+            setTimeout(() => popup.classList.add('hidden'), 3000);
+        }
 
-            document.getElementById('live-host-name').innerText = currentUser + " (You)";
-            document.getElementById('live-host-avatar').src = currentAvatar;
 
-            hideLoading();
-            showToast("You are now LIVE! 🔴");
-            setupLiveChat();
-
-            // Security 4: Detect Camera Interruption / External Screen Record taking over camera
-            if (localStream && localStream.getVideoTracks().length > 0) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                videoTrack.onmute = () => {
-                    showToast("Warning: Camera interrupted (Screen Record/Call detected)!");
-                    document.body.classList.add('security-blur');
-                };
-                videoTrack.onunmute = () => {
-                    showToast("Camera restored.");
-                    document.body.classList.remove('security-blur');
-                };
-                videoTrack.onended = () => {
-                    showToast("Camera stopped unexpectedly!");
-                    leaveLiveStream();
-                };
-            }
-
-            // Listen for Viewers joining and offering WebRTC connection
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
-                const viewerId = snapshot.key;
-                const viewerData = snapshot.val();
+        // ================= WebRTC MESH NETWORK (Scaffold) =================
+        // In a true production app, we handle full ICE negotiation here. 
+        // This is the functional structural scaffold ensuring no placeholders break the code.
+        const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+        
+        function initWebRTCMesh() {
+            const signalsRef = ref(db, `signals/${currentRoomId}/${currentUser.uid}`);
+            onChildAdded(signalsRef, async (snap) => {
+                const signal = snap.val();
+                const senderId = signal.sender;
                 
-                get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
-                    document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
-                });
-
-                if (viewerData.offer) {
-                    // Create a connection for this specific viewer
-                    const pc = new RTCPeerConnection(iceServers);
-                    hostPeerConnections[viewerId] = pc;
-
-                    // Add local tracks to this connection strictly
-                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-                    // Listen for ICE candidates from Host to send to Viewer
-                    pc.onicecandidate = e => {
-                        if (e.candidate) {
-                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
-                        }
-                    };
-
-                    // Queue ICE candidates from Viewer to fix WebRTC race condition (THE BUG FIX)
-                    const viewerCandidatesQueue = [];
-                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
-                        if(snap.val()) {
-                            if(pc.remoteDescription && pc.remoteDescription.type) {
-                                pc.addIceCandidate(new RTCIceCandidate(snap.val()));
-                            } else {
-                                viewerCandidatesQueue.push(snap.val());
-                            }
-                        }
-                    });
-
-                    // Process the Viewer's offer
-                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
+                if(!peerConnections[senderId]) {
+                    createPeerConnection(senderId);
+                }
+                
+                const pc = peerConnections[senderId];
+                
+                if(signal.type === 'offer') {
+                    await pc.setRemoteDescription(new RTCSessionDescription(signal.sdp));
                     const answer = await pc.createAnswer();
                     await pc.setLocalDescription(answer);
-
-                    // Send Answer back to Viewer
-                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
-                        type: answer.type, sdp: answer.sdp
-                    });
-
-                    // Flush queued candidates safely now
-                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
-                    viewerCandidatesQueue.length = 0;
+                    sendSignal(senderId, { type: 'answer', sdp: answer });
+                } else if(signal.type === 'answer') {
+                    await pc.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                } else if(signal.type === 'ice') {
+                    await pc.addIceCandidate(new RTCIceCandidate(signal.candidate));
                 }
             });
-        }
 
-
-        // --- 5. WEBRTC VIEWING (VIEWER) ---
-        async function joinLiveStream(streamId, streamData) {
-            showLoading("Joining Room...");
-            currentStreamId = streamId;
-            isHost = false;
-
-            document.getElementById('main-app').style.display = 'none';
-            const liveScreen = document.getElementById('live-view-screen');
-            liveScreen.style.display = 'flex';
-            
-            document.getElementById('local-live-video').style.display = 'none';
-            const remoteVideo = document.getElementById('remote-live-video');
-            remoteVideo.style.display = 'block';
-
-            document.getElementById('live-host-name').innerText = streamData.hostName;
-            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
-
-            try {
-                viewerPeerConnection = new RTCPeerConnection(iceServers);
-
-                // When stream is received, play it (Updated to completely fix Audio/Sudo dropping bug)
-                viewerPeerConnection.ontrack = e => {
-                    if (e.streams && e.streams[0]) {
-                        // Strict check to prevent resetting stream when the audio track arrives milliseconds later
-                        if (remoteVideo.srcObject !== e.streams[0]) {
-                            remoteVideo.srcObject = e.streams[0];
+            // Simulate broadcasting offer to existing seated users
+            get(ref(db, `rooms/${currentRoomId}/seats`)).then(snap => {
+                const seats = snap.val();
+                if(seats) {
+                    Object.values(seats).forEach(user => {
+                        if(user.uid !== currentUser.uid) {
+                            createPeerConnection(user.uid, true);
                         }
-                    } else {
-                        if (!remoteVideo.srcObject) remoteVideo.srcObject = new MediaStream();
-                        remoteVideo.srcObject.addTrack(e.track);
-                    }
-                    
-                    // Forcefully ensure audio is enabled to bypass strict mobile browser blocks
-                    remoteVideo.muted = false;
-                    remoteVideo.volume = 1.0;
-                    
-                    const playPromise = remoteVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(err => {
-                            console.warn("Audio/Video play blocked by browser:", err);
-                            // Only trigger this fallback if the browser completely blocks the audio
-                            showToast("Audio muted by browser. Tap anywhere to enable audio!");
-                            document.body.addEventListener('click', () => {
-                                remoteVideo.muted = false;
-                                remoteVideo.play();
-                            }, { once: true });
-                        });
-                    }
-                };
-
-                // Send ICE candidates to Host
-                viewerPeerConnection.onicecandidate = e => {
-                    if (e.candidate) {
-                        push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
-                    }
-                };
-
-                // Create Offer (Viewer initiates to receive media)
-                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
-                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
-                
-                const offer = await viewerPeerConnection.createOffer();
-                await viewerPeerConnection.setLocalDescription(offer);
-
-                // Write offer to Firebase
-                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
-                    username: currentUser,
-                    offer: { type: offer.type, sdp: offer.sdp }
-                });
-
-                // Delete entry on disconnect
-                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
-
-                // Queue ICE Candidates from Host (THE BUG FIX)
-                const hostCandidatesQueue = [];
-                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
-                    if(snap.val()) {
-                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
-                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
-                        } else {
-                            hostCandidatesQueue.push(snap.val());
-                        }
-                    }
-                });
-
-                // Wait for Host's Answer
-                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
-                    const answer = snap.val();
-                    if (answer && viewerPeerConnection.signalingState !== "closed") {
-                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-                        
-                        // Flush queued ICE candidates after Answer is set
-                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
-                        hostCandidatesQueue.length = 0;
-                    }
-                });
-
-                // Update viewer count locally
-                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
-                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
-                });
-
-                hideLoading();
-                setupLiveChat();
-                
-                // System message to chat
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
-
-            } catch(e) {
-                hideLoading();
-                showToast("Failed to join stream.");
-                leaveLiveStream();
-            }
-        }
-
-
-        // --- 6. LEAVE/STOP STREAM ---
-        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
-
-        function leaveLiveStream() {
-            document.getElementById('live-view-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-
-            if (isHost && currentStreamId) {
-                // Stop camera
-                if (localStream) localStream.getTracks().forEach(t => t.stop());
-                // Close all peer connections
-                Object.values(hostPeerConnections).forEach(pc => pc.close());
-                hostPeerConnections = {};
-                // Remove stream from Firebase
-                remove(ref(db, `live_streams/${currentStreamId}`));
-            } else if (!isHost && currentStreamId) {
-                if (viewerPeerConnection) viewerPeerConnection.close();
-                viewerPeerConnection = null;
-                // Remove viewer from Firebase
-                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
-                // Notify chat
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
-            }
-
-            currentStreamId = null;
-            document.getElementById('local-live-video').srcObject = null;
-            document.getElementById('remote-live-video').srcObject = null;
-            document.getElementById('live-chat-box').innerHTML = ''; // clear chat
-        }
-
-
-        // --- 7. LIVE CHAT FUNCTIONALITY (UPGRADED) ---
-        function setupLiveChat() {
-            const chatBox = document.getElementById('live-chat-box');
-            chatBox.innerHTML = ''; // reset
-            
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
-                const data = snap.val();
-                if(data) {
-                    const msgDiv = document.createElement('div');
-                    
-                    if (data.user === 'System') {
-                        msgDiv.className = 'chat-msg system';
-                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
-                    } else if (data.isGift) {
-                        msgDiv.className = 'chat-msg gift';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎✨`;
-                    } else {
-                        msgDiv.className = 'chat-msg';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
-                    }
-                    
-                    chatBox.appendChild(msgDiv);
-                    
-                    // Smooth Auto-scroll to bottom so chat works "acche se" (perfectly)
-                    chatBox.scrollTo({
-                        top: chatBox.scrollHeight,
-                        behavior: 'smooth'
                     });
                 }
             });
         }
 
-        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const text = this.value.trim();
-                if (text && currentStreamId) {
-                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
-                    this.value = '';
+        async function createPeerConnection(targetId, isInitiator = false) {
+            const pc = new RTCPeerConnection(rtcConfig);
+            peerConnections[targetId] = pc;
+
+            if(localStream) {
+                localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+            }
+
+            pc.onicecandidate = (e) => {
+                if(e.candidate) sendSignal(targetId, { type: 'ice', candidate: e.candidate });
+            };
+
+            pc.ontrack = (e) => {
+                // Render invisible audio for remote peer to handle iOS/Chrome autoplay policies
+                const container = document.getElementById('remote-audios');
+                let audioEl = document.getElementById(`audio-${targetId}`);
+                if(!audioEl) {
+                    audioEl = document.createElement('audio');
+                    audioEl.id = `audio-${targetId}`;
+                    audioEl.autoplay = true;
+                    audioEl.playsInline = true;
+                    container.appendChild(audioEl);
                 }
+                audioEl.srcObject = e.streams[0];
+            };
+
+            if(isInitiator) {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                sendSignal(targetId, { type: 'offer', sdp: offer });
             }
-        });
+        }
 
+        function sendSignal(targetId, payload) {
+            const refPath = ref(db, `signals/${currentRoomId}/${targetId}`);
+            push(refPath, { ...payload, sender: currentUser.uid });
+        }
 
-        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
-        window.handleGiftClick = function() {
-            if (isHost) {
-                showToast("You cannot send gifts to yourself!");
-                return;
-            }
-
-            const giftCost = 10; // 10 Diamonds per click
-
-            if (userDiamonds >= giftCost) {
-                // Deduct diamonds
-                const newBal = userDiamonds - giftCost;
-                get(ref(db, 'users')).then(snap => {
-                    const users = snap.val();
-                    for(let key in users) {
-                        if(users[key].name === currentUser) {
-                            set(ref(db, `users/${key}/diamonds`), newBal);
-                            break;
-                        }
-                    }
-                });
-                
-                // Send gift message to chat
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
-                showToast("Gift Sent! 💎");
-                
-            } else {
-                // NOT ENOUGH DIAMONDS -> Redirect to Main App Diamond Store
-                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
-                
-                if(confirmBuy) {
-                    leaveLiveStream();
-                    redirectToDiamondStore();
-                }
-            }
-        };
-
-        window.redirectToDiamondStore = function() {
-            // As requested, redirecting back to main app to buy diamonds.
-            // Appending a query parameter so main index.html knows to open the store immediately.
-            window.location.href = 'index.html?action=buy_diamonds';
-        };
-
+        // Start App
+        initAuth();
     </script>
 </body>
 </html>
