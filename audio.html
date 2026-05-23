@@ -13,7 +13,7 @@
         /* --- Global Styles & Fonts --- */
         :root {
             /* Zingoo Specific Light Theme Variables */
-            --dark-bg: #f8f9fa;
+            --dark-bg: #000000; /* Fixed right side white gap issue */
             --dark-secondary: #ffffff; 
             --dark-card: #ffffff;
             --glass-border: 1px solid rgba(255, 255, 255, 0.4);
@@ -22,8 +22,8 @@
             --hot-pink: #ff004c;
             --red-accent: #ff3b6b;
             --text-light: #888888;
-            --text-white: #111111; /* Flipped for light theme */
-            --text-pure-white: #ffffff; /* For buttons and dark cards */
+            --text-white: #111111; 
+            --text-pure-white: #ffffff; 
 
             --green-live: #25D366;
             
@@ -53,12 +53,17 @@
             margin: 0 auto;
             height: 100dvh; 
             position: relative;
-            background-color: #ffffff;
+            background-color: #000000; /* Ensure no white gaps bleed through */
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
             overflow-y: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* --- NEW: White Splash Screen Loading Overlay --- */
@@ -155,7 +160,7 @@
         #id-login-screen button:hover { transform: translateY(-2px); }
 
         /* ---- LOBBY SCREEN STYLES ---- */
-        #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; }
+        #lobby-screen { display: none; flex-direction: column; height: 100%; background: #ffffff; animation: fadeIn 0.4s ease-out; }
         
         .lobby-header-top { padding: 15px 20px 10px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
         .lobby-header-top .logo { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 1.2em; font-style: italic;}
@@ -200,9 +205,9 @@
         .fab-create:hover { transform: scale(1.1); }
 
         /* ---- ZINGOO LIVE ROOM SCREEN STYLES ---- */
-        #live-room-screen { display: none; }
+        #live-room-screen { display: none; animation: fadeIn 0.4s ease-out; }
         .live-room-container { 
-            display: flex; flex-direction: column; height: 100dvh; position: relative; 
+            display: flex; flex-direction: column; height: 100dvh; position: relative; width: 100%;
             /* Transparent to allow dynamic background */
             background-color: #fdfdfd; 
             background-size: cover; 
@@ -227,7 +232,7 @@
         
         .room-body { flex-grow: 1; padding: 75px 15px 10px 15px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
-        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 20px; z-index: 5;}
+        .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 20px; z-index: 5; width: 100%; box-sizing: border-box;}
         
         /* UPGRADED SEATS UI WITH PREMIUM CHAIR ASSETS */
         .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
@@ -302,23 +307,30 @@
         
         .gift-scroll-bar { display: none; } 
         
-        /* --- NEW FLOATING CHAT OVERLAY (Transparent Background) --- */
+        /* --- FLOATING CHAT OVERLAY (Transparent Background, Smooth Flow) --- */
         .floating-chat-container {
             position: absolute;
             bottom: 85px; 
             left: 15px;
             width: 70%;
             max-width: 300px;
-            height: 180px;
-            overflow-y: hidden;
+            height: 250px; /* Increased Height */
+            overflow-y: auto; /* Fixed disappearing bug */
+            scroll-behavior: smooth;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
             z-index: 15;
             pointer-events: none; 
         }
+        .floating-chat-container::-webkit-scrollbar { display: none; }
+        /* Fixes items cutting off at top when scrolling in flex */
+        .floating-chat-container::before {
+            content: "";
+            flex: 1;
+        }
+        
         .floating-chat-msg {
-            background: transparent; /* Changed to Transparent */
+            background: transparent; 
             backdrop-filter: none;
             color: white;
             padding: 4px 10px;
@@ -354,7 +366,7 @@
         .zf-btn.orange { background: #ff7f50; box-shadow: 0 5px 15px rgba(255,127,80,0.4); }
         .zf-btn.grey { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* --- GLASSY CHAT PANEL OVERLAY (Updated to floating bottom bar) --- */
+        /* --- CHAT PANEL OVERLAY (Updated to floating bottom bar WITHOUT X icon) --- */
         #chat-panel-overlay {
             position: absolute; bottom: 0; left: 0; width: 100%; height: auto; 
             background: transparent;
@@ -567,7 +579,7 @@
 
         <!-- LIVE ROOM SCREEN -->
         <div id="live-room-screen">
-             <div class="live-room-container">
+             <div class="live-room-container" id="live-room-container-area">
                 
                 <!-- UPDATED HEADER -->
                 <header class="zingoo-header">
@@ -583,7 +595,7 @@
                     </div>
                 </header>
                 
-                <main class="room-body">
+                <main class="room-body" id="room-body-area">
                     <div class="speaker-grid-zingoo" id="speaker-grid-container">
                         <!-- Speakers Injected Here -->
                     </div>
@@ -602,7 +614,7 @@
                 </main>
                 
                 <div id="floating-live-chat" class="floating-chat-container">
-                    <!-- Removed System Welcome Message -->
+                    <!-- Chat Messages Flow Here Naturally -->
                 </div>
 
                 <!-- UPDATED FOOTER -->
@@ -614,7 +626,7 @@
                     <button class="zf-btn grey" id="main-mic-btn"><i class="fas fa-microphone-slash"></i></button>
                 </footer>
                 
-                <!-- GLASSY CHAT PANEL OVERLAY -->
+                <!-- CHAT PANEL OVERLAY (Without X button) -->
                 <div id="chat-panel-overlay">
                     <div class="chat-panel-header" style="display:none;">
                         <h3>Live Chat</h3>
@@ -624,7 +636,6 @@
                     <div class="chat-input-area">
                         <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
                         <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
-                        <button class="close-btn" id="close-chat-btn" style="width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.05); color: #111; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0;"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
             </div>
@@ -1018,6 +1029,7 @@
             let roomBgListener = null;
             let unsubscribeChat = null;
             let unsubscribeMedia = null;
+            let isJoining = false; // Throttling logic
 
             let availableGifts = {};
             function fetchAdminGifts() {
@@ -1214,10 +1226,8 @@
 
             const liveRoomScreen = document.getElementById('live-room-screen');
             const modals = document.querySelectorAll('.modal-overlay');
-            const closeButtons = document.querySelectorAll('.close-btn');
             const lobbyRoomsList = document.getElementById('lobby-rooms-list');
             const noRoomsMsg = document.getElementById('no-rooms-message');
-            const speakerGrid = document.getElementById('speaker-grid-container');
 
             const openModal = (modalId) => {
                 const modal = document.getElementById(modalId);
@@ -1582,6 +1592,10 @@
             }
 
             function joinAudioRoom(roomId, roomTitle, fee) {
+                if (isJoining) return;
+                isJoining = true;
+                setTimeout(() => { isJoining = false; }, 1000); // Throttler to prevent multiple connections
+
                 const proceed = () => {
                     currentActiveRoomId = roomId;
                     document.getElementById('live-room-title').innerText = roomTitle;
@@ -1600,7 +1614,7 @@
                         if(roomBgListener) roomBgListener();
                         roomBgListener = onValue(ref(db, `audio_rooms/${roomId}/background`), (snap) => {
                             const bgUrl = snap.val();
-                            const container = document.querySelector('.live-room-container');
+                            const container = document.getElementById('live-room-container-area');
                             if(bgUrl) {
                                 container.style.backgroundImage = `url(${bgUrl})`;
                             } else {
@@ -1631,7 +1645,7 @@
                     });
 
                     // LISTEN TO ENTIRE ROOM SO IF IT IS DELETED WE KNOW
-                    if (roomListener) roomListener(); 
+                    if (roomListener) { roomListener(); roomListener = null; } 
                     roomListener = onValue(ref(db, `audio_rooms/${roomId}`), (snapshot) => {
                         if(!snapshot.exists()) {
                             showToast("The Room has been closed.");
@@ -1642,47 +1656,35 @@
                         renderSeats(roomData.seats || {});
                     });
 
-                    const chatContainer = document.getElementById('chat-messages');
                     const floatingContainer = document.getElementById('floating-live-chat');
-                    
-                    chatContainer.innerHTML = '';
                     floatingContainer.innerHTML = '';
                     
-                    if (unsubscribeChat) unsubscribeChat();
+                    if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
                     const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
                     
                     unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
                         const msgData = snapshot.val();
                         if(msgData) {
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = 'chat-msg';
-                            if(msgData.user === currentUser) {
-                                msgDiv.style.alignSelf = 'flex-end';
-                                msgDiv.style.background = 'rgba(255, 0, 76, 0.05)';
-                            }
-
-                            if(msgData.giftUrl) {
-                                triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
-                                msgDiv.classList.add('gift-message');
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> Sent a gorgeous gift! <img src="${msgData.giftUrl}" style="width:30px; vertical-align:middle; margin-left:5px;">`;
-                            } else {
-                                msgDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.text}`;
-                            }
-
-                            chatContainer.appendChild(msgDiv);
-                            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
-                            
                             const floatDiv = document.createElement('div');
                             floatDiv.className = 'floating-chat-msg';
                             floatDiv.innerHTML = `<span class="username">${msgData.user}:</span> ${msgData.giftUrl ? "Sent a Gift! 🎁" : msgData.text}`;
                             floatingContainer.appendChild(floatDiv);
+                            
+                            // Scroll naturally to bottom
                             setTimeout(() => { floatingContainer.scrollTop = floatingContainer.scrollHeight; }, 50);
                             
-                            setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
+                            // Fade out individual messages gracefully rather than hard remove
+                            setTimeout(() => { 
+                                if(floatDiv) {
+                                    floatDiv.style.transition = 'opacity 0.5s ease-out';
+                                    floatDiv.style.opacity = '0';
+                                    setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 500);
+                                }
+                            }, 10000);
                         }
                     });
 
-                    if (window.unsubscribeReactions) window.unsubscribeReactions();
+                    if (window.unsubscribeReactions) { window.unsubscribeReactions(); window.unsubscribeReactions = null; }
                     window.unsubscribeReactions = onChildAdded(ref(db, `audio_rooms/${roomId}/reactions`), (snap) => {
                         const data = snap.val();
                         if(data && Date.now() - data.timestamp < 5000) {
@@ -1714,8 +1716,15 @@
                 }
             }
 
+            // --- DOUBLE SEAT FIX applied here with bulletproof clear method ---
             function renderSeats(seatsData) {
-                speakerGrid.innerHTML = '';
+                const grid = document.getElementById('speaker-grid-container');
+                if(!grid) return;
+
+                // Bulletproof inner content clear
+                while(grid.firstChild) {
+                    grid.removeChild(grid.firstChild);
+                }
                 
                 let wasInSeat = mySeatIndex !== -1;
                 mySeatIndex = -1;
@@ -1768,7 +1777,6 @@
                         `;
                     } else {
                         seatDiv.classList.add('empty');
-                        // Updated to match padlock design on image
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.audioRoomAPI.takeSeat(${i})">
                                 <i class="fas fa-lock" style="color:rgba(255,255,255,0.6); font-size: 20px;"></i>
@@ -1776,7 +1784,7 @@
                             <p>Seat ${i + 1}</p>
                         `;
                     }
-                    speakerGrid.appendChild(seatDiv);
+                    grid.appendChild(seatDiv);
                 }
             }
             
@@ -1834,13 +1842,23 @@
                     timestamp: serverTimestamp()
                 });
                 input.value = ''; 
+                // Close input footer right after sending to prevent screen clutter
+                document.getElementById('chat-panel-overlay').style.display = 'none';
             }
             document.getElementById('send-msg-btn').addEventListener('click', sendRoomMessage);
             document.getElementById('live-chat-input').addEventListener('keypress', (e) => {
                 if(e.key === 'Enter') sendRoomMessage();
             });
 
-            closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
+            // Close chat if tapping anywhere outside the input overlay on screen
+            document.getElementById('room-body-area').addEventListener('click', () => {
+                document.getElementById('chat-panel-overlay').style.display = 'none';
+            });
+            document.querySelector('.zingoo-header').addEventListener('click', () => {
+                document.getElementById('chat-panel-overlay').style.display = 'none';
+            });
+
+            document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', closeModal));
             modals.forEach(modal => {
                 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
             });
@@ -2005,8 +2023,13 @@
                 closeModal();
             });
 
-            document.getElementById('open-chat-btn').addEventListener('click', () => document.getElementById('chat-panel-overlay').style.display = 'flex');
-            document.getElementById('close-chat-btn').addEventListener('click', () => document.getElementById('chat-panel-overlay').style.display = 'none');
+            document.getElementById('open-chat-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('chat-panel-overlay').style.display = 'flex';
+                // Trigger auto-focus inside to open Keyboard
+                setTimeout(() => { document.getElementById('live-chat-input').focus(); }, 50);
+            });
+            
         });
     </script>
 </body>
