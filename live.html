@@ -629,10 +629,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Setup ZegoCloud Window instances
-        const ZegoExpressEngine = window.ZegoExpressEngine;
-        const ZegoUIKitPrebuilt = window.ZegoUIKitPrebuilt;
-
         // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
         document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -1073,11 +1069,16 @@
                 const userID = currentUserId ? currentUserId.toString() : "host_" + Date.now();
                 const userName = currentUser || "Host";
 
-                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
-                zg = new ZegoExpressEngine(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
+                const ZegoUIKit = window.ZegoUIKitPrebuilt.ZegoUIKitPrebuilt || window.ZegoUIKitPrebuilt;
+                const ZegoEngineClass = window.ZegoExpressEngine.ZegoExpressEngine || window.ZegoExpressEngine;
+
+                const token = ZegoUIKit.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
+                zg = new ZegoEngineClass(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
                 
                 zg.loginRoom(roomID, token, { userID, userName }, { userUpdate: true }).then(() => {
                     zg.startPublishingStream(roomID + "_stream", localStream);
+                }).catch(e => {
+                    console.error("Host Zego login error:", e);
                 });
             } catch(e) {
                 console.error("ZegoCloud Error: ", e);
@@ -1103,13 +1104,14 @@
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
 
             try {
-                // Firebase Viewer Count Logics Remained
-                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
+                // Firebase Viewer Count Logics Remained (Safely avoiding await block & invalid name characters)
+                const safeUserId = currentUserId ? currentUserId.toString() : "v_" + Date.now();
+                set(ref(db, `live_streams/${streamId}/viewers/${safeUserId}`), {
                     username: currentUser,
                     joinedAt: serverTimestamp()
-                });
+                }).catch(e => console.error("Firebase set error:", e));
 
-                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
+                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${safeUserId}`)).remove();
 
                 onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
                     document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
@@ -1119,33 +1121,40 @@
                 const appID = 557776684;
                 const serverSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
                 const roomID = streamId;
-                const userID = currentUserId ? currentUserId.toString() : "viewer_" + Date.now();
+                const userID = safeUserId;
                 const userName = currentUser || "Viewer";
 
-                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
-                zg = new ZegoExpressEngine(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
+                const ZegoUIKit = window.ZegoUIKitPrebuilt.ZegoUIKitPrebuilt || window.ZegoUIKitPrebuilt;
+                const ZegoEngineClass = window.ZegoExpressEngine.ZegoExpressEngine || window.ZegoExpressEngine;
+
+                const token = ZegoUIKit.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
+                zg = new ZegoEngineClass(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
                 
                 await zg.loginRoom(roomID, token, { userID, userName });
                 
                 const playZegoStream = async (streamID) => {
-                    const remoteStream = await zg.startPlayingStream(streamID);
-                    remoteVideo.srcObject = remoteStream;
-                    remoteVideo.muted = false;
-                    remoteVideo.volume = 1.0;
+                    try {
+                        const remoteStream = await zg.startPlayingStream(streamID);
+                        remoteVideo.srcObject = remoteStream;
+                        remoteVideo.muted = false;
+                        remoteVideo.volume = 1.0;
 
-                    const playPromise = remoteVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            console.warn("Autoplay policy blocked audio:", error);
-                            const unmuteBtn = document.getElementById('unmute-overlay');
-                            unmuteBtn.style.display = 'flex';
-                            unmuteBtn.onclick = () => {
-                                remoteVideo.muted = false;
-                                remoteVideo.play();
-                                unmuteBtn.style.display = 'none';
-                                showToast("Audio is now Live! 🔊");
-                            };
-                        });
+                        const playPromise = remoteVideo.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                console.warn("Autoplay policy blocked audio:", error);
+                                const unmuteBtn = document.getElementById('unmute-overlay');
+                                unmuteBtn.style.display = 'flex';
+                                unmuteBtn.onclick = () => {
+                                    remoteVideo.muted = false;
+                                    remoteVideo.play();
+                                    unmuteBtn.style.display = 'none';
+                                    showToast("Audio is now Live! 🔊");
+                                };
+                            });
+                        }
+                    } catch (playErr) {
+                        console.error("Stream Play Error:", playErr);
                     }
                 };
 
@@ -1155,8 +1164,8 @@
                     }
                 });
 
-                // Fallback attempt instantly
-                try { playZegoStream(roomID + "_stream"); } catch(e) {}
+                // Fallback attempt instantly safely caught
+                playZegoStream(roomID + "_stream").catch(e => console.warn("Stream not live yet"));
 
                 hideLoading();
                 setupLiveChat();
@@ -1164,8 +1173,9 @@
                 push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
 
             } catch(e) {
+                console.error("Join Live Error details:", e);
                 hideLoading();
-                showToast("Failed to join stream.");
+                showToast("Failed to join stream. Checking connection.");
                 leaveLiveStream();
             }
         }
@@ -1200,7 +1210,8 @@
             } else if (!isHost && currentStreamId) {
                 if (viewerPeerConnection) viewerPeerConnection.close();
                 viewerPeerConnection = null;
-                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
+                const safeUserId = currentUserId ? currentUserId.toString() : "unknown";
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${safeUserId}`)).catch(e => {});
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
 
