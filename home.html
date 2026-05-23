@@ -71,6 +71,11 @@
           }
           .animate-fade-up { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
 
+          @keyframes marquee {
+              0% { transform: translateX(100%); }
+              100% { transform: translateX(-100%); }
+          }
+
           /* Bottom Nav styling */
           .nav-item-active { color: #da1c22; transform: scale(1.1); transition: all 0.3s ease; font-weight: bold; }
           .nav-item-hover:hover { color: #da1c22; transform: translateY(-2px); cursor: pointer; }
@@ -927,20 +932,38 @@
 
 <!-- VIDEO FEED (Reels & Longs) - Full Screen Snap Scroll -->
 <div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
-    <!-- Floating Header over Video -->
-    <div class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent px-4 pt-6 pb-4 flex justify-between items-center pointer-events-auto border-none">
-        <button class="text-white" onclick="closeAllMainTabs()"><span class="material-symbols-outlined">arrow_back</span></button>
-        <div class="flex gap-4">
-            <button id="tab-shorts-btn" class="text-red-500 font-bold drop-shadow-md" onclick="switchVideoTab('shorts')">Reels</button>
-            <button id="tab-longs-btn" class="text-white/70 font-bold drop-shadow-md" onclick="switchVideoTab('longs')">Live/Vods</button>
+    <!-- Floating Header over Video (TikTok Style matching the provided image) -->
+    <div class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/60 to-transparent px-4 pt-10 pb-6 flex justify-between items-start pointer-events-auto border-none">
+        <!-- Left Side -->
+        <div class="flex items-center gap-3">
+            <button class="text-white drop-shadow-lg" onclick="closeAllMainTabs()"><span class="material-symbols-outlined text-[28px]">arrow_back_ios</span></button>
+            <div class="flex flex-col items-center cursor-pointer">
+                <span class="material-symbols-outlined text-white text-[28px] drop-shadow-lg">tv</span>
+                <span class="text-white text-[10px] font-bold mt-[-4px] drop-shadow-md">LIVE</span>
+            </div>
         </div>
+        
+        <!-- Center Tabs -->
+        <div class="flex gap-6 mt-1 relative">
+            <div class="relative">
+                <button id="tab-longs-btn" class="text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors" onclick="switchVideoTab('longs')">Following</button>
+                <div id="tab-longs-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full hidden"></div>
+            </div>
+            <div class="relative">
+                <button id="tab-shorts-btn" class="text-white font-bold text-[17px] drop-shadow-md" onclick="switchVideoTab('shorts')">For You</button>
+                <div id="tab-shorts-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full"></div>
+            </div>
+        </div>
+        
+        <!-- Right Side -->
+        <button class="text-white drop-shadow-lg mt-1"><span class="material-symbols-outlined text-[30px]">search</span></button>
     </div>
     
     <!-- Shorts container with snap-scroll for YouTube/TikTok style -->
     <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth"></div>
     
     <!-- Longs container standard flow -->
-    <div class="w-full h-full overflow-y-auto pt-20 pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
+    <div class="w-full h-full overflow-y-auto pt-24 pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
         <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
     </div>
 </div>
@@ -958,14 +981,41 @@
     <div id="upload-spinner" class="absolute inset-0 bg-black/80 z-[10000] flex-col items-center justify-center hidden text-white">
         Loading...
     </div>
-    <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md relative">
+    <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md relative overflow-y-auto max-h-[90vh] no-scrollbar">
         <button class="absolute top-4 right-4 text-gray-500" onclick="document.getElementById('upload-video-overlay').style.display='none';"><span class="material-symbols-outlined">close</span></button>
         <h2 class="text-xl font-bold text-gray-900 mb-4">Upload Video</h2>
         <input type="text" id="upload-title" placeholder="Video Title" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
-        <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
+        
+        <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium">
             <option value="short">Reel (9:16)</option>
             <option value="long">Video (16:9)</option>
         </select>
+        
+        <!-- Extensive Category Selection as requested -->
+        <select id="upload-category" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium appearance-none">
+            <option value="" disabled selected>Select Category Feed</option>
+            <option value="For You Feed">For You Feed</option>
+            <option value="Following Feed">Following Feed</option>
+            <option value="Trending Feed">Trending Feed</option>
+            <option value="Nearby Feed">Nearby Feed</option>
+            <option value="New Creators Feed">New Creators Feed</option>
+            <option value="Viral Videos Feed">Viral Videos Feed</option>
+            <option value="Verified Creators Feed">Verified Creators Feed</option>
+            <option value="Premium Creators Feed">Premium Creators Feed</option>
+            <option value="Regional Content Feed">Regional Content Feed</option>
+            <option value="Language-Based Feed">Language-Based Feed</option>
+            <option value="Mood-Based Feed">Mood-Based Feed</option>
+            <option value="AI Personalized Feed">AI Personalized Feed</option>
+            <option value="Category Feed">Category Feed</option>
+            <option value="Gaming Feed">Gaming Feed</option>
+            <option value="Meme Feed">Meme Feed</option>
+            <option value="Music Feed">Music Feed</option>
+            <option value="Education Feed">Education Feed</option>
+            <option value="Comedy Feed">Comedy Feed</option>
+            <option value="Fashion Feed">Fashion Feed</option>
+            <option value="Fitness Feed">Fitness Feed</option>
+        </select>
+
         <div class="flex gap-2 mb-3">
             <button id="src-btn-upload" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm" onclick="toggleUploadSource('upload')">File</button>
             <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm" onclick="toggleUploadSource('link')">YouTube Link</button>
@@ -1436,6 +1486,7 @@
       }
   };
 
+  // Video Tab Switch logic revised to match the new UI exactly
   window.switchVideoTab = function(tab) {
       resetNavHighlights();
       document.getElementById('nav-reels').classList.add('nav-item-active', 'text-dia-red');
@@ -1443,14 +1494,21 @@
       
       const shortsBtn = document.getElementById('tab-shorts-btn');
       const longsBtn = document.getElementById('tab-longs-btn');
+      const shortsIndicator = document.getElementById('tab-shorts-indicator');
+      const longsIndicator = document.getElementById('tab-longs-indicator');
+      
       if(tab === 'shorts') {
-          shortsBtn.className = "text-red-500 font-bold drop-shadow-md";
-          longsBtn.className = "text-white/70 font-bold drop-shadow-md";
+          shortsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
+          longsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
+          if(shortsIndicator) shortsIndicator.style.display = 'block';
+          if(longsIndicator) longsIndicator.style.display = 'none';
           document.getElementById('shorts-feed-container').style.display = 'block';
           document.getElementById('longs-feed-wrap').style.display = 'none';
       } else {
-          longsBtn.className = "text-red-500 font-bold drop-shadow-md";
-          shortsBtn.className = "text-white/70 font-bold drop-shadow-md";
+          longsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
+          shortsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
+          if(shortsIndicator) shortsIndicator.style.display = 'none';
+          if(longsIndicator) longsIndicator.style.display = 'block';
           document.getElementById('shorts-feed-container').style.display = 'none';
           document.getElementById('longs-feed-wrap').style.display = 'block';
       }
@@ -1480,6 +1538,7 @@
   window.submitVideoUpload = async function() {
       const title = document.getElementById('upload-title').value;
       const type = document.getElementById('upload-type').value;
+      const category = document.getElementById('upload-category').value || 'For You Feed';
       const isUpload = document.getElementById('source-file-container').style.display !== 'none';
       
       if(!title) { alert('Please enter title'); return; }
@@ -1503,7 +1562,7 @@
       }
 
       push(ref(db, 'videos'), {
-          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0
+          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, category: category, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0
       }).then(() => {
           document.getElementById('upload-spinner').style.display = 'none';
           document.getElementById('upload-video-overlay').style.display='none';
@@ -1548,31 +1607,79 @@
 
               if (vid.type === 'short') {
                   let embeddedMedia = vid.isYouTube 
-                        ? `<iframe class="relative z-10 w-full h-full pointer-events-auto yt-iframe" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
-                        : `<video class="relative z-10 w-full h-full object-contain pointer-events-auto html5-video" src="${vid.mediaUrl}" loop controls playsinline></video>`;
+                        ? `<iframe class="absolute inset-0 z-0 w-full h-full pointer-events-auto yt-iframe scale-105" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1&controls=0" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
+                        : `<video class="absolute inset-0 z-0 w-full h-[100dvh] object-cover pointer-events-auto html5-video cursor-pointer" src="${vid.mediaUrl}" loop playsinline controls></video>`;
 
+                  // Generate pseudo-random UI numbers for realism as requested by design
+                  const likeCount = (Math.random() * 200 + 10).toFixed(1) + 'K';
+                  const commentCount = (Math.random() * 10 + 1).toFixed(1) + 'K';
+                  const shareCount = (Math.random() * 5 + 1).toFixed(1) + 'K';
+                  const safeCategory = (vid.category || 'For You Feed').replace(' Feed', '');
+                  const tagCategory = safeCategory.replace(/\s+/g, '');
+
+                  // The newly designed Reels Feed Block matching the provided target image
                   shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden">
-                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm z-0 pointer-events-none">
+                  <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden group">
+                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-xl z-0 pointer-events-none">
                       ${embeddedMedia}
-                      <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-end">
-                          <div class="flex justify-between items-end p-4 pb-8 h-full w-full bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                              <div class="flex-col gap-2 max-w-[70%]">
-                                  <div class="flex items-center gap-2 mb-2 pointer-events-auto">
-                                      <img src="${vid.authorAvatar || currentAvatar}" class="w-10 h-10 rounded-full border-2 border-white object-cover">
-                                      <span class="text-white text-md font-bold drop-shadow-md">${vid.author || 'Creator'}</span>
-                                  </div>
-                                  <h3 class="text-white font-medium text-sm drop-shadow-md">${vid.title}</h3>
+                      
+                      <!-- Dark Gradient Overlays for readability -->
+                      <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10"></div>
+                      <div class="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none z-10"></div>
+                      
+                      <!-- Side Actions Column -->
+                      <div class="absolute bottom-[80px] right-3 z-20 flex flex-col items-center gap-5 pointer-events-auto pb-4">
+                          <!-- Profile -->
+                          <div class="relative w-[46px] h-[46px] mb-2 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
+                              <img src="${vid.authorAvatar || currentAvatar}" class="w-full h-full rounded-full border-[1.5px] border-white object-cover shadow-md bg-white">
+                              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-[#ff004c] rounded-full w-[18px] h-[18px] flex items-center justify-center shadow-sm">
+                                  <span class="text-white text-[14px] font-bold leading-none mb-[1px]">+</span>
                               </div>
-                              <div class="flex flex-col items-center gap-6 pointer-events-auto pb-6">
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer" onclick="giftDiamonds('${vid.author}', '${vidId}')">
-                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-purple-400 text-[28px]">diamond</span></div>
-                                      <span class="text-white text-xs font-bold drop-shadow-md">Gift</span>
-                                  </div>
-                                  <div class="flex flex-col items-center gap-1 cursor-pointer">
-                                      <div class="bg-black/40 p-3 rounded-full"><span class="material-symbols-outlined text-white text-[28px]">share</span></div>
-                                      <span class="text-white text-xs font-bold drop-shadow-md">Share</span>
-                                  </div>
+                          </div>
+                          <!-- Like -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
+                              <span class="material-symbols-outlined text-[#ff004c] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${likeCount}</span>
+                          </div>
+                          <!-- Comment -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
+                              <span class="material-symbols-outlined text-white text-[32px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${commentCount}</span>
+                          </div>
+                          <!-- Share -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
+                              <span class="material-symbols-outlined text-white text-[34px] drop-shadow-md" style="font-variation-settings: 'FILL' 1; transform: scaleX(-1);">reply</span>
+                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${shareCount}</span>
+                          </div>
+                          <!-- Gift -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="giftDiamonds('${vid.author}', '${vidId}')">
+                              <span class="material-symbols-outlined text-[#ff3b6b] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">redeem</span>
+                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">Send Gift</span>
+                          </div>
+                          <!-- Music Record -->
+                          <div class="w-[42px] h-[42px] rounded-full border-[6px] border-gray-900/90 animate-[spin_4s_linear_infinite] overflow-hidden mt-3 relative shadow-[0_0_10px_rgba(0,0,0,0.5)]">
+                              <img src="${vid.authorAvatar || currentAvatar}" class="w-full h-full object-cover">
+                              <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/50 text-[16px]">music_note</span>
+                          </div>
+                      </div>
+
+                      <!-- Bottom Left Info -->
+                      <div class="absolute bottom-[80px] left-3 z-20 flex flex-col gap-2 max-w-[70%] pointer-events-auto pb-4">
+                          <div class="bg-white/20 backdrop-blur-md rounded-full px-2.5 py-1 inline-flex items-center gap-1.5 w-max mb-0.5 shadow-sm">
+                              <span class="text-red-500 text-[10px]">🔥</span>
+                              <span class="text-white text-[11px] font-semibold">#1 Trending in ${safeCategory}</span>
+                          </div>
+                          <div class="flex items-center gap-1.5 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
+                              <h3 class="text-white font-bold text-[17px] drop-shadow-lg tracking-wide">@${vid.author || 'Creator'}</h3>
+                              <span class="material-symbols-outlined text-[#ff004c] text-[15px] bg-white rounded-full leading-none shadow-sm">check_circle</span>
+                          </div>
+                          <p class="text-white/95 text-[13px] drop-shadow-lg leading-[1.3] font-medium mb-1">
+                              ${vid.title} ✨<br><span class="font-bold text-white/90">#${tagCategory} #trending #explore #fyp</span>
+                          </p>
+                          <div class="flex items-center gap-2 mt-0.5 max-w-[200px]">
+                              <span class="material-symbols-outlined text-white text-[16px] animate-pulse drop-shadow-md">music_note</span>
+                              <div class="overflow-hidden w-full relative">
+                                  <p class="text-white text-[12px] font-semibold whitespace-nowrap inline-block animate-[marquee_5s_linear_infinite] drop-shadow-md">Original Sound - ${vid.author || 'Creator'}</p>
                               </div>
                           </div>
                       </div>
