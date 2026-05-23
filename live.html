@@ -298,6 +298,16 @@
             -webkit-transform: scaleX(-1);
         }
         
+        /* AUDIO FIX: Unmute Button Overlay */
+        #unmute-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 51, 102, 0.95); color: white; padding: 15px 30px;
+            border-radius: 30px; font-weight: 800; cursor: pointer; z-index: 50; display: none;
+            box-shadow: 0 8px 25px rgba(255,51,102,0.5); font-size: 16px;
+            align-items: center; gap: 10px; animation: pulse-bg 1.5s infinite;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
@@ -495,6 +505,11 @@
             <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             <!-- Viewer Video -->
             <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            
+            <!-- THE FIX: Unmute Button for Autoplay blocked browsers -->
+            <div id="unmute-overlay">
+                <i class="fas fa-volume-up"></i> Tap to Unmute Voice
+            </div>
         </div>
         
         <div class="live-overlay-top">
@@ -583,15 +598,15 @@
         let userDiamonds = 0;
         let selectedAvatarFile = null;
         let selectedThumbFile = null;
-        let selectedPastThumb = null; // New variable for previous thumbs
+        let selectedPastThumb = null;
 
         // WebRTC Variables
         const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
         let localStream = null;
         let currentStreamId = null;
         let isHost = false;
-        let hostPeerConnections = {}; // For 1-to-Many broadcasting
-        let viewerPeerConnection = null; // For watching
+        let hostPeerConnections = {};
+        let viewerPeerConnection = null;
 
         // --- TOAST FUNCTION ---
         function showToast(message) {
@@ -689,10 +704,8 @@
                     mainApp.style.display = 'block';
                     showToast(`Welcome, ${currentUser}!`);
                     
-                    // Start fetching active live streams
                     fetchLiveStreams();
                     
-                    // Listen for diamond updates live
                     onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
                         userDiamonds = snap.val() || 0;
                         document.getElementById('user-diamond-bal').innerText = userDiamonds;
@@ -707,12 +720,11 @@
             });
         }
 
-
         // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
         document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
             if(e.target.files[0]) {
                 selectedThumbFile = e.target.files[0];
-                selectedPastThumb = null; // Clear past selection if new uploaded
+                selectedPastThumb = null; 
                 document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
                 clearPastThumbSelection();
             }
@@ -730,7 +742,6 @@
             } catch (err) { return null; }
         }
 
-        // Add Past Thumbnails rendering logic
         function loadPastThumbnails() {
             const container = document.getElementById('past-thumbs-container');
             const wrapper = document.getElementById('past-thumbs-wrapper');
@@ -744,7 +755,7 @@
                     img.src = url;
                     img.onclick = () => {
                         selectedPastThumb = url;
-                        selectedThumbFile = null; // Reset new file
+                        selectedThumbFile = null; 
                         document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
                         clearPastThumbSelection();
                         img.classList.add('selected');
@@ -765,13 +776,12 @@
             if(url && url !== currentAvatar) {
                 let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
                 if(!pastThumbs.includes(url)) {
-                    pastThumbs.unshift(url); // Add to beginning
-                    if(pastThumbs.length > 5) pastThumbs.pop(); // Keep only last 5
+                    pastThumbs.unshift(url); 
+                    if(pastThumbs.length > 5) pastThumbs.pop(); 
                     localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
                 }
             }
         }
-
 
         // --- 3. FETCH LIVE STREAMS (GRID) ---
         const gridContainer = document.getElementById('liveGrid');
@@ -784,13 +794,11 @@
                 
                 if (streams) {
                     Object.entries(streams).forEach(([streamId, data]) => {
-                        // Include both active AND scheduled lives
                         if (data.isLive || data.scheduledTime) {
                             count++;
                             const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
-                            const thumbUrl = data.thumbnail || data.hostAvatar; // Fallback to avatar if no thumb
+                            const thumbUrl = data.thumbnail || data.hostAvatar; 
                             
-                            // Badge logic based on status
                             const badgeHTML = data.isLive ? 
                                 `<span class="live-badge"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i>LIVE</span>` : 
                                 `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
@@ -798,7 +806,6 @@
                             const card = document.createElement('div');
                             card.className = 'live-card';
                             
-                            // Logic for clicking card
                             card.onclick = () => {
                                 if (!data.isLive && data.hostName === currentUser) {
                                     startScheduledLiveAsHost(streamId, data);
@@ -832,7 +839,6 @@
             });
         }
 
-        // --- MODAL FUNCTIONS ---
         window.openStartLiveModal = () => {
             loadPastThumbnails();
             document.getElementById('live-schedule-time').value = '';
@@ -852,7 +858,7 @@
             showLoading("Processing...");
 
             try {
-                let thumbUrl = currentAvatar; // Start with fallback
+                let thumbUrl = currentAvatar; 
                 
                 if(selectedThumbFile) {
                     showLoading("Uploading Thumbnail...");
@@ -865,7 +871,6 @@
                     thumbUrl = selectedPastThumb;
                 }
 
-                // If scheduled, just write to DB and exit
                 if(isScheduled) {
                     const newStreamRef = push(ref(db, 'live_streams'));
                     await set(newStreamRef, {
@@ -882,12 +887,11 @@
                     return; 
                 }
 
-                showLoading("Accessing Camera...");
-                // Get Camera & Mic (Added strict audio constraints to ensure audio starts cleanly)
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
+                showLoading("Accessing Camera & Mic...");
+                // Guaranteed microphone access capture
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 showLoading("Starting Stream...");
                 
-                // Create Node in Firebase
                 const newStreamRef = push(ref(db, 'live_streams'));
                 currentStreamId = newStreamRef.key;
                 isHost = true;
@@ -901,9 +905,7 @@
                     timestamp: serverTimestamp()
                 });
 
-                // Remove stream on disconnect
                 onDisconnect(newStreamRef).remove();
-
                 setupHostUIAndSignaling();
 
             } catch (err) {
@@ -912,16 +914,13 @@
             }
         });
 
-        // Function created to allow Host to start their pre-scheduled live directly
         async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Accessing Camera...");
+            showLoading("Accessing Camera & Mic...");
             try {
-                // Added strict audio constraints to ensure audio starts cleanly
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 currentStreamId = streamId;
                 isHost = true;
 
-                // Update DB to mark as live and clear schedule
                 await update(ref(db, `live_streams/${streamId}`), {
                     isLive: true,
                     scheduledTime: null,
@@ -936,9 +935,7 @@
             }
         }
 
-        // Extracted Host logic to reuse for Normal Live & Scheduled Live without breaking anything
         function setupHostUIAndSignaling() {
-            // Setup UI
             document.getElementById('main-app').style.display = 'none';
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
@@ -955,7 +952,6 @@
             showToast("You are now LIVE! 🔴");
             setupLiveChat();
 
-            // Security 4: Detect Camera Interruption / External Screen Record taking over camera
             if (localStream && localStream.getVideoTracks().length > 0) {
                 const videoTrack = localStream.getVideoTracks()[0];
                 videoTrack.onmute = () => {
@@ -972,7 +968,6 @@
                 };
             }
 
-            // Listen for Viewers joining and offering WebRTC connection
             onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
                 const viewerId = snapshot.key;
                 const viewerData = snapshot.val();
@@ -982,21 +977,17 @@
                 });
 
                 if (viewerData.offer) {
-                    // Create a connection for this specific viewer
                     const pc = new RTCPeerConnection(iceServers);
                     hostPeerConnections[viewerId] = pc;
 
-                    // Add local tracks to this connection strictly
                     localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-                    // Listen for ICE candidates from Host to send to Viewer
                     pc.onicecandidate = e => {
                         if (e.candidate) {
                             push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
                         }
                     };
 
-                    // Queue ICE candidates from Viewer to fix WebRTC race condition (THE BUG FIX)
                     const viewerCandidatesQueue = [];
                     onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
                         if(snap.val()) {
@@ -1008,17 +999,14 @@
                         }
                     });
 
-                    // Process the Viewer's offer
                     await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
                     const answer = await pc.createAnswer();
                     await pc.setLocalDescription(answer);
 
-                    // Send Answer back to Viewer
                     await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
                         type: answer.type, sdp: answer.sdp
                     });
 
-                    // Flush queued candidates safely now
                     viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
                     viewerCandidatesQueue.length = 0;
                 }
@@ -1026,7 +1014,7 @@
         }
 
 
-        // --- 5. WEBRTC VIEWING (VIEWER) ---
+        // --- 5. WEBRTC VIEWING (VIEWER) - AUDIO FIX APPLIED HERE ---
         async function joinLiveStream(streamId, streamData) {
             showLoading("Joining Room...");
             currentStreamId = streamId;
@@ -1046,60 +1034,55 @@
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                // When stream is received, play it (Updated to completely fix Audio/Sudo dropping bug)
+                // --- AUDIO / SUDO TRACK FIX ---
                 viewerPeerConnection.ontrack = e => {
-                    if (e.streams && e.streams[0]) {
-                        // Strict check to prevent resetting stream when the audio track arrives milliseconds later
-                        if (remoteVideo.srcObject !== e.streams[0]) {
-                            remoteVideo.srcObject = e.streams[0];
-                        }
-                    } else {
-                        if (!remoteVideo.srcObject) remoteVideo.srcObject = new MediaStream();
-                        remoteVideo.srcObject.addTrack(e.track);
+                    // Create MediaStream if missing, Add incoming track to it.
+                    if (!remoteVideo.srcObject) {
+                        remoteVideo.srcObject = new MediaStream();
                     }
-                    
-                    // Forcefully ensure audio is enabled to bypass strict mobile browser blocks
+                    remoteVideo.srcObject.addTrack(e.track);
+
+                    // Force audio settings to be active
                     remoteVideo.muted = false;
                     remoteVideo.volume = 1.0;
-                    
+
+                    // Play and Catch Browser Blockers
                     const playPromise = remoteVideo.play();
                     if (playPromise !== undefined) {
-                        playPromise.catch(err => {
-                            console.warn("Audio/Video play blocked by browser:", err);
-                            // Only trigger this fallback if the browser completely blocks the audio
-                            showToast("Audio muted by browser. Tap anywhere to enable audio!");
-                            document.body.addEventListener('click', () => {
+                        playPromise.catch(error => {
+                            console.warn("Autoplay policy blocked audio:", error);
+                            // Show Unmute button to the user
+                            const unmuteBtn = document.getElementById('unmute-overlay');
+                            unmuteBtn.style.display = 'flex';
+                            unmuteBtn.onclick = () => {
                                 remoteVideo.muted = false;
                                 remoteVideo.play();
-                            }, { once: true });
+                                unmuteBtn.style.display = 'none';
+                                showToast("Audio is now Live! 🔊");
+                            };
                         });
                     }
                 };
 
-                // Send ICE candidates to Host
                 viewerPeerConnection.onicecandidate = e => {
                     if (e.candidate) {
                         push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
                     }
                 };
 
-                // Create Offer (Viewer initiates to receive media)
                 viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
                 viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
                 
                 const offer = await viewerPeerConnection.createOffer();
                 await viewerPeerConnection.setLocalDescription(offer);
 
-                // Write offer to Firebase
                 await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
                     username: currentUser,
                     offer: { type: offer.type, sdp: offer.sdp }
                 });
 
-                // Delete entry on disconnect
                 onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
 
-                // Queue ICE Candidates from Host (THE BUG FIX)
                 const hostCandidatesQueue = [];
                 onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
                     if(snap.val()) {
@@ -1111,19 +1094,16 @@
                     }
                 });
 
-                // Wait for Host's Answer
                 onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
                     const answer = snap.val();
                     if (answer && viewerPeerConnection.signalingState !== "closed") {
                         await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
                         
-                        // Flush queued ICE candidates after Answer is set
                         hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
                         hostCandidatesQueue.length = 0;
                     }
                 });
 
-                // Update viewer count locally
                 onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
                     document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
                 });
@@ -1131,7 +1111,6 @@
                 hideLoading();
                 setupLiveChat();
                 
-                // System message to chat
                 push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
 
             } catch(e) {
@@ -1148,35 +1127,33 @@
         function leaveLiveStream() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
+            
+            // Hide the unmute overlay for next stream
+            document.getElementById('unmute-overlay').style.display = 'none';
 
             if (isHost && currentStreamId) {
-                // Stop camera
                 if (localStream) localStream.getTracks().forEach(t => t.stop());
-                // Close all peer connections
                 Object.values(hostPeerConnections).forEach(pc => pc.close());
                 hostPeerConnections = {};
-                // Remove stream from Firebase
                 remove(ref(db, `live_streams/${currentStreamId}`));
             } else if (!isHost && currentStreamId) {
                 if (viewerPeerConnection) viewerPeerConnection.close();
                 viewerPeerConnection = null;
-                // Remove viewer from Firebase
                 remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
-                // Notify chat
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
 
             currentStreamId = null;
             document.getElementById('local-live-video').srcObject = null;
             document.getElementById('remote-live-video').srcObject = null;
-            document.getElementById('live-chat-box').innerHTML = ''; // clear chat
+            document.getElementById('live-chat-box').innerHTML = ''; 
         }
 
 
-        // --- 7. LIVE CHAT FUNCTIONALITY (UPGRADED) ---
+        // --- 7. LIVE CHAT FUNCTIONALITY ---
         function setupLiveChat() {
             const chatBox = document.getElementById('live-chat-box');
-            chatBox.innerHTML = ''; // reset
+            chatBox.innerHTML = ''; 
             
             onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
                 const data = snap.val();
@@ -1196,7 +1173,6 @@
                     
                     chatBox.appendChild(msgDiv);
                     
-                    // Smooth Auto-scroll to bottom so chat works "acche se" (perfectly)
                     chatBox.scrollTo({
                         top: chatBox.scrollHeight,
                         behavior: 'smooth'
@@ -1223,10 +1199,9 @@
                 return;
             }
 
-            const giftCost = 10; // 10 Diamonds per click
+            const giftCost = 10; 
 
             if (userDiamonds >= giftCost) {
-                // Deduct diamonds
                 const newBal = userDiamonds - giftCost;
                 get(ref(db, 'users')).then(snap => {
                     const users = snap.val();
@@ -1238,12 +1213,10 @@
                     }
                 });
                 
-                // Send gift message to chat
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
                 showToast("Gift Sent! 💎");
                 
             } else {
-                // NOT ENOUGH DIAMONDS -> Redirect to Main App Diamond Store
                 const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
                 
                 if(confirmBuy) {
@@ -1254,8 +1227,6 @@
         };
 
         window.redirectToDiamondStore = function() {
-            // As requested, redirecting back to main app to buy diamonds.
-            // Appending a query parameter so main index.html knows to open the store immediately.
             window.location.href = 'index.html?action=buy_diamonds';
         };
 
