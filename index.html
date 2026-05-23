@@ -1,570 +1,1158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Zingoo - Complete Welcome & Onboarding</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zingoo - Live Streaming</title>
     
-    <!-- Scripts & Fonts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet"/>
-    
-    <!-- Tailwind Config (Combined & Preserved) -->
-    <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "surface-dim": "#d9dadb", "surface-variant": "#e1e3e4", "inverse-surface": "#2e3132", "surface-container": "#edeeef", "secondary-container": "#e5e2e1", "on-tertiary-fixed": "#410004", "tertiary-fixed-dim": "#ffb3ae", "primary-container": "#e7151f", "on-background": "#191c1d", "background": "#f8f9fa", "outline": "#936e6a", "on-secondary-fixed": "#1c1b1b", "surface": "#f8f9fa", "tertiary": "#b71422", "on-secondary-fixed-variant": "#474646", "surface-container-low": "#f3f4f5", "on-primary-fixed": "#410002", "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "inverse-on-surface": "#f0f1f2", "on-tertiary": "#ffffff", "on-surface": "#191c1d", "tertiary-container": "#db3237", "surface-tint": "#c00013", "surface-bright": "#f8f9fa", "primary-fixed": "#ffdad6", "on-error": "#ffffff", "inverse-primary": "#ffb4ab", "on-secondary": "#ffffff", "on-primary": "#ffffff", "secondary-fixed": "#e5e2e1", "on-secondary-container": "#656464", "error-container": "#ffdad6", "tertiary-fixed": "#ffdad7", "surface-container-highest": "#e1e3e4", "primary-fixed-dim": "#ffb4ab", "on-primary-container": "#fffbff", "primary": "#bb0012", "surface-container-high": "#e7e8e9", "outline-variant": "#e8bcb7", "on-surface-variant": "#5e3f3b", "on-tertiary-fixed-variant": "#930014", "on-primary-fixed-variant": "#93000b", "secondary": "#5f5e5e", "on-error-container": "#93000a", "secondary-fixed-dim": "#c8c6c5", "on-tertiary-container": "#fffbff"
-              },
-              "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-              "spacing": { "xs": "4px", "gutter": "24px", "sm": "12px", "margin-desktop": "64px", "md": "24px", "margin-mobile": "16px", "lg": "48px", "base": "8px", "xl": "80px" },
-              "fontFamily": { "display-lg": ["Sora"], "headline-lg-mobile": ["Sora"], "headline-lg": ["Sora"], "body-lg": ["Plus Jakarta Sans"], "title-md": ["Sora"], "label-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"] },
-              "fontSize": {
-                      "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
-                      "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
-                      "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                      "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                      "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                      "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                      "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
-              }
-            },
-          },
-        }
-    </script>
-    
-    <!-- Master Styles for all screens -->
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        /* General Setup */
-        html, body {
-            height: 100dvh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: var(--tw-colors-background);
-        }
-        
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
+        :root {
+            --baby-pink: #FFE4E8;
+            --pink-dark: #FFB6C1;
+            --primary-red: #FF3366;
+            --dark-text: #333333;
+            --white: #FFFFFF;
+            --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
         }
 
-        /* Screen Wrapper Setup for Single Page Application feeling */
-        .screen-wrapper {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100vw; height: 100dvh;
-            overflow: hidden;
-            display: none; /* Hidden by default, JS will toggle to 'flex' */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--baby-pink), #FFF0F5);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* --- Security: Prevent Text Selection and Image Dragging --- */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            transition: filter 0.2s ease;
+        }
+
+        /* --- Security Blur Filter --- */
+        body.security-blur {
+            filter: blur(20px);
+            pointer-events: none;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { display: none; }
+
+        /* --- LOGIN SCREEN (ID Enforced) --- */
+        #id-login-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 99999;
+            display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        #id-login-screen .logo-container {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        #id-login-screen .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.15);
+            border: 1px solid var(--baby-pink);
+            text-align: center;
+        }
+
+        #id-login-screen h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
+        #id-login-screen p { font-size: 13px; color: #666; margin-bottom: 25px; }
+        
+        .avatar-upload-box {
+            cursor: pointer; margin-bottom: 20px; display: inline-block;
+        }
+        .avatar-upload-box img {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
+            border: 3px solid var(--primary-red); box-shadow: 0 4px 15px rgba(255,51,102,0.2);
+        }
+        .avatar-upload-box p { font-size: 11px; color: var(--primary-red); margin-top: 8px; font-weight: bold; }
+
+        #id-login-screen input[type="number"] {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
+            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
+            outline: none; transition: border 0.3s;
+        }
+        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; }
+        #id-login-screen button {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(255,51,102,0.4); transition: transform 0.2s;
+        }
+        #id-login-screen button:hover { transform: translateY(-2px); }
+
+        /* --- Header Styling (Glassmorphism) --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+
+        .diamond-bal {
+            background: #fff; border: 1px solid var(--pink-dark); color: #d97706; 
+            padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+        }
+
+        .start-live-btn {
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .start-live-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.6);
+        }
+
+        .start-live-btn i { animation: pulse-icon 1.5s infinite; }
+
+        /* --- Main Content & Grid (2-2 Layout) --- */
+        main { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary-red); }
+
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .live-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.5);
+            background: #fff;
+        }
+
+        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .live-card:hover img { transform: scale(1.05); }
+
+        .card-top-info {
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 2;
+        }
+
+        .live-badge {
+            background: var(--primary-red); color: white; font-size: 10px; font-weight: 700;
+            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite;
+        }
+        
+        /* New Scheduled Badge Style */
+        .scheduled-badge {
+            background: #f39c12; color: white; font-size: 10px; font-weight: 700;
+            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px;
+        }
+
+        .viewers {
+            background: rgba(0, 0, 0, 0.5); color: white; font-size: 11px; padding: 4px 8px;
+            border-radius: 8px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;
+        }
+
+        .card-bottom-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 10px 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; z-index: 2;
+        }
+
+        .user-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        /* --- Start Live Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            width: 90%; max-width: 350px; transform: translateY(20px); transition: transform 0.3s ease;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        
+        .modal-box h3 { color: var(--primary-red); margin-bottom: 10px; font-weight: 700; }
+        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
+            margin-bottom: 15px; font-family: 'Poppins'; outline: none;
+        }
+        
+        .thumb-upload {
+            border: 2px dashed var(--pink-dark); padding: 15px; border-radius: 10px;
+            margin-bottom: 10px; cursor: pointer; color: var(--primary-red); font-size: 12px; font-weight: 600;
+        }
+        
+        /* New Past Thumbnails Style */
+        .past-thumbs-wrapper {
+            margin-bottom: 15px; text-align: left;
+        }
+        .past-thumbs-wrapper p { font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600; }
+        .past-thumbs-list {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .past-thumbs-list img {
+            width: 50px; height: 50px; border-radius: 8px; object-fit: cover; cursor: pointer;
+            border: 2px solid transparent; transition: border 0.2s;
+        }
+        .past-thumbs-list img.selected { border: 2px solid var(--primary-red); transform: scale(1.05); }
+
+        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-confirm { flex: 1; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { flex: 1; background: var(--baby-pink); color: var(--primary-red); border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+
+        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
+        #live-view-screen {
+            position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
+        }
+        
+        .live-video-container { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; }
+        
+        #remote-live-video, #local-live-video {
+            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
+            transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
+            -webkit-transform: scaleX(-1); /* Safari support */
+        }
+        
+        .live-overlay-top {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+            background: linear-gradient(rgba(0,0,0,0.6), transparent); z-index: 10;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        
+        .host-info { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px 5px 5px; border-radius: 30px; backdrop-filter: blur(5px); }
+        .host-info img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
+        .host-text h4 { color: white; font-size: 13px; font-weight: 700; line-height: 1; }
+        .host-text p { color: #ccc; font-size: 10px; margin-top: 2px; }
+        
+        .close-live-btn { width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(5px); }
+        
+        .live-overlay-bottom {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 10;
+        }
+        
+        .chat-box { height: 150px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; mask-image: linear-gradient(to top, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to top, black 80%, transparent 100%); }
+        .chat-msg { color: white; font-size: 13px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 15px; width: max-content; max-width: 80%; }
+        .chat-msg span { color: var(--pink-dark); font-weight: 700; margin-right: 5px; }
+        
+        .action-bar { display: flex; gap: 10px; align-items: center; }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 0 15px; display: flex; align-items: center; backdrop-filter: blur(5px); }
+        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; }
+        .chat-input-wrapper input::placeholder { color: #ccc; }
+        
+        .gift-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 15px rgba(255,51,102,0.5); }
+        
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); color: white;
+            display: none; justify-content: center; align-items: center; z-index: 9999;
+            font-size: 18px; font-weight: bold; flex-direction: column;
         }
 
         /* --- Animations --- */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .animate-on-load { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        .animate-fade-up { opacity: 0; animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-
-        /* Floating 3D Animations */
-        @keyframes float-3d {
-            0% { transform: translateY(0px) rotate(-5deg); box-shadow: 0 15px 35px rgba(187,0,18,0.2); }
-            50% { transform: translateY(-10px) rotate(-3deg); box-shadow: 0 25px 45px rgba(187,0,18,0.3); }
-            100% { transform: translateY(0px) rotate(-5deg); box-shadow: 0 15px 35px rgba(187,0,18,0.2); }
+        @keyframes pulse-bg {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
         }
-        .animate-float-phone { animation: float-3d 4s ease-in-out infinite; will-change: transform; }
-
-        @keyframes float-avatar {
-            0%, 100% { transform: translateY(0px) scale(1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-            50% { transform: translateY(-8px) scale(1.05); box-shadow: 0 15px 25px rgba(187,0,18,0.25); }
-        }
-        .avatar-float { animation: float-avatar 4s ease-in-out infinite; will-change: transform; }
-
-        @keyframes float-bubble {
-            0%, 100% { transform: translateY(0px) rotate(5deg); }
-            50% { transform: translateY(-6px) rotate(0deg); }
-        }
-        .bubble-float { animation: float-bubble 3.5s ease-in-out infinite; }
-
-        /* Blobs for Screen 0 */
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(20px, 40px) rotate(45deg); }
-            50% { transform: translate(-30px, -10px) rotate(90deg); }
-            75% { transform: translate(10px, -30px) rotate(135deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-        @keyframes float2 {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-30px, 20px) rotate(-30deg); }
-            50% { transform: translate(20px, -40px) rotate(-60deg); }
-            75% { transform: translate(-10px, 30px) rotate(-90deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-        .blob { position: absolute; border-radius: 9999px; filter: blur(80px); will-change: transform; }
-        .blob-1 { top: -15%; right: -15%; width: 50vw; height: 50vw; background-color: rgba(255, 180, 171, 0.6); animation: float 25s ease-in-out infinite; }
-        .blob-2 { bottom: -20%; left: -20%; width: 60vw; height: 60vw; background-color: rgba(255, 218, 214, 0.7); animation: float2 30s ease-in-out infinite alternate; }
-
-        /* Backgrounds & Glassmorphism */
-        .gradient-bg { background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,218,214,1) 50%, rgba(255,180,171,1) 100%); }
-        .dot-pattern { background-image: radial-gradient(theme('colors.primary-fixed-dim') 1px, transparent 1px); background-size: 25px 25px; }
-        .bg-gradient-radial { background: radial-gradient(circle at center, rgba(255, 218, 214, 0.6) 0%, rgba(248, 249, 250, 1) 80%); }
-
-        @keyframes subtle-sparkle {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(5px, -10px); }
-            50% { transform: translate(-5px, 10px); }
-            75% { transform: translate(10px, 5px); }
-            100% { transform: translate(0, 0); }
+        @keyframes pulse-icon {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
-        .sparkle-bg::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(255,180,171,0.4) 1px, transparent 2px),
-                radial-gradient(circle at 80% 70%, rgba(255,180,171,0.4) 1px, transparent 2px),
-                radial-gradient(circle at 50% 90%, rgba(255,180,171,0.2) 2px, transparent 3px);
-            background-size: 150px 150px;
-            animation: subtle-sparkle 30s linear infinite;
-            opacity: 0.8;
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #fff; color: var(--dark-text); padding: 12px 25px; border-radius: 30px;
+            font-size: 13px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-red); transition: transform 0.3s ease; z-index: 100000;
         }
-
-        /* Enhanced Glass Panel */
-        .glass-panel {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-        }
-        .glass-panel:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(187, 0, 18, 0.15);
-            border-color: rgba(255, 255, 255, 1);
-        }
-
-        /* Screen 0 specific */
-        .logo-container { perspective: 1000px; }
-        .logo-3d { transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform-style: preserve-3d; will-change: transform; }
-        
-        .glass-btn {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, rgba(231, 21, 31, 0.95), rgba(187, 0, 18, 0.95));
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            animation: pulse-glow 3s infinite ease-in-out;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .glass-btn:hover { transform: translateY(-5px) scale(1.03); filter: brightness(1.2); }
-        .glass-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 300%; height: 100%;
-            background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.6s ease;
-        }
-        .glass-btn:hover::before { animation: shine 2s infinite linear; }
-        
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 20px rgba(187, 0, 18, 0.4); } 50% { box-shadow: 0 10px 35px rgba(187, 0, 18, 0.6); } }
-        @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        /* Screen 2 Mic Glow */
-        @keyframes mic-pulse-glow {
-            0% { box-shadow: 0 0 20px rgba(187,0,18,0.5), inset 0 -4px 10px rgba(0,0,0,0.2); }
-            50% { box-shadow: 0 0 40px rgba(187,0,18,0.7), inset 0 -4px 10px rgba(0,0,0,0.2); }
-            100% { box-shadow: 0 0 20px rgba(187,0,18,0.5), inset 0 -4px 10px rgba(0,0,0,0.2); }
-        }
-        .mic-glow { animation: mic-pulse-glow 2s ease-in-out infinite; }
-        
-        /* Red Theme Action Buttons - HIGHLY ENHANCED (Red Background & White Text) */
-        .btn-primary-action {
-            background: linear-gradient(135deg, #ff0f23 0%, #bb0012 100%);
-            color: #ffffff !important;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 6px 20px rgba(187, 0, 18, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .btn-primary-action:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(187, 0, 18, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.5);
-            background: linear-gradient(135deg, #ff2a3a 0%, #d40015 100%);
-        }
-        
-        /* Active Dot Glow */
-        .dot-active {
-            box-shadow: 0 0 12px rgba(187, 0, 18, 0.8);
-        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
-<body class="font-body-md text-on-background bg-background">
+<body>
 
-    <!-- ========================================== -->
-    <!-- SCREEN 0: WELCOME & 3D LOGO                -->
-    <!-- ========================================== -->
-    <div id="screen-welcome" class="screen-wrapper bg-background justify-center" style="display: flex;">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-            <div class="absolute inset-0 gradient-bg opacity-80"></div>
-            <div class="absolute inset-0 dot-pattern opacity-20 mix-blend-multiply"></div>
-            <!-- Animated Blobs -->
-            <div class="blob blob-1"></div>
-            <div class="blob blob-2"></div>
-        </div>
+    <!-- Global Toast Notification -->
+    <div class="toast" id="toastMsg">Action Successful!</div>
 
-        <!-- Main Content Canvas with Parallax Effect -->
-        <main id="main-content-0" class="relative z-10 flex flex-col items-center justify-center w-full max-w-md mx-auto px-margin-mobile md:px-margin-desktop h-full" style="transition: transform 0.2s ease-out;">
-            <!-- Logo Area -->
-            <div class="flex-1 flex flex-col items-center justify-center w-full">
-                <div class="logo-container animate-on-load" style="animation-delay: 0.2s;">
-                    <div class="logo-3d w-64 h-64 md:w-80 md:h-80 relative flex items-center justify-center">
-                        <div class="absolute inset-0 bg-white/50 rounded-full blur-2xl z-0"></div>
-                        <img alt="Zingoo Logo" class="relative z-10 w-full h-full object-contain drop-shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcxqgEVKgVBdSByIIIZGZPheas_-u-BE5IBI7WyWKx4_ivYZhBCKN6Av4E-n6cm9CAccjXqMylqh3KwE-UesIjOGIJVwLJtlMOJDK9MK_4_EHWGI4O23uclkY4rnXGNFM7HS8YUOBV2kYx9nZhFNqBoLkamQBA8fyGyg9l3E1TWJgZ_YAvjpK3I0Gf1tSm7avwaCfk0vA5yRstrtVrQ-DhXSeXXFShA-KD2dKMJp3_-I12LlxE-pI9-BLyIsSLJ8HHV9aEiXJ4sg4"/>
-                    </div>
-                </div>
-                <!-- Animated Tagline -->
-                <div class="mt-8 text-center space-y-4">
-                    <div class="flex items-center justify-center space-x-3 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest font-bold">
-                        <span class="animate-on-load" style="animation-delay: 0.6s;">Live</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary dot-active animate-on-load" style="animation-delay: 0.7s;"></span>
-                        <span class="animate-on-load" style="animation-delay: 0.8s;">Meet</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary dot-active animate-on-load" style="animation-delay: 0.9s;"></span>
-                        <span class="animate-on-load" style="animation-delay: 1.0s;">Connect</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary dot-active animate-on-load" style="animation-delay: 1.1s;"></span>
-                        <span class="animate-on-load" style="animation-delay: 1.2s;">Create</span>
-                    </div>
-                    <div class="h-0.5 w-48 mx-auto bg-gradient-to-r from-transparent via-primary to-transparent rounded-full opacity-60 animate-on-load" style="animation-delay: 1.3s;"></div>
-                </div>
+    <!-- 1. LOGIN SCREEN -->
+    <div id="id-login-screen">
+        <div class="logo-container">ZINGOO LIVE</div>
+        <div class="login-card">
+            <h2>Live Room Access</h2>
+            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
+            
+            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
+                <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
+                <p>Tap to upload picture</p>
             </div>
 
-            <!-- Action Area -->
-            <div class="w-full pb-xl animate-on-load" style="animation-delay: 1.5s;">
-                <button onclick="switchScreen('screen-welcome', 'screen-1')" class="glass-btn w-full py-4 rounded-full flex items-center justify-center font-title-md text-[20px] font-bold text-white uppercase tracking-widest group cursor-pointer shadow-2xl">
-                    <span>Get Started</span>
-                    <span class="material-symbols-outlined ml-2 transform group-hover:translate-x-2 transition-transform duration-300">arrow_forward</span>
+            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
+            <button id="btn-login-id">Enter Live App</button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER & HOME PAGE -->
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="logo" onclick="window.location.href='index.html'">Zingoo</div>
+            <div class="header-actions">
+                <div class="diamond-bal" onclick="redirectToDiamondStore()">
+                    <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
+                </div>
+                <button class="start-live-btn" onclick="openStartLiveModal()">
+                    <i class="fas fa-video"></i> Go Live
                 </button>
             </div>
-        </main>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- SCREEN 1: CREATE & WATCH REELS             -->
-    <!-- ========================================== -->
-    <div id="screen-1" class="screen-wrapper bg-gradient-radial sparkle-bg relative">
-        <!-- Top Action Bar (Next/Skip) -->
-        <header class="w-full flex justify-between items-center px-margin-mobile pt-margin-mobile z-10 relative md:px-margin-desktop md:pt-md md:max-w-md md:mx-auto">
-            <button onclick="window.location.href = 'home.html'" class="text-on-surface-variant font-label-sm font-bold uppercase tracking-wider hover:text-primary transition-all animate-fade-up" style="animation-delay: 0.1s;">Skip</button>
-            <button onclick="switchScreen('screen-1', 'screen-2')" class="btn-primary-action flex items-center gap-1.5 px-5 py-2.5 rounded-full font-label-sm font-bold uppercase tracking-widest animate-fade-up" style="animation-delay: 0.1s;">
-                Next <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
         </header>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col items-center justify-between w-full max-w-md mx-auto px-margin-mobile relative z-0 pb-6 h-full min-h-0">
-            <!-- Header Text -->
-            <div class="text-center mt-2 md:mt-4 space-y-1 animate-fade-up" style="animation-delay: 0.2s;">
-                <h1 class="font-headline-lg-mobile text-[26px] md:font-headline-lg md:text-headline-lg text-primary leading-tight font-extrabold drop-shadow-sm">
-                    Create &amp; Watch <br/><span class="text-on-background">Reels</span>
-                </h1>
-                <p class="font-body-md text-[14px] md:text-[16px] text-on-surface-variant max-w-[280px] mx-auto mt-1 font-medium">
-                    Watch trending reels and show your creativity.
-                </p>
-            </div>
-
-            <!-- Central Visual (3D Phone Representation) -->
-            <div class="relative w-full flex-1 flex items-center justify-center my-2 md:my-md min-h-0 animate-fade-up" style="animation-delay: 0.3s;">
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div class="w-40 h-40 bg-primary/40 rounded-full blur-3xl mix-blend-multiply"></div>
-                    <div class="w-24 h-24 bg-tertiary/40 rounded-full blur-2xl mix-blend-multiply absolute top-10 left-10"></div>
-                </div>
-                <img alt="3D render of a modern smartphone" class="h-full max-h-[35vh] md:max-h-[38vh] w-auto object-contain rounded-[32px] border-4 border-white z-10 animate-float-phone shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-er4E-QwP3DYIzkfz8SwMqwmIRpagVCy_wubabslmanEaIsvd9EmjdI4spLBGkC7xEaeGSNoGpLmZaXQ-2-RLsPpnewsmMWCERQt3wo0jG5h-ZqdVatbfwuoih9B3wm4oCNzWMoERyNcDU3p24H-gcafGoWT7blGVxHL_N_S6l2WCb5rrGo-tJafE8Efoq0L6JyxFjstOZwUCi6-sxaLNnl1oGgD30aDeMG3-JecMGWVCRpRgeCXyFFcskxBxZWgsFrtpvrE26wI"/>
-                <div class="absolute right-[15%] top-[30%] bg-white p-2 rounded-full shadow-lg shadow-primary/30 border border-white/50 animate-bounce" style="animation-duration: 3s;">
-                    <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-                </div>
-                <div class="absolute left-[20%] bottom-[20%] bg-white p-2 rounded-full shadow-lg shadow-tertiary/30 border border-white/50 animate-bounce" style="animation-duration: 2.5s; animation-delay: 0.5s;">
-                    <span class="material-symbols-outlined text-tertiary text-[24px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                </div>
-            </div>
-
-            <!-- Feature List -->
-            <div class="w-full space-y-3 mb-4 animate-fade-up" style="animation-delay: 0.4s;">
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-primary/20">
-                        <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">play_circle</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-background font-bold">Trending Reels</h3>
-                        <p class="font-label-sm text-[12px] text-on-surface-variant normal-case mt-0.5">Discover Viral Content</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-primary/20">
-                        <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">trending_up</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-background font-bold">Viral Videos</h3>
-                        <p class="font-label-sm text-[12px] text-on-surface-variant normal-case mt-0.5">Watch &amp; Get Inspired</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-primary/20">
-                        <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">magic_button</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-background font-bold">Creator Tools</h3>
-                        <p class="font-label-sm text-[12px] text-on-surface-variant normal-case mt-0.5">Create &amp; Grow Your Brand</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dots (Screen 1 = Dot 1 Active) -->
-            <div class="w-full flex justify-center mt-2 animate-fade-up" style="animation-delay: 0.5s;">
-                <div class="flex gap-2.5 items-center h-4">
-                    <div class="w-3 h-3 rounded-full bg-primary dot-active transition-all"></div>
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                </div>
+        <main>
+            <h2 class="section-title">Trending Now 🔥</h2>
+            <!-- Dynamic Grid -->
+            <div class="live-grid" id="liveGrid">
+                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">Fetching active streams...</p>
             </div>
         </main>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SCREEN 2: JOIN LIVE AUDIO ROOMS            -->
-    <!-- ========================================== -->
-    <div id="screen-2" class="screen-wrapper bg-gradient-radial sparkle-bg relative">
-        <!-- Abstract Background Elements -->
-        <div class="absolute inset-0 z-0 pointer-events-none opacity-50">
-            <div class="absolute top-0 right-0 w-[40vw] h-[40vw] bg-primary/40 rounded-full blur-[80px] -translate-y-1/4 translate-x-1/4 mix-blend-multiply"></div>
-            <div class="absolute bottom-0 left-0 w-[50vw] h-[50vw] bg-tertiary/30 rounded-full blur-[100px] translate-y-1/4 -translate-x-1/4 mix-blend-multiply"></div>
-        </div>
-
-        <!-- Top Action Bar (Next/Skip) -->
-        <header class="w-full flex justify-between items-center px-margin-mobile pt-margin-mobile z-10 relative md:px-margin-desktop md:pt-md md:max-w-md md:mx-auto">
-            <button onclick="window.location.href = 'home.html'" class="text-on-surface-variant font-label-sm font-bold uppercase tracking-wider hover:text-primary transition-all animate-fade-up" style="animation-delay: 0.1s;">Skip</button>
-            <button onclick="switchScreen('screen-2', 'screen-3')" class="btn-primary-action flex items-center gap-1.5 px-5 py-2.5 rounded-full font-label-sm font-bold uppercase tracking-widest animate-fade-up" style="animation-delay: 0.1s;">
-                Next <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
-        </header>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col items-center justify-between w-full max-w-md mx-auto px-margin-mobile relative z-0 pb-6 h-full min-h-0">
-            <!-- Header Text -->
-            <div class="text-center mt-2 md:mt-4 space-y-1 animate-fade-up z-10" style="animation-delay: 0.2s;">
-                <h1 class="font-headline-lg-mobile text-[26px] md:font-headline-lg md:text-headline-lg text-primary leading-tight font-extrabold drop-shadow-sm">
-                    Join Live Audio Rooms
-                </h1>
-                <p class="font-body-md text-[14px] md:text-[16px] text-on-surface-variant max-w-[280px] mx-auto mt-1 font-medium">
-                    Jump into fun conversations and make new connections.
-                </p>
-            </div>
-
-            <!-- Central Visual Component (Mic & Floating Avatars) -->
-            <div class="relative w-full flex-1 min-h-0 max-h-[35vh] md:max-h-[38vh] flex items-center justify-center my-2 md:my-4 z-10 animate-fade-up" style="animation-delay: 0.3s;">
-                <div class="relative w-full max-w-[280px] aspect-square flex items-center justify-center">
-                    <div class="w-20 h-20 md:w-24 md:h-24 bg-primary rounded-full flex items-center justify-center mic-glow relative z-20 shadow-2xl shadow-primary/50 before:absolute before:inset-0 before:bg-white/20 before:rounded-full before:-m-[1px] before:-z-10">
-                        <span class="material-symbols-outlined text-[40px] md:text-[48px] text-white drop-shadow-md" style="font-variation-settings: 'FILL' 1;">mic</span>
-                    </div>
-                    <div class="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
-                        <div class="w-36 h-36 md:w-44 md:h-44 border-[3px] border-primary/40 rounded-full animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-                        <div class="w-48 h-48 md:w-60 md:h-60 border-2 border-primary/20 rounded-full absolute"></div>
-                    </div>
-                    <div class="absolute inset-0 z-10">
-                        <img alt="Avatar" class="avatar-float absolute top-[10%] right-[15%] w-11 h-11 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 0s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-q9GwWQt9sRO2NKdwTFZYvLNN8d1rMcpeWwAfa65rrTAl7T81QKyx1TDcVOVtcOvlxSeVLB7O9A4h-7tkEyC0eUsxGyW9qAmL1gugBcBP0mDWz_tUqzFpWKFRPtO1HaDTnWeoJxYqEAubVqUZwwBvNjtmxbCOnpkpPkVjfjtqdHWxYq98GNW4KZKrKP8Voc3PINKTfG0nsvPQ9jm2eZXsNWV2ySh-q1g2mE4N8GlLyuHJ53vr0S1_DvMiejZiYvXjWAF93FxsjLs"/>
-                        <img alt="Avatar" class="avatar-float absolute top-[40%] right-[-5%] w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 0.5s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeZjcDlulFPBaqPwSBYx5RmBBhWZD2tBl-qYLs_H3lTzezAcGO-6IjxnkHw3tBy1VmV5XmnYuil95W2ifcKcKshbr1GpmT71GYfdbT2TpmIgM9n7YO-9W9H93J3hD7IulmCw_Z2h034mP4UZwkNG4VRqpobPe6YR1kUnf9tngMc_z_HFHLlzIK0u_-3ambWqhgjqU-KdQ1gO2IkOOzfit4Hj0ugt8AX9D6h5I3kxhZEYy1dmbtgf8pjzHFVg5gN5GWl20dyFu8KT0"/>
-                        <img alt="Avatar" class="avatar-float absolute bottom-[15%] right-[10%] w-10 h-10 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 1s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwML_9-KO-QU-fRIS8qbzRnIts9IBucYJQ0cvXUCV6X0jzJJBq81ZOGI3nsj3WERaGes3j1z3XB5QdjMhjdTiTZSCnZcIFBW58DfY2Q81Aci7jy_LjRoGinO68RQobvSCxwRKTJXaK1ELXpk6ROgWKgroDe1wB3Qz_W7Lrc4b3DDFWZz0h9R4cbBMqEgZKQhJ_ljDhopK-g_KQrYXkyvXWeop7xDr0iFYy3O3f1UnQejf--vLx9vNDIrzQpJOPNe27lx6fX0Knd9s"/>
-                        <img alt="Avatar" class="avatar-float absolute bottom-[-5%] left-[45%] w-14 h-14 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 1.5s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO236hLb_njjB4sNk01U2nZYbcUB_zGxF6vCGbFzGOQ-UMVJRYNjnDF1I6q8_BjcOGVt2ijO_dnuDOS2lvs3kJAhe08wttVctGXkg85iqelBfSsv2MM5F3G3iAY2B1p4YE4i58EQHkF4azAr5huCHCu9N5WaOAtQZ6e4oANeRX67x5Td0-0fJghc4wBHIDgkvdFfHCAMOUozmy6bDXX0J-JS5X2fm1UlTWS3UTGpKo7bnl3xgbpNSsYlRj4wmzA4hBzliN9jwrhMU"/>
-                        <img alt="Avatar" class="avatar-float absolute bottom-[20%] left-[5%] w-11 h-11 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 2s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiDxJvCNpB3qoKQBNFYAfY1AY1IuO4fy8oAxbkfaicEY6_V6_L_yADoi-RbltLiNJR9tAqhTyPqOrwh1Jj7RpUnAUpCnA-iCAB4sTZvzmv23HgocELX242UT0lUlU0LpjeNYTGyDwJITzo0uyONdIbtLVE3MHVI-vhqP-Re-RdWhbweqOJFtZboG2c34il-siR3SrqVuCjQz5sBbWAAjDIQbCvf7w2sZ1XHvArI3g85zpEF8zSi8f51i_k-waGql23c3_BKJlF3Vk"/>
-                        <img alt="Avatar" class="avatar-float absolute top-[40%] left-[-10%] w-12 h-12 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 2.5s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkuwBQYlLP4Y3mGmSsF_OZN7Vmdg0FYnknmZnDlXNpkicd1aVsmDRCjJUZ8ChwisTngvFC3djhOxYDlStaIiT3s31BtZUOtQ6EFMF4h5LkiKCY1UNsr6OGNFPZjP4nQDm5bU0xnmQiFiIkH1CVK1rqgX8x_qod6Hn3IV80InQPETc1wJC9aCjROHCe3N7n0v1kLVEx0szffbE0nyrGdgGR_aZGBmMaXrF1qYdCcLjU6PHNM8WF9hpO2zh1xSUiJCCI4_GjkBYl0cs"/>
-                        <img alt="Avatar" class="avatar-float absolute top-[12%] left-[10%] w-10 h-10 rounded-full border-[3px] border-white object-cover shadow-lg" style="animation-delay: 3s;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8bokUpYdTHlLSyQHFIKXoZ-wWXpExj7Rla6Tkikh8l9RW5NPHII5Rr_f2sqhRVKMii4hdMgoFXi_Fu12dJ0tQb6qGqByOZBI7d6mXNC-i5SQW1KfSaJZtadVTBIbF8A9L0gW-nMptip2PxA1E4mJ34D44y270bTbJK4s_zXCImlnQilpP5bXavSQBPbjmzXT6lN3VH9w0Iwpp-qPPRIp2f62_TrHDuJpuiUKO8tlldNTWC9Aa7t6h3mZ1oF1KwcY-mwkBUaHwCIA"/>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Feature List -->
-            <div class="flex flex-col gap-3 z-10 w-full mb-4 animate-fade-up" style="animation-delay: 0.4s;">
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">groups</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">10 Seat Rooms</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Join engaging rooms</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-tertiary/10 border border-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">featured_seasonal_and_gifts</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">Send Gifts</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Show your appreciation</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-[#E5B539]/10 border border-[#E5B539]/30 flex items-center justify-center text-[#d19c15] shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">mood</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">Fun Vibes</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Enjoy &amp; Have Fun</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dots (Screen 2 = Dot 2 Active) -->
-            <div class="w-full flex justify-center mt-2 animate-fade-up" style="animation-delay: 0.5s;">
-                <div class="flex gap-2.5 items-center h-4">
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                    <div class="w-3 h-3 rounded-full bg-primary dot-active transition-all"></div>
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- SCREEN 3: MEET NEW PEOPLE                  -->
-    <!-- ========================================== -->
-    <div id="screen-3" class="screen-wrapper bg-gradient-radial sparkle-bg relative">
-        
-        <!-- Top Action Bar (Finish) -->
-        <header class="w-full flex justify-end items-center px-margin-mobile pt-margin-mobile z-10 relative md:px-margin-desktop md:pt-md md:max-w-md md:mx-auto">
-            <button onclick="window.location.href = 'home.html'" class="btn-primary-action flex items-center gap-1.5 px-6 py-2.5 rounded-full font-label-sm font-bold uppercase tracking-widest animate-fade-up" style="animation-delay: 0.1s;">
-                Done <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            </button>
-        </header>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col items-center justify-between w-full max-w-md mx-auto px-margin-mobile relative z-0 pb-6 h-full min-h-0">
-            <!-- Typography Section -->
-            <div class="text-center mt-2 md:mt-4 space-y-1 animate-fade-up z-10" style="animation-delay: 0.2s;">
-                <h1 class="font-headline-lg-mobile text-[26px] md:font-headline-lg md:text-headline-lg text-on-background leading-tight font-extrabold drop-shadow-sm">
-                    Meet <span class="text-primary">New People</span>
-                </h1>
-                <p class="font-body-md text-[14px] md:text-[16px] text-on-surface-variant max-w-[280px] mx-auto mt-1 font-medium">
-                    Connect with new people from around the world.
-                </p>
-            </div>
-
-            <!-- Central Visual Stage (3D Concept) -->
-            <div class="relative w-full flex-1 min-h-0 max-h-[35vh] md:max-h-[38vh] flex items-center justify-center my-2 md:my-4 z-10 animate-fade-up" style="animation-delay: 0.3s;">
-                <div class="relative w-full flex items-center justify-center">
-                    <div class="relative z-30 w-[30vw] max-w-[140px] aspect-square rounded-full border-[5px] border-white shadow-2xl shadow-primary/30 bg-surface-container-high overflow-hidden avatar-float" style="animation-delay: 0s;">
-                        <img alt="Smiling young woman with headphones" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsxLFG3qXubDmJTQNV1lJVuKj8Rgv4YRB2CxL2OmyKXoQrzevIzOu4eT3dTIT6yzzBrLrzziHVdoNsn5GEnSRZ5-QHJlKdKXzZxDlWu6fjdOxTz8utjPk_baBcKYy1txYj-_rJmoYAcKJeyY8d69akwgigHuC1MiAFr3jf-0MVDzWnm-0hwZ3Em-j4tVzeiWD4xdwxlwVr6_Alik5X685nZlgq5q0Fml_Z4JtDYX5c7gKiekS66RZ3IX3Zbh2-O7BZ7PWPIX5j-RI"/>
-                    </div>
-                    <div class="absolute z-40 top-[-5%] right-[20%] md:right-[25%] bg-white text-primary font-title-md font-bold px-4 py-2 rounded-2xl rounded-bl-none shadow-xl shadow-primary/20 border border-white/80 backdrop-blur-md bubble-float text-[14px] md:text-[16px]" style="animation-delay: 0.5s;">
-                        Hi!
-                    </div>
-                    <div class="absolute z-40 bottom-[5%] right-[10%] md:right-[15%] bg-white p-2 md:p-2.5 rounded-full shadow-xl shadow-primary/20 border border-white/80 backdrop-blur-md flex items-center justify-center bubble-float" style="animation-delay: 1.5s;">
-                        <span class="material-symbols-outlined text-primary text-[20px] md:text-[22px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
-                    </div>
-                    <div class="absolute z-20 w-[20vw] max-w-[90px] aspect-square top-[5%] left-[10%] md:left-[15%] rounded-full border-[4px] border-white shadow-xl bg-surface-container overflow-hidden avatar-float" style="animation-delay: 1s;">
-                        <img alt="Smiling young man" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0x5DlR-3d7CLqCLDgHLaAVEmuGvMLLZJNaMgNHkDe9E8vQfZmgP5rRjIJBfaYCV4acEMUyafVlJhZjWQF-GhInjhMLe2Isuwq41gL-kH-FZ6VTbeyKaCfd4RK2AKF86QGSqo5riENlHx1ZQ6Lt5g-M7jWRSaXPr0cZppXHfz6Wj_N9eU3advhAUwpqMKDzSTDRbtQC1zVby3RvXJI_yJCC2vBTfSAjoqsLtRKH3sgiX2T9XYbeC-P6HJdKyt2mSWPObLfDwjj4Fw"/>
-                    </div>
-                    <div class="absolute z-20 w-[24vw] max-w-[110px] aspect-square bottom-[-5%] left-[60%] md:left-[55%] rounded-full border-[4px] border-white shadow-xl bg-surface-container overflow-hidden avatar-float" style="animation-delay: 2s;">
-                        <img alt="Laughing young man" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv-jmlc16cotSEUEZpzZLIsAerAhKzdqxXYhMf20ISDdhWXAfSIY7YUwMmQXMtmPbUl1ixlh3oOsPIJIXx1l1HndC0K4m-Fc_p8wuffT0mXulELdB_ymaQqNAWs4M8Ajg6BPjTjpajUIdrJ3tIjXhcymK8cQDbtfnnNDzNuBJWgDtLRpA0Yss5Jy7X7UnI3hYXEY0fJoeKay3ACkBY8ovhZVOztMDDnZ_AK7ngrT-rA651x6hz1_2GZXp_CGZnoKDkg8jC0jIrwQU"/>
-                    </div>
-                    <div class="absolute top-[15%] left-[5%] w-2.5 h-2.5 rounded-full bg-primary/80 animate-ping" style="animation-duration: 3s;"></div>
-                    <div class="absolute bottom-[10%] left-[15%] w-4 h-4 rounded-full bg-primary/50 blur-[2px]"></div>
-                    <div class="absolute top-[50%] right-[5%] w-2 h-2 rounded-full bg-tertiary/90"></div>
-                </div>
-            </div>
-
-            <!-- Feature List -->
-            <div class="flex flex-col gap-3 z-10 w-full mb-4 animate-fade-up" style="animation-delay: 0.4s;">
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">headset_mic</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">Audio Rooms</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Talk, Share &amp; Connect</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-secondary/10 border border-secondary/20 flex items-center justify-center text-[#474646] shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">Live Chat</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Chat Anytime, Anywhere</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-3 rounded-2xl flex items-center gap-4 cursor-pointer">
-                    <div class="w-12 h-12 rounded-full bg-tertiary/10 border border-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-                        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">group</span>
-                    </div>
-                    <div>
-                        <h3 class="font-title-md text-[16px] leading-tight text-on-surface font-bold">Make Friends</h3>
-                        <p class="font-body-md text-[12px] leading-tight text-on-surface-variant mt-0.5">Find Your Community</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dots (Screen 3 = Dot 3 Active) -->
-            <div class="w-full flex justify-center mt-2 animate-fade-up" style="animation-delay: 0.5s;">
-                <div class="flex gap-2.5 items-center h-4">
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                    <div class="w-2 h-2 rounded-full bg-surface-variant border border-gray-300 transition-colors"></div>
-                    <div class="w-3 h-3 rounded-full bg-primary dot-active transition-all"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MASTER JAVASCRIPT                          -->
-    <!-- ========================================== -->
-    <script>
-        // --- Single Page Application Navigation Logic ---
-        function switchScreen(currentId, nextId) {
-            // Hide current
-            document.getElementById(currentId).style.display = 'none';
-            // Show next
-            const nextScreen = document.getElementById(nextId);
-            nextScreen.style.display = 'flex';
+    <!-- 3. START LIVE MODAL -->
+    <div class="modal-overlay" id="startLiveModal">
+        <div class="modal-box">
+            <i class="fas fa-broadcast-tower" style="font-size: 40px; color: var(--primary-red); margin-bottom: 15px;"></i>
+            <h3>Ready to Stream?</h3>
+            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
             
-            // Re-trigger CSS entrance animations for the new screen elements
-            const animatedElements = nextScreen.querySelectorAll('.animate-fade-up');
-            animatedElements.forEach(el => {
-                el.classList.remove('animate-fade-up');
-                void el.offsetWidth; // trigger reflow
-                el.classList.add('animate-fade-up');
+            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
+            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
+                <i class="fas fa-image"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
+            </div>
+            
+            <!-- NEW: Past Thumbnails & Schedule Options -->
+            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
+                <p>Or choose previous thumbnail:</p>
+                <div class="past-thumbs-list" id="past-thumbs-container"></div>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 5px;">
+                <label style="font-size:11px; color:#666; font-weight:bold;">Schedule Live (Optional):</label>
+                <input type="datetime-local" id="live-schedule-time">
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
+                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
+    <div id="live-view-screen">
+        <div class="live-video-container">
+            <!-- Broadcaster Video -->
+            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            <!-- Viewer Video -->
+            <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+        </div>
+        
+        <div class="live-overlay-top">
+            <div class="host-info">
+                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
+                <div class="host-text">
+                    <h4 id="live-host-name">Host Name</h4>
+                    <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
+                </div>
+            </div>
+            <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="live-overlay-bottom">
+            <div class="chat-box" id="live-chat-box">
+                <div class="chat-msg"><span>System:</span> Welcome to the live stream!</div>
+            </div>
+            <div class="action-bar">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="live-chat-input" placeholder="Say something...">
+                </div>
+                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px; color: var(--primary-red);"></i>
+        <p id="loading-text">Connecting...</p>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
+    <!-- ============================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
+        // 1. Disable Right Click (Context Menu)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
+                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+                e.preventDefault();
+                showToast("Security: Screenshots & recording are restricted!");
+            }
+        });
+
+        // 3. Blur screen if app loses focus (minimizing screen recording/screenshot risk)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.body.classList.add('security-blur');
+            } else {
+                document.body.classList.remove('security-blur');
+            }
+        });
+
+        // --- FIREBASE SETUP ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
+            authDomain: "benchtopinnovations12.firebaseapp.com",
+            databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
+            projectId: "benchtopinnovations12",
+            storageBucket: "benchtopinnovations12.firebasestorage.app",
+            messagingSenderId: "113274194106",
+            appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- APIS ---
+        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
+        const CLOUD_NAME = "dotjw6tep"; 
+        const UPLOAD_PRESET = "Zingoo"; 
+
+        // --- GLOBAL VARIABLES ---
+        let currentUser = null;
+        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
+        let currentUserId = null;
+        let userDiamonds = 0;
+        let selectedAvatarFile = null;
+        let selectedThumbFile = null;
+        let selectedPastThumb = null; // New variable for previous thumbs
+
+        // WebRTC Variables
+        const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+        let localStream = null;
+        let currentStreamId = null;
+        let isHost = false;
+        let hostPeerConnections = {}; // For 1-to-Many broadcasting
+        let viewerPeerConnection = null; // For watching
+
+        // --- TOAST FUNCTION ---
+        function showToast(message) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function showLoading(text) {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        // --- 1. ID LOGIN & IMGBB LOGIC ---
+        const loginScreen = document.getElementById('id-login-screen');
+        const mainApp = document.getElementById('main-app');
+
+        const storedId = localStorage.getItem("zingoo_id");
+        if (storedId) {
+            document.getElementById('login-zingoo-id').value = storedId;
+            const storedAv = localStorage.getItem("zingoo_avatar");
+            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+            
+            // Auto-login trigger
+            document.getElementById('btn-login-id').innerText = "Verifying...";
+            validateDatabaseLogin(storedId);
+        }
+
+        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
+                reader.readAsDataURL(e.target.files[0]);
+                selectedAvatarFile = e.target.files[0];
+            }
+        });
+
+        document.getElementById('btn-login-id').addEventListener('click', () => {
+            const enteredId = document.getElementById('login-zingoo-id').value.trim();
+            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
+            
+            const btn = document.getElementById('btn-login-id');
+            btn.innerText = "Verifying...";
+
+            if (selectedAvatarFile) {
+                const formData = new FormData();
+                formData.append("image", selectedAvatarFile);
+                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
+                .then(res => res.json()).then(data => {
+                    if (data.success) currentAvatar = data.data.url;
+                    validateDatabaseLogin(enteredId);
+                }).catch(err => {
+                    showToast("Image upload failed, using default.");
+                    validateDatabaseLogin(enteredId);
+                });
+            } else {
+                validateDatabaseLogin(enteredId);
+            }
+        });
+
+        function validateDatabaseLogin(enteredId) {
+            get(ref(db, 'users')).then(snapshot => {
+                let userFound = false;
+                const allUsers = snapshot.val();
+                let userKey = null;
+                
+                if (allUsers) {
+                    for (let key in allUsers) {
+                        if (allUsers[key].id === enteredId) {
+                            currentUser = allUsers[key].name;
+                            currentUserId = enteredId;
+                            userKey = key;
+                            userFound = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (userFound) {
+                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
+                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+
+                    localStorage.setItem("zingoo_user", currentUser);
+                    localStorage.setItem("zingoo_avatar", currentAvatar);
+                    localStorage.setItem("zingoo_id", enteredId);
+                    
+                    userDiamonds = allUsers[userKey].diamonds || 0;
+                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    
+                    loginScreen.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    showToast(`Welcome, ${currentUser}!`);
+                    
+                    // Start fetching active live streams
+                    fetchLiveStreams();
+                    
+                    // Listen for diamond updates live
+                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                        userDiamonds = snap.val() || 0;
+                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    });
+                } else {
+                    showToast("Invalid ID! User not found.");
+                    document.getElementById('btn-login-id').innerText = "Enter Live App";
+                }
+            }).catch(err => {
+                showToast("Connection error!");
+                document.getElementById('btn-login-id').innerText = "Enter Live App";
             });
         }
 
-        // --- 3D Logo Mouse Parallax Logic (Only active on Welcome Screen) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const mainContent = document.getElementById('main-content-0');
-            const logo3D = document.querySelector('.logo-3d');
-            
-            if(mainContent && logo3D) {
-                mainContent.addEventListener('mousemove', (e) => {
-                    const { clientX, clientY } = e;
-                    const { offsetWidth, offsetHeight } = mainContent;
-                    const x = (clientX / offsetWidth - 0.5) * 2;
-                    const y = (clientY / offsetHeight - 0.5) * 2;
-                    
-                    const rotateY = x * 20; // Increased rotation for more dramatic effect
-                    const rotateX = -y * 20; // Increased rotation
-                    logo3D.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-                    
-                    const moveX = x * -8; // Increased movement
-                    const moveY = y * -8; // Increased movement
-                    mainContent.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
-                });
 
-                mainContent.addEventListener('mouseleave', () => {
-                    logo3D.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-                    mainContent.style.transform = 'translateX(0px) translateY(0px)';
-                });
+        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
+        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedThumbFile = e.target.files[0];
+                selectedPastThumb = null; // Clear past selection if new uploaded
+                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
+                clearPastThumbSelection();
             }
         });
+
+        async function uploadToCloudinary(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET); 
+                formData.append('cloud_name', CLOUD_NAME);
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+                const data = await res.json();
+                return data.secure_url || null;
+            } catch (err) { return null; }
+        }
+
+        // Add Past Thumbnails rendering logic
+        function loadPastThumbnails() {
+            const container = document.getElementById('past-thumbs-container');
+            const wrapper = document.getElementById('past-thumbs-wrapper');
+            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+            
+            if(pastThumbs.length > 0) {
+                wrapper.style.display = 'block';
+                container.innerHTML = '';
+                pastThumbs.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.onclick = () => {
+                        selectedPastThumb = url;
+                        selectedThumbFile = null; // Reset new file
+                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
+                        clearPastThumbSelection();
+                        img.classList.add('selected');
+                    };
+                    container.appendChild(img);
+                });
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function clearPastThumbSelection() {
+            const imgs = document.querySelectorAll('#past-thumbs-container img');
+            imgs.forEach(i => i.classList.remove('selected'));
+        }
+
+        function saveThumbToPast(url) {
+            if(url && url !== currentAvatar) {
+                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+                if(!pastThumbs.includes(url)) {
+                    pastThumbs.unshift(url); // Add to beginning
+                    if(pastThumbs.length > 5) pastThumbs.pop(); // Keep only last 5
+                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
+                }
+            }
+        }
+
+
+        // --- 3. FETCH LIVE STREAMS (GRID) ---
+        const gridContainer = document.getElementById('liveGrid');
+
+        function fetchLiveStreams() {
+            onValue(ref(db, 'live_streams'), (snapshot) => {
+                gridContainer.innerHTML = '';
+                const streams = snapshot.val();
+                let count = 0;
+                
+                if (streams) {
+                    Object.entries(streams).forEach(([streamId, data]) => {
+                        // Include both active AND scheduled lives
+                        if (data.isLive || data.scheduledTime) {
+                            count++;
+                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
+                            const thumbUrl = data.thumbnail || data.hostAvatar; // Fallback to avatar if no thumb
+                            
+                            // Badge logic based on status
+                            const badgeHTML = data.isLive ? 
+                                `<span class="live-badge">LIVE</span>` : 
+                                `<span class="scheduled-badge">SCHEDULED</span>`;
+
+                            const card = document.createElement('div');
+                            card.className = 'live-card';
+                            
+                            // Logic for clicking card
+                            card.onclick = () => {
+                                if (!data.isLive && data.hostName === currentUser) {
+                                    startScheduledLiveAsHost(streamId, data);
+                                } else if (!data.isLive) {
+                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
+                                    showToast(`This live starts later at: ${timeStr}`);
+                                } else {
+                                    joinLiveStream(streamId, data);
+                                }
+                            };
+                            
+                            card.innerHTML = `
+                                <img src="${thumbUrl}" alt="Live">
+                                <div class="card-top-info">
+                                    ${badgeHTML}
+                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
+                                </div>
+                                <div class="card-bottom-info">
+                                    <div class="user-name">${data.hostName}</div>
+                                    <div style="font-size:11px; margin-top:3px; color:#ddd;">${data.title}</div>
+                                </div>
+                            `;
+                            gridContainer.appendChild(card);
+                        }
+                    });
+                }
+                
+                if(count === 0) {
+                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">No one is currently live. Be the first!</p>';
+                }
+            });
+        }
+
+        // --- MODAL FUNCTIONS ---
+        window.openStartLiveModal = () => {
+            loadPastThumbnails();
+            document.getElementById('live-schedule-time').value = '';
+            document.getElementById('startLiveModal').classList.add('active');
+        };
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.remove('active');
+        };
+
+        // --- 4. WEBRTC BROADCASTING (HOST) ---
+        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
+            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            const scheduleInput = document.getElementById('live-schedule-time').value;
+            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
+            
+            closeModal('startLiveModal');
+            showLoading("Processing...");
+
+            try {
+                let thumbUrl = currentAvatar; // Start with fallback
+                
+                if(selectedThumbFile) {
+                    showLoading("Uploading Thumbnail...");
+                    const uploaded = await uploadToCloudinary(selectedThumbFile);
+                    if(uploaded) {
+                        thumbUrl = uploaded;
+                        saveThumbToPast(thumbUrl);
+                    }
+                } else if (selectedPastThumb) {
+                    thumbUrl = selectedPastThumb;
+                }
+
+                // If scheduled, just write to DB and exit
+                if(isScheduled) {
+                    const newStreamRef = push(ref(db, 'live_streams'));
+                    await set(newStreamRef, {
+                        hostName: currentUser,
+                        hostAvatar: currentAvatar,
+                        title: title,
+                        thumbnail: thumbUrl,
+                        isLive: false,
+                        scheduledTime: new Date(scheduleInput).getTime(),
+                        timestamp: serverTimestamp()
+                    });
+                    hideLoading();
+                    showToast("Live Scheduled Successfully! ⏰");
+                    return; 
+                }
+
+                showLoading("Accessing Camera...");
+                // Get Camera & Mic
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                showLoading("Starting Stream...");
+                
+                // Create Node in Firebase
+                const newStreamRef = push(ref(db, 'live_streams'));
+                currentStreamId = newStreamRef.key;
+                isHost = true;
+
+                await set(newStreamRef, {
+                    hostName: currentUser,
+                    hostAvatar: currentAvatar,
+                    title: title,
+                    thumbnail: thumbUrl,
+                    isLive: true,
+                    timestamp: serverTimestamp()
+                });
+
+                // Remove stream on disconnect
+                onDisconnect(newStreamRef).remove();
+
+                setupHostUIAndSignaling();
+
+            } catch (err) {
+                hideLoading();
+                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
+            }
+        });
+
+        // Function created to allow Host to start their pre-scheduled live directly
+        async function startScheduledLiveAsHost(streamId, data) {
+            showLoading("Accessing Camera...");
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                currentStreamId = streamId;
+                isHost = true;
+
+                // Update DB to mark as live and clear schedule
+                await update(ref(db, `live_streams/${streamId}`), {
+                    isLive: true,
+                    scheduledTime: null,
+                    timestamp: serverTimestamp()
+                });
+                
+                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
+                setupHostUIAndSignaling();
+            } catch (err) {
+                hideLoading();
+                alert("Could not start live: " + err.message);
+            }
+        }
+
+        // Extracted Host logic to reuse for Normal Live & Scheduled Live without breaking anything
+        function setupHostUIAndSignaling() {
+            // Setup UI
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+            
+            const localVideo = document.getElementById('local-live-video');
+            localVideo.style.display = 'block';
+            document.getElementById('remote-live-video').style.display = 'none';
+            localVideo.srcObject = localStream;
+
+            document.getElementById('live-host-name').innerText = currentUser + " (You)";
+            document.getElementById('live-host-avatar').src = currentAvatar;
+
+            hideLoading();
+            showToast("You are now LIVE! 🔴");
+            setupLiveChat();
+
+            // Security 4: Detect Camera Interruption / External Screen Record taking over camera
+            if (localStream && localStream.getVideoTracks().length > 0) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                videoTrack.onmute = () => {
+                    showToast("Warning: Camera interrupted (Screen Record/Call detected)!");
+                    document.body.classList.add('security-blur');
+                };
+                videoTrack.onunmute = () => {
+                    showToast("Camera restored.");
+                    document.body.classList.remove('security-blur');
+                };
+                videoTrack.onended = () => {
+                    showToast("Camera stopped unexpectedly!");
+                    leaveLiveStream();
+                };
+            }
+
+            // Listen for Viewers joining and offering WebRTC connection
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
+                const viewerId = snapshot.key;
+                const viewerData = snapshot.val();
+                
+                get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
+                    document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
+                });
+
+                if (viewerData.offer) {
+                    // Create a connection for this specific viewer
+                    const pc = new RTCPeerConnection(iceServers);
+                    hostPeerConnections[viewerId] = pc;
+
+                    // Add local tracks to this connection strictly
+                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                    // Listen for ICE candidates from Host to send to Viewer
+                    pc.onicecandidate = e => {
+                        if (e.candidate) {
+                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
+                        }
+                    };
+
+                    // Queue ICE candidates from Viewer to fix WebRTC race condition (THE BUG FIX)
+                    const viewerCandidatesQueue = [];
+                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
+                        if(snap.val()) {
+                            if(pc.remoteDescription && pc.remoteDescription.type) {
+                                pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+                            } else {
+                                viewerCandidatesQueue.push(snap.val());
+                            }
+                        }
+                    });
+
+                    // Process the Viewer's offer
+                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    // Send Answer back to Viewer
+                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
+                        type: answer.type, sdp: answer.sdp
+                    });
+
+                    // Flush queued candidates safely now
+                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
+                    viewerCandidatesQueue.length = 0;
+                }
+            });
+        }
+
+
+        // --- 5. WEBRTC VIEWING (VIEWER) ---
+        async function joinLiveStream(streamId, streamData) {
+            showLoading("Joining Room...");
+            currentStreamId = streamId;
+            isHost = false;
+
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+            
+            document.getElementById('local-live-video').style.display = 'none';
+            const remoteVideo = document.getElementById('remote-live-video');
+            remoteVideo.style.display = 'block';
+
+            document.getElementById('live-host-name').innerText = streamData.hostName;
+            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
+
+            try {
+                viewerPeerConnection = new RTCPeerConnection(iceServers);
+
+                // When stream is received, play it (Updated for better device compatibility)
+                viewerPeerConnection.ontrack = e => {
+                    if (e.streams && e.streams[0]) {
+                        remoteVideo.srcObject = e.streams[0];
+                    } else {
+                        if (!remoteVideo.srcObject) remoteVideo.srcObject = new MediaStream();
+                        remoteVideo.srcObject.addTrack(e.track);
+                    }
+                    remoteVideo.play().catch(console.error);
+                };
+
+                // Send ICE candidates to Host
+                viewerPeerConnection.onicecandidate = e => {
+                    if (e.candidate) {
+                        push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
+                    }
+                };
+
+                // Create Offer (Viewer initiates to receive media)
+                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
+                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
+                
+                const offer = await viewerPeerConnection.createOffer();
+                await viewerPeerConnection.setLocalDescription(offer);
+
+                // Write offer to Firebase
+                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
+                    username: currentUser,
+                    offer: { type: offer.type, sdp: offer.sdp }
+                });
+
+                // Delete entry on disconnect
+                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
+
+                // Queue ICE Candidates from Host (THE BUG FIX)
+                const hostCandidatesQueue = [];
+                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
+                    if(snap.val()) {
+                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
+                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
+                        } else {
+                            hostCandidatesQueue.push(snap.val());
+                        }
+                    }
+                });
+
+                // Wait for Host's Answer
+                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
+                    const answer = snap.val();
+                    if (answer && viewerPeerConnection.signalingState !== "closed") {
+                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                        
+                        // Flush queued ICE candidates after Answer is set
+                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
+                        hostCandidatesQueue.length = 0;
+                    }
+                });
+
+                // Update viewer count locally
+                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
+                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+                });
+
+                hideLoading();
+                setupLiveChat();
+                
+                // System message to chat
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined!` });
+
+            } catch(e) {
+                hideLoading();
+                showToast("Failed to join stream.");
+                leaveLiveStream();
+            }
+        }
+
+
+        // --- 6. LEAVE/STOP STREAM ---
+        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
+
+        function leaveLiveStream() {
+            document.getElementById('live-view-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+
+            if (isHost && currentStreamId) {
+                // Stop camera
+                if (localStream) localStream.getTracks().forEach(t => t.stop());
+                // Close all peer connections
+                Object.values(hostPeerConnections).forEach(pc => pc.close());
+                hostPeerConnections = {};
+                // Remove stream from Firebase
+                remove(ref(db, `live_streams/${currentStreamId}`));
+            } else if (!isHost && currentStreamId) {
+                if (viewerPeerConnection) viewerPeerConnection.close();
+                viewerPeerConnection = null;
+                // Remove viewer from Firebase
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
+                // Notify chat
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
+            }
+
+            currentStreamId = null;
+            document.getElementById('local-live-video').srcObject = null;
+            document.getElementById('remote-live-video').srcObject = null;
+            document.getElementById('live-chat-box').innerHTML = ''; // clear chat
+        }
+
+
+        // --- 7. LIVE CHAT FUNCTIONALITY ---
+        function setupLiveChat() {
+            const chatBox = document.getElementById('live-chat-box');
+            chatBox.innerHTML = ''; // reset
+            
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
+                const data = snap.val();
+                if(data) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'chat-msg';
+                    if (data.user === 'System') {
+                        msgDiv.style.color = '#FFB6C1';
+                        msgDiv.style.fontStyle = 'italic';
+                        msgDiv.innerHTML = `${data.text}`;
+                    } else if (data.isGift) {
+                        msgDiv.style.background = 'var(--gradient-main)';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎`;
+                    } else {
+                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+                    }
+                    chatBox.appendChild(msgDiv);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const text = this.value.trim();
+                if (text && currentStreamId) {
+                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
+                    this.value = '';
+                }
+            }
+        });
+
+
+        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
+        window.handleGiftClick = function() {
+            if (isHost) {
+                showToast("You cannot send gifts to yourself!");
+                return;
+            }
+
+            const giftCost = 10; // 10 Diamonds per click
+
+            if (userDiamonds >= giftCost) {
+                // Deduct diamonds
+                const newBal = userDiamonds - giftCost;
+                get(ref(db, 'users')).then(snap => {
+                    const users = snap.val();
+                    for(let key in users) {
+                        if(users[key].name === currentUser) {
+                            set(ref(db, `users/${key}/diamonds`), newBal);
+                            break;
+                        }
+                    }
+                });
+                
+                // Send gift message to chat
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
+                showToast("Gift Sent! 💎");
+                
+            } else {
+                // NOT ENOUGH DIAMONDS -> Redirect to Main App Diamond Store
+                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
+                
+                if(confirmBuy) {
+                    leaveLiveStream();
+                    redirectToDiamondStore();
+                }
+            }
+        };
+
+        window.redirectToDiamondStore = function() {
+            // As requested, redirecting back to main app to buy diamonds.
+            // Appending a query parameter so main index.html knows to open the store immediately.
+            window.location.href = 'index.html?action=buy_diamonds';
+        };
+
     </script>
 </body>
 </html>
