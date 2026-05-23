@@ -121,7 +121,7 @@
     <!-- Screen Container -->
     <div class="relative w-full h-full">
 
-        <!-- LOBBY SCREEN (Matches Image 5 Design Perfectly) -->
+        <!-- LOBBY SCREEN -->
         <div id="lobby-screen" class="absolute inset-0 z-40 bg-white flex flex-col hidden">
             <header class="flex justify-between items-center px-4 pt-6 pb-4">
                 <div class="flex items-center gap-3">
@@ -190,7 +190,7 @@
                 <button id="leave-room-btn" class="bg-red-500/90 hover:bg-red-600 text-white font-extrabold text-xs px-6 py-2 rounded-full shadow-lg transition active:scale-95">Leave</button>
             </div>
 
-            <!-- WATERMARK TITLE IN CENTER (Zingoo Text completely removed based on request) -->
+            <!-- WATERMARK TITLE IN CENTER -->
             <div id="zingoo-watermark" class="hidden"></div>
 
             <!-- Seats Grid Layout (10 seats) -->
@@ -200,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- YouTube Video Player Wrapper (Moved to bottom, Chat will overlay it nicely) -->
+            <!-- YouTube Video Player Wrapper -->
             <div id="yt-player-container" class="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 z-10 w-[85%] max-w-[400px] aspect-video hidden rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.8)] border-2 border-zingoo-gold/60 bg-black">
                 <!-- Admin Close Button -->
                 <button id="yt-close-btn" onclick="stopYTVideo()" class="absolute top-2 right-2 bg-black/70 text-white rounded-full w-8 h-8 flex items-center justify-center hidden z-[60] hover:bg-red-600 border border-white/30 transition shadow-lg"><span class="material-symbols-outlined text-[18px]">close</span></button>
@@ -310,7 +310,7 @@
         </div>
 
         <!-- Options Popup Modal (Modified for Host Only Restrictions) -->
-        <div id="options-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center hidden p-4">
+        <div id="options-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center hidden p-4 z-[70]">
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 w-full max-w-xs text-center shadow-2xl">
                 <h4 class="font-bold text-white mb-4">Command Actions (Admin)</h4>
                 <div class="flex flex-col gap-2">
@@ -323,7 +323,7 @@
         </div>
 
         <!-- Host Authority Management UI -->
-        <div id="host-authority-modal" class="fixed inset-0 bg-black/80 z-50 flex items-end justify-center hidden">
+        <div id="host-authority-modal" class="fixed inset-0 bg-black/80 z-[70] flex items-end justify-center hidden">
             <div class="bg-zinc-900 border-t border-zinc-800 rounded-t-3xl p-5 w-full max-w-lg flex flex-col h-[65vh]">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-black text-white text-lg flex items-center gap-2"><span class="material-symbols-outlined text-zingoo-gold">shield_person</span> Host Authority</h3>
@@ -336,7 +336,7 @@
         </div>
 
         <!-- Youtube Player Modal Input -->
-        <div id="yt-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div id="yt-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[70] flex items-center justify-center hidden p-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
                 <div class="w-12 h-12 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3"><span class="material-symbols-outlined text-[28px]">youtube_activity</span></div>
                 <h4 class="font-black text-white mb-2 text-lg">Deploy YouTube Video</h4>
@@ -350,8 +350,8 @@
             </div>
         </div>
 
-        <!-- Store Assets Sync Deployment (Updated with small cards layout) -->
-        <div id="assets-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-end justify-center hidden">
+        <!-- Store Assets Sync Deployment -->
+        <div id="assets-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[70] flex items-end justify-center hidden">
             <div class="bg-zinc-900 border-t border-zinc-800 rounded-t-3xl p-5 w-full max-w-lg flex flex-col h-[70vh]">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-black text-white text-lg flex items-center gap-2"><span class="material-symbols-outlined text-blue-400">category</span> Virtual Assets Registry</h3>
@@ -364,16 +364,65 @@
                     <button onclick="loadAssetsCategory('frames', this)" class="shrink-0 bg-zinc-800 border border-zinc-700 text-zinc-300 px-4 py-1.5 rounded-full text-[11px] font-bold transition asset-tab-btn">Profile Frames</button>
                     <button onclick="loadAssetsCategory('entry_stickers', this)" class="shrink-0 bg-zinc-800 border border-zinc-700 text-zinc-300 px-4 py-1.5 rounded-full text-[11px] font-bold transition asset-tab-btn">Entry Stickers</button>
                 </div>
-                <!-- Small compact grid architecture applied here -->
+                <!-- Small compact grid architecture -->
                 <div id="assets-grid" class="flex-1 overflow-y-auto grid grid-cols-4 gap-2 p-1 no-scrollbar">
                     <!-- Dynamic Assets pulled from DB -->
                 </div>
             </div>
         </div>
 
+        <!-- ================= 1-ON-1 CALL UI MODALS ================= -->
+
+        <!-- Outgoing Call Ringing -->
+        <div id="outgoing-call-modal" class="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center hidden backdrop-blur-md">
+            <div class="text-center w-full max-w-sm px-6">
+                <img id="outgoing-avatar" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-500 object-cover shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse">
+                <h2 id="outgoing-name" class="text-white text-3xl font-black mb-2 tracking-wide">User</h2>
+                <p class="text-blue-400 mb-10 font-bold uppercase tracking-widest text-sm animate-pulse">Ringing...</p>
+                <button onclick="cancelOutgoingCall()" class="w-20 h-20 bg-red-600 rounded-full mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.7)] hover:scale-105 active:scale-95 transition-transform"><span class="material-symbols-outlined text-white text-[40px]">call_end</span></button>
+            </div>
+        </div>
+
+        <!-- Incoming Call Modal -->
+        <div id="incoming-call-modal" class="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center hidden backdrop-blur-md">
+            <div class="text-center w-full max-w-sm px-6">
+                <img id="incoming-caller-avatar" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-emerald-500 object-cover shadow-[0_0_40px_rgba(16,185,129,0.6)] animate-bounce">
+                <h2 id="incoming-caller-name" class="text-white text-3xl font-black mb-2 tracking-wide">User Name</h2>
+                <p id="incoming-call-type" class="text-emerald-400 mb-10 font-bold uppercase tracking-widest text-sm animate-pulse">Incoming Call...</p>
+                <div class="flex gap-8 justify-center">
+                    <button onclick="acceptCall()" class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.7)] hover:scale-105 active:scale-95 transition-transform"><span class="material-symbols-outlined text-white text-[40px]">call</span></button>
+                    <button onclick="rejectCall()" class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.7)] hover:scale-105 active:scale-95 transition-transform"><span class="material-symbols-outlined text-white text-[40px]">call_end</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Direct Call Interface -->
+        <div id="active-call-modal" class="fixed inset-0 bg-[#0c0c0e] z-[100] hidden flex flex-col">
+            <div class="relative flex-1 bg-black overflow-hidden flex items-center justify-center">
+                <!-- Video Elements -->
+                <video id="remote-video" class="w-full h-full object-cover hidden" autoplay playsinline></video>
+                <video id="local-video" class="absolute bottom-6 right-4 w-32 h-48 object-cover rounded-2xl border-2 border-white/50 shadow-2xl hidden" autoplay playsinline muted></video>
+                
+                <!-- Audio Call UI Fallback -->
+                <div id="audio-call-ui" class="absolute inset-0 bg-gradient-to-b from-slate-900 to-black flex flex-col items-center justify-center hidden">
+                    <div class="w-40 h-40 rounded-full p-1 bg-gradient-to-tr from-emerald-400 to-blue-500 animate-spin-slow mb-8 shadow-[0_0_50px_rgba(16,185,129,0.4)]">
+                        <img id="active-call-avatar" class="w-full h-full rounded-full object-cover border-4 border-[#0c0c0e] animate-pulse">
+                    </div>
+                    <h2 id="active-call-name" class="text-white text-3xl font-black tracking-wide mb-2">User</h2>
+                    <p class="text-emerald-400 font-bold uppercase tracking-widest text-sm">Call Connected 0:00</p>
+                </div>
+            </div>
+
+            <!-- Call Controls Bar -->
+            <div class="h-28 bg-zinc-900/90 backdrop-blur-xl flex items-center justify-center gap-8 rounded-t-[40px] border-t border-white/10 pb-4">
+                <button onclick="toggleCallMic()" class="w-14 h-14 bg-zinc-700 hover:bg-zinc-600 rounded-full flex items-center justify-center text-white shadow-lg transition-colors"><span id="call-mic-icon" class="material-symbols-outlined text-[24px]">mic</span></button>
+                <button onclick="endDirectCall()" class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95 transition-transform"><span class="material-symbols-outlined text-[40px]">call_end</span></button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Hidden audio receiver container for WebRTC -->
+    <!-- Hidden audio receiver container for WebRTC Room Mesh -->
     <div id="remote-audios-container" class="hidden"></div>
 
     <!-- Firebase SDK Implementation -->
@@ -443,6 +492,9 @@
                     }
                 });
 
+                // Global Incoming Call Listener
+                listenForIncomingDirectCalls();
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const queryRoomId = urlParams.get('roomId');
                 if (queryRoomId) joinRoom(queryRoomId);
@@ -480,7 +532,7 @@
             window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser.name)}&amount=${amount}&diamonds=${diamonds}`;
         };
 
-        // LOBBY SYNC (Matches Image 5 Light Theme Logic perfectly)
+        // LOBBY SYNC
         function listenToLobbyRooms() {
             onValue(ref(db, 'audio_rooms'), (snapshot) => {
                 const list = document.getElementById('room-list');
@@ -529,7 +581,6 @@
             const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
             if(!topic) { alert("Please set a room topic!"); return; }
 
-            // Restrict logic: Check if user already owns an active room
             const roomsSnap = await get(ref(db, 'audio_rooms'));
             const rooms = roomsSnap.val() || {};
             const existingRoomId = Object.keys(rooms).find(k => rooms[k].host === currentUser.name);
@@ -550,7 +601,7 @@
             joinRoom(roomId);
         };
 
-        // JOIN PROTOCOL + BAN SECURITY & ENTRY NOTIFICATION
+        // JOIN PROTOCOL
         window.joinRoom = async (roomId) => {
             const banSnap = await get(ref(db, `audio_rooms/${roomId}/banned/${currentUser.id}`));
             if(banSnap.exists()) {
@@ -682,7 +733,7 @@
             });
         }
 
-        // RENDER 10 SEATS + LABELS + MIC FIX
+        // RENDER 10 SEATS
         function renderSeats(seatsData) {
             const grid = document.getElementById('seats-grid');
             grid.innerHTML = '';
@@ -703,7 +754,7 @@
                         sittingOnSeat = true;
                         iWasRemoved = false;
                         
-                        // FIX: Correctly Sync Microphone hardware tracking state BOTH WAYS
+                        // Sync Hardware Mic State accurately
                         if(localAudioStream && localAudioStream.getAudioTracks().length > 0) {
                             localAudioStream.getAudioTracks()[0].enabled = !occupant.isMuted;
                         }
@@ -757,7 +808,7 @@
             }
         }
 
-        // PROFILE SEAT ACTION CLICKS (Self-Mute included)
+        // PROFILE SEAT ACTION CLICKS (With Direct Call Hook)
         window.handleSeatClick = (index, occupantId, occupantName, occupantAvatar, isMuted) => {
             const content = document.getElementById('seat-action-content');
             
@@ -789,10 +840,10 @@
                         <p class="text-[10px] text-blue-400 mb-6 font-bold tracking-widest uppercase bg-blue-500/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">Zingoo Member</p>
                         
                         <div class="flex gap-3">
-                            <button onclick="alert('Audio Calling ${occupantName}...')" class="flex-1 bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(16,185,129,0.3)] active:scale-95 border border-emerald-400/30">
+                            <button onclick="initiateCall('${occupantName}', '${occupantId}', '${occupantAvatar}', 'audio')" class="flex-1 bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(16,185,129,0.3)] active:scale-95 border border-emerald-400/30">
                                 <span class="material-symbols-outlined text-[18px]">call</span> Call
                             </button>
-                            <button onclick="alert('Video Calling ${occupantName}...')" class="flex-1 bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(59,130,246,0.3)] active:scale-95 border border-blue-400/30">
+                            <button onclick="initiateCall('${occupantName}', '${occupantId}', '${occupantAvatar}', 'video')" class="flex-1 bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(59,130,246,0.3)] active:scale-95 border border-blue-400/30">
                                 <span class="material-symbols-outlined text-[18px]">videocam</span> Video
                             </button>
                         </div>
@@ -905,7 +956,7 @@
             }, 3500);
         }
 
-        // CHAT INBOUND - Triggers Animation for Gifts and Stickers
+        // CHAT INBOUND
         function handleChatInbound(snap) {
             const data = snap.val();
             const container = document.getElementById('chat-container');
@@ -1033,7 +1084,7 @@
             closeModal('yt-modal'); 
         };
 
-        // ADMIN ASSETS OVERRIDE MODULE (UPDATED WITH SMALL CARDS)
+        // ADMIN ASSETS OVERRIDE MODULE
         window.openRoomAssets = () => {
             closeModal('options-modal');
             document.getElementById('assets-modal').classList.remove('hidden');
@@ -1079,10 +1130,8 @@
             const state = window.lastSeatsData[mySeatIndex];
             const newMutedState = !state.isMuted;
             
-            // Sync Firebase
             await update(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`), { isMuted: newMutedState });
             
-            // Sync WebRTC Hardware stream physically
             if(localAudioStream && localAudioStream.getAudioTracks().length > 0) {
                 localAudioStream.getAudioTracks()[0].enabled = !newMutedState;
             }
@@ -1114,7 +1163,7 @@
             closeModal('gift-tray-modal');
         };
 
-        // WEBRTC PEER-TO-PEER MESH ENGINE
+        // WEBRTC PEER-TO-PEER MESH ENGINE (ROOM AUDIO)
         function launchPeerConnection(targetId, isCaller) {
             if(peerConnections[targetId]) return peerConnections[targetId];
             const pc = new RTCPeerConnection(iceServersConfig);
@@ -1124,6 +1173,8 @@
             if(localAudioStream) localAudioStream.getTracks().forEach(track => pc.addTrack(track, localAudioStream));
 
             pc.onicecandidate = e => { if(e.candidate) dispatchSignal(targetId, { type: 'candidate', candidate: e.candidate.toJSON() }); };
+            
+            // FIX: Explicitly play audio element to bypass mobile autoplay policies
             pc.ontrack = e => {
                 let audioEl = document.getElementById(`audio_peer_${targetId}`);
                 if (!audioEl) {
@@ -1132,7 +1183,8 @@
                     audioEl.autoplay = true;
                     document.getElementById('remote-audios-container').appendChild(audioEl);
                 }
-                audioEl.srcObject = new MediaStream([e.track]);
+                audioEl.srcObject = e.streams && e.streams[0] ? e.streams[0] : new MediaStream([e.track]);
+                audioEl.play().catch(err => console.log('Audio autoplay prevented. Interaction needed.', err));
             };
 
             pc.onconnectionstatechange = () => { if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') unmountPeer(targetId); };
@@ -1151,7 +1203,7 @@
 
         async function handleSignalsInbound(snap) {
             const data = snap.val();
-            remove(ref(db, `audio_rooms/${currentRoomId}/signals/${currentUser.id}/${snap.key}`));
+            try { remove(ref(db, `audio_rooms/${currentRoomId}/signals/${currentUser.id}/${snap.key}`)); } catch(e){}
             if(data.senderId === currentUser.id) return;
 
             let pc = peerConnections[data.senderId];
@@ -1187,7 +1239,7 @@
             if(localAudioStream) { localAudioStream.getTracks().forEach(track => track.stop()); localAudioStream = null; }
         }
 
-        // LEAVE ROOM (Safely returns to Lobby Screen as a Back Button)
+        // LEAVE ROOM (Returns to Lobby)
         document.getElementById('leave-room-btn').addEventListener('click', async () => {
             if(mySeatIndex !== null) {
                 await remove(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`));
@@ -1208,8 +1260,193 @@
 
             currentRoomId = null; roomData = null;
             document.getElementById('remote-audios-container').innerHTML = '';
-            openLobbyScreen(); // Acts as a back button
+            openLobbyScreen();
         });
+
+
+        // =========================================================================
+        // DIRECT 1-ON-1 CALLING SYSTEM (AUDIO / VIDEO)
+        // =========================================================================
+        let directCallId = null;
+        let directCallPC = null;
+        let directLocalStream = null;
+        let isDirectVideo = false;
+        let activeCallRef = null;
+        let directSignalRef = null;
+
+        function listenForIncomingDirectCalls() {
+            const myIncomingCallsRef = ref(db, `calls`);
+            onValue(myIncomingCallsRef, (snap) => {
+                const calls = snap.val() || {};
+                let foundIncoming = false;
+                for(const [cId, cData] of Object.entries(calls)) {
+                    if(cData.targetId === currentUser.id && cData.status === 'ringing') {
+                        foundIncoming = true;
+                        if (directCallId !== cId) {
+                            directCallId = cId;
+                            isDirectVideo = (cData.type === 'video');
+                            document.getElementById('incoming-caller-name').innerText = cData.caller;
+                            document.getElementById('incoming-caller-avatar').src = cData.callerAvatar;
+                            document.getElementById('incoming-call-type').innerText = isDirectVideo ? 'Incoming Video Call...' : 'Incoming Audio Call...';
+                            document.getElementById('incoming-call-modal').classList.remove('hidden');
+                        }
+                    }
+                }
+                if(!foundIncoming && !document.getElementById('incoming-call-modal').classList.contains('hidden')) {
+                    document.getElementById('incoming-call-modal').classList.add('hidden');
+                    directCallId = null;
+                }
+            });
+        }
+
+        window.initiateCall = async (targetName, targetId, targetAvatar, type) => {
+            isDirectVideo = (type === 'video');
+            directCallId = currentUser.id + "_" + targetId;
+            
+            document.getElementById('outgoing-name').innerText = targetName;
+            document.getElementById('outgoing-avatar').src = targetAvatar;
+            document.getElementById('outgoing-call-modal').classList.remove('hidden');
+            closeModal('seat-action-modal');
+
+            await set(ref(db, `calls/${directCallId}`), {
+                caller: currentUser.name, callerAvatar: currentUser.avatar, callerId: currentUser.id,
+                targetId: targetId, targetName: targetName, type: type, status: 'ringing', time: Date.now()
+            });
+
+            activeCallRef = ref(db, `calls/${directCallId}`);
+            onValue(activeCallRef, (snap) => {
+                const data = snap.val();
+                if(!data) { endDirectCallUI(); } 
+                else if(data.status === 'accepted') {
+                    document.getElementById('outgoing-call-modal').classList.add('hidden');
+                    startWebRTC_DirectCall(true, data.type);
+                } else if (data.status === 'rejected') {
+                    alert("Call Declined");
+                    endDirectCallUI();
+                }
+            });
+        };
+
+        window.acceptCall = async () => {
+            await update(ref(db, `calls/${directCallId}`), { status: 'accepted' });
+            document.getElementById('incoming-call-modal').classList.add('hidden');
+            startWebRTC_DirectCall(false, isDirectVideo ? 'video' : 'audio');
+        };
+
+        window.rejectCall = async () => {
+            await update(ref(db, `calls/${directCallId}`), { status: 'rejected' });
+            document.getElementById('incoming-call-modal').classList.add('hidden');
+            directCallId = null;
+        };
+
+        window.cancelOutgoingCall = async () => {
+            if(directCallId) await remove(ref(db, `calls/${directCallId}`));
+            endDirectCallUI();
+        };
+
+        window.endDirectCall = async () => {
+            if(directCallId) await remove(ref(db, `calls/${directCallId}`));
+            endDirectCallUI();
+        };
+
+        function endDirectCallUI() {
+            document.getElementById('outgoing-call-modal').classList.add('hidden');
+            document.getElementById('incoming-call-modal').classList.add('hidden');
+            document.getElementById('active-call-modal').classList.add('hidden');
+            if(directCallPC) { directCallPC.close(); directCallPC = null; }
+            if(directLocalStream) { directLocalStream.getTracks().forEach(t => t.stop()); directLocalStream = null; }
+            if(activeCallRef) off(activeCallRef);
+            if(directSignalRef) off(directSignalRef);
+            directCallId = null;
+        }
+
+        async function startWebRTC_DirectCall(isCaller, type) {
+            document.getElementById('active-call-modal').classList.remove('hidden');
+            
+            try {
+                if(type === 'video') {
+                    document.getElementById('audio-call-ui').classList.add('hidden');
+                    document.getElementById('remote-video').classList.remove('hidden');
+                    document.getElementById('local-video').classList.remove('hidden');
+                    directLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    document.getElementById('local-video').srcObject = directLocalStream;
+                } else {
+                    document.getElementById('audio-call-ui').classList.remove('hidden');
+                    document.getElementById('remote-video').classList.add('hidden');
+                    document.getElementById('local-video').classList.add('hidden');
+                    // Setup audio fallback UI
+                    const avatar = isCaller ? document.getElementById('outgoing-avatar').src : document.getElementById('incoming-caller-avatar').src;
+                    const name = isCaller ? document.getElementById('outgoing-name').innerText : document.getElementById('incoming-caller-name').innerText;
+                    document.getElementById('active-call-avatar').src = avatar;
+                    document.getElementById('active-call-name').innerText = name;
+                    
+                    directLocalStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+                }
+
+                directCallPC = new RTCPeerConnection(iceServersConfig);
+                directLocalStream.getTracks().forEach(track => directCallPC.addTrack(track, directLocalStream));
+
+                directCallPC.onicecandidate = e => {
+                    if(e.candidate) push(ref(db, `calls/${directCallId}/signals`), { senderId: currentUser.id, candidate: e.candidate.toJSON() });
+                };
+
+                directCallPC.ontrack = e => {
+                    if(type === 'video') {
+                        document.getElementById('remote-video').srcObject = e.streams[0];
+                    } else {
+                        let aud = document.getElementById('direct-audio');
+                        if(!aud) {
+                            aud = document.createElement('audio');
+                            aud.id = 'direct-audio';
+                            aud.autoplay = true;
+                            document.body.appendChild(aud);
+                        }
+                        aud.srcObject = e.streams[0];
+                        aud.play().catch(console.error);
+                    }
+                };
+
+                directSignalRef = ref(db, `calls/${directCallId}/signals`);
+                onChildAdded(directSignalRef, snap => {
+                    const data = snap.val();
+                    if(!data || data.senderId === currentUser.id) return;
+                    
+                    if(data.type === 'offer') {
+                        directCallPC.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: data.sdp }))
+                        .then(() => directCallPC.createAnswer())
+                        .then(ans => directCallPC.setLocalDescription(ans))
+                        .then(() => push(ref(db, `calls/${directCallId}/signals`), { senderId: currentUser.id, type: 'answer', sdp: directCallPC.localDescription.sdp }));
+                    } else if(data.type === 'answer') {
+                        directCallPC.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: data.sdp }));
+                    } else if(data.candidate) {
+                        directCallPC.addIceCandidate(new RTCIceCandidate(data.candidate));
+                    }
+                });
+
+                if(isCaller) {
+                    const offer = await directCallPC.createOffer();
+                    await directCallPC.setLocalDescription(offer);
+                    await push(ref(db, `calls/${directCallId}/signals`), { senderId: currentUser.id, type: 'offer', sdp: offer.sdp });
+                }
+
+            } catch(e) {
+                console.error("Direct Call Media Error:", e);
+                alert("Please enable camera/microphone permissions.");
+                endDirectCall();
+            }
+        }
+
+        window.toggleCallMic = () => {
+            if(directLocalStream) {
+                const track = directLocalStream.getAudioTracks()[0];
+                if(track) {
+                    track.enabled = !track.enabled;
+                    const icon = document.getElementById('call-mic-icon');
+                    icon.innerText = track.enabled ? 'mic' : 'mic_off';
+                    icon.parentElement.className = track.enabled ? 'w-14 h-14 bg-zinc-700 hover:bg-zinc-600 rounded-full flex items-center justify-center text-white shadow-lg transition-colors' : 'w-14 h-14 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg transition-colors border border-red-500/50';
+                }
+            }
+        };
 
     </script>
 </body>
