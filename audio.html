@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -356,26 +354,20 @@
 
         /* --- GLASSY CHAT PANEL OVERLAY --- */
         #chat-panel-overlay { 
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; 
-            background: rgba(255, 255, 255, 0.7); /* Glassy Background */
+            position: absolute; bottom: 0; left: 0; width: 100%; height: auto; 
+            background: rgba(255, 255, 255, 0.9); /* Glassy Background */
             backdrop-filter: blur(20px); /* Beautiful Blur */
             border-top: 1px solid rgba(255,255,255,0.8); 
             border-radius: 25px 25px 0 0; display: none; flex-direction: column; 
             z-index: 50; animation: slideUpModal 0.3s ease-out; 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
         }
-        .chat-panel-header { padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .chat-panel-header h3 { font-size: 1.1em; color: #111; font-weight: 800;}
-        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .chat-messages::-webkit-scrollbar { display: none; }
-        .chat-msg { background: #ffffff; padding: 10px 15px; border-radius: 20px; font-size: 0.9em; align-self: flex-start; max-width: 85%; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.03); font-weight: 500;}
-        .chat-msg .username { color: var(--hot-pink); font-weight: 800; margin-right: 5px; }
-        .chat-msg.system { background: transparent; box-shadow: none; font-style: italic; color: #666; text-align: center; align-self: center; font-size: 0.8em;}
-        .chat-msg.gift-message { background: linear-gradient(135deg, #fff0f2, #ffe4e8); border: 1px solid var(--hot-pink); color: #111; font-weight: 700; align-self: flex-start; }
-        .chat-input-area { padding: 15px; display: flex; gap: 10px; background: transparent; border-top: 1px solid rgba(0,0,0,0.05);}
+        .chat-panel-header { display: none; }
+        .chat-messages { display: none; }
+        .chat-input-area { padding: 15px; display: flex; align-items:center; gap: 10px; background: transparent; border-top: none;}
         .chat-input { flex-grow: 1; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: #111; padding: 12px 18px; border-radius: 25px; font-size: 0.9em; font-weight: 500; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);}
         .chat-input:focus { outline: none; border: 1px solid var(--hot-pink); background: #fff;}
-        #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s;}
+        #send-msg-btn { background: var(--gradient-main); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; box-shadow: var(--glow-red); transition: transform 0.2s; flex-shrink: 0;}
         #send-msg-btn:hover { transform: scale(1.1); }
 
         /* --- Modals / Popups --- */
@@ -474,6 +466,23 @@
         @keyframes pulse-gift {
             0% { transform: scale(1); }
             100% { transform: scale(1.05); }
+        }
+
+        /* --- FIRE ANIMATION CSS --- */
+        @keyframes fireFloat {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--x-dir), -300px) scale(1.5); opacity: 0; }
+        }
+        .fire-anim {
+            position: absolute;
+            bottom: 80px;
+            right: 80px;
+            font-size: 28px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: fireFloat 1.2s ease-out forwards;
+            filter: drop-shadow(0 2px 5px rgba(255, 100, 0, 0.5));
         }
 
     </style>
@@ -599,21 +608,21 @@
                     <button class="chat-pill-btn" id="open-chat-btn"><i class="fas fa-comment"></i> Chat</button>
                     <button class="zf-btn purple" id="bottom-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                     <button class="zf-btn teal" id="gift-btn-footer"><i class="fas fa-gift"></i></button>
-                    <button class="zf-btn orange"><i class="fas fa-fire"></i></button>
+                    <button class="zf-btn orange" id="fire-reaction-btn"><i class="fas fa-fire"></i></button>
                     <button class="zf-btn grey" id="main-mic-btn"><i class="fas fa-microphone-slash"></i></button>
                 </footer>
                 
                 <!-- GLASSY CHAT PANEL OVERLAY -->
                 <div id="chat-panel-overlay">
-                    <div class="chat-panel-header">
+                    <div class="chat-panel-header" style="display:none;">
                         <h3>Live Chat</h3>
-                        <button class="close-btn" id="close-chat-btn"><i class="fas fa-times"></i></button>
                     </div>
-                    <div id="chat-messages" class="chat-messages">
+                    <div id="chat-messages" class="chat-messages" style="display:none;">
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
                         <button id="send-msg-btn"><i class="fas fa-paper-plane"></i></button>
+                        <button class="close-btn" id="close-chat-btn" style="width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.05); color: #111; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0;"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
             </div>
@@ -852,6 +861,23 @@
                 setTimeout(() => {
                     if(giftDiv.parentNode) { giftDiv.parentNode.removeChild(giftDiv); }
                 }, 3500);
+            };
+
+            window.spawnFireAnimation = function() {
+                const container = document.querySelector('.live-room-container');
+                for(let i=0; i<10; i++) {
+                    setTimeout(() => {
+                        const fire = document.createElement('div');
+                        fire.className = 'fire-anim';
+                        fire.innerHTML = '🔥';
+                        const xDir = (Math.random() - 0.5) * 150 + 'px';
+                        fire.style.setProperty('--x-dir', xDir);
+                        fire.style.right = (60 + Math.random() * 40) + 'px';
+                        fire.style.bottom = (80 + Math.random() * 20) + 'px';
+                        container.appendChild(fire);
+                        setTimeout(() => { if(fire.parentNode) fire.remove(); }, 1200);
+                    }, i * 80);
+                }
             };
 
             window.redirectToDiamondStore = function() {
@@ -1319,6 +1345,13 @@
 
                         if (data.type === 'offer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            
+                            // Process queued candidates
+                            if(roomPeers[sender].candidateQueue) {
+                                roomPeers[sender].candidateQueue.forEach(c => roomPeers[sender].addIceCandidate(c));
+                                roomPeers[sender].candidateQueue = [];
+                            }
+
                             const answer = await roomPeers[sender].createAnswer();
                             await roomPeers[sender].setLocalDescription(answer);
                             push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
@@ -1326,9 +1359,19 @@
                             });
                         } else if (data.type === 'answer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            
+                            // Process queued candidates
+                            if(roomPeers[sender].candidateQueue) {
+                                roomPeers[sender].candidateQueue.forEach(c => roomPeers[sender].addIceCandidate(c));
+                                roomPeers[sender].candidateQueue = [];
+                            }
+
                         } else if (data.type === 'candidate') {
-                            if(roomPeers[sender].remoteDescription) {
+                            if(roomPeers[sender].remoteDescription && roomPeers[sender].remoteDescription.type) {
                                 roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                            } else {
+                                roomPeers[sender].candidateQueue = roomPeers[sender].candidateQueue || [];
+                                roomPeers[sender].candidateQueue.push(new RTCIceCandidate(data.candidate));
                             }
                         }
                     });
@@ -1617,6 +1660,16 @@
                             setTimeout(() => { if(floatDiv.parentNode) floatDiv.parentNode.removeChild(floatDiv); }, 10000);
                         }
                     });
+
+                    if (window.unsubscribeReactions) window.unsubscribeReactions();
+                    window.unsubscribeReactions = onChildAdded(ref(db, `audio_rooms/${roomId}/reactions`), (snap) => {
+                        const data = snap.val();
+                        if(data && Date.now() - data.timestamp < 5000) {
+                            if(data.type === 'fire') {
+                                window.spawnFireAnimation();
+                            }
+                        }
+                    });
                 };
 
                 if (fee > 0) {
@@ -1738,6 +1791,7 @@
                 if (roomBgListener) { roomBgListener(); roomBgListener = null; }
                 if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
                 if (unsubscribeMedia) { unsubscribeMedia(); unsubscribeMedia = null; }
+                if (window.unsubscribeReactions) { window.unsubscribeReactions(); window.unsubscribeReactions = null; }
                 
                 stopRoomAudio();
                 
@@ -1836,6 +1890,16 @@
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
             
+            document.getElementById('fire-reaction-btn').addEventListener('click', () => {
+                if(currentActiveRoomId) {
+                    push(ref(db, `audio_rooms/${currentActiveRoomId}/reactions`), {
+                        user: currentUser,
+                        type: 'fire',
+                        timestamp: Date.now()
+                    });
+                }
+            });
+
             document.getElementById('menu-hand-btn').addEventListener('click', () => {
                 showToast("You raised your hand! ✋");
                 closeModal();
