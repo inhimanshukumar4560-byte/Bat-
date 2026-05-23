@@ -681,7 +681,6 @@
         let roomPeers = {};
         let roomLocalStream = null;
         let roomSignalListener = null;
-        let roomIceCandidateQueues = {}; // <--- Queuing system for Ice Candidates
 
         // --- Global Redirect to Secure Payment Page ---
         window.redirectToPayment = function(amount, diamonds) {
@@ -1209,34 +1208,10 @@
                         push(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${sender}`), {
                             type: 'answer', sender: window.currentUser, sdp: answer
                         });
-                        
-                        // Process Queued ICE Candidates after setting remote description
-                        if(roomIceCandidateQueues[sender]){
-                            for(let c of roomIceCandidateQueues[sender]){
-                                try { await roomPeers[sender].addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
-                            }
-                            roomIceCandidateQueues[sender] = [];
-                        }
-
                     } else if (data.type === 'answer' && roomPeers[sender]) {
                         await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        
-                        // Process Queued ICE Candidates after setting remote description
-                        if(roomIceCandidateQueues[sender]){
-                            for(let c of roomIceCandidateQueues[sender]){
-                                try { await roomPeers[sender].addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
-                            }
-                            roomIceCandidateQueues[sender] = [];
-                        }
-
-                    } else if (data.type === 'candidate') {
-                        if (roomPeers[sender] && roomPeers[sender].remoteDescription) {
-                            try { await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate)); } catch(e){}
-                        } else {
-                            // Queue the candidate if the remote description is not ready yet
-                            if(!roomIceCandidateQueues[sender]) roomIceCandidateQueues[sender] = [];
-                            roomIceCandidateQueues[sender].push(data.candidate);
-                        }
+                    } else if (data.type === 'candidate' && roomPeers[sender]) {
+                        await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
                     }
                     // Clean up processed signal
                     remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}/${snapshot.key}`));
@@ -1246,8 +1221,7 @@
             async function createRoomPeerConnection(targetUser, isOfferer) {
                 const pc = new RTCPeerConnection(servers);
                 roomPeers[targetUser] = pc;
-                if(!roomIceCandidateQueues[targetUser]) roomIceCandidateQueues[targetUser] = []; // Initialize queue
-
+                
                 if (roomLocalStream) {
                     roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
                 }
@@ -1266,12 +1240,9 @@
                         audioEl = document.createElement('audio');
                         audioEl.id = `audio-${targetUser}`;
                         audioEl.autoplay = true;
-                        audioEl.style.display = 'none'; // Keep hidden securely
                         document.body.appendChild(audioEl);
                     }
                     audioEl.srcObject = e.streams[0];
-                    // Forcefully catch and bypass Autoplay Policy cleanly
-                    audioEl.play().catch(err => console.log("Autoplay prevented securely:", err));
                 };
 
                 if (isOfferer) {
@@ -1474,7 +1445,6 @@
                     }
                     Object.values(roomPeers).forEach(pc => pc.close());
                     roomPeers = {};
-                    roomIceCandidateQueues = {}; // Clear queue memory safely
                     document.querySelectorAll('audio[id^="audio-"]').forEach(el => el.remove());
                 }
             };
@@ -1504,7 +1474,6 @@
                 }
                 Object.values(roomPeers).forEach(pc => pc.close());
                 roomPeers = {};
-                roomIceCandidateQueues = {}; // Clear queue memory safely
                 document.querySelectorAll('audio[id^="audio-"]').forEach(el => el.remove());
 
                 window.currentActiveRoomId = null;
