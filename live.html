@@ -9,11 +9,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🔥 ZEGOCLOUD CORE SDK (JSdelivr Super Fast Premium Link) 🔥 -->
-    <script src="https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js"></script>
-    
-    <!-- 🔥 ZEGOCLOUD OFFICIAL PREBUILT CDN (Direct Global Server Link) 🔥 -->
-    <script src="https://cdn.zegocloud.com/prebuilt/latest/ZegoUIKitPrebuilt.js"></script>
+    <!-- 🔥 DYNAMIC SMART CDN FALLBACK LOADER 🔥 -->
+    <script>
+        window.loadZegoExpress = function() {
+            return new Promise((resolve) => {
+                if (window.ZegoExpressEngine) { resolve(true); return; }
+                const s = document.createElement('script');
+                // Pehle original browser build wala link try karega jo 100% verified hai
+                s.src = "https://unpkg.com/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js";
+                s.onload = () => resolve(true);
+                s.onerror = () => {
+                    const fallback = document.createElement('script');
+                    fallback.src = "https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js";
+                    fallback.onload = () => resolve(true);
+                    fallback.onerror = () => resolve(false);
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(s);
+            });
+        }
+
+        window.loadZegoPrebuilt = function() {
+            return new Promise((resolve) => {
+                if (window.ZegoUIKitPrebuilt) { resolve(true); return; }
+                const s = document.createElement('script');
+                // Pehle jsDelivr mirror try karega speed ke liye
+                s.src = "https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js";
+                s.onload = () => resolve(true);
+                s.onerror = () => {
+                    const fallback = document.createElement('script');
+                    fallback.src = "https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js";
+                    fallback.onload = () => resolve(true);
+                    fallback.onerror = () => {
+                        const fallback3 = document.createElement('script');
+                        fallback3.src = "https://cdn.zegocloud.com/prebuilt/latest/ZegoUIKitPrebuilt.js";
+                        fallback3.onload = () => resolve(true);
+                        fallback3.onerror = () => resolve(false);
+                        document.head.appendChild(fallback3);
+                    };
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(s);
+            });
+        }
+    </script>
 
     <style>
         :root {
@@ -34,7 +73,7 @@
         body.security-blur { filter: blur(25px); pointer-events: none; }
         ::-webkit-scrollbar { width: 6px; display: none; }
 
-        /* --- REDESIGNED AUTO-VERIFICATION SCREEN --- */
+        /* --- AUTO-VERIFICATION SCREEN --- */
         #id-login-screen {
             position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
             z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
@@ -239,12 +278,6 @@
         const ZEGO_SERVER_URL = "wss://webliveroom557776684-api.coolzcloud.com/ws";
         
         let zg = null;
-        try {
-            // Safe Constructor call
-            zg = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_SERVER_URL);
-        } catch (e) {
-            console.error("ZegoExpressEngine constructor failed:", e);
-        }
         
         // Zego variables
         let localStream = null;
@@ -278,15 +311,14 @@
             if (overlayEl) overlayEl.style.display = 'none'; 
         }
 
-        // --- 100% STABLE RECOVERY & BYPASS TIMEOUT IMPLEMENTATION ---
+        // --- 100% STABLE RECOVERY & BYPASS TIMEOUT ---
         let countdownTime = 30;
         let countdownInterval = null;
 
-        // Secure DOM access checks to avoid crashes
         const countdownElement = document.getElementById("countdown-timer");
         const statusElement = document.getElementById("verify-status");
 
-        // Safely start countdown. No matter what, after 30s we bypass to app.
+        // Safely start countdown timer
         try {
             countdownInterval = setInterval(() => {
                 countdownTime--;
@@ -337,12 +369,31 @@
             if (avatarPreview) avatarPreview.src = storedAv;
         }
 
-        // Run verification safely
-        try {
+        // --- DYNAMICALLY RESOLVED INITIALIZATION ---
+        // We trigger both Zego engine loading and silent verification asynchronously
+        startZegoAndApp();
+
+        async function startZegoAndApp() {
+            if (statusElement) statusElement.innerText = "Connecting to streaming network...";
+            
+            // Wait for both the core engine and the prebuilt script to completely compile in browser
+            const expressLoaded = await window.loadZegoExpress();
+            const prebuiltLoaded = await window.loadZegoPrebuilt();
+            
+            if (expressLoaded) {
+                try {
+                    // Safe reference with fallback to window context
+                    const zegoEngineClass = window.ZegoExpressEngine || ZegoExpressEngine;
+                    zg = new zegoEngineClass(ZEGO_APP_ID, ZEGO_SERVER_URL);
+                } catch (e) {
+                    console.error("ZegoExpressEngine initialization failed:", e);
+                }
+            } else {
+                console.error("ZegoExpressEngine SDK failed to load entirely.");
+            }
+
+            // Start silent verification after we are sure CDNs have finished processing
             verifyUserSilently(storedId, storedUser, storedAv);
-        } catch(e) {
-            console.error("Verification engine failed, forcing bypass:", e);
-            forceEnterMainApp();
         }
 
         function verifyUserSilently(enteredId, userName, userAvatar) {
@@ -517,8 +568,13 @@
             isHost = true;
 
             try {
-                // AUTO TOKEN GENERATOR (Using window fallback to prevent reference errors)
-                const zegoPrebuilt = window.ZegoUIKitPrebuilt || ZegoUIKitPrebuilt;
+                // --- SAFE VARIABLE SCOPE ACCESS WITH AUTO FALLBACKS ---
+                const zegoPrebuilt = window.ZegoUIKitPrebuilt || (typeof ZegoUIKitPrebuilt !== 'undefined' ? ZegoUIKitPrebuilt : null);
+                if (!zegoPrebuilt) {
+                    throw new Error("ZEGOCLOUD Prebuilt SDK failed to load. Please verify your network and refresh.");
+                }
+
+                // AUTO TOKEN GENERATOR
                 const autoToken = zegoPrebuilt.generateKitTokenForTest(ZEGO_APP_ID, ZEGO_SERVER_SECRET, currentStreamId, currentUserId, currentUser);
 
                 // 1. Login to Zego Room using Auto-Token
@@ -554,8 +610,13 @@
             currentStreamId = streamId; isHost = false;
 
             try {
-                // AUTO TOKEN GENERATOR (Using window fallback to prevent reference errors)
-                const zegoPrebuilt = window.ZegoUIKitPrebuilt || ZegoUIKitPrebuilt;
+                // --- SAFE VARIABLE SCOPE ACCESS WITH AUTO FALLBACKS ---
+                const zegoPrebuilt = window.ZegoUIKitPrebuilt || (typeof ZegoUIKitPrebuilt !== 'undefined' ? ZegoUIKitPrebuilt : null);
+                if (!zegoPrebuilt) {
+                    throw new Error("ZEGOCLOUD Prebuilt SDK failed to load. Please verify your network and refresh.");
+                }
+
+                // AUTO TOKEN GENERATOR
                 const autoToken = zegoPrebuilt.generateKitTokenForTest(ZEGO_APP_ID, ZEGO_SERVER_SECRET, currentStreamId, currentUserId, currentUser);
 
                 // 1. Login to Zego Room using Auto-Token
