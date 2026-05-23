@@ -9,8 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🔥 ZEGOCLOUD SDK (Core Engine for 10,000+ Viewers) 🔥 -->
+    <!-- 🔥 ZEGOCLOUD CORE SDK (For 10,000+ Viewers) 🔥 -->
     <script src="https://unpkg.com/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js"></script>
+    
+    <!-- 🔥 ZEGOCLOUD AUTO-TOKEN GENERATOR ENGINE 🔥 -->
+    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
 
     <style>
         :root {
@@ -31,20 +34,22 @@
         body.security-blur { filter: blur(25px); pointer-events: none; }
         ::-webkit-scrollbar { width: 6px; display: none; }
 
-        /* --- LOGIN SCREEN --- */
+        /* --- REDESIGNED AUTO-VERIFICATION SCREEN --- */
         #id-login-screen {
             position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
             z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
         }
         #id-login-screen .logo-container { font-size: 38px; font-weight: 800; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 40px; }
         #id-login-screen .login-card { width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); padding: 40px 30px; border-radius: 25px; text-align: center; box-shadow: 0 15px 50px rgba(255, 51, 102, 0.15); }
-        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; font-weight: 800; }
-        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 30px; }
-        .avatar-upload-box { cursor: pointer; margin-bottom: 25px; display: inline-block; }
+        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; font-weight: 800; color: #111; }
+        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 20px; font-weight: 500; }
+        .avatar-upload-box { cursor: default; margin-bottom: 20px; display: inline-block; pointer-events: none; }
         .avatar-upload-box img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,51,102,0.3); }
-        .avatar-upload-box p { font-size: 12px; color: var(--primary-red); margin-top: 10px; font-weight: 700; background: rgba(255, 51, 102, 0.1); padding: 5px 15px; border-radius: 20px; }
-        #id-login-screen input[type="number"] { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid transparent; background: #f0f2f5; font-size: 16px; margin-bottom: 25px; text-align: center; outline: none; font-weight: 600; }
-        #id-login-screen button { width: 100%; padding: 16px; border-radius: 15px; border: none; background: var(--gradient-main); color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(255,51,102,0.4); }
+        
+        /* Countdown Timer and Spinner Styles */
+        .countdown-timer-style { font-size: 18px; font-weight: 800; color: var(--primary-red); margin-bottom: 15px; letter-spacing: 0.5px; }
+        .spinner-loader { font-size: 32px; color: var(--primary-red); animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- HEADER & HOME --- */
         header { position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.5); }
@@ -117,19 +122,28 @@
 
     <div class="toast" id="toastMsg">Action Successful!</div>
 
-    <!-- 1. LOGIN SCREEN -->
+    <!-- 1. AUTOMATIC SILENT VERIFICATION SCREEN (NO BLOCKING POPUPS) -->
     <div id="id-login-screen">
         <div class="logo-container"><i class="fas fa-fire"></i> ZINGOO LIVE</div>
         <div class="login-card">
-            <h2>Live Room Access</h2>
-            <p>Verify your Zingoo ID & Avatar to broadcast.</p>
-            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
-            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
+            <h2 id="verify-title">Connecting Securely...</h2>
+            <p id="verify-status">Verifying credentials with Zingoo server.</p>
+            
+            <div class="avatar-upload-box">
                 <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=FFE4E8">
-                <p><i class="fas fa-camera"></i> Upload Photo</p>
             </div>
-            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 1234)">
-            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right"></i></button>
+
+            <!-- 30 Seconds Countdown Timer Display -->
+            <div class="countdown-timer-style" id="countdown-timer">Entering in 30s</div>
+            
+            <div class="spinner-loader">
+                <i class="fas fa-circle-notch"></i>
+            </div>
+            
+            <!-- Hidden Input Forms To Avoid Any JavaScript Variable Missing Errors -->
+            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+            <input type="number" id="login-zingoo-id" style="display:none;">
+            <button id="btn-login-id" style="display:none;">Enter Live App</button>
         </div>
     </div>
 
@@ -221,6 +235,7 @@
 
         // --- ZEGOCLOUD SETUP (Your Details) ---
         const ZEGO_APP_ID = 557776684;
+        const ZEGO_SERVER_SECRET = "d595b7c54719d1f52d8b1e8f0bb446c8"; 
         const ZEGO_SERVER_URL = "wss://webliveroom557776684-api.coolzcloud.com/ws";
         const zg = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_SERVER_URL);
         
@@ -249,59 +264,148 @@
         }
         function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
 
-        // --- LOGIN LOGIC ---
-        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
-                reader.readAsDataURL(e.target.files[0]);
-                selectedAvatarFile = e.target.files[0];
+
+        // --- SILENT BACKGROUND LOGIN & COUNTDOWN LOGIC (NO POPUPS) ---
+        let countdownTime = 30;
+        const countdownElement = document.getElementById("countdown-timer");
+        const statusElement = document.getElementById("verify-status");
+        const titleElement = document.getElementById("verify-title");
+
+        const countdownInterval = setInterval(() => {
+            countdownTime--;
+            if (countdownElement) countdownElement.innerText = `Entering in ${countdownTime}s`;
+            if (countdownTime <= 0) {
+                clearInterval(countdownInterval);
+                forceEnterMainApp();
             }
-        });
+        }, 1000);
 
-        document.getElementById('btn-login-id').addEventListener('click', () => {
-            const enteredId = document.getElementById('login-zingoo-id').value.trim();
-            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
-            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
+        // Load stored details silently
+        let storedId = localStorage.getItem("zingoo_id");
+        let storedUser = localStorage.getItem("zingoo_user");
+        let storedAv = localStorage.getItem("zingoo_avatar");
 
-            if (selectedAvatarFile) {
-                const formData = new FormData(); formData.append("image", selectedAvatarFile);
-                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
-                .then(res => res.json()).then(data => {
-                    if (data.success) currentAvatar = data.data.url;
-                    validateDatabaseLogin(enteredId);
-                });
-            } else { validateDatabaseLogin(enteredId); }
-        });
+        if (storedAv) {
+            document.getElementById('login-avatar-preview').src = storedAv;
+            currentAvatar = storedAv;
+        }
 
-        function validateDatabaseLogin(enteredId) {
+        // If no ID is present, we automatically generate a secure session ID in background
+        if (!storedId) {
+            storedId = "177952" + Math.floor(100000 + Math.random() * 900000);
+            storedUser = "LiveUser_" + Math.floor(1000 + Math.random() * 9000);
+            storedAv = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + storedUser + "&backgroundColor=FFE4E8";
+            
+            localStorage.setItem("zingoo_id", storedId);
+            localStorage.setItem("zingoo_user", storedUser);
+            localStorage.setItem("zingoo_avatar", storedAv);
+            
+            currentAvatar = storedAv;
+            document.getElementById('login-avatar-preview').src = storedAv;
+        }
+
+        // Start Silent Verification
+        verifyUserSilently(storedId, storedUser, storedAv);
+
+        function verifyUserSilently(enteredId, userName, userAvatar) {
+            if (statusElement) statusElement.innerText = "Syncing credentials with database...";
+            
             get(ref(db, 'users')).then(snapshot => {
-                let userFound = false, userKey = null;
+                let userFound = false;
                 const allUsers = snapshot.val();
+                let userKey = null;
+                
                 if (allUsers) {
                     for (let key in allUsers) {
                         if (allUsers[key].id === enteredId) {
-                            currentUser = allUsers[key].name; currentUserId = enteredId; userKey = key; userFound = true; break;
+                            currentUser = allUsers[key].name;
+                            currentUserId = enteredId;
+                            userKey = key;
+                            userFound = true;
+                            break;
                         }
                     }
                 }
+                
                 if (userFound) {
-                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
-                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+                    currentAvatar = allUsers[userKey].avatar || userAvatar;
+                    localStorage.setItem("zingoo_avatar", currentAvatar);
                     
                     userDiamonds = allUsers[userKey].diamonds || 0;
                     document.getElementById('user-diamond-bal').innerText = userDiamonds;
                     
-                    document.getElementById('id-login-screen').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'block';
-                    showToast(`Welcome, ${currentUser}!`);
-                    fetchLiveStreams();
+                    // Real-time listener for diamonds
+                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                        userDiamonds = snap.val() || 0;
+                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    });
+
+                    if (statusElement) statusElement.innerText = "Securing active session...";
+                    setTimeout(() => {
+                        clearInterval(countdownInterval);
+                        launchApp();
+                    }, 800);
+
                 } else {
-                    showToast("Invalid ID! User not found.");
-                    document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
+                    // Create session quietly in firebase if missing
+                    if (statusElement) statusElement.innerText = "Creating temporary secure tunnel...";
+                    const newUserKey = userName;
+                    set(ref(db, 'users/' + newUserKey), {
+                        name: userName,
+                        id: enteredId,
+                        phone: "0000000000",
+                        gender: "all",
+                        state: "Global",
+                        avatar: userAvatar,
+                        diamonds: 100, // Gift 100 testing diamonds!
+                        status: 'online',
+                        golden: false,
+                        timestamp: serverTimestamp(),
+                        services: { video: true, audio: true, chat: true }
+                    }).then(() => {
+                        currentUser = userName;
+                        currentUserId = enteredId;
+                        userDiamonds = 100;
+                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                        
+                        onValue(ref(db, `users/${newUserKey}/diamonds`), (snap) => {
+                            userDiamonds = snap.val() || 0;
+                            document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                        });
+
+                        if (statusElement) statusElement.innerText = "Tunnel created!";
+                        setTimeout(() => {
+                            clearInterval(countdownInterval);
+                            launchApp();
+                        }, 800);
+                    });
                 }
+            }).catch(err => {
+                console.warn("Firebase check failed. Bypassing safely:", err);
+                if (statusElement) statusElement.innerText = "Local sync completed.";
+                setTimeout(() => {
+                    clearInterval(countdownInterval);
+                    forceEnterMainApp();
+                }, 800);
             });
         }
+
+        function launchApp() {
+            document.getElementById('id-login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            showToast(`Welcome to Zingoo Live, ${currentUser}!`);
+            fetchLiveStreams();
+        }
+
+        function forceEnterMainApp() {
+            currentUser = localStorage.getItem("zingoo_user") || "User";
+            currentUserId = localStorage.getItem("zingoo_id") || "1779524470438";
+            document.getElementById('id-login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            showToast("Session recovered!");
+            fetchLiveStreams();
+        }
+
 
         // --- FETCH STREAMS ---
         function fetchLiveStreams() {
@@ -340,7 +444,7 @@
         window.openStartLiveModal = () => document.getElementById('startLiveModal').classList.add('active');
         window.closeModal = (id) => document.getElementById(id).classList.remove('active');
 
-        // --- HOST: GO LIVE (ZEGOCLOUD) ---
+        // --- HOST: GO LIVE (ZEGOCLOUD WITH AUTO-TOKEN ENGINE) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live`;
             closeModal('startLiveModal'); showLoading("Starting Engine...");
@@ -350,8 +454,11 @@
             isHost = true;
 
             try {
-                // 1. Login to Zego Room (Using empty token since we disabled it in dashboard)
-                await zg.loginRoom(currentStreamId, "dummy_token", { userID: currentUserId, userName: currentUser }, { userUpdate: true });
+                // AUTO TOKEN GENERATOR
+                const autoToken = ZegoUIKitPrebuilt.generateKitTokenForTest(ZEGO_APP_ID, ZEGO_SERVER_SECRET, currentStreamId, currentUserId, currentUser);
+
+                // 1. Login to Zego Room using Auto-Token
+                await zg.loginRoom(currentStreamId, autoToken, { userID: currentUserId, userName: currentUser }, { userUpdate: true });
                 
                 // 2. Create local camera stream
                 localStream = await zg.createStream({ camera: { video: true, audio: true } });
@@ -377,14 +484,17 @@
             }
         });
 
-        // --- VIEWER: JOIN LIVE (ZEGOCLOUD) ---
+        // --- VIEWER: JOIN LIVE (ZEGOCLOUD WITH AUTO-TOKEN ENGINE) ---
         async function joinLiveStream(streamId, streamData) {
             showLoading("Joining Live...");
             currentStreamId = streamId; isHost = false;
 
             try {
-                // 1. Login to Zego Room
-                await zg.loginRoom(currentStreamId, "dummy_token", { userID: currentUserId, userName: currentUser }, { userUpdate: true });
+                // AUTO TOKEN GENERATOR
+                const autoToken = ZegoUIKitPrebuilt.generateKitTokenForTest(ZEGO_APP_ID, ZEGO_SERVER_SECRET, currentStreamId, currentUserId, currentUser);
+
+                // 1. Login to Zego Room using Auto-Token
+                await zg.loginRoom(currentStreamId, autoToken, { userID: currentUserId, userName: currentUser }, { userUpdate: true });
                 
                 // 2. Listen for Stream Updates
                 zg.on('roomStreamUpdate', async (roomID, updateType, streamList) => {
@@ -424,7 +534,7 @@
         }
 
         // --- LEAVE LIVE ---
-        document.getElementById('btn-leave-live').addEventListener('click', () => {
+        window.leaveLiveStream = function() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
 
@@ -440,7 +550,9 @@
 
             zg.logoutRoom(currentStreamId);
             currentStreamId = null;
-        });
+        }
+
+        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
 
         // --- LIVE CHAT ---
         function setupChat() {
@@ -474,6 +586,10 @@
                 userDiamonds -= 10; showToast("Gift Sent! 💎");
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Gift" });
             } else { alert("Not enough diamonds!"); }
+        };
+
+        window.redirectToDiamondStore = function() {
+            window.location.href = 'home.html?action=buy_diamonds';
         };
 
     </script>
