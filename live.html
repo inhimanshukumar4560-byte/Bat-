@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +49,7 @@
         
         /* Countdown Timer and Spinner Styles */
         .countdown-timer-style { font-size: 18px; font-weight: 800; color: var(--primary-red); margin-bottom: 15px; letter-spacing: 0.5px; }
-        .spinner-loader { font-size: 32px; color: var(--primary-red); animation: spin 1s linear infinite; margin-bottom: 10px; }
+        .spinner-loader { font-size: 32px; color: var(--primary-red); animation: spin 1s linear infinite; margin-bottom: 10px; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- HEADER & HOME --- */
@@ -136,7 +137,7 @@
             <!-- 30 Seconds Countdown Timer Display -->
             <div class="countdown-timer-style" id="countdown-timer">Entering in 30s</div>
             
-            <div class="spinner-loader">
+            <div class="spinner-loader" id="verification-spinner">
                 <i class="fas fa-circle-notch"></i>
             </div>
             
@@ -237,7 +238,13 @@
         const ZEGO_APP_ID = 557776684;
         const ZEGO_SERVER_SECRET = "d595b7c54719d1f52d8b1e8f0bb446c8"; 
         const ZEGO_SERVER_URL = "wss://webliveroom557776684-api.coolzcloud.com/ws";
-        const zg = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_SERVER_URL);
+        
+        let zg = null;
+        try {
+            zg = new ZegoExpressEngine(ZEGO_APP_ID, ZEGO_SERVER_URL);
+        } catch (e) {
+            console.error("ZegoExpressEngine constructor failed:", e);
+        }
         
         // Zego variables
         let localStream = null;
@@ -255,57 +262,88 @@
 
         function showToast(message) {
             const toast = document.getElementById('toastMsg');
-            toast.innerText = message; toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            if (toast) {
+                toast.innerText = message; toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
         }
         function showLoading(text) {
-            document.getElementById('loading-text').innerText = text;
-            document.getElementById('loading-overlay').style.display = 'flex';
+            const textEl = document.getElementById('loading-text');
+            const overlayEl = document.getElementById('loading-overlay');
+            if (textEl) textEl.innerText = text;
+            if (overlayEl) overlayEl.style.display = 'flex';
         }
-        function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
+        function hideLoading() { 
+            const overlayEl = document.getElementById('loading-overlay');
+            if (overlayEl) overlayEl.style.display = 'none'; 
+        }
 
-
-        // --- SILENT BACKGROUND LOGIN & COUNTDOWN LOGIC (NO POPUPS) ---
+        // --- 100% STABLE RECOVERY & BYPASS TIMEOUT IMPLEMENTATION ---
         let countdownTime = 30;
+        let countdownInterval = null;
+
+        // Secure DOM access checks to avoid crashes
         const countdownElement = document.getElementById("countdown-timer");
         const statusElement = document.getElementById("verify-status");
-        const titleElement = document.getElementById("verify-title");
 
-        const countdownInterval = setInterval(() => {
-            countdownTime--;
-            if (countdownElement) countdownElement.innerText = `Entering in ${countdownTime}s`;
-            if (countdownTime <= 0) {
-                clearInterval(countdownInterval);
-                forceEnterMainApp();
-            }
-        }, 1000);
+        // Safely start countdown. No matter what, after 30s we bypass to app.
+        try {
+            countdownInterval = setInterval(() => {
+                countdownTime--;
+                if (countdownElement) countdownElement.innerText = `Entering in ${countdownTime}s`;
+                if (countdownTime <= 0) {
+                    clearInterval(countdownInterval);
+                    forceEnterMainApp();
+                }
+            }, 1000);
+        } catch(e) {
+            console.error("Timer failed to set up:", e);
+        }
 
-        // Load stored details silently
-        let storedId = localStorage.getItem("zingoo_id");
-        let storedUser = localStorage.getItem("zingoo_user");
-        let storedAv = localStorage.getItem("zingoo_avatar");
+        // Safe profile details fetching
+        let storedId = "";
+        let storedUser = "";
+        let storedAv = "";
 
-        if (storedAv) {
-            document.getElementById('login-avatar-preview').src = storedAv;
+        try {
+            storedId = localStorage.getItem("zingoo_id");
+            storedUser = localStorage.getItem("zingoo_user");
+            storedAv = localStorage.getItem("zingoo_avatar");
+        } catch (e) {
+            console.error("Local storage error:", e);
+        }
+
+        const avatarPreview = document.getElementById('login-avatar-preview');
+        if (avatarPreview && storedAv) {
+            avatarPreview.src = storedAv;
             currentAvatar = storedAv;
         }
 
-        // If no ID is present, we automatically generate a secure session ID in background
+        // Silent fallbacks if user came directly
         if (!storedId) {
             storedId = "177952" + Math.floor(100000 + Math.random() * 900000);
             storedUser = "LiveUser_" + Math.floor(1000 + Math.random() * 9000);
             storedAv = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + storedUser + "&backgroundColor=FFE4E8";
             
-            localStorage.setItem("zingoo_id", storedId);
-            localStorage.setItem("zingoo_user", storedUser);
-            localStorage.setItem("zingoo_avatar", storedAv);
+            try {
+                localStorage.setItem("zingoo_id", storedId);
+                localStorage.setItem("zingoo_user", storedUser);
+                localStorage.setItem("zingoo_avatar", storedAv);
+            } catch (e) {
+                console.error("Failed to write offline credentials:", e);
+            }
             
             currentAvatar = storedAv;
-            document.getElementById('login-avatar-preview').src = storedAv;
+            if (avatarPreview) avatarPreview.src = storedAv;
         }
 
-        // Start Silent Verification
-        verifyUserSilently(storedId, storedUser, storedAv);
+        // Run verification safely
+        try {
+            verifyUserSilently(storedId, storedUser, storedAv);
+        } catch(e) {
+            console.error("Verification engine failed, forcing bypass:", e);
+            forceEnterMainApp();
+        }
 
         function verifyUserSilently(enteredId, userName, userAvatar) {
             if (statusElement) statusElement.innerText = "Syncing credentials with database...";
@@ -317,7 +355,7 @@
                 
                 if (allUsers) {
                     for (let key in allUsers) {
-                        if (allUsers[key].id === enteredId) {
+                        if (allUsers[key] && allUsers[key].id === enteredId) {
                             currentUser = allUsers[key].name;
                             currentUserId = enteredId;
                             userKey = key;
@@ -329,27 +367,28 @@
                 
                 if (userFound) {
                     currentAvatar = allUsers[userKey].avatar || userAvatar;
-                    localStorage.setItem("zingoo_avatar", currentAvatar);
+                    try {
+                        localStorage.setItem("zingoo_avatar", currentAvatar);
+                    } catch(e){}
                     
                     userDiamonds = allUsers[userKey].diamonds || 0;
-                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
                     
-                    // Real-time listener for diamonds
+                    const dbEl = document.getElementById('user-diamond-bal');
+                    if (dbEl) dbEl.innerText = userDiamonds;
+                    
                     onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
                         userDiamonds = snap.val() || 0;
-                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                        if (dbEl) dbEl.innerText = userDiamonds;
                     });
 
                     if (statusElement) statusElement.innerText = "Securing active session...";
                     setTimeout(() => {
-                        clearInterval(countdownInterval);
                         launchApp();
                     }, 800);
 
                 } else {
-                    // Create session quietly in firebase if missing
                     if (statusElement) statusElement.innerText = "Creating temporary secure tunnel...";
-                    const newUserKey = userName;
+                    const newUserKey = userName.replace(/[.#$\[\]]/g, "");
                     set(ref(db, 'users/' + newUserKey), {
                         name: userName,
                         id: enteredId,
@@ -357,7 +396,7 @@
                         gender: "all",
                         state: "Global",
                         avatar: userAvatar,
-                        diamonds: 100, // Gift 100 testing diamonds!
+                        diamonds: 100, 
                         status: 'online',
                         golden: false,
                         timestamp: serverTimestamp(),
@@ -366,51 +405,75 @@
                         currentUser = userName;
                         currentUserId = enteredId;
                         userDiamonds = 100;
-                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                        
+                        const dbEl = document.getElementById('user-diamond-bal');
+                        if (dbEl) dbEl.innerText = userDiamonds;
                         
                         onValue(ref(db, `users/${newUserKey}/diamonds`), (snap) => {
                             userDiamonds = snap.val() || 0;
-                            document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                            if (dbEl) dbEl.innerText = userDiamonds;
                         });
 
                         if (statusElement) statusElement.innerText = "Tunnel created!";
                         setTimeout(() => {
-                            clearInterval(countdownInterval);
                             launchApp();
                         }, 800);
+                    }).catch(err => {
+                        console.error("User registration failed silently. Bypassing safely:", err);
+                        forceEnterMainApp();
                     });
                 }
             }).catch(err => {
-                console.warn("Firebase check failed. Bypassing safely:", err);
+                console.warn("Firebase fetch error, bypassing directly:", err);
                 if (statusElement) statusElement.innerText = "Local sync completed.";
                 setTimeout(() => {
-                    clearInterval(countdownInterval);
                     forceEnterMainApp();
                 }, 800);
             });
         }
 
         function launchApp() {
-            document.getElementById('id-login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
+            try {
+                clearInterval(countdownInterval);
+            } catch(e){}
+            
+            const loginScreen = document.getElementById('id-login-screen');
+            const mainApp = document.getElementById('main-app');
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (mainApp) mainApp.style.display = 'block';
+            
             showToast(`Welcome to Zingoo Live, ${currentUser}!`);
             fetchLiveStreams();
         }
 
         function forceEnterMainApp() {
-            currentUser = localStorage.getItem("zingoo_user") || "User";
-            currentUserId = localStorage.getItem("zingoo_id") || "1779524470438";
-            document.getElementById('id-login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            showToast("Session recovered!");
+            try {
+                clearInterval(countdownInterval);
+            } catch(e){}
+            
+            try {
+                currentUser = localStorage.getItem("zingoo_user") || "User";
+                currentUserId = localStorage.getItem("zingoo_id") || "1779524470438";
+            } catch (e) {
+                currentUser = "User";
+                currentUserId = "1779524470438";
+            }
+            
+            const loginScreen = document.getElementById('id-login-screen');
+            const mainApp = document.getElementById('main-app');
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (mainApp) mainApp.style.display = 'block';
+            
+            showToast("Session recovered successfully!");
             fetchLiveStreams();
         }
-
 
         // --- FETCH STREAMS ---
         function fetchLiveStreams() {
             onValue(ref(db, 'live_streams'), (snapshot) => {
-                const grid = document.getElementById('liveGrid'); grid.innerHTML = '';
+                const grid = document.getElementById('liveGrid'); 
+                if (!grid) return;
+                grid.innerHTML = '';
                 const streams = snapshot.val();
                 let count = 0;
                 
@@ -528,7 +591,8 @@
             document.getElementById('live-host-avatar').src = hAvatar;
             
             onValue(ref(db, `live_streams/${currentStreamId}/viewers`), (snap) => {
-                document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+                const countEl = document.getElementById('live-viewer-count');
+                if (countEl) countEl.innerText = snap.val() ? Object.keys(snap.val()).length : 0;
             });
             setupChat();
         }
@@ -556,7 +620,9 @@
 
         // --- LIVE CHAT ---
         function setupChat() {
-            const chatBox = document.getElementById('live-chat-box'); chatBox.innerHTML = ''; 
+            const chatBox = document.getElementById('live-chat-box'); 
+            if (!chatBox) return;
+            chatBox.innerHTML = ''; 
             onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
                 const data = snap.val();
                 if(data) {
