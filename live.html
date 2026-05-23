@@ -9,21 +9,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- ZEGOCLOUD SDKs for 10000+ Viewers scalability -->
-    <script src="https://unpkg.com/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js"></script>
-    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
 
     <style>
         :root {
-            --baby-pink: #FFF0F5;
+            --baby-pink: #FFE4E8;
             --pink-dark: #FFB6C1;
             --primary-red: #FF3366;
             --dark-text: #2c2c2c;
             --white: #FFFFFF;
             --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
             --gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e);
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
             --chat-bg: rgba(0, 0, 0, 0.45);
         }
 
@@ -35,7 +32,7 @@
         }
 
         body {
-            background: var(--baby-pink);
+            background: linear-gradient(135deg, var(--baby-pink) 0%, #FFF0F5 100%);
             background-attachment: fixed;
             color: var(--dark-text);
             min-height: 100vh;
@@ -124,170 +121,120 @@
         }
         #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,51,102,0.5); }
 
-        /* --- NEW UI: Header Styling --- */
-        #main-app { padding-bottom: 80px; } /* Prevent bottom nav from hiding content */
-        
-        .app-header {
+        /* --- Header Styling (Glassmorphism) --- */
+        header {
             position: sticky;
             top: 0;
             z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: rgba(255, 240, 245, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.2);
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .logo-nav {
-            font-size: 26px;
+        .logo {
+            font-size: 28px;
             font-weight: 800;
-            color: var(--primary-red);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.5px;
-        }
-        .logo-nav span {
-            background: var(--primary-red);
-            color: white;
-            font-size: 10px;
-            padding: 3px 6px;
-            border-radius: 8px;
-            vertical-align: middle;
-            margin-bottom: 2px;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            cursor: pointer;
         }
 
-        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
 
         .diamond-bal {
-            background: rgba(255,255,255,0.9); border-radius: 20px; 
-            padding: 5px 6px 5px 12px; display: flex; align-items: center; gap: 8px; 
-            font-weight: 700; font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); cursor: pointer; color: var(--dark-text);
+            background: linear-gradient(135deg, #fff, #f9f9f9); border: 1px solid var(--pink-dark); color: #d97706; 
+            padding: 8px 16px; border-radius: 25px; font-size: 14px; font-weight: 800;
+            display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .diamond-bal i { color: #ff4070; font-size: 14px; }
-        .plus-btn { background: var(--primary-red); color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-        
-        .notification-bell {
-            position: relative; width: 35px; height: 35px; border-radius: 50%; background: white; 
-            display: flex; align-items: center; justify-content: center; color: #555; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 18px; cursor: pointer;
-        }
-        .notification-bell .badge {
-            position: absolute; top: -2px; right: -2px; background: var(--primary-red); color: white;
-            font-size: 9px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; border: 2px solid var(--baby-pink);
+        .diamond-bal i { font-size: 16px; animation: shine 2s infinite linear; }
+
+        .start-live-btn {
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
+            transition: all 0.3s ease;
         }
 
-        /* --- NEW UI: Hero Banner --- */
-        .hero-banner {
-            margin: 10px 20px 20px; border-radius: 20px; background: var(--gradient-main);
-            padding: 20px; display: flex; align-items: center; justify-content: space-between;
-            color: white; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(255,51,102,0.3);
-        }
-        .hero-banner::after {
-            content: '\f3a5'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            position: absolute; right: -20px; top: 10px; font-size: 120px; color: rgba(255,255,255,0.15); transform: rotate(15deg); pointer-events: none;
-        }
-        .banner-left { display: flex; align-items: center; gap: 12px; z-index: 2; }
-        .banner-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
-        .banner-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-        .banner-text p { font-size: 11px; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-weight: 500; }
-        .go-live-banner-btn {
-            background: white; color: var(--primary-red); border: none; padding: 6px 15px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        .start-live-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+            background: linear-gradient(135deg, #ff4070, #ff2055);
         }
 
-        /* --- NEW UI: Categories Tabs --- */
-        .category-tabs {
-            display: flex; gap: 12px; overflow-x: auto; padding: 0 20px; margin-bottom: 20px;
-        }
-        .category-tabs::-webkit-scrollbar { display: none; }
-        .tab {
-            background: white; border-radius: 20px; padding: 8px 18px; font-size: 13px; font-weight: 600; 
-            color: var(--primary-red); white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer;
-            display: flex; align-items: center; gap: 6px; transition: all 0.3s;
-        }
-        .tab.active { background: var(--gradient-main); color: white; box-shadow: 0 5px 15px rgba(255,51,102,0.3); }
+        .start-live-btn i { animation: pulse-icon 1.5s infinite; }
 
-        /* --- NEW UI: Section Header --- */
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 15px;
-        }
-        .section-header h2 { font-size: 18px; font-weight: 800; color: #111; display: flex; align-items: center; gap: 8px; }
-        .live-count-badge { background: #ffe4e8; color: var(--primary-red); font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-        .see-all { font-size: 12px; color: var(--primary-red); font-weight: 600; cursor: pointer; }
+        /* --- Main Content & Grid (2-2 Layout) --- */
+        main { padding: 25px; max-width: 900px; margin: 0 auto; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--primary-red); display: flex; align-items: center; gap: 10px; }
 
-        /* --- NEW UI: 3-Column Grid --- */
         .live-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 0 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
 
         .live-card {
-            position: relative; border-radius: 15px; overflow: hidden; aspect-ratio: 4/5; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); background: #fff; transform: translateZ(0);
+            position: relative;
+            border-radius: 25px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            background: #fff;
+            transform: translateZ(0);
         }
 
         .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
         .live-card:hover img { transform: scale(1.1); }
         .live-card::after {
-            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);
+            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
             z-index: 1; pointer-events: none;
         }
 
         .card-top-info {
-            position: absolute; top: 8px; left: 8px; right: 8px;
+            position: absolute; top: 12px; left: 12px; right: 12px;
             display: flex; justify-content: space-between; align-items: center; z-index: 2;
         }
 
-        .live-badge { background: var(--primary-red); color: white; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite; }
-        .scheduled-badge { background: #f39c12; color: white; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px; }
+        .live-badge {
+            background: var(--primary-red); color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; animation: pulse-bg 1.5s infinite;
+        }
+        
+        .scheduled-badge {
+            background: #f39c12; color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
+        }
 
-        .viewers { background: rgba(0, 0, 0, 0.5); color: white; font-size: 9px; font-weight: 600; padding: 3px 6px; border-radius: 6px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 3px; }
+        .viewers {
+            background: rgba(0, 0, 0, 0.6); color: white; font-size: 12px; font-weight: 600; padding: 5px 10px;
+            border-radius: 10px; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 5px;
+        }
 
         .card-bottom-info {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 8px 8px;
-            color: white; z-index: 2; display: flex; flex-direction: column; gap: 2px;
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 15px 15px;
+            color: white; z-index: 2; display: flex; flex-direction: column; gap: 4px;
         }
 
-        .user-name { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .verified-icon { color: white; font-size: 9px; background: #3498db; border-radius: 50%; padding: 2px; }
-        .live-title { font-size: 9px; font-weight: 500; color: #ddd; text-shadow: 0 1px 2px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; justify-content: space-between; }
-        .live-diamond-stat { color: #ff9fb3; font-weight: 700; display: flex; align-items: center; gap: 3px; }
-
-        /* --- NEW UI: Promo Bar --- */
-        .promo-bar {
-            margin: 20px; background: rgba(255,255,255,0.8); border-radius: 15px; padding: 12px 15px;
-            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 5px 15px rgba(255,182,193,0.2);
-        }
-        .promo-item { display: flex; align-items: center; gap: 8px; }
-        .promo-item i { font-size: 20px; color: var(--primary-red); }
-        .promo-text h4 { font-size: 11px; font-weight: 700; color: var(--dark-text); }
-        .promo-text p { font-size: 9px; color: #888; font-weight: 500; }
-        .promo-divider { width: 1px; height: 30px; background: #eee; }
-
-        /* --- NEW UI: Bottom Navigation Bar --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff;
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 90; border-top-left-radius: 25px; border-top-right-radius: 25px;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px; color: #a0a0a0; font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.3s;
-        }
-        .nav-item.active { color: var(--primary-red); }
-        .nav-item i { font-size: 20px; }
-        
-        .nav-center-btn {
-            background: var(--gradient-main); color: white; width: 55px; height: 55px;
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transform: translateY(-20px); box-shadow: 0 8px 20px rgba(255,51,102,0.4); border: 4px solid #fff; cursor: pointer;
-        }
-        .nav-center-btn i { font-size: 20px; margin-bottom: 2px; }
-        .nav-center-btn span { font-size: 9px; font-weight: 700; }
+        .user-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .live-title { font-size: 12px; font-weight: 500; color: #f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* --- Start Live Modal --- */
         .modal-overlay {
@@ -338,7 +285,7 @@
         .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
+        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) - REDESIGNED FOR BETTER CHAT --- */
         #live-view-screen {
             position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
         }
@@ -347,7 +294,7 @@
         
         #remote-live-video, #local-live-video {
             width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
-            transform: scaleX(-1);
+            transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
             -webkit-transform: scaleX(-1);
         }
         
@@ -367,43 +314,70 @@
             display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
         }
         
-        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
-        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; }
+        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
         
-        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s; }
+        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
         .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
         
+        /* --- HIGHLY IMPROVED CHAT UI SECTION --- */
         .live-overlay-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
             background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
             display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
         }
         
+        /* Massive Chat Area Upgrade */
         .chat-box { 
-            pointer-events: auto; max-height: 45vh; overflow-y: auto; margin-bottom: 20px; 
-            display: flex; flex-direction: column; gap: 12px; padding-right: 10px;
+            pointer-events: auto;
+            max-height: 45vh; /* Allows chat to take up almost half the screen nicely */
+            overflow-y: auto; 
+            margin-bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            padding-right: 10px;
+            /* Fade effect at the top of chat */
             mask-image: linear-gradient(to top, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
         }
+        
+        /* Custom scrollbar just for chat to make it neat */
         .chat-box::-webkit-scrollbar { width: 4px; display: block; }
+        .chat-box::-webkit-scrollbar-track { background: transparent; }
         .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
 
         .chat-msg { 
-            color: #fff; font-size: 14px; font-weight: 500; background: var(--chat-bg); 
-            padding: 10px 16px; border-radius: 20px; width: max-content; max-width: 85%; 
-            backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.05);
-            word-wrap: break-word; white-space: normal; line-height: 1.4;
-            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; transform-origin: bottom left;
+            color: #fff; 
+            font-size: 14px; 
+            font-weight: 500;
+            background: var(--chat-bg); 
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            width: max-content; 
+            max-width: 85%; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            transform-origin: bottom left;
         }
         .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
+        
+        /* System message style */
         .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
+        
+        /* Gift message style */
         .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
         .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
         .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
-        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
         .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
         
@@ -414,20 +388,36 @@
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
             display: none; justify-content: center; align-items: center; z-index: 9999;
-            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px);
+            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
         }
 
         /* --- Animations --- */
-        @keyframes pulse-bg { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); } }
-        @keyframes pulse-icon { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pulse-bg {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+        @keyframes pulse-icon {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shine {
+            0% { color: #d97706; text-shadow: none; }
+            50% { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.8); }
+            100% { color: #d97706; text-shadow: none; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
         .toast {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
             background: rgba(255, 255, 255, 0.95); color: var(--dark-text); padding: 14px 28px; border-radius: 30px;
             font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             border-left: 5px solid var(--primary-red); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100000;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -451,109 +441,37 @@
             </div>
 
             <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
-            <button id="btn-login-id">Enter App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
         </div>
     </div>
 
-    <!-- 2. MAIN HEADER & HOME PAGE (NEW UI) -->
+    <!-- 2. MAIN HEADER & HOME PAGE -->
     <div id="main-app" style="display: none;">
-        
-        <!-- App Header -->
-        <header class="app-header">
-            <div class="logo-nav">ZINGOO <span>LIVE</span></div>
+        <header>
+            <div class="logo" onclick="window.location.href='index.html'">Zingoo</div>
             <div class="header-actions">
                 <div class="diamond-bal" onclick="redirectToDiamondStore()">
                     <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
-                    <div class="plus-btn"><i class="fas fa-plus"></i></div>
                 </div>
-                <div class="notification-bell">
-                    <i class="far fa-bell"></i>
-                    <div class="badge">8</div>
-                </div>
+                <button class="start-live-btn" onclick="openStartLiveModal()">
+                    <i class="fas fa-video"></i> Go Live
+                </button>
             </div>
         </header>
 
-        <!-- Hero Banner -->
-        <div class="hero-banner">
-            <div class="banner-left">
-                <img id="ui-hero-avatar" class="banner-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <div class="banner-text">
-                    <h3 id="ui-hero-name">Hi, Zingoo Star ✨</h3>
-                    <p>Let's go live & connect</p>
-                    <button class="go-live-banner-btn" onclick="openStartLiveModal()">
-                        <i class="fas fa-video"></i> Go Live Now
-                    </button>
-                </div>
+        <main>
+            <h2 class="section-title"><i class="fas fa-fire-flame-curved"></i> Trending Now</h2>
+            <!-- Dynamic Grid -->
+            <div class="live-grid" id="liveGrid">
+                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;">Fetching active streams...</p>
             </div>
-        </div>
-
-        <!-- Category Tabs -->
-        <div class="category-tabs">
-            <div class="tab active"><i class="fas fa-broadcast-tower"></i> Live Now</div>
-            <div class="tab"><i class="fas fa-fire"></i> Popular</div>
-            <div class="tab"><i class="fas fa-map-marker-alt"></i> Nearby</div>
-            <div class="tab"><i class="fas fa-star"></i> New Star</div>
-        </div>
-
-        <!-- Section Title -->
-        <div class="section-header">
-            <h2>Live Now <span class="live-count-badge">Active</span></h2>
-            <span class="see-all">See All <i class="fas fa-chevron-right" style="font-size: 10px;"></i></span>
-        </div>
-
-        <!-- Dynamic Grid (3-Column) -->
-        <div class="live-grid" id="liveGrid">
-            <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 13px; font-weight: 600; margin-top: 20px; padding: 20px;">Fetching active streams...</p>
-        </div>
-
-        <!-- Promo Bar -->
-        <div class="promo-bar">
-            <div class="promo-item">
-                <i class="fas fa-gift" style="color: #ff3366;"></i>
-                <div class="promo-text">
-                    <h4>Daily Bonus</h4>
-                    <p>Claim Now</p>
-                </div>
-            </div>
-            <div class="promo-divider"></div>
-            <div class="promo-item">
-                <i class="far fa-gem" style="color: #f39c12;"></i>
-                <div class="promo-text">
-                    <h4>Diamond Pass</h4>
-                    <p>Level Up</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation Bar -->
-        <div class="bottom-nav">
-            <div class="nav-item active">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-search"></i>
-                <span>Explore</span>
-            </div>
-            <div class="nav-center-btn" onclick="openStartLiveModal()">
-                <i class="fas fa-video"></i>
-                <span>Go Live</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-comment-dots"></i>
-                <span>Message</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-user"></i>
-                <span>Profile</span>
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- 3. START LIVE MODAL -->
     <div class="modal-overlay" id="startLiveModal">
         <div class="modal-box">
-            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px;"></i>
+            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(255,51,102,0.3));"></i>
             <h3>Ready to Stream?</h3>
             <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
             
@@ -562,7 +480,7 @@
                 <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
             </div>
             
-            <!-- Past Thumbnails & Schedule -->
+            <!-- NEW: Past Thumbnails & Schedule Options -->
             <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
                 <p>Or choose previous thumbnail:</p>
                 <div class="past-thumbs-list" id="past-thumbs-container"></div>
@@ -583,10 +501,12 @@
     <!-- 4. ACTUAL LIVE VIEW SCREEN -->
     <div id="live-view-screen">
         <div class="live-video-container">
+            <!-- Broadcaster Video -->
             <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            <!-- Viewer Video -->
             <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             
-            <!-- THE FIX: Unmute Button -->
+            <!-- THE FIX: Unmute Button for Autoplay blocked browsers -->
             <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
             </div>
@@ -622,6 +542,7 @@
         <p id="loading-text">Connecting...</p>
     </div>
 
+
     <!-- ============================================== -->
     <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
     <!-- ============================================== -->
@@ -630,8 +551,10 @@
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
+        // 1. Disable Right Click (Context Menu)
         document.addEventListener('contextmenu', event => event.preventDefault());
 
+        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
         document.addEventListener('keydown', (e) => {
             if (e.key === 'PrintScreen' || 
                 (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
@@ -641,6 +564,7 @@
             }
         });
 
+        // 3. Blur screen if app loses focus (minimizing screen recording/screenshot risk)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 document.body.classList.add('security-blur');
@@ -683,9 +607,6 @@
         let isHost = false;
         let hostPeerConnections = {};
         let viewerPeerConnection = null;
-        
-        // ZegoCloud Setup
-        let zg = null;
 
         // --- TOAST FUNCTION ---
         function showToast(message) {
@@ -713,6 +634,7 @@
             const storedAv = localStorage.getItem("zingoo_avatar");
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             
+            // Auto-login trigger
             document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
             validateDatabaseLogin(storedId);
         }
@@ -778,10 +700,6 @@
                     userDiamonds = allUsers[userKey].diamonds || 0;
                     document.getElementById('user-diamond-bal').innerText = userDiamonds;
                     
-                    // Update Hero Banner Details dynamically
-                    document.getElementById('ui-hero-name').innerText = `Hi, ${currentUser} ✨`;
-                    document.getElementById('ui-hero-avatar').src = currentAvatar;
-                    
                     loginScreen.style.display = 'none';
                     mainApp.style.display = 'block';
                     showToast(`Welcome, ${currentUser}!`);
@@ -794,11 +712,11 @@
                     });
                 } else {
                     showToast("Invalid ID! User not found.");
-                    document.getElementById('btn-login-id').innerHTML = 'Enter App <i class="fas fa-arrow-right"></i>';
+                    document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
                 }
             }).catch(err => {
                 showToast("Connection error!");
-                document.getElementById('btn-login-id').innerHTML = 'Enter App <i class="fas fa-arrow-right"></i>';
+                document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
@@ -865,7 +783,7 @@
             }
         }
 
-        // --- 3. FETCH LIVE STREAMS (GRID - NEW 3 COLUMN UI) ---
+        // --- 3. FETCH LIVE STREAMS (GRID) ---
         const gridContainer = document.getElementById('liveGrid');
 
         function fetchLiveStreams() {
@@ -882,11 +800,8 @@
                             const thumbUrl = data.thumbnail || data.hostAvatar; 
                             
                             const badgeHTML = data.isLive ? 
-                                `<span class="live-badge">LIVE</span>` : 
-                                `<span class="scheduled-badge">SCHED</span>`;
-
-                            // Generating random diamond count just like the image reference (for UI presentation)
-                            const fakeDiamonds = (Math.random() * (5.5 - 0.5) + 0.5).toFixed(1) + 'K';
+                                `<span class="live-badge"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i>LIVE</span>` : 
+                                `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
 
                             const card = document.createElement('div');
                             card.className = 'live-card';
@@ -909,11 +824,8 @@
                                     ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
                                 </div>
                                 <div class="card-bottom-info">
-                                    <div class="user-name">${data.hostName} <i class="fas fa-check verified-icon"></i></div>
-                                    <div class="live-title">
-                                        <span>${data.title || "Let's talk ✨"}</span>
-                                        <span class="live-diamond-stat"><i class="fas fa-gem"></i> ${fakeDiamonds}</span>
-                                    </div>
+                                    <div class="user-name">${data.hostName}</div>
+                                    <div class="live-title">${data.title}</div>
                                 </div>
                             `;
                             gridContainer.appendChild(card);
@@ -922,7 +834,7 @@
                 }
                 
                 if(count === 0) {
-                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 13px; font-weight: 600; padding: 20px;"><i class="fas fa-video-slash" style="display:block; font-size:25px; margin-bottom:8px; color:#ccc;"></i>No one is live. Be the first!</p>';
+                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;"><i class="fas fa-video-slash" style="display:block; font-size:30px; margin-bottom:10px; color:#ccc;"></i>No one is currently live. Be the first!</p>';
                 }
             });
         }
@@ -976,6 +888,7 @@
                 }
 
                 showLoading("Accessing Camera & Mic...");
+                // Guaranteed microphone access capture
                 localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 showLoading("Starting Stream...");
                 
@@ -1056,37 +969,52 @@
             }
 
             onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
+                const viewerId = snapshot.key;
+                const viewerData = snapshot.val();
+                
                 get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
                     document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
                 });
+
+                if (viewerData.offer) {
+                    const pc = new RTCPeerConnection(iceServers);
+                    hostPeerConnections[viewerId] = pc;
+
+                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+                    pc.onicecandidate = e => {
+                        if (e.candidate) {
+                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
+                        }
+                    };
+
+                    const viewerCandidatesQueue = [];
+                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
+                        if(snap.val()) {
+                            if(pc.remoteDescription && pc.remoteDescription.type) {
+                                pc.addIceCandidate(new RTCIceCandidate(snap.val()));
+                            } else {
+                                viewerCandidatesQueue.push(snap.val());
+                            }
+                        }
+                    });
+
+                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
+                        type: answer.type, sdp: answer.sdp
+                    });
+
+                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)));
+                    viewerCandidatesQueue.length = 0;
+                }
             });
-
-            // --- ZEGOCLOUD HOST BROADCAST INTEGRATION FOR 10K+ VIEWERS ---
-            try {
-                const appID = 557776684;
-                const serverSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
-                const roomID = currentStreamId;
-                const userID = currentUserId ? currentUserId.toString() : "host_" + Date.now();
-                const userName = currentUser || "Host";
-
-                const ZegoUIKit = window.ZegoUIKitPrebuilt.ZegoUIKitPrebuilt || window.ZegoUIKitPrebuilt;
-                const ZegoEngineClass = window.ZegoExpressEngine.ZegoExpressEngine || window.ZegoExpressEngine;
-
-                const token = ZegoUIKit.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
-                zg = new ZegoEngineClass(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
-                
-                zg.loginRoom(roomID, token, { userID, userName }, { userUpdate: true }).then(() => {
-                    zg.startPublishingStream(roomID + "_stream", localStream);
-                }).catch(e => {
-                    console.error("Host Zego login error:", e);
-                });
-            } catch(e) {
-                console.error("ZegoCloud Error: ", e);
-            }
         }
 
 
-        // --- 5. WEBRTC VIEWING (VIEWER) - ZEGOCLOUD IMPLEMENTATION ---
+        // --- 5. WEBRTC VIEWING (VIEWER) - AUDIO FIX APPLIED HERE ---
         async function joinLiveStream(streamId, streamData) {
             showLoading("Joining Room...");
             currentStreamId = streamId;
@@ -1104,68 +1032,81 @@
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
 
             try {
-                // Firebase Viewer Count Logics Remained (Safely avoiding await block & invalid name characters)
-                const safeUserId = currentUserId ? currentUserId.toString() : "v_" + Date.now();
-                set(ref(db, `live_streams/${streamId}/viewers/${safeUserId}`), {
-                    username: currentUser,
-                    joinedAt: serverTimestamp()
-                }).catch(e => console.error("Firebase set error:", e));
+                viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${safeUserId}`)).remove();
+                // --- AUDIO / SUDO TRACK FIX ---
+                viewerPeerConnection.ontrack = e => {
+                    // Create MediaStream if missing, Add incoming track to it.
+                    if (!remoteVideo.srcObject) {
+                        remoteVideo.srcObject = new MediaStream();
+                    }
+                    remoteVideo.srcObject.addTrack(e.track);
+
+                    // Force audio settings to be active
+                    remoteVideo.muted = false;
+                    remoteVideo.volume = 1.0;
+
+                    // Play and Catch Browser Blockers
+                    const playPromise = remoteVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.warn("Autoplay policy blocked audio:", error);
+                            // Show Unmute button to the user
+                            const unmuteBtn = document.getElementById('unmute-overlay');
+                            unmuteBtn.style.display = 'flex';
+                            unmuteBtn.onclick = () => {
+                                remoteVideo.muted = false;
+                                remoteVideo.play();
+                                unmuteBtn.style.display = 'none';
+                                showToast("Audio is now Live! 🔊");
+                            };
+                        });
+                    }
+                };
+
+                viewerPeerConnection.onicecandidate = e => {
+                    if (e.candidate) {
+                        push(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/viewer`), e.candidate.toJSON());
+                    }
+                };
+
+                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
+                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
+                
+                const offer = await viewerPeerConnection.createOffer();
+                await viewerPeerConnection.setLocalDescription(offer);
+
+                await set(ref(db, `live_streams/${streamId}/viewers/${currentUser}`), {
+                    username: currentUser,
+                    offer: { type: offer.type, sdp: offer.sdp }
+                });
+
+                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUser}`)).remove();
+
+                const hostCandidatesQueue = [];
+                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUser}/candidates/host`), (snap) => {
+                    if(snap.val()) {
+                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
+                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val()));
+                        } else {
+                            hostCandidatesQueue.push(snap.val());
+                        }
+                    }
+                });
+
+                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUser}/answer`), async (snap) => {
+                    const answer = snap.val();
+                    if (answer && viewerPeerConnection.signalingState !== "closed") {
+                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                        
+                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)));
+                        hostCandidatesQueue.length = 0;
+                    }
+                });
 
                 onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
                     document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
                 });
-
-                // --- ZEGOCLOUD VIEWER INTEGRATION FOR 10K+ VIEWERS ---
-                const appID = 557776684;
-                const serverSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
-                const roomID = streamId;
-                const userID = safeUserId;
-                const userName = currentUser || "Viewer";
-
-                const ZegoUIKit = window.ZegoUIKitPrebuilt.ZegoUIKitPrebuilt || window.ZegoUIKitPrebuilt;
-                const ZegoEngineClass = window.ZegoExpressEngine.ZegoExpressEngine || window.ZegoExpressEngine;
-
-                const token = ZegoUIKit.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
-                zg = new ZegoEngineClass(appID, `wss://webliveroom${appID}-api.zegocloud.com/ws`);
-                
-                await zg.loginRoom(roomID, token, { userID, userName });
-                
-                const playZegoStream = async (streamID) => {
-                    try {
-                        const remoteStream = await zg.startPlayingStream(streamID);
-                        remoteVideo.srcObject = remoteStream;
-                        remoteVideo.muted = false;
-                        remoteVideo.volume = 1.0;
-
-                        const playPromise = remoteVideo.play();
-                        if (playPromise !== undefined) {
-                            playPromise.catch(error => {
-                                console.warn("Autoplay policy blocked audio:", error);
-                                const unmuteBtn = document.getElementById('unmute-overlay');
-                                unmuteBtn.style.display = 'flex';
-                                unmuteBtn.onclick = () => {
-                                    remoteVideo.muted = false;
-                                    remoteVideo.play();
-                                    unmuteBtn.style.display = 'none';
-                                    showToast("Audio is now Live! 🔊");
-                                };
-                            });
-                        }
-                    } catch (playErr) {
-                        console.error("Stream Play Error:", playErr);
-                    }
-                };
-
-                zg.on('roomStreamUpdate', async (roomID, updateType, streamList) => {
-                    if (updateType === 'ADD') {
-                        playZegoStream(streamList[0].streamID);
-                    }
-                });
-
-                // Fallback attempt instantly safely caught
-                playZegoStream(roomID + "_stream").catch(e => console.warn("Stream not live yet"));
 
                 hideLoading();
                 setupLiveChat();
@@ -1173,9 +1114,8 @@
                 push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
 
             } catch(e) {
-                console.error("Join Live Error details:", e);
                 hideLoading();
-                showToast("Failed to join stream. Checking connection.");
+                showToast("Failed to join stream.");
                 leaveLiveStream();
             }
         }
@@ -1188,20 +1128,9 @@
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             
+            // Hide the unmute overlay for next stream
             document.getElementById('unmute-overlay').style.display = 'none';
 
-            // ZEGOCLOUD Clean Up
-            if (zg) {
-                if (isHost && currentStreamId) {
-                    zg.stopPublishingStream(currentStreamId + "_stream");
-                } else if (!isHost && currentStreamId) {
-                    zg.stopPlayingStream(currentStreamId + "_stream");
-                }
-                zg.logoutRoom(currentStreamId);
-                zg = null;
-            }
-
-            // Keep Firebase Cleanup as is
             if (isHost && currentStreamId) {
                 if (localStream) localStream.getTracks().forEach(t => t.stop());
                 Object.values(hostPeerConnections).forEach(pc => pc.close());
@@ -1210,8 +1139,7 @@
             } else if (!isHost && currentStreamId) {
                 if (viewerPeerConnection) viewerPeerConnection.close();
                 viewerPeerConnection = null;
-                const safeUserId = currentUserId ? currentUserId.toString() : "unknown";
-                remove(ref(db, `live_streams/${currentStreamId}/viewers/${safeUserId}`)).catch(e => {});
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
 
