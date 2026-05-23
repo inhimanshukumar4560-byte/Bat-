@@ -538,6 +538,10 @@
             document.getElementById('login-zingoo-id').value = storedId;
             const storedAv = localStorage.getItem("zingoo_avatar");
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+            
+            // Auto-login trigger
+            document.getElementById('btn-login-id').innerText = "Verifying...";
+            validateDatabaseLogin(storedId);
         }
 
         document.getElementById('login-profile-upload').addEventListener('change', function(e) {
