@@ -1192,62 +1192,79 @@
                 }
             }
 
-            // --- Group WebRTC signaling logic ---
+            // --- Updated Group WebRTC Signaling Logic with Error Checks ---
             function startRoomWebRTC() {
                 if (roomSignalListener) roomSignalListener();
                 const sigRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}`);
                 
-                roomSignalListener = onChildAdded(sigRef, async (snapshot) => {
-                    const data = snapshot.val();
-                    if (!data) return;
-                    const sender = data.sender;
-                    
-                    try {
-                        if (data.type === 'offer') {
-                            if (!roomPeers[sender]) await createRoomPeerConnection(sender, false);
-                            
-                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                            const answer = await roomPeers[sender].createAnswer();
-                            await roomPeers[sender].setLocalDescription(answer);
-                            
-                            push(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${sender}`), {
-                                type: 'answer', sender: window.currentUser, sdp: answer
-                            });
+                remove(sigRef).then(() => {
+                    roomSignalListener = onChildAdded(sigRef, async (snapshot) => {
+                        const data = snapshot.val();
+                        if (!data) return;
+                        const sender = data.sender;
+                        
+                        try {
+                            if (data.type === 'offer') {
+                                if (!roomPeers[sender]) await createRoomPeerConnection(sender, false);
+                                
+                                await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                                const answer = await roomPeers[sender].createAnswer();
+                                await roomPeers[sender].setLocalDescription(answer);
+                                
+                                push(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${sender}`), {
+                                    type: 'answer', sender: window.currentUser, sdp: answer
+                                });
 
-                            // अगर कोई Candidate पहले आ गया था, तो अब उसे ऐड करें
-                            if (iceCandidateQueues[sender]) {
-                                iceCandidateQueues[sender].forEach(c => roomPeers[sender].addIceCandidate(new RTCIceCandidate(c)));
-                                delete iceCandidateQueues[sender];
-                            }
+                                if (iceCandidateQueues[sender]) {
+                                    iceCandidateQueues[sender].forEach(c => roomPeers[sender].addIceCandidate(new RTCIceCandidate(c)));
+                                    delete iceCandidateQueues[sender];
+                                }
 
-                        } else if (data.type === 'answer' && roomPeers[sender]) {
-                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                            
-                        } else if (data.type === 'candidate') {
-                            // अगर RemoteDescription सेट हो चुका है, तो तुरंत Candidate ऐड करें
-                            if (roomPeers[sender] && roomPeers[sender].remoteDescription) {
-                                await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
-                            } else {
-                                // वरना Candidate को Queue में सेव कर लें
-                                if (!iceCandidateQueues[sender]) iceCandidateQueues[sender] = [];
-                                iceCandidateQueues[sender].push(data.candidate);
+                            } else if (data.type === 'answer' && roomPeers[sender]) {
+                                await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                                
+                            } else if (data.type === 'candidate') {
+                                if (roomPeers[sender] && roomPeers[sender].remoteDescription) {
+                                    await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                                } else {
+                                    if (!iceCandidateQueues[sender]) iceCandidateQueues[sender] = [];
+                                    iceCandidateQueues[sender].push(data.candidate);
+                                }
                             }
+                        } catch (err) {
+                            console.error("WebRTC Signaling Error:", err);
+                            alert("DEBUG: WebRTC Signaling Error - " + err.message);
+                        } finally {
+                            remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}/${snapshot.key}`));
                         }
-                    } catch (err) {
-                        console.error("WebRTC Error:", err);
-                    } finally {
-                        // काम पूरा होने के बाद ही सिग्नल डिलीट करें
-                        remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}/${snapshot.key}`));
-                    }
+                    });
                 });
             }
 
+            // --- Updated Peer Connection with Extensive Checking ---
             async function createRoomPeerConnection(targetUser, isOfferer) {
-                const pc = new RTCPeerConnection(servers);
+                const groupServers = { 
+                    iceServers: [
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' }
+                    ] 
+                };
+
+                const pc = new RTCPeerConnection(groupServers);
                 roomPeers[targetUser] = pc;
                 
+                // Track ICE Connection failures to identify network blocks
+                pc.oniceconnectionstatechange = () => {
+                    console.log(`ICE State with ${targetUser}:`, pc.iceConnectionState);
+                    if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                        alert(`DEBUG ERROR: Connection failed with ${targetUser}. Network provider is blocking P2P!`);
+                    }
+                };
+
                 if (roomLocalStream) {
                     roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
+                } else {
+                    console.warn("DEBUG: Peer created without local stream. User might not be on seat.");
                 }
 
                 pc.onicecandidate = e => {
@@ -1259,17 +1276,27 @@
                 };
 
                 pc.ontrack = e => {
+                    showToast(`DEBUG: Receiving Audio from ${targetUser}`);
                     let safeTargetUser = targetUser.replace(/\s+/g, '-'); 
                     let audioEl = document.getElementById(`audio-${safeTargetUser}`);
+                    
                     if (!audioEl) {
                         audioEl = document.createElement('audio');
                         audioEl.id = `audio-${safeTargetUser}`;
                         audioEl.autoplay = true;
+                        audioEl.playsInline = true; 
                         audioEl.style.display = 'none';
                         document.body.appendChild(audioEl);
                     }
-                    audioEl.srcObject = e.streams[0];
-                    audioEl.play().catch(err => console.log("Audio play blocked by browser:", err));
+                    
+                    try {
+                        audioEl.srcObject = new MediaStream([e.track]);
+                        audioEl.play().catch(err => {
+                            alert(`DEBUG ERROR: Browser blocked audio play for ${targetUser}. Reason: ${err.message}`);
+                        });
+                    } catch (trackErr) {
+                        alert(`DEBUG ERROR: Failed to attach MediaStream track. Reason: ${trackErr.message}`);
+                    }
                 };
 
                 if (isOfferer) {
@@ -1436,11 +1463,15 @@
                         return;
                     }
                     
+                    // SEAT DEBUGGING 1: Request Mic Start
+                    alert("DEBUG: Requesting microphone permission from browser...");
+                    
                     try {
-                        // FIX: Request local mic permission before taking seat
                         roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        alert("DEBUG SUCCESS: Microphone permission GRANTED!");
                     } catch (e) {
-                        showToast("Microphone permission denied! Cannot take seat.");
+                        // SEAT DEBUGGING 2: Mic Denied Error
+                        alert("DEBUG ERROR: Microphone access denied or not found. Details: " + e.message);
                         return;
                     }
 
@@ -1593,17 +1624,21 @@
 
             document.getElementById('main-mic-btn').addEventListener('click', () => {
                  if(window.currentActiveRoomId && mySeatIndex !== -1) {
+                     if (!roomLocalStream) {
+                         // MIC BUTTON DEBUGGING: Warn user if stream is suddenly missing
+                         alert("DEBUG ERROR: Mic button clicked but roomLocalStream is empty. Did you give permission?");
+                         return;
+                     }
+                     
                      const seatRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${mySeatIndex}`);
                      get(seatRef).then(snapshot => {
                          if(snapshot.exists()){
                              const currentMuteState = snapshot.val().isMuted;
                              
-                             // FIX: Physically mute the actual local media track
-                             if (roomLocalStream) {
-                                 roomLocalStream.getAudioTracks().forEach(track => {
-                                     track.enabled = currentMuteState; // If it was muted (isMuted=true), make it true (enabled)
-                                 });
-                             }
+                             // Physically mute the actual local media track
+                             roomLocalStream.getAudioTracks().forEach(track => {
+                                 track.enabled = currentMuteState; // If it was muted (isMuted=true), make it true (enabled)
+                             });
                              
                              set(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), !currentMuteState);
                              showToast(!currentMuteState ? "Mic Muted" : "Mic Unmuted");
