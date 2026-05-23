@@ -214,6 +214,7 @@
             z-index: 70;
             display: none;
             flex-direction: column;
+            overflow: hidden; /* Added to fix stretching / hiding out of bounds */
         }
 
         /* Large Background Logo Overlay */
@@ -267,12 +268,22 @@
         .seats-container {
             padding: 20px 10px; 
             display: grid;
-            grid-template-columns: repeat(5, 1fr); 
+            grid-template-columns: repeat(5, minmax(0, 1fr)); /* Fix: Prevents stretching beyond screen width */
             gap: 15px 5px;
             z-index: 10;
+            flex-shrink: 0; /* Fix: Keeps seats stable and stops them from crushing */
+            width: 100%;
         }
 
-        .seat { display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
+        .seat { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            position: relative; 
+            cursor: pointer; 
+            width: 100%; /* Fix: Responsive constraint */
+            min-width: 0; 
+        }
         
         .seat-avatar {
             width: 50px; 
@@ -292,7 +303,17 @@
 
         .seat.empty .seat-avatar { background: white; color: #9c27b0; font-size: 20px; border: 2px solid #9c27b0; }
         .seat.occupied .seat-avatar { color: white; font-size: 24px; }
-        .seat-name { color: var(--text-light); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 60px; font-family: -apple-system, sans-serif;}
+        .seat-name { 
+            color: var(--text-light); 
+            font-size: 11px; 
+            white-space: nowrap; 
+            text-overflow: ellipsis; 
+            overflow: hidden; 
+            max-width: 60px; 
+            width: 100%; /* Fix: Prevents text stretching */
+            text-align: center;
+            font-family: -apple-system, sans-serif;
+        }
 
         /* Custom Zingoo Store Overlays for Seats */
         .custom-chair-frame { position: absolute; top: -25%; left: -25%; width: 150%; height: 150%; z-index: 1; pointer-events: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5)); object-fit: contain; }
@@ -310,7 +331,8 @@
         .mic-icon-status.muted { color: #ff004c; }
 
         .chat-container {
-            flex: 1;
+            flex: 1 1 0%; /* Fix: Flexbox shrink rule so it doesn't push UI out */
+            min-height: 0; /* Fix: Stops chat stretching beyond container boundaries */
             padding: 10px 15px;
             overflow-y: auto;
             display: flex;
@@ -1793,7 +1815,7 @@
                         seatDiv.className = 'seat empty';
                         seatDiv.innerHTML = `
                             <div class="seat-avatar" onclick="window.audioRoomAPI.takeSeat(${i})">🔒</div>
-                            <span class="seat-name">..</span>
+                            <span class="seat-name">Seat ${i + 1}</span>
                         `;
                     }
                     speakerGrid.appendChild(seatDiv);
@@ -1848,6 +1870,18 @@
                 currentActiveRoomId = null;
                 currentRoomHost = null;
                 mySeatIndex = -1;
+
+                // CRITICAL FIX: Clear the UI to prevent extra seats or content from flashing/sticking when re-joining
+                document.getElementById('speaker-grid-container').innerHTML = '';
+                document.getElementById('chatBox').innerHTML = '';
+                document.getElementById('youtubePlayerContainer').style.display = 'none';
+                document.getElementById('youtubePlayerContainer').innerHTML = '';
+                document.getElementById('live-room-title').innerText = 'Loading Room...';
+                document.getElementById('listener-count-num').innerText = '0';
+                
+                // Clear dynamic background image to default so ghost backgrounds don't appear in next room
+                document.getElementById('live-room-screen').style.backgroundImage = `url('https://i.ibb.co/8nLL3qwv/file-00000000484c71f8880494edee7225e8.png')`;
+
                 liveRoomScreen.style.display = 'none';
                 lobbyScreen.style.display = 'flex';
             }
