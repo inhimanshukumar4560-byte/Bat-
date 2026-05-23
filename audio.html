@@ -243,7 +243,7 @@
         .mic-icon-status.muted { color: red; }
 
         /* Floating Overlays */
-        .floating-diamond-balance { position: absolute; bottom: 85px; left: 15px; background: white; padding: 6px 12px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 5;}
+        .floating-diamond-balance { position: absolute; bottom: 85px; left: 15px; background: white; padding: 6px 12px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 5; cursor: pointer;}
         .floating-diamond-balance .num { font-size: 12px; font-weight: bold; color: black; display: flex; align-items: center; gap: 4px; }
         .floating-diamond-balance .num i { color: #00BFFF; }
         .floating-diamond-balance .text { font-size: 9px; color: #888; margin-top: 1px;}
@@ -344,7 +344,7 @@
         .gift-item p { font-size: 0.8em; margin-top: 5px; color: #333; font-weight: 600;}
         .gift-item .price { font-size: 0.7em; color: #d97706; margin-top: 2px; font-weight: bold;}
         
-        /* Profile Popup with Background Cover Update */
+        /* Profile Popup with Host Controls */
         #profile-popup .modal-content { padding: 0; overflow: hidden; }
         .profile-header-bg { width: 100%; height: 120px; background: linear-gradient(135deg, #FFB6C1, #FF1493); background-size: cover; background-position: center; position: relative;}
         .profile-header-bg .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.5); }
@@ -356,7 +356,7 @@
         #profile-popup .profile-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
         #profile-popup .action-btn { background: var(--gradient-main); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600;}
         #profile-popup .action-btn.secondary { background: transparent; border: 1px solid #ccc; color: #333;}
-        .host-control-btn { background: transparent !important; border: 1px solid var(--hot-pink) !important; color: var(--hot-pink) !important; }
+        .host-control-btn { background: transparent !important; color: #333 !important; border-color:#ccc !important;}
         
         #create-room-modal .modal-content { height: 85vh; display: flex; flex-direction: column; }
         .custom-input { width: 100%; background: #f9f9f9; border: 1px solid #ddd; color: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 0.9em; font-family: 'Outfit'; font-weight: 500;}
@@ -449,10 +449,9 @@
              <div class="live-room-container" id="live-room-container-bg">
                 <div id="gift-animation-container" class="gift-animation-container"></div>
                 
-                <!-- Transparent Pill Header -->
+                <!-- Transparent Pill Header & Back Button -->
                 <header class="zingoo-header">
                     <div class="zh-left-pill">
-                        <!-- Added Back Button in Live Room -->
                         <i class="fas fa-arrow-left" id="room-back-btn" style="margin: 0 5px; font-size: 18px; cursor: pointer;"></i>
                         <img id="live-room-host-img" src="https://i.pravatar.cc/150" alt="Host">
                         <div class="zh-info-pill">
@@ -461,6 +460,8 @@
                         </div>
                     </div>
                     <div class="zh-right">
+                        <!-- KING LEADERBOARD ICON ADDED HERE -->
+                        <button class="zh-btn" id="leaderboard-btn" style="background:transparent; border:none; color:#FFD700; font-size:18px; text-shadow:0 0 10px rgba(255,215,0,0.8); cursor:pointer;"><i class="fas fa-crown"></i></button>
                         <button class="zh-leave-btn" id="close-room-btn">Leave</button>
                     </div>
                 </header>
@@ -475,9 +476,9 @@
                         <!-- Chat messages injected here -->
                     </div>
 
-                    <!-- Floating Overlays -->
-                    <div class="floating-diamond-balance">
-                        <div class="num"><i class="fas fa-gem"></i> <span id="room-diamond-bal">19997201</span></div>
+                    <!-- Floating Overlays with Redirection attached -->
+                    <div class="floating-diamond-balance" onclick="redirectToPayment(100, 300)">
+                        <div class="num"><i class="fas fa-gem"></i> <span id="room-diamond-bal">0</span></div>
                         <div class="text">Buy More</div>
                     </div>
 
@@ -485,7 +486,7 @@
                         <h5>Limited Offers</h5>
                         <div class="price"><i class="fas fa-gem"></i> 300</div>
                         <div class="sub">₹100</div>
-                        <button>Buy Now</button>
+                        <button onclick="redirectToPayment(100, 300)">Buy Now</button>
                     </div>
                 </main>
 
@@ -495,7 +496,7 @@
                     <div class="footer-right-actions">
                         <button class="zf-btn zf-dots" id="bottom-more-btn"><i class="fas fa-ellipsis-v"></i></button>
                         <button class="zf-btn zf-gift" id="gift-btn-footer"><i class="fas fa-gift"></i></button>
-                        <!-- Added Fire Animation Button Here -->
+                        <!-- Fire Animation Button -->
                         <button class="zf-btn zf-fire" id="fire-btn-footer"><i class="fas fa-fire"></i></button>
                         <button class="zf-btn zf-mic" id="main-mic-btn"><i class="fas fa-microphone"></i></button>
                     </div>
@@ -543,6 +544,20 @@
 
     </div>
     
+    <!-- LEADERBOARD MODAL (Top Wealth) -->
+    <div id="leaderboard-modal" class="modal-overlay">
+        <div class="modal-content" style="height: 65vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3><i class="fas fa-crown" style="color:#FFD700;"></i> Top Wealth</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div id="leaderboard-list" style="overflow-y:auto; flex-grow:1; display:flex; flex-direction:column; gap:10px;">
+                <!-- Dynamically injected users sorted by diamonds -->
+                <p style="text-align:center; color:#888;">Loading Leaderboard...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- COMPREHENSIVE STORE MODAL -->
     <div id="store-modal" class="modal-overlay">
         <div class="modal-content" style="height: 75vh;">
@@ -597,7 +612,7 @@
         </div>
     </div>
 
-    <!-- Gift Modal (Will be dynamically populated from Admin Panel) -->
+    <!-- Gift Modal (Dynamically populated from Admin Panel) -->
     <div id="gift-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Send a Gift</h3><button class="close-btn">&times;</button></div>
@@ -608,7 +623,7 @@
         </div>
     </div>
 
-    <!-- Enhanced Profile Popup with Customizable Background Support -->
+    <!-- Enhanced Profile Popup with Admin/Host Controls -->
     <div id="profile-popup" class="modal-overlay">
         <div class="modal-content">
             <div class="profile-header-bg" id="profile-header-bg">
@@ -621,10 +636,11 @@
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
                 <div class="profile-actions">
-                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Audio Call</button>
-                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video Call</button>
-                    <button class="action-btn secondary host-control-btn" id="mute-user-btn"><i class="fas fa-microphone-slash"></i> Mute User</button>
+                    <button class="action-btn" id="popup-btn-audio-call" style="background:#25D366;"><i class="fas fa-phone"></i> Call</button>
+                    <button class="action-btn" id="popup-btn-video-call" style="background:var(--hot-pink);"><i class="fas fa-video"></i> Video</button>
                 </div>
+                <!-- Extra Host Controls Injected Here dynamically if user is host -->
+                <div class="profile-actions" id="host-extra-controls" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;"></div>
             </div>
         </div>
     </div>
@@ -655,7 +671,19 @@
             db = getDatabase(app);
         }
 
-        // Store UI Logic attached to Window for HTML calls
+        // Global Variables for window access
+        window.currentActiveRoomId = null;
+        window.currentRoomHost = null;
+        window.currentUser = null;
+        let showToast;
+
+        // --- Global Redirect to Secure Payment Page ---
+        window.redirectToPayment = function(amount, diamonds) {
+            if(!window.currentUser) { showToast("Please login first"); return; }
+            window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(window.currentUser)}&amount=${amount}&diamonds=${diamonds}`;
+        };
+
+        // Store UI Logic
         window.switchStoreTab = function(tabName) {
             document.querySelectorAll('.store-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.store-grid').forEach(g => g.classList.remove('active'));
@@ -663,23 +691,54 @@
             document.getElementById(`store-grid-${tabName}`).classList.add('active');
         };
 
-        window.applyStoreItem = function(category, imageUrl) {
-            if (category === 'backgrounds' && currentActiveRoomId) {
-                set(ref(db, `audio_rooms/${currentActiveRoomId}/backgroundUrl`), imageUrl)
-                    .then(() => showToast("Room Background Updated!"))
-                    .catch(() => showToast("Error updating background"));
-            } else if (category === 'frames') {
-                // Set logic to apply frame to user profile locally for preview
-                document.getElementById('profile-img-wrapper').style.background = `url(${imageUrl})`;
-                document.getElementById('profile-img-wrapper').style.backgroundSize = 'cover';
-                showToast("Frame Applied to Profile view!");
-            } else {
-                showToast(`${category} item selected!`);
-            }
+        // --- Purchase & Apply Store Items with 2 Days Expiry ---
+        window.applyStoreItem = function(category, itemKey, imageUrl, cost) {
+            if (!window.currentActiveRoomId) return;
+            const now = Date.now();
+            const expTime = now + (2 * 24 * 60 * 60 * 1000); // 48 Hours Expiry
+
+            get(ref(db, `users/${window.currentUser}/purchased/${itemKey}`)).then(snap => {
+                let ownItem = false;
+                if(snap.exists() && snap.val().expiresAt > now) {
+                    ownItem = true; // Still active
+                }
+
+                if(ownItem) {
+                    applyItemToRoom(category, imageUrl);
+                } else {
+                    // Need to Buy
+                    let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+                    if (currentDiamonds >= cost) {
+                        let newBal = currentDiamonds - cost;
+                        set(ref(db, `users/${window.currentUser}/diamonds`), newBal);
+                        localStorage.setItem('zingoo_diamonds', newBal);
+                        document.getElementById('room-diamond-bal').innerText = newBal;
+                        
+                        // Save Expiration info
+                        set(ref(db, `users/${window.currentUser}/purchased/${itemKey}`), { expiresAt: expTime });
+                        applyItemToRoom(category, imageUrl);
+                        showToast(`Purchased successfully! Valid for 2 days.`);
+                    } else {
+                        // Redirect to zingoo-pay.html if low diamonds
+                        const reqAmt = Math.ceil(cost / 3); // Approx Conversion formula
+                        window.redirectToPayment(reqAmt, cost);
+                    }
+                }
+            });
         };
 
-        let currentActiveRoomId = null; // Hoisted for window access
-        let showToast; // Hoisted for window access
+        function applyItemToRoom(category, imageUrl) {
+            if (category === 'backgrounds') {
+                set(ref(db, `audio_rooms/${window.currentActiveRoomId}/backgroundUrl`), imageUrl);
+                showToast("Room Background Updated!");
+            } else if (category === 'frames') {
+                document.getElementById('profile-img-wrapper').style.background = `url(${imageUrl})`;
+                document.getElementById('profile-img-wrapper').style.backgroundSize = 'cover';
+                showToast("Frame Applied!");
+            } else {
+                showToast(`${category} applied!`);
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -691,7 +750,6 @@
             const globalToast = document.getElementById('global-toast');
             let selectedAvatarFile = null;
 
-            let currentUser = null;
             let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa";
             let roomMaxSeatsConfig = 10;
             
@@ -758,7 +816,7 @@
                     if (allUsers) {
                         for (let key in allUsers) {
                             if (allUsers[key].id === enteredId) {
-                                currentUser = allUsers[key].name;
+                                window.currentUser = allUsers[key].name;
                                 userKey = key;
                                 userFound = true;
                                 break;
@@ -773,7 +831,7 @@
                             currentAvatar = allUsers[userKey].avatar || currentAvatar;
                         }
 
-                        localStorage.setItem("zingoo_user", currentUser);
+                        localStorage.setItem("zingoo_user", window.currentUser);
                         localStorage.setItem("zingoo_avatar", currentAvatar);
                         localStorage.setItem("zingoo_id", enteredId);
                         
@@ -789,7 +847,7 @@
                         listenForIncomingCalls();
                         loadAdminStoreItems(); // Pre-fetch store items
                         listenForGifts(); // Fetch dynamically uploaded Admin gifts
-                        showToast(`Welcome back, ${currentUser}!`);
+                        showToast(`Welcome back, ${window.currentUser}!`);
                     } else {
                         showToast("Invalid ID! User not found.");
                         loginBtn.innerText = "Enter Rooms";
@@ -800,7 +858,7 @@
                 });
             }
 
-            // --- Dynamic Fetch Gifts uploaded via Admin Panel ---
+            // --- Fetch Gifts uploaded via Admin Panel ---
             function listenForGifts() {
                 onValue(ref(db, 'gifts'), (snapshot) => {
                     const giftGrid = document.querySelector('#gift-modal .gift-grid');
@@ -834,7 +892,7 @@
                             Object.entries(data).forEach(([key, item]) => {
                                 const isBg = cat === 'backgrounds' ? 'bg-item' : '';
                                 grid.insertAdjacentHTML('beforeend', `
-                                    <div class="store-item ${isBg}" onclick="applyStoreItem('${cat}', '${item.imageUrl}')">
+                                    <div class="store-item ${isBg}" onclick="applyStoreItem('${cat}', '${key}', '${item.imageUrl}', ${item.cost})">
                                         <img src="${item.imageUrl}" alt="${item.name}">
                                         <p>${item.name}</p>
                                         <span><i class="fas fa-gem"></i> ${item.cost}</span>
@@ -877,8 +935,8 @@
             };
 
             function listenForIncomingCalls() {
-                if(!currentUser) return;
-                onValue(ref(db, `calls/${currentUser}`), (snapshot) => {
+                if(!window.currentUser) return;
+                onValue(ref(db, `calls/${window.currentUser}`), (snapshot) => {
                     const data = snapshot.val();
                     if (data && data.offer && !peerConnection) {
                         incomingCallData = data;
@@ -895,7 +953,7 @@
 
             window.initiateCall = async function(targetUser, isVideo, targetAvatar) {
                 if(peerConnection) return;
-                if(targetUser === currentUser) { showToast("You cannot call yourself!"); return; }
+                if(targetUser === window.currentUser) { showToast("You cannot call yourself!"); return; }
                 
                 currentCallPath = `calls/${targetUser}`;
                 document.getElementById('video-partner-name').innerText = targetUser;
@@ -914,7 +972,7 @@
 
                     const offer = await peerConnection.createOffer();
                     await peerConnection.setLocalDescription(offer);
-                    set(ref(db, currentCallPath), { caller: currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
+                    set(ref(db, currentCallPath), { caller: window.currentUser, callerAvatar: currentAvatar, offer: { type: offer.type, sdp: offer.sdp }, isVideo: isVideo });
 
                     onValue(ref(db, `${currentCallPath}/answer`), (snap) => { if(snap.val()) peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); });
                     onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
@@ -923,7 +981,7 @@
 
             document.getElementById("btn-accept-call").addEventListener("click", async () => {
                 document.getElementById('incoming-call-overlay').style.display = 'none';
-                const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${currentUser}`;
+                const isVideo = incomingCallData.isVideo; currentCallPath = `calls/${window.currentUser}`;
                 document.getElementById(isVideo ? "video-overlay" : "audio-overlay").style.display = "flex";
                 
                 try {
@@ -952,10 +1010,38 @@
                 if(currentCallPath) { remove(ref(db, currentCallPath)); currentCallPath = null; }
                 peerConnection = null; incomingCallData = null;
             }
-            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${currentUser}`)); stopWebRTC(); });
+            document.getElementById("btn-decline-call").addEventListener("click", () => { remove(ref(db, `calls/${window.currentUser}`)); stopWebRTC(); });
             document.getElementById("btn-end-video").addEventListener("click", stopWebRTC);
             document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC);
 
+            // --- Host Controls Implementation ---
+            window.hostMuteUser = function(targetUser) {
+                 get(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats`)).then(snap => {
+                     let seats = snap.val();
+                     for(let i in seats) {
+                         if(seats[i].user === targetUser) {
+                             set(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${i}/isMuted`), !seats[i].isMuted);
+                             showToast(seats[i].isMuted ? "User Unmuted" : "User Muted");
+                             closeModal();
+                             break;
+                         }
+                     }
+                 });
+            };
+            
+            window.hostKickUser = function(targetUser) {
+                 get(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats`)).then(snap => {
+                     let seats = snap.val();
+                     for(let i in seats) {
+                         if(seats[i].user === targetUser) {
+                             remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${i}`));
+                             showToast("User kicked from seat");
+                             closeModal();
+                             break;
+                         }
+                     }
+                 });
+            };
 
             window.openUserProfile = function(username, avatar) {
                 document.getElementById('popup-username').innerText = username;
@@ -965,8 +1051,43 @@
                 document.getElementById('popup-btn-audio-call').onclick = () => { closeModal(); initiateCall(username, false, avatar); };
                 document.getElementById('popup-btn-video-call').onclick = () => { closeModal(); initiateCall(username, true, avatar); };
                 
+                // Inject Host Extra Controls dynamically if active user is Host
+                let hostControlsHtml = '';
+                if (window.currentUser === window.currentRoomHost && username !== window.currentUser) {
+                    hostControlsHtml = `
+                        <button class="action-btn secondary host-control-btn" onclick="hostMuteUser('${username}')"><i class="fas fa-microphone-slash"></i> Mute / Unmute</button>
+                        <button class="action-btn secondary host-control-btn" style="color:red !important; border-color:red !important;" onclick="hostKickUser('${username}')"><i class="fas fa-sign-out-alt"></i> Kick User</button>
+                    `;
+                }
+                document.getElementById('host-extra-controls').innerHTML = hostControlsHtml;
+
                 openModal('profile-popup');
             };
+
+            // --- Leaderboard Implementation ---
+            document.getElementById('leaderboard-btn').addEventListener('click', () => {
+                get(ref(db, 'users')).then(snap => {
+                    const users = snap.val();
+                    let arr = [];
+                    for(let k in users) arr.push(users[k]);
+                    arr.sort((a,b) => (b.diamonds || 0) - (a.diamonds || 0)); // Highest diamonds top
+                    
+                    const lbList = document.getElementById('leaderboard-list');
+                    lbList.innerHTML = '';
+                    arr.forEach((u, i) => {
+                        let rankColor = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? '#cd7f32' : '#888';
+                        lbList.innerHTML += `
+                            <div style="display:flex; align-items:center; background:#f9f9f9; padding:10px; border-radius:12px; border:1px solid #eee;">
+                                <span style="font-weight:900; color:${rankColor}; width:30px; font-size:16px;">#${i+1}</span>
+                                <img src="${u.avatar}" style="width:40px; height:40px; border-radius:50%; margin-right:10px; border:2px solid ${rankColor};">
+                                <div style="flex-grow:1;"><p style="font-weight:bold; color:#111; font-size:14px;">${u.name}</p></div>
+                                <div style="color:#d97706; font-weight:bold;"><i class="fas fa-gem"></i> ${u.diamonds || 0}</div>
+                            </div>
+                        `;
+                    });
+                    openModal('leaderboard-modal');
+                });
+            });
 
             function listenForAudioRooms() {
                 const roomsRef = ref(db, 'audio_rooms');
@@ -1016,6 +1137,7 @@
                 });
             }
 
+            // Entry Pop-up Effect
             function showEntryBanner(username) {
                 const banner = document.createElement('div');
                 banner.className = 'entry-popup';
@@ -1024,35 +1146,39 @@
                 setTimeout(() => banner.remove(), 3500);
             }
 
-            // --- 3 Fire Animation Logic ---
+            // --- 3 Staggered Fire Animation Logic ---
             function showFireAnimation() {
                 const container = document.getElementById('gift-animation-container');
                 for(let i=0; i<3; i++) {
-                    const fire = document.createElement('img');
-                    fire.src = 'https://cdn-icons-png.flaticon.com/512/785/785116.png'; // Awesome Fire Icon
-                    fire.style.position = 'absolute';
-                    fire.style.width = '70px';
-                    fire.style.height = '70px';
-                    fire.style.left = (20 + Math.random() * 60) + '%';
-                    fire.style.bottom = '80px';
-                    fire.style.opacity = '1';
-                    fire.style.transition = 'all 1.5s ease-out';
-                    fire.style.zIndex = '999';
-                    container.appendChild(fire);
-
                     setTimeout(() => {
-                        fire.style.bottom = '500px';
-                        fire.style.opacity = '0';
-                        fire.style.transform = `scale(${1 + Math.random()})`;
-                    }, 50);
+                        const fire = document.createElement('img');
+                        fire.src = 'https://cdn-icons-png.flaticon.com/512/785/785116.png'; // Awesome Fire Icon
+                        fire.style.position = 'absolute';
+                        fire.style.width = '70px';
+                        fire.style.height = '70px';
+                        fire.style.left = (20 + Math.random() * 60) + '%';
+                        fire.style.bottom = '80px';
+                        fire.style.opacity = '1';
+                        fire.style.transition = 'all 1.5s ease-out';
+                        fire.style.zIndex = '999';
+                        container.appendChild(fire);
 
-                    setTimeout(() => fire.remove(), 1600);
+                        // Float up and fade
+                        setTimeout(() => {
+                            fire.style.bottom = '500px';
+                            fire.style.opacity = '0';
+                            fire.style.transform = `scale(${1 + Math.random()})`;
+                        }, 50);
+
+                        // Remove from DOM
+                        setTimeout(() => fire.remove(), 1600);
+                    }, i * 400); // 400ms delay between each fire spawn
                 }
             }
 
             function joinAudioRoom(roomId, roomTitle, fee) {
                 const proceed = () => {
-                    currentActiveRoomId = roomId;
+                    window.currentActiveRoomId = roomId;
                     document.getElementById('live-room-title').innerText = roomTitle;
                     lobbyScreen.style.display = 'none';
                     liveRoomScreen.style.display = 'flex';
@@ -1061,7 +1187,7 @@
                     push(ref(db, `audio_rooms/${roomId}/chats`), {
                         user: "System",
                         isEntry: true,
-                        text: `${currentUser} entered the room`,
+                        text: `${window.currentUser} entered the room`,
                         timestamp: serverTimestamp()
                     });
 
@@ -1070,6 +1196,7 @@
                     roomListener = onValue(roomRef, (snapshot) => {
                         const rData = snapshot.val();
                         if(rData) {
+                            window.currentRoomHost = rData.host; // Save globally for host controls
                             roomMaxSeatsConfig = rData.maxSeats || 10;
                             renderSeats(rData.seats || {});
                             if(rData.hostAvatar) document.getElementById('live-room-host-img').src = rData.hostAvatar;
@@ -1098,7 +1225,7 @@
                             } else {
                                 const msgDiv = document.createElement('div');
                                 msgDiv.className = 'chat-msg';
-                                if(msgData.user === currentUser) {
+                                if(msgData.user === window.currentUser) {
                                     msgDiv.style.alignSelf = 'flex-start';
                                 }
                                 msgDiv.innerHTML = `
@@ -1130,7 +1257,7 @@
                     if (currentDiamonds >= fee) {
                         if (confirm(`This room costs ${fee} diamonds. Your balance: ${currentDiamonds}. Join?`)) {
                             const newBal = currentDiamonds - fee;
-                            set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
+                            set(ref(db, `users/${window.currentUser}/diamonds`), newBal).then(() => {
                                 localStorage.setItem("zingoo_diamonds", newBal);
                                 document.getElementById('lobby-diamond-balance').innerText = newBal;
                                 document.getElementById('room-diamond-bal').innerText = newBal;
@@ -1140,6 +1267,8 @@
                         }
                     } else {
                         alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
+                        // Auto Redirect to Payment Page if not enough diamonds
+                        window.redirectToPayment(Math.ceil(fee/3), fee);
                     }
                 } else {
                     proceed();
@@ -1151,7 +1280,7 @@
                 mySeatIndex = -1;
 
                 Object.entries(seatsData).forEach(([index, seatInfo]) => {
-                    if (seatInfo.user === currentUser) {
+                    if (seatInfo.user === window.currentUser) {
                         mySeatIndex = parseInt(index);
                     }
                 });
@@ -1169,7 +1298,7 @@
                         seatDiv.dataset.userid = `ID: ${seatInfo.user}`;
                         seatDiv.innerHTML = `
                             <div class="avatar-container" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
-                                ${seatInfo.user === currentUser ? `<span class="admin-tag" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</span>` : ''}
+                                ${seatInfo.user === window.currentUser ? `<span class="admin-tag" onclick="event.stopPropagation(); window.audioRoomAPI.leaveSeat()">Leave</span>` : ''}
                                 <img src="${seatInfo.avatar}" alt="Speaker">
                                 <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
@@ -1192,18 +1321,18 @@
             
             window.audioRoomAPI = {
                 takeSeat: (index) => {
-                    if (!currentActiveRoomId) return;
+                    if (!window.currentActiveRoomId) return;
                     if (mySeatIndex !== -1) {
                         showToast("You are already in a seat!");
                         return;
                     }
-                    const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${index}`);
-                    set(seatRef, { user: currentUser, avatar: currentAvatar, isMuted: false, timestamp: serverTimestamp() });
-                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), { user: "System", avatar: currentAvatar, text: `${currentUser} took a seat.`, timestamp: serverTimestamp() });
+                    const seatRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${index}`);
+                    set(seatRef, { user: window.currentUser, avatar: currentAvatar, isMuted: false, timestamp: serverTimestamp() });
+                    push(ref(db, `audio_rooms/${window.currentActiveRoomId}/chats`), { user: "System", avatar: currentAvatar, text: `${window.currentUser} took a seat.`, timestamp: serverTimestamp() });
                 },
                 leaveSeat: () => {
-                    if (!currentActiveRoomId || mySeatIndex === -1) return;
-                    const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                    if (!window.currentActiveRoomId || mySeatIndex === -1) return;
+                    const seatRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${mySeatIndex}`);
                     remove(seatRef);
                 }
             };
@@ -1221,7 +1350,8 @@
                     unsubscribeAnim();
                     unsubscribeAnim = null;
                 }
-                currentActiveRoomId = null;
+                window.currentActiveRoomId = null;
+                window.currentRoomHost = null;
                 mySeatIndex = -1;
                 liveRoomScreen.style.display = 'none';
                 lobbyScreen.style.display = 'flex';
@@ -1230,10 +1360,10 @@
             function sendRoomMessage() {
                 const input = document.getElementById('live-chat-input');
                 const text = input.value.trim();
-                if(!text || !currentActiveRoomId) return;
+                if(!text || !window.currentActiveRoomId) return;
                 
-                push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                    user: currentUser,
+                push(ref(db, `audio_rooms/${window.currentActiveRoomId}/chats`), {
+                    user: window.currentUser,
                     avatar: currentAvatar,
                     text: text,
                     timestamp: serverTimestamp()
@@ -1260,7 +1390,7 @@
             });
             
             document.getElementById('open-create-room-btn').addEventListener('click', () => {
-                if(!currentUser){
+                if(!window.currentUser){
                     showToast("Please login first to create a room!");
                     return;
                 }
@@ -1268,7 +1398,7 @@
             });
             
             document.getElementById('start-new-room-btn').addEventListener('click', () => {
-                const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
+                const topic = document.getElementById('new-room-topic').value.trim() || `${window.currentUser}'s Room`;
                 const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
                 let reqSeats = parseInt(document.getElementById('new-room-seats').value) || 10;
                 if(reqSeats > 10) reqSeats = 10;
@@ -1278,7 +1408,7 @@
                 set(newRoomRef, {
                     name: topic,
                     fee: fee,
-                    host: currentUser,
+                    host: window.currentUser,
                     hostAvatar: currentAvatar,
                     maxSeats: reqSeats, /* Room Creation dynamically sets seats */
                     createdAt: serverTimestamp(),
@@ -1302,19 +1432,19 @@
             
             // Fire Effect Button
             document.getElementById('fire-btn-footer').addEventListener('click', () => {
-                if(!currentActiveRoomId) return;
-                push(ref(db, `audio_rooms/${currentActiveRoomId}/animations`), {
-                    type: 'fire', user: currentUser, timestamp: serverTimestamp()
+                if(!window.currentActiveRoomId) return;
+                push(ref(db, `audio_rooms/${window.currentActiveRoomId}/animations`), {
+                    type: 'fire', user: window.currentUser, timestamp: serverTimestamp()
                 });
             });
 
             document.getElementById('main-mic-btn').addEventListener('click', () => {
-                 if(currentActiveRoomId && mySeatIndex !== -1) {
-                     const seatRef = ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}`);
+                 if(window.currentActiveRoomId && mySeatIndex !== -1) {
+                     const seatRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${mySeatIndex}`);
                      get(seatRef).then(snapshot => {
                          if(snapshot.exists()){
                              const currentMuteState = snapshot.val().isMuted;
-                             set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), !currentMuteState);
+                             set(ref(db, `audio_rooms/${window.currentActiveRoomId}/seats/${mySeatIndex}/isMuted`), !currentMuteState);
                              showToast(!currentMuteState ? "Mic Muted" : "Mic Unmuted");
                          }
                      });
