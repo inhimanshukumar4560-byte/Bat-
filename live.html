@@ -6,7 +6,7 @@
     <title>Zingoo - Live Streaming</title>
     
     <!-- Google Fonts for Modern Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -15,9 +15,13 @@
             --baby-pink: #FFE4E8;
             --pink-dark: #FFB6C1;
             --primary-red: #FF3366;
-            --dark-text: #333333;
+            --dark-text: #2c2c2c;
             --white: #FFFFFF;
             --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --chat-bg: rgba(0, 0, 0, 0.45);
         }
 
         * {
@@ -28,7 +32,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--baby-pink), #FFF0F5);
+            background: linear-gradient(135deg, var(--baby-pink) 0%, #FFF0F5 100%);
+            background-attachment: fixed;
             color: var(--dark-text);
             min-height: 100vh;
             overflow-x: hidden;
@@ -38,23 +43,25 @@
             -moz-user-select: none;
             -ms-user-select: none;
             -webkit-touch-callout: none;
-            transition: filter 0.2s ease;
+            transition: filter 0.3s ease;
         }
 
         /* --- Security Blur Filter --- */
         body.security-blur {
-            filter: blur(20px);
+            filter: blur(25px);
             pointer-events: none;
         }
 
-        /* --- Custom Scrollbar --- */
-        ::-webkit-scrollbar { display: none; }
+        /* --- Custom Scrollbar for App --- */
+        ::-webkit-scrollbar { width: 6px; display: none; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--pink-dark); border-radius: 10px; }
 
         /* --- LOGIN SCREEN (ID Enforced) --- */
         #id-login-screen {
             position: fixed;
             inset: 0;
-            background: #ffffff;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
             z-index: 99999;
             display: flex;
             flex-direction: column;
@@ -64,50 +71,55 @@
         }
         
         #id-login-screen .logo-container {
-            font-size: 32px;
+            font-size: 38px;
             font-weight: 800;
             background: var(--gradient-main);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
+            margin-bottom: 40px;
+            letter-spacing: 2.5px;
+            text-shadow: 0px 4px 15px rgba(255, 51, 102, 0.2);
         }
         
         #id-login-screen .login-card {
             width: 100%;
-            max-width: 400px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.15);
-            border: 1px solid var(--baby-pink);
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(255, 51, 102, 0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
+            border: 1px solid var(--white);
             text-align: center;
         }
 
-        #id-login-screen h2 { font-size: 20px; margin-bottom: 10px; color: #111; font-weight: 700; }
-        #id-login-screen p { font-size: 13px; color: #666; margin-bottom: 25px; }
+        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; color: #111; font-weight: 800; }
+        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 30px; font-weight: 500; }
         
         .avatar-upload-box {
-            cursor: pointer; margin-bottom: 20px; display: inline-block;
+            cursor: pointer; margin-bottom: 25px; display: inline-block; position: relative;
         }
         .avatar-upload-box img {
-            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
-            border: 3px solid var(--primary-red); box-shadow: 0 4px 15px rgba(255,51,102,0.2);
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
+            border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,51,102,0.3);
+            transition: transform 0.3s ease;
         }
-        .avatar-upload-box p { font-size: 11px; color: var(--primary-red); margin-top: 8px; font-weight: bold; }
+        .avatar-upload-box:hover img { transform: scale(1.05); }
+        .avatar-upload-box p { font-size: 12px; color: var(--primary-red); margin-top: 10px; font-weight: 700; background: rgba(255, 51, 102, 0.1); padding: 5px 15px; border-radius: 20px; }
 
         #id-login-screen input[type="number"] {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd;
-            background: #f9f9f9; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
-            outline: none; transition: border 0.3s;
+            width: 100%; padding: 16px; border-radius: 15px; border: 2px solid transparent;
+            background: #f0f2f5; font-size: 16px; margin-bottom: 25px; font-weight: 600; text-align: center;
+            outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
-        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; }
+        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.1); }
         #id-login-screen button {
-            width: 100%; padding: 15px; border-radius: 12px; border: none;
-            background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(255,51,102,0.4); transition: transform 0.2s;
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: var(--gradient-main); color: #fff; font-size: 18px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 8px 25px rgba(255,51,102,0.4); transition: transform 0.2s, box-shadow 0.2s;
         }
-        #id-login-screen button:hover { transform: translateY(-2px); }
+        #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,51,102,0.5); }
 
         /* --- Header Styling (Glassmorphism) --- */
         header {
@@ -117,16 +129,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.2);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .logo {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             background: var(--gradient-main);
             -webkit-background-clip: text;
@@ -135,199 +147,267 @@
             cursor: pointer;
         }
 
-        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
 
         .diamond-bal {
-            background: #fff; border: 1px solid var(--pink-dark); color: #d97706; 
-            padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;
-            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            background: linear-gradient(135deg, #fff, #f9f9f9); border: 1px solid var(--pink-dark); color: #d97706; 
+            padding: 8px 16px; border-radius: 25px; font-size: 14px; font-weight: 800;
+            display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
+        .diamond-bal i { font-size: 16px; animation: shine 2s infinite linear; }
 
         .start-live-btn {
             background: var(--primary-red);
             color: var(--white);
             border: none;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 30px;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
             transition: all 0.3s ease;
         }
 
         .start-live-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.6);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+            background: linear-gradient(135deg, #ff4070, #ff2055);
         }
 
         .start-live-btn i { animation: pulse-icon 1.5s infinite; }
 
         /* --- Main Content & Grid (2-2 Layout) --- */
-        main { padding: 20px; max-width: 800px; margin: 0 auto; }
-        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--primary-red); }
+        main { padding: 25px; max-width: 900px; margin: 0 auto; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--primary-red); display: flex; align-items: center; gap: 10px; }
 
         .live-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 20px;
         }
 
         .live-card {
             position: relative;
-            border-radius: 20px;
+            border-radius: 25px;
             overflow: hidden;
             aspect-ratio: 3/4;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.5);
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
             background: #fff;
+            transform: translateZ(0);
         }
 
-        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .live-card:hover img { transform: scale(1.05); }
+        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .live-card:hover img { transform: scale(1.1); }
+        .live-card::after {
+            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+            z-index: 1; pointer-events: none;
+        }
 
         .card-top-info {
-            position: absolute; top: 10px; left: 10px; right: 10px;
+            position: absolute; top: 12px; left: 12px; right: 12px;
             display: flex; justify-content: space-between; align-items: center; z-index: 2;
         }
 
         .live-badge {
-            background: var(--primary-red); color: white; font-size: 10px; font-weight: 700;
-            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite;
+            background: var(--primary-red); color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; animation: pulse-bg 1.5s infinite;
         }
         
-        /* New Scheduled Badge Style */
         .scheduled-badge {
-            background: #f39c12; color: white; font-size: 10px; font-weight: 700;
-            padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px;
+            background: #f39c12; color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
         }
 
         .viewers {
-            background: rgba(0, 0, 0, 0.5); color: white; font-size: 11px; padding: 4px 8px;
-            border-radius: 8px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;
+            background: rgba(0, 0, 0, 0.6); color: white; font-size: 12px; font-weight: 600; padding: 5px 10px;
+            border-radius: 10px; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 5px;
         }
 
         .card-bottom-info {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 10px 10px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; z-index: 2;
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 15px 15px;
+            color: white; z-index: 2; display: flex; flex-direction: column; gap: 4px;
         }
 
-        .user-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .user-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .live-title { font-size: 12px; font-weight: 500; color: #f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* --- Start Live Modal --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
 
         .modal-box {
-            background: white; padding: 30px; border-radius: 20px; text-align: center;
-            width: 90%; max-width: 350px; transform: translateY(20px); transition: transform 0.3s ease;
-            max-height: 90vh; overflow-y: auto;
+            background: white; padding: 35px 25px; border-radius: 30px; text-align: center;
+            width: 90%; max-width: 400px; transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
         
-        .modal-box h3 { color: var(--primary-red); margin-bottom: 10px; font-weight: 700; }
+        .modal-box h3 { color: var(--dark-text); font-size: 24px; margin-bottom: 20px; font-weight: 800; }
         .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
-            margin-bottom: 15px; font-family: 'Poppins'; outline: none;
+            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee;
+            margin-bottom: 20px; font-family: 'Poppins'; font-size: 14px; outline: none; transition: border 0.3s;
+            background: #fafafa; font-weight: 500;
         }
+        .modal-box input:focus { border-color: var(--pink-dark); background: #fff; }
         
         .thumb-upload {
-            border: 2px dashed var(--pink-dark); padding: 15px; border-radius: 10px;
-            margin-bottom: 10px; cursor: pointer; color: var(--primary-red); font-size: 12px; font-weight: 600;
+            border: 2px dashed var(--pink-dark); padding: 20px; border-radius: 15px; background: var(--baby-pink);
+            margin-bottom: 15px; cursor: pointer; color: var(--primary-red); font-size: 14px; font-weight: 700;
+            transition: all 0.3s; display: flex; flex-direction: column; gap: 8px; align-items: center;
         }
+        .thumb-upload:hover { background: #ffd1d9; border-color: var(--primary-red); }
+        .thumb-upload i { font-size: 24px; }
         
-        /* New Past Thumbnails Style */
-        .past-thumbs-wrapper {
-            margin-bottom: 15px; text-align: left;
-        }
-        .past-thumbs-wrapper p { font-size: 11px; color: #666; margin-bottom: 5px; font-weight: 600; }
-        .past-thumbs-list {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px;
-        }
+        .past-thumbs-wrapper { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
+        .past-thumbs-wrapper p { font-size: 12px; color: #555; margin-bottom: 10px; font-weight: 700; }
+        .past-thumbs-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+        .past-thumbs-list::-webkit-scrollbar { height: 4px; display: block; }
+        .past-thumbs-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         .past-thumbs-list img {
-            width: 50px; height: 50px; border-radius: 8px; object-fit: cover; cursor: pointer;
-            border: 2px solid transparent; transition: border 0.2s;
+            width: 60px; height: 60px; border-radius: 12px; object-fit: cover; cursor: pointer;
+            border: 3px solid transparent; transition: all 0.3s;
         }
-        .past-thumbs-list img.selected { border: 2px solid var(--primary-red); transform: scale(1.05); }
+        .past-thumbs-list img.selected { border: 3px solid var(--primary-red); transform: scale(1.1); box-shadow: 0 4px 10px rgba(255,51,102,0.3); }
 
-        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-confirm { flex: 1; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        .btn-cancel { flex: 1; background: var(--baby-pink); color: var(--primary-red); border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .modal-btns { display: flex; gap: 15px; margin-top: 15px; }
+        .btn-confirm { flex: 1; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 15px rgba(255,51,102,0.3); transition: transform 0.2s; }
+        .btn-confirm:hover { transform: translateY(-2px); }
+        .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
+        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) - REDESIGNED FOR BETTER CHAT --- */
         #live-view-screen {
             position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
         }
         
-        .live-video-container { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; }
+        .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
         
         #remote-live-video, #local-live-video {
             width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
             transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
-            -webkit-transform: scaleX(-1); /* Safari support */
+            -webkit-transform: scaleX(-1);
         }
         
         .live-overlay-top {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
-            background: linear-gradient(rgba(0,0,0,0.6), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start;
+            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
+            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
         }
         
-        .host-info { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.4); padding: 5px 15px 5px 5px; border-radius: 30px; backdrop-filter: blur(5px); }
-        .host-info img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
-        .host-text h4 { color: white; font-size: 13px; font-weight: 700; line-height: 1; }
-        .host-text p { color: #ccc; font-size: 10px; margin-top: 2px; }
+        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
+        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
         
-        .close-live-btn { width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(5px); }
+        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
+        .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
         
+        /* --- HIGHLY IMPROVED CHAT UI SECTION --- */
         .live-overlay-bottom {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 10;
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
+            display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
         }
         
-        .chat-box { height: 150px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; mask-image: linear-gradient(to top, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to top, black 80%, transparent 100%); }
-        .chat-msg { color: white; font-size: 13px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 15px; width: max-content; max-width: 80%; }
-        .chat-msg span { color: var(--pink-dark); font-weight: 700; margin-right: 5px; }
+        /* Massive Chat Area Upgrade */
+        .chat-box { 
+            pointer-events: auto;
+            max-height: 45vh; /* Allows chat to take up almost half the screen nicely */
+            overflow-y: auto; 
+            margin-bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            padding-right: 10px;
+            /* Fade effect at the top of chat */
+            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+        }
         
-        .action-bar { display: flex; gap: 10px; align-items: center; }
-        .chat-input-wrapper { flex-grow: 1; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 0 15px; display: flex; align-items: center; backdrop-filter: blur(5px); }
-        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; }
-        .chat-input-wrapper input::placeholder { color: #ccc; }
+        /* Custom scrollbar just for chat to make it neat */
+        .chat-box::-webkit-scrollbar { width: 4px; display: block; }
+        .chat-box::-webkit-scrollbar-track { background: transparent; }
+        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+
+        .chat-msg { 
+            color: #fff; 
+            font-size: 14px; 
+            font-weight: 500;
+            background: var(--chat-bg); 
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            width: max-content; 
+            max-width: 85%; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            transform-origin: bottom left;
+        }
+        .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
         
-        .gift-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 15px rgba(255,51,102,0.5); }
+        /* System message style */
+        .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
+        
+        /* Gift message style */
+        .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
+        .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
+        .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
+        
+        .gift-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,51,102,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
+        .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,51,102,0.7); }
         
         /* Loading Overlay */
         #loading-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); color: white;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
             display: none; justify-content: center; align-items: center; z-index: 9999;
-            font-size: 18px; font-weight: bold; flex-direction: column;
+            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
         }
 
         /* --- Animations --- */
         @keyframes pulse-bg {
             0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
         }
         @keyframes pulse-icon {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shine {
+            0% { color: #d97706; text-shadow: none; }
+            50% { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.8); }
+            100% { color: #d97706; text-shadow: none; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #fff; color: var(--dark-text); padding: 12px 25px; border-radius: 30px;
-            font-size: 13px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--primary-red); transition: transform 0.3s ease; z-index: 100000;
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 255, 255, 0.95); color: var(--dark-text); padding: 14px 28px; border-radius: 30px;
+            font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-left: 5px solid var(--primary-red); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100000;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -339,7 +419,7 @@
 
     <!-- 1. LOGIN SCREEN -->
     <div id="id-login-screen">
-        <div class="logo-container">ZINGOO LIVE</div>
+        <div class="logo-container"><i class="fas fa-fire" style="color:var(--primary-red);"></i> ZINGOO LIVE</div>
         <div class="login-card">
             <h2>Live Room Access</h2>
             <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
@@ -347,11 +427,11 @@
             <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
             <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
                 <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <p>Tap to upload picture</p>
+                <p><i class="fas fa-camera"></i> Upload Photo</p>
             </div>
 
             <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
-            <button id="btn-login-id">Enter Live App</button>
+            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
         </div>
     </div>
 
@@ -370,10 +450,10 @@
         </header>
 
         <main>
-            <h2 class="section-title">Trending Now 🔥</h2>
+            <h2 class="section-title"><i class="fas fa-fire-flame-curved"></i> Trending Now</h2>
             <!-- Dynamic Grid -->
             <div class="live-grid" id="liveGrid">
-                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">Fetching active streams...</p>
+                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;">Fetching active streams...</p>
             </div>
         </main>
     </div>
@@ -381,13 +461,13 @@
     <!-- 3. START LIVE MODAL -->
     <div class="modal-overlay" id="startLiveModal">
         <div class="modal-box">
-            <i class="fas fa-broadcast-tower" style="font-size: 40px; color: var(--primary-red); margin-bottom: 15px;"></i>
+            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(255,51,102,0.3));"></i>
             <h3>Ready to Stream?</h3>
             <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
             
             <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
             <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
-                <i class="fas fa-image"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
+                <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
             </div>
             
             <!-- NEW: Past Thumbnails & Schedule Options -->
@@ -396,8 +476,8 @@
                 <div class="past-thumbs-list" id="past-thumbs-container"></div>
             </div>
 
-            <div style="text-align: left; margin-bottom: 5px;">
-                <label style="font-size:11px; color:#666; font-weight:bold;">Schedule Live (Optional):</label>
+            <div style="text-align: left; margin-bottom: 10px;">
+                <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;"><i class="far fa-clock"></i> Schedule Live (Optional):</label>
                 <input type="datetime-local" id="live-schedule-time">
             </div>
 
@@ -430,11 +510,11 @@
         
         <div class="live-overlay-bottom">
             <div class="chat-box" id="live-chat-box">
-                <div class="chat-msg"><span>System:</span> Welcome to the live stream!</div>
+                <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
             </div>
             <div class="action-bar">
                 <div class="chat-input-wrapper">
-                    <input type="text" id="live-chat-input" placeholder="Say something...">
+                    <input type="text" id="live-chat-input" placeholder="Say something nice...">
                 </div>
                 <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
             </div>
@@ -443,7 +523,7 @@
 
     <!-- Loading Overlay -->
     <div id="loading-overlay">
-        <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px; color: var(--primary-red);"></i>
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 45px; margin-bottom: 20px; color: var(--primary-red);"></i>
         <p id="loading-text">Connecting...</p>
     </div>
 
@@ -540,7 +620,7 @@
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             
             // Auto-login trigger
-            document.getElementById('btn-login-id').innerText = "Verifying...";
+            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
             validateDatabaseLogin(storedId);
         }
 
@@ -558,7 +638,7 @@
             if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
             
             const btn = document.getElementById('btn-login-id');
-            btn.innerText = "Verifying...";
+            btn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
 
             if (selectedAvatarFile) {
                 const formData = new FormData();
@@ -619,11 +699,11 @@
                     });
                 } else {
                     showToast("Invalid ID! User not found.");
-                    document.getElementById('btn-login-id').innerText = "Enter Live App";
+                    document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
                 }
             }).catch(err => {
                 showToast("Connection error!");
-                document.getElementById('btn-login-id').innerText = "Enter Live App";
+                document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
@@ -712,8 +792,8 @@
                             
                             // Badge logic based on status
                             const badgeHTML = data.isLive ? 
-                                `<span class="live-badge">LIVE</span>` : 
-                                `<span class="scheduled-badge">SCHEDULED</span>`;
+                                `<span class="live-badge"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i>LIVE</span>` : 
+                                `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
 
                             const card = document.createElement('div');
                             card.className = 'live-card';
@@ -738,7 +818,7 @@
                                 </div>
                                 <div class="card-bottom-info">
                                     <div class="user-name">${data.hostName}</div>
-                                    <div style="font-size:11px; margin-top:3px; color:#ddd;">${data.title}</div>
+                                    <div class="live-title">${data.title}</div>
                                 </div>
                             `;
                             gridContainer.appendChild(card);
@@ -747,7 +827,7 @@
                 }
                 
                 if(count === 0) {
-                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 14px; margin-top: 20px;">No one is currently live. Be the first!</p>';
+                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;"><i class="fas fa-video-slash" style="display:block; font-size:30px; margin-bottom:10px; color:#ccc;"></i>No one is currently live. Be the first!</p>';
                 }
             });
         }
@@ -803,8 +883,8 @@
                 }
 
                 showLoading("Accessing Camera...");
-                // Get Camera & Mic
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                // Get Camera & Mic (Added strict audio constraints to ensure audio starts cleanly)
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
                 showLoading("Starting Stream...");
                 
                 // Create Node in Firebase
@@ -836,7 +916,8 @@
         async function startScheduledLiveAsHost(streamId, data) {
             showLoading("Accessing Camera...");
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                // Added strict audio constraints to ensure audio starts cleanly
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: { echoCancellation: true, noiseSuppression: true } });
                 currentStreamId = streamId;
                 isHost = true;
 
@@ -965,15 +1046,34 @@
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                // When stream is received, play it (Updated for better device compatibility)
+                // When stream is received, play it (Updated to completely fix Audio/Sudo dropping bug)
                 viewerPeerConnection.ontrack = e => {
                     if (e.streams && e.streams[0]) {
-                        remoteVideo.srcObject = e.streams[0];
+                        // Strict check to prevent resetting stream when the audio track arrives milliseconds later
+                        if (remoteVideo.srcObject !== e.streams[0]) {
+                            remoteVideo.srcObject = e.streams[0];
+                        }
                     } else {
                         if (!remoteVideo.srcObject) remoteVideo.srcObject = new MediaStream();
                         remoteVideo.srcObject.addTrack(e.track);
                     }
-                    remoteVideo.play().catch(console.error);
+                    
+                    // Forcefully ensure audio is enabled to bypass strict mobile browser blocks
+                    remoteVideo.muted = false;
+                    remoteVideo.volume = 1.0;
+                    
+                    const playPromise = remoteVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => {
+                            console.warn("Audio/Video play blocked by browser:", err);
+                            // Only trigger this fallback if the browser completely blocks the audio
+                            showToast("Audio muted by browser. Tap anywhere to enable audio!");
+                            document.body.addEventListener('click', () => {
+                                remoteVideo.muted = false;
+                                remoteVideo.play();
+                            }, { once: true });
+                        });
+                    }
                 };
 
                 // Send ICE candidates to Host
@@ -1032,7 +1132,7 @@
                 setupLiveChat();
                 
                 // System message to chat
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined!` });
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
 
             } catch(e) {
                 hideLoading();
@@ -1073,7 +1173,7 @@
         }
 
 
-        // --- 7. LIVE CHAT FUNCTIONALITY ---
+        // --- 7. LIVE CHAT FUNCTIONALITY (UPGRADED) ---
         function setupLiveChat() {
             const chatBox = document.getElementById('live-chat-box');
             chatBox.innerHTML = ''; // reset
@@ -1082,19 +1182,25 @@
                 const data = snap.val();
                 if(data) {
                     const msgDiv = document.createElement('div');
-                    msgDiv.className = 'chat-msg';
+                    
                     if (data.user === 'System') {
-                        msgDiv.style.color = '#FFB6C1';
-                        msgDiv.style.fontStyle = 'italic';
-                        msgDiv.innerHTML = `${data.text}`;
+                        msgDiv.className = 'chat-msg system';
+                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
                     } else if (data.isGift) {
-                        msgDiv.style.background = 'var(--gradient-main)';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎`;
+                        msgDiv.className = 'chat-msg gift';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎✨`;
                     } else {
+                        msgDiv.className = 'chat-msg';
                         msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
                     }
+                    
                     chatBox.appendChild(msgDiv);
-                    chatBox.scrollTop = chatBox.scrollHeight;
+                    
+                    // Smooth Auto-scroll to bottom so chat works "acche se" (perfectly)
+                    chatBox.scrollTo({
+                        top: chatBox.scrollHeight,
+                        behavior: 'smooth'
+                    });
                 }
             });
         }
