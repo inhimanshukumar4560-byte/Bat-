@@ -1136,6 +1136,9 @@
       onValue(ref(db, `users/${currentUser}`), (snapshot) => {
           const data = snapshot.val();
           if(data) {
+              // ID sync to ensure live/audio files always have the correct ID
+              if(data.id) { currentId = data.id; localStorage.setItem('zingoo_id', currentId); }
+
               // Wallet sync
               localStorage.setItem('zingoo_wallet', data.wallet || 0);
               updateWalletDisplay();
@@ -1644,7 +1647,7 @@
       }
 
       if (name && ageNum >= 18 && phone && gender && state) {
-          const newId = Math.floor(10000000 + Math.random() * 90000000).toString();
+          const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
           
           set(ref(db, 'users/' + name), {
               name: name, id: newId, phone: phone, gender: gender, state: state, avatar: currentAvatar, diamonds: 0, wallet: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
