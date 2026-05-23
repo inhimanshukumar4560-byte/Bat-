@@ -110,27 +110,46 @@
     <!-- Screen Container -->
     <div class="relative w-full h-full">
 
-        <!-- LOBBY SCREEN -->
-        <div id="lobby-screen" class="absolute inset-0 z-40 bg-zinc-950 flex flex-col p-6 hidden">
-            <header class="flex justify-between items-center mb-8">
+        <!-- LOBBY SCREEN (Matches Image 5 Design Perfectly) -->
+        <div id="lobby-screen" class="absolute inset-0 z-40 bg-white flex flex-col hidden">
+            <header class="flex justify-between items-center px-4 pt-6 pb-4">
                 <div class="flex items-center gap-3">
-                    <img id="lobby-avatar" src="https://i.ibb.co/6HvwbJ0/default-avatar.png" class="w-12 h-12 rounded-full object-cover border-2 border-zingoo-gold">
-                    <div>
-                        <h4 id="lobby-name" class="font-bold text-white">Guest</h4>
-                        <p class="text-xs text-zingoo-gold flex items-center gap-1">💎 <span id="lobby-diamonds">0</span></p>
+                    <button onclick="window.location.href='profile.html'" class="text-black"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button>
+                    <div class="w-7 h-7 bg-zingoo-pink text-white font-black flex items-center justify-center rounded-full italic text-sm">Z</div>
+                    <h1 class="font-black text-black text-xl tracking-widest italic">ZINGOO</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-black text-[22px]">notifications</span>
+                    <div class="bg-purple-100 px-3 py-1 rounded-full flex items-center gap-1">
+                        <span class="material-symbols-outlined text-purple-700 text-[14px]">diamond</span>
+                        <span id="lobby-diamonds" class="text-purple-900 font-bold text-xs">0</span>
                     </div>
                 </div>
-                <button onclick="window.history.back()" class="bg-zinc-800 text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-zinc-700 transition">Back to Home</button>
             </header>
 
-            <div class="flex-1 overflow-y-auto" id="room-list-container">
-                <h3 class="font-bold text-lg text-zinc-400 mb-4">Active Audio Rooms</h3>
-                <div id="room-list" class="grid gap-4">
-                    <p class="text-center text-zinc-600 text-sm py-10">Searching for live sessions...</p>
+            <div class="px-4 mb-4">
+                <div class="bg-gray-100 rounded-xl px-4 py-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
+                    <input type="text" placeholder="Search people, rooms, games..." class="bg-transparent border-none w-full text-sm outline-none text-black placeholder-gray-500">
+                    <span class="material-symbols-outlined text-gray-500 text-[20px]">filter_alt</span>
                 </div>
             </div>
 
-            <button onclick="openCreateRoomModal()" class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-tr from-zingoo-pink to-zingoo-gold rounded-full flex items-center justify-center text-white text-3xl shadow-xl hover:scale-105 active:scale-95 transition-transform">+</button>
+            <div class="px-4 flex justify-between items-center mb-4">
+                <h2 class="font-black text-black text-lg">Live Rooms</h2>
+                <span class="text-zingoo-pink font-bold text-xs cursor-pointer">View All</span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-4" id="room-list-container">
+                <div id="room-list" class="flex flex-col gap-4 pb-20">
+                    <!-- Dynamic Live Rooms Rendered Here -->
+                    <p class="text-center text-gray-500 text-sm py-10">Searching for live sessions...</p>
+                </div>
+            </div>
+
+            <button onclick="openCreateRoomModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-zingoo-pink rounded-full flex items-center justify-center text-white shadow-[0_10px_20px_rgba(255,20,147,0.4)] hover:scale-105 active:scale-95 transition-transform">
+                <span class="material-symbols-outlined text-[28px]">add</span>
+            </button>
         </div>
 
         <!-- LIVE AUDIO ROOM SCREEN -->
@@ -156,6 +175,7 @@
                     </div>
                 </div>
 
+                <!-- Leave button now beautifully redirects to profile.html as strictly requested -->
                 <button id="leave-room-btn" class="bg-red-500/90 hover:bg-red-600 text-white font-extrabold text-xs px-6 py-2 rounded-full shadow-lg transition active:scale-95">Leave</button>
             </div>
 
@@ -184,7 +204,7 @@
                     <!-- Chats & System logs will appear here -->
                 </div>
 
-                <!-- Floating Limited Offers Card (Added Cross Icon as requested) -->
+                <!-- Floating Limited Offers Card -->
                 <div id="offer-card" class="absolute bottom-[90px] right-4 w-[130px] rounded-2xl p-3.5 offer-gradient text-center flex flex-col items-center shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
                     <button onclick="document.getElementById('offer-card').style.display='none'" class="absolute top-2 right-2 text-white/60 hover:text-white transition z-10"><span class="material-symbols-outlined text-[14px]">close</span></button>
                     <span class="text-[8px] font-black tracking-widest text-purple-200 uppercase mb-1">Limited Offers</span>
@@ -196,7 +216,7 @@
                     <button onclick="buyDiamondPack(100, 300)" class="mt-2 bg-white text-purple-700 text-[10px] font-black py-1.5 w-full rounded-full shadow hover:scale-105 active:scale-95 transition-transform">Buy Now</button>
                 </div>
 
-                <!-- NEW: Floating Mini Gift Tray (Positioned tightly above the bottom bar) -->
+                <!-- Floating Mini Gift Tray -->
                 <div id="gift-tray-modal" class="absolute bottom-[75px] left-2 right-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl p-3 z-40 hidden shadow-[0_15px_35px_rgba(0,0,0,0.6)]">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-black text-white text-sm flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-[16px]">redeem</span> Send Gift Stickers</h3>
@@ -223,24 +243,21 @@
                         <span>Chat</span>
                     </button>
 
-                    <!-- Persistent Inline Chat Input (Expands fully when activated, Cross removed) -->
+                    <!-- Persistent Inline Chat Input -->
                     <div id="inline-chat-box" class="hidden flex-1 items-center bg-black/70 backdrop-blur-md border border-white/20 rounded-full pl-4 pr-1 py-1 w-full max-w-[220px] transition-all duration-300 shadow-xl">
                         <input type="text" id="inline-chat-input" placeholder="Say something..." class="bg-transparent border-none text-white text-xs w-full focus:outline-none focus:ring-0 placeholder-white/60">
                         <button onclick="sendChatMessageInline()" class="w-9 h-9 rounded-full bg-gradient-to-r from-orange-400 to-rose-500 flex items-center justify-center text-white shrink-0 ml-1 shadow-md active:scale-95"><span class="material-symbols-outlined text-[16px]">send</span></button>
                     </div>
                 </div>
 
-                <!-- Action Controls (Hides when typing to make room for full width chat) -->
+                <!-- Action Controls -->
                 <div id="action-controls" class="flex items-center gap-3 relative z-10 shrink-0 transition-all duration-300">
-                    <!-- 3-Dots Host Authority Option -->
                     <button onclick="openOptionsModal()" class="w-11 h-11 bg-indigo-600/90 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
                         <span class="material-symbols-outlined text-[20px]">more_vert</span>
                     </button>
-                    <!-- Virtual Gifts (Triggers mini tray) -->
                     <button onclick="openGiftTray()" class="w-11 h-11 bg-teal-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
                         <span class="material-symbols-outlined text-[20px]">redeem</span>
                     </button>
-                    <!-- Realtime Global Fire Reactions Sync -->
                     <button id="fire-reaction-btn" onclick="sendFireReaction()" class="w-11 h-11 bg-gradient-to-tr from-orange-500 to-red-600 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform relative overflow-hidden">
                         <span class="text-[20px] drop-shadow-md">🔥</span>
                     </button>
@@ -268,10 +285,10 @@
             </div>
         </div>
 
-        <!-- Seat Profile Action Popup (Call / Video Call / Leave) -->
-        <div id="seat-action-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4 backdrop-blur-sm" onclick="if(event.target===this) closeModal('seat-action-modal')">
-            <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 w-full max-w-[250px] text-center shadow-2xl relative" id="seat-action-content">
-                <!-- Injected via JS -->
+        <!-- Seat Profile Action Popup (Highly Advanced Design with Call / Video Call) -->
+        <div id="seat-action-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden p-4 backdrop-blur-md" onclick="if(event.target===this) closeModal('seat-action-modal')">
+            <div id="seat-action-content" class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 w-full max-w-[250px] text-center shadow-2xl relative transition-all">
+                <!-- Injected beautifully via JS -->
             </div>
         </div>
 
@@ -385,7 +402,6 @@
         let banListenerRef = null;
         let reactionListenerRef = null;
 
-        // Custom Layout Overrides applied from Host Option Assets
         window.activeRoomChair = null;
         window.activeRoomFrame = null;
         window.activeRoomSticker = null;
@@ -424,8 +440,6 @@
             document.getElementById('lobby-screen').classList.remove('hidden');
             document.getElementById('room-screen').classList.add('hidden');
             
-            document.getElementById('lobby-name').innerText = currentUser.name;
-            document.getElementById('lobby-avatar').src = currentUser.avatar;
             document.getElementById('lobby-diamonds').innerText = currentUser.diamonds.toLocaleString();
             listenToLobbyRooms();
         }
@@ -448,7 +462,7 @@
             window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser.name)}&amount=${amount}&diamonds=${diamonds}`;
         };
 
-        // LOBBY SYNC
+        // LOBBY SYNC (Matches Image 5 Light Theme Logic perfectly)
         function listenToLobbyRooms() {
             onValue(ref(db, 'audio_rooms'), (snapshot) => {
                 const list = document.getElementById('room-list');
@@ -456,18 +470,35 @@
                 const rooms = snapshot.val();
 
                 if(!rooms) {
-                    list.innerHTML = '<p class="text-zinc-600 text-sm text-center py-12">No active rooms found. Tap "+" to initiate one!</p>';
+                    list.innerHTML = '<p class="text-gray-500 text-sm text-center py-12">No active rooms found.</p>';
                     return;
                 }
 
                 Object.entries(rooms).forEach(([roomId, room]) => {
+                    const seatKeys = room.seats ? Object.keys(room.seats) : [];
+                    const takenSeats = seatKeys.filter(k => room.seats[k] !== null).length;
+                    const available = 10 - takenSeats;
+                    
                     list.insertAdjacentHTML('beforeend', `
-                        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex justify-between items-center hover:border-zingoo-gold/40 transition-colors">
-                            <div>
-                                <h4 class="text-white font-black text-base">${room.name}</h4>
-                                <p class="text-xs text-zinc-500 mt-1">Host: ${room.host} | Entry: 💎 ${room.fee || 0}</p>
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="relative">
+                                    <img src="${room.hostAvatar}" class="w-14 h-14 rounded-2xl object-cover bg-gray-200">
+                                    <div class="absolute -top-1.5 -left-1.5 bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm border border-white">+ Live</div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <h4 class="font-bold text-black text-base leading-tight">${room.name}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Host: ${room.host}</p>
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <img src="${room.hostAvatar}" class="w-4 h-4 rounded-full">
+                                        <span class="text-[10px] text-zingoo-pink font-bold bg-pink-50 px-1.5 rounded-full">+${takenSeats} joined</span>
+                                    </div>
+                                </div>
                             </div>
-                            <button onclick="joinRoom('${roomId}')" class="bg-gradient-to-r from-zingoo-pink to-zingoo-gold text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-lg">Join</button>
+                            <div class="flex flex-col items-end gap-2">
+                                <span class="text-zingoo-pink text-[10px] font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">person_outline</span> ${available} left</span>
+                                <button onclick="joinRoom('${roomId}')" class="border border-zingoo-pink text-zingoo-pink font-bold text-xs px-5 py-1.5 rounded-full active:bg-pink-50 transition">Join</button>
+                            </div>
                         </div>
                     `);
                 });
@@ -607,7 +638,7 @@
             });
         }
 
-        // RENDER 10 SEATS + LABELS (HOST/ZINGOO MEMBER) + ACTION CLICKS
+        // RENDER 10 SEATS + LABELS (HOST/ZINGOO MEMBER) + ACTION CLICKS + MIC FIX
         function renderSeats(seatsData) {
             const grid = document.getElementById('seats-grid');
             grid.innerHTML = '';
@@ -627,8 +658,10 @@
                     if(occupant.id === currentUser.id) {
                         sittingOnSeat = true;
                         iWasRemoved = false;
-                        if(occupant.isMuted && localAudioStream && localAudioStream.getAudioTracks()[0].enabled) {
-                            localAudioStream.getAudioTracks()[0].enabled = false;
+                        
+                        // FIX: Correctly Sync Microphone hardware tracking state BOTH WAYS
+                        if(localAudioStream && localAudioStream.getAudioTracks().length > 0) {
+                            localAudioStream.getAudioTracks()[0].enabled = !occupant.isMuted;
                         }
                     }
 
@@ -636,13 +669,14 @@
                     const muteIndicator = occupant.isMuted ? `<div class="absolute -bottom-1 -right-1 bg-red-600 rounded-full w-5 h-5 flex items-center justify-center border border-white shadow shadow-red-500/50 z-20"><span class="material-symbols-outlined text-white text-[12px]">mic_off</span></div>` : '';
                     
                     const safeName = occupant.name || 'User';
+                    const safeAvatar = occupant.avatar || 'https://i.ibb.co/6HvwbJ0/default-avatar.png';
                     const hostBadge = (safeName === roomData.host) 
                         ? `<span class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[8px] px-1.5 py-0.5 rounded-full mt-1 drop-shadow shadow-md uppercase font-black tracking-wider">Host</span>`
-                        : `<span class="text-[8px] text-zinc-300 font-bold mt-1 bg-black/40 px-1.5 py-0.5 rounded-full">Zingoo Member</span>`;
+                        : `<span class="text-[8px] text-zinc-300 font-bold mt-1 bg-black/40 px-1.5 py-0.5 rounded-full border border-white/10">Zingoo Member</span>`;
 
                     col.innerHTML = `
-                        <div onclick="handleSeatClick(${i}, '${occupant.id}', '${safeName}')" class="relative w-[52px] h-[52px] md:w-[60px] md:h-[60px] rounded-full border-2 ${speakingStyle} p-[2px] transition duration-350 flex items-center justify-center z-0">
-                            <img src="${occupant.avatar}" class="w-full h-full rounded-full object-cover">
+                        <div onclick="handleSeatClick(${i}, '${occupant.id}', '${safeName.replace(/'/g, "\\'")}', '${safeAvatar}')" class="relative w-[52px] h-[52px] md:w-[60px] md:h-[60px] rounded-full border-2 ${speakingStyle} p-[2px] transition duration-350 flex items-center justify-center z-0">
+                            <img src="${safeAvatar}" class="w-full h-full rounded-full object-cover">
                             ${frameHtml}
                             ${muteIndicator}
                         </div>
@@ -679,24 +713,40 @@
             }
         }
 
-        // PROFILE SEAT ACTION CLICKS (Call/Video/Leave)
-        window.handleSeatClick = (index, occupantId, occupantName) => {
+        // PROFILE SEAT ACTION CLICKS (Highly Advanced UI)
+        window.handleSeatClick = (index, occupantId, occupantName, occupantAvatar) => {
             const content = document.getElementById('seat-action-content');
+            
             if (occupantId === currentUser.id) {
+                content.className = "bg-zinc-900 border border-zinc-700 rounded-2xl p-5 w-full max-w-[250px] text-center shadow-2xl relative transition-all";
                 content.innerHTML = `
                     <button onclick="closeModal('seat-action-modal')" class="absolute top-2 right-2 text-zinc-400 hover:text-white"><span class="material-symbols-outlined text-[16px]">close</span></button>
-                    <img src="${currentUser.avatar}" class="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-zingoo-gold object-cover">
+                    <img src="${occupantAvatar}" class="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-zingoo-gold object-cover">
                     <h4 class="text-white font-bold mb-4">Manage Your Seat</h4>
                     <button onclick="leaveMySeat(${index})" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-xl text-sm font-bold shadow-lg transition">Leave Seat</button>
                 `;
             } else {
+                // Highly Advanced Glassmorphism UI for calling others
+                content.className = "bg-[#1c1c1e] border border-zinc-700/50 rounded-3xl p-6 w-full max-w-[280px] text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden backdrop-blur-xl transition-all";
                 content.innerHTML = `
-                    <button onclick="closeModal('seat-action-modal')" class="absolute top-2 right-2 text-zinc-400 hover:text-white"><span class="material-symbols-outlined text-[16px]">close</span></button>
-                    <h4 class="text-white font-bold mb-1 mt-2">${occupantName}</h4>
-                    <p class="text-[10px] text-zinc-400 mb-5 font-bold">Zingoo Member</p>
-                    <div class="flex gap-2">
-                        <button onclick="alert('Audio Calling ${occupantName}...')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition shadow"><span class="material-symbols-outlined text-[16px]">call</span> Call</button>
-                        <button onclick="alert('Video Calling ${occupantName}...')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition shadow"><span class="material-symbols-outlined text-[16px]">videocam</span> Video</button>
+                    <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-blue-600/20 to-transparent pointer-events-none"></div>
+                    <button onclick="closeModal('seat-action-modal')" class="absolute top-3 right-3 text-zinc-400 hover:text-white bg-black/40 rounded-full w-8 h-8 flex items-center justify-center backdrop-blur-md z-10 transition-all shadow-md"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                    
+                    <div class="relative z-10">
+                        <div class="w-20 h-20 mx-auto rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 mb-3 shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                            <img src="${occupantAvatar}" class="w-full h-full rounded-full object-cover border-2 border-[#1c1c1e]">
+                        </div>
+                        <h4 class="text-white font-black text-lg mb-0.5 tracking-wide">${occupantName}</h4>
+                        <p class="text-[10px] text-blue-400 mb-6 font-bold tracking-widest uppercase bg-blue-500/10 inline-block px-3 py-1 rounded-full border border-blue-500/20">Zingoo Member</p>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="alert('Audio Calling ${occupantName}...')" class="flex-1 bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(16,185,129,0.3)] active:scale-95 border border-emerald-400/30">
+                                <span class="material-symbols-outlined text-[18px]">call</span> Call
+                            </button>
+                            <button onclick="alert('Video Calling ${occupantName}...')" class="flex-1 bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-3 rounded-2xl text-[13px] font-black flex items-center justify-center gap-1.5 transition-all shadow-[0_8px_16px_rgba(59,130,246,0.3)] active:scale-95 border border-blue-400/30">
+                                <span class="material-symbols-outlined text-[18px]">videocam</span> Video
+                            </button>
+                        </div>
                     </div>
                 `;
             }
@@ -934,11 +984,17 @@
             alert(`Asset Protocol injected dynamically to room.`);
         };
 
-        // MIC HARDWARE TOGGLE
+        // MIC HARDWARE TOGGLE (Fixed hardware sync)
         document.getElementById('mic-toggle-btn').addEventListener('click', async () => {
             if(!localAudioStream || mySeatIndex === null) return;
             const state = window.lastSeatsData[mySeatIndex];
-            await update(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`), { isMuted: !state.isMuted });
+            const newMutedState = !state.isMuted;
+            
+            // Sync Firebase
+            await update(ref(db, `audio_rooms/${currentRoomId}/seats/${mySeatIndex}`), { isMuted: newMutedState });
+            
+            // Sync WebRTC Hardware stream physically
+            localAudioStream.getAudioTracks()[0].enabled = !newMutedState;
         });
 
         // REALTIME MINI GIFT TRAY ROUTER
@@ -1040,7 +1096,7 @@
             if(localAudioStream) { localAudioStream.getTracks().forEach(track => track.stop()); localAudioStream = null; }
         }
 
-        // LEAVE ROOM
+        // LEAVE ROOM (Safely returns to profile.html as strictly requested)
         document.getElementById('leave-room-btn').addEventListener('click', async () => {
             if(confirm("Confirm: Leave the audio room?")) {
                 if(mySeatIndex !== null) {
@@ -1062,7 +1118,7 @@
 
                 currentRoomId = null; roomData = null;
                 document.getElementById('remote-audios-container').innerHTML = '';
-                window.location.href = "index.html";
+                window.location.href = "profile.html";
             }
         });
 
