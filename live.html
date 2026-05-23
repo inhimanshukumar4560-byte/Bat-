@@ -15,12 +15,12 @@
             return new Promise((resolve) => {
                 if (window.ZegoExpressEngine) { resolve(true); return; }
                 const s = document.createElement('script');
-                // Pehle original browser build wala link try karega jo 100% verified hai
-                s.src = "https://unpkg.com/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js";
+                // Pehle original browser build wala index.js load karega
+                s.src = "https://unpkg.com/zego-express-engine-webrtc@3.1.0/index.js";
                 s.onload = () => resolve(true);
                 s.onerror = () => {
                     const fallback = document.createElement('script');
-                    fallback.src = "https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/zego-express-engine-webrtc.js";
+                    fallback.src = "https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/index.js";
                     fallback.onload = () => resolve(true);
                     fallback.onerror = () => resolve(false);
                     document.head.appendChild(fallback);
