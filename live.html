@@ -274,7 +274,7 @@
 
         // --- ZEGOCLOUD SETUP (Your Details) ---
         const ZEGO_APP_ID = 557776684;
-        const ZEGO_SERVER_SECRET = "d595b7c54719d1f52d8b1e8f0bb446c8"; 
+        const ZEGO_SERVER_SECRET = "d595b7c54719d1f52d8b1e8f0bb446c6"; 
         const ZEGO_SERVER_URL = "wss://webliveroom557776684-api.coolzcloud.com/ws";
         
         let zg = null;
@@ -382,11 +382,19 @@
             
             if (expressLoaded) {
                 try {
-                    // Safe reference with fallback to window context
-                    const zegoEngineClass = window.ZegoExpressEngine || ZegoExpressEngine;
-                    zg = new zegoEngineClass(ZEGO_APP_ID, ZEGO_SERVER_URL);
+                    // Safe reference directly from window context to avoid ReferenceError
+                    const zegoEngineClass = window.ZegoExpressEngine;
+                    if (zegoEngineClass) {
+                        zg = new zegoEngineClass(ZEGO_APP_ID, ZEGO_SERVER_URL);
+                    } else {
+                        console.error("ZegoExpressEngine is not defined on window object.");
+                    }
                 } catch (e) {
                     console.error("ZegoExpressEngine initialization failed:", e);
+                    // Helpful safety warning if users run WebRTC on an insecure http remote IP
+                    if (!window.isSecureContext && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+                        console.warn("Insecure Context Warning: Browser restricts media engines over non-secure HTTP.");
+                    }
                 }
             } else {
                 console.error("ZegoExpressEngine SDK failed to load entirely.");
@@ -497,6 +505,7 @@
             fetchLiveStreams();
         }
 
+        // Force Recovery bypass handler
         function forceEnterMainApp() {
             try {
                 clearInterval(countdownInterval);
@@ -561,13 +570,18 @@
         // --- HOST: GO LIVE (ZEGOCLOUD WITH AUTO-TOKEN ENGINE) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live`;
-            closeModal('startLiveModal'); showLoading("Starting Engine...");
+            closeModal('startLiveModal'); showLoading("Starting Engine... Please allow Camera & Mic access.");
 
             const newStreamRef = push(ref(db, 'live_streams'));
             currentStreamId = newStreamRef.key;
             isHost = true;
 
             try {
+                // Safeguard check to ensure WebRTC engine initialized successfully
+                if (!zg) {
+                    throw new Error("WebRTC Engine (zg) start nahi ho paya. Kripya dhyan dein ki aap is application ko HTTPS ya localhost par chala rahe hain.");
+                }
+
                 // --- SAFE VARIABLE SCOPE ACCESS WITH AUTO FALLBACKS ---
                 const zegoPrebuilt = window.ZegoUIKitPrebuilt || (typeof ZegoUIKitPrebuilt !== 'undefined' ? ZegoUIKitPrebuilt : null);
                 if (!zegoPrebuilt) {
@@ -610,6 +624,11 @@
             currentStreamId = streamId; isHost = false;
 
             try {
+                // Safeguard check to ensure WebRTC engine initialized successfully
+                if (!zg) {
+                    throw new Error("WebRTC Engine (zg) start nahi ho paya. Kripya dhyan dein ki aap is application ko HTTPS ya localhost par chala rahe hain.");
+                }
+
                 // --- SAFE VARIABLE SCOPE ACCESS WITH AUTO FALLBACKS ---
                 const zegoPrebuilt = window.ZegoUIKitPrebuilt || (typeof ZegoUIKitPrebuilt !== 'undefined' ? ZegoUIKitPrebuilt : null);
                 if (!zegoPrebuilt) {
@@ -643,7 +662,7 @@
                 push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined!` });
 
             } catch(e) {
-                hideLoading(); showToast("Error joining stream.");
+                hideLoading(); showToast("Error joining stream: " + e.message);
             }
         }
 
