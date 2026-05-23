@@ -618,6 +618,10 @@
                 loginInput.value = storedId;
                 const storedAv = localStorage.getItem("zingoo_avatar");
                 if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+                
+                // Auto-login trigger
+                loginBtn.innerText = "Verifying...";
+                processDatabaseLogin(storedId);
             }
 
             const showToast = (message) => {
