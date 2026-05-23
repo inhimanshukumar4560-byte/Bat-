@@ -681,6 +681,7 @@
         let roomPeers = {};
         let roomLocalStream = null;
         let roomSignalListener = null;
+        let iceCandidateQueues = {};
 
         // --- Global Redirect to Secure Payment Page ---
         window.redirectToPayment = function(amount, diamonds) {
@@ -1195,26 +1196,49 @@
             function startRoomWebRTC() {
                 if (roomSignalListener) roomSignalListener();
                 const sigRef = ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}`);
+                
                 roomSignalListener = onChildAdded(sigRef, async (snapshot) => {
                     const data = snapshot.val();
                     if (!data) return;
                     const sender = data.sender;
                     
-                    if (data.type === 'offer') {
-                        if (!roomPeers[sender]) await createRoomPeerConnection(sender, false);
-                        await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        const answer = await roomPeers[sender].createAnswer();
-                        await roomPeers[sender].setLocalDescription(answer);
-                        push(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${sender}`), {
-                            type: 'answer', sender: window.currentUser, sdp: answer
-                        });
-                    } else if (data.type === 'answer' && roomPeers[sender]) {
-                        await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    } else if (data.type === 'candidate' && roomPeers[sender]) {
-                        await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                    try {
+                        if (data.type === 'offer') {
+                            if (!roomPeers[sender]) await createRoomPeerConnection(sender, false);
+                            
+                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            const answer = await roomPeers[sender].createAnswer();
+                            await roomPeers[sender].setLocalDescription(answer);
+                            
+                            push(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${sender}`), {
+                                type: 'answer', sender: window.currentUser, sdp: answer
+                            });
+
+                            // अगर कोई Candidate पहले आ गया था, तो अब उसे ऐड करें
+                            if (iceCandidateQueues[sender]) {
+                                iceCandidateQueues[sender].forEach(c => roomPeers[sender].addIceCandidate(new RTCIceCandidate(c)));
+                                delete iceCandidateQueues[sender];
+                            }
+
+                        } else if (data.type === 'answer' && roomPeers[sender]) {
+                            await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                            
+                        } else if (data.type === 'candidate') {
+                            // अगर RemoteDescription सेट हो चुका है, तो तुरंत Candidate ऐड करें
+                            if (roomPeers[sender] && roomPeers[sender].remoteDescription) {
+                                await roomPeers[sender].addIceCandidate(new RTCIceCandidate(data.candidate));
+                            } else {
+                                // वरना Candidate को Queue में सेव कर लें
+                                if (!iceCandidateQueues[sender]) iceCandidateQueues[sender] = [];
+                                iceCandidateQueues[sender].push(data.candidate);
+                            }
+                        }
+                    } catch (err) {
+                        console.error("WebRTC Error:", err);
+                    } finally {
+                        // काम पूरा होने के बाद ही सिग्नल डिलीट करें
+                        remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}/${snapshot.key}`));
                     }
-                    // Clean up processed signal
-                    remove(ref(db, `audio_rooms/${window.currentActiveRoomId}/signals/${window.currentUser}/${snapshot.key}`));
                 });
             }
 
@@ -1235,14 +1259,17 @@
                 };
 
                 pc.ontrack = e => {
-                    let audioEl = document.getElementById(`audio-${targetUser}`);
+                    let safeTargetUser = targetUser.replace(/\s+/g, '-'); 
+                    let audioEl = document.getElementById(`audio-${safeTargetUser}`);
                     if (!audioEl) {
                         audioEl = document.createElement('audio');
-                        audioEl.id = `audio-${targetUser}`;
+                        audioEl.id = `audio-${safeTargetUser}`;
                         audioEl.autoplay = true;
+                        audioEl.style.display = 'none';
                         document.body.appendChild(audioEl);
                     }
                     audioEl.srcObject = e.streams[0];
+                    audioEl.play().catch(err => console.log("Audio play blocked by browser:", err));
                 };
 
                 if (isOfferer) {
