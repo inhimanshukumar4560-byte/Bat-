@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Audio Live Room - Zingoo</title>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,6 +40,8 @@
 
         html, body {
             height: 100%;
+            width: 100%;
+            overflow-x: hidden;
             font-family: 'Outfit', sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-white);
@@ -47,6 +49,7 @@
 
         .main-container {
             max-width: 500px;
+            width: 100%;
             margin: 0 auto;
             height: 100dvh; 
             position: relative;
@@ -54,7 +57,8 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            overflow: hidden; 
+            overflow-x: hidden;
+            overflow-y: hidden;
         }
 
         /* --- NEW: White Splash Screen Loading Overlay --- */
@@ -167,7 +171,7 @@
         .lobby-search-box input:focus { outline: none; }
         .filter-btn { color: var(--hot-pink); background: none; border: none; font-size: 1.1em; cursor: pointer; }
 
-        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; } 
+        .lobby-body { flex-grow: 1; overflow-y: auto; padding: 0 20px 20px 20px; overflow-x: hidden; } 
         .lobby-body::-webkit-scrollbar { display: none; }
 
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 10px;}
@@ -202,7 +206,8 @@
             /* Transparent to allow dynamic background */
             background-color: #fdfdfd; 
             background-size: cover; 
-            background-position: center; 
+            background-position: center;
+            overflow-x: hidden;
         }
         
         /* Updated Header for Image match */
@@ -220,7 +225,7 @@
         .zh-btn { background: rgba(0,0,0,0.3); border: none; color: white; font-size: 1.1em; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: all 0.2s ease; }
         .zh-btn:hover { background: rgba(0,0,0,0.5); }
         
-        .room-body { flex-grow: 1; padding: 75px 15px 10px 15px; overflow-y: auto; display: flex; flex-direction: column; position: relative;}
+        .room-body { flex-grow: 1; padding: 75px 15px 10px 15px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; position: relative;}
         .room-body::-webkit-scrollbar { display: none; }
         .speaker-grid-zingoo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 5px; margin-top: 20px; z-index: 5;}
         
@@ -228,7 +233,7 @@
         .speaker-seat { position: relative; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .avatar-container { position: relative; width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px; padding: 2px; transition: all 0.3s ease; }
         .speaker-seat img.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; position: relative; z-index: 2;}
-        .speaker-seat p { font-size: 0.75em; color: white; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px; text-shadow: 0 1px 3px rgba(0,0,0,0.9);}
+        .speaker-seat p { font-size: 0.75em; color: white; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.9);}
         .admin-tag { background: rgba(255,0,76,0.8); color: white; font-size: 0.6em; padding: 3px 8px; border-radius: 12px; margin-top: 3px; font-weight: 800; border: 1px solid #fff;}
         
         /* Custom Store Chair Frame Styling */
@@ -278,22 +283,32 @@
         .warning-text h5 { font-size: 0.75em; color: #111; margin-bottom: 3px; font-weight: 700;}
         .warning-text p { font-size: 0.65em; color: #666; line-height: 1.3; }
         
-        /* Fixed position for Limited offers as per image */
-        .offer-box { position: absolute; bottom: 85px; right: 15px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border: none; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 25; width: 140px;}
-        .offer-title { font-size: 0.65em; color: white; margin-bottom: 5px; font-weight: 800; letter-spacing: 1px;}
-        .offer-price { font-size: 1.4em; font-weight: 900; color: white; display: flex; justify-content: center; align-items: center; gap: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        /* UPDATED: Smaller Fixed position Limited offers with Close button */
+        .offer-box { 
+            position: absolute; bottom: 85px; right: 15px; 
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe); 
+            border: none; border-radius: 12px; padding: 10px; 
+            text-align: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            z-index: 25; width: 110px;
+        }
+        .offer-box .close-offer {
+            position: absolute; top: 2px; right: 6px; color: white; font-size: 14px; font-weight: bold; cursor: pointer;
+        }
+        .offer-title { font-size: 0.55em; color: white; margin-bottom: 3px; font-weight: 800; letter-spacing: 0.5px;}
+        .offer-price { font-size: 1.2em; font-weight: 900; color: white; display: flex; justify-content: center; align-items: center; gap: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
         .offer-price i { color: #f1c40f; }
-        .offer-sub { font-size: 0.7em; text-decoration: line-through; color: rgba(255,255,255,0.7); }
-        .buy-btn { background: white; color: #6c5ce7; border: none; padding: 8px 20px; border-radius: 20px; font-size: 0.8em; margin-top: 8px; cursor: pointer; font-weight: 800; width: 100%;}
+        .offer-sub { font-size: 0.65em; text-decoration: line-through; color: rgba(255,255,255,0.7); }
+        .buy-btn { background: white; color: #6c5ce7; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.7em; margin-top: 5px; cursor: pointer; font-weight: 800; width: 100%;}
         
-        .gift-scroll-bar { display: none; } /* Hidden as UI uses limited offer floating box instead */
+        .gift-scroll-bar { display: none; } 
         
-        /* --- NEW FLOATING CHAT OVERLAY --- */
+        /* --- NEW FLOATING CHAT OVERLAY (Transparent Background) --- */
         .floating-chat-container {
             position: absolute;
             bottom: 85px; 
             left: 15px;
-            width: 55%; /* Reduced width to not overlap offers */
+            width: 70%;
+            max-width: 300px;
             height: 180px;
             overflow-y: hidden;
             display: flex;
@@ -303,33 +318,22 @@
             pointer-events: none; 
         }
         .floating-chat-msg {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
+            background: transparent; /* Changed to Transparent */
+            backdrop-filter: none;
             color: white;
-            padding: 8px 14px;
-            border-radius: 18px;
-            font-size: 0.85em;
-            margin-top: 8px;
+            padding: 4px 10px;
+            font-size: 0.9em;
+            margin-top: 4px;
             width: max-content;
             max-width: 100%;
             word-wrap: break-word;
+            white-space: normal;
             pointer-events: auto;
             animation: slideInLeft 0.3s ease-out;
-            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9), -1px -1px 3px rgba(0,0,0,0.9);
+            border: none;
         }
-        .floating-chat-msg .username { color: #f1c40f; font-weight: 800; margin-right: 5px; }
-        .floating-system-msg {
-            background: rgba(255, 0, 76, 0.8);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-top: 6px;
-            font-weight: bold;
-            width: max-content;
-            animation: slideInLeft 0.3s ease-out;
-        }
+        .floating-chat-msg .username { color: #f1c40f; font-weight: 800; margin-right: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
 
         @keyframes slideInLeft {
             from { opacity: 0; transform: translateX(-20px); }
@@ -573,11 +577,11 @@
                         <!-- Speakers Injected Here -->
                     </div>
                     
-                    <!-- Center Zingoo Text removed completely as requested, keeping ID for media player integration -->
                     <div class="center-logo-area" id="room-center-display"></div>
                     
-                    <!-- Limited Offer Fixed Box at Bottom Right -->
+                    <!-- UPDATED: Limited Offer Fixed Box at Bottom Right with Close Button -->
                     <div class="offer-box" onclick="window.redirectToDiamondStore()">
+                        <div class="close-offer" onclick="event.stopPropagation(); this.parentElement.style.display='none';">&times;</div>
                         <div class="offer-title">LIMITED OFFERS</div>
                         <div class="offer-price"><i class="fas fa-gem"></i> 300</div>
                         <div class="offer-sub">₹100</div>
@@ -587,7 +591,7 @@
                 </main>
                 
                 <div id="floating-live-chat" class="floating-chat-container">
-                    <div class="floating-system-msg">Welcome to the Room! Be respectful.</div>
+                    <!-- Removed System Welcome Message -->
                 </div>
 
                 <!-- UPDATED FOOTER -->
@@ -606,7 +610,6 @@
                         <button class="close-btn" id="close-chat-btn"><i class="fas fa-times"></i></button>
                     </div>
                     <div id="chat-messages" class="chat-messages">
-                        <div class="chat-msg system">Welcome to the Room! Be respectful.</div>
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="live-chat-input" class="chat-input" placeholder="Say something nice...">
@@ -685,7 +688,7 @@
         </div>
     </div>
 
-    <!-- UPDATED: ROOM SETTINGS & STORE MODAL WITH ALL CATEGORIES -->
+    <!-- ROOM SETTINGS & STORE MODAL WITH ALL CATEGORIES -->
     <div id="room-settings-modal" class="modal-overlay">
         <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
             <div class="modal-header"><h3>Room Store & Settings</h3><button class="close-btn">&times;</button></div>
@@ -782,8 +785,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- UPDATED: SPLASH SCREEN REDUCED TIMER LOGIC ---
-            let splashTime = 3; // Reduced to prevent waiting delay
+            // --- SPLASH SCREEN REDUCED TIMER LOGIC ---
+            let splashTime = 2; // Fast skip
             const splashTimerEl = document.getElementById('splash-timer');
             const splashScreen = document.getElementById('splash-screen');
             const idLoginScreen = document.getElementById('id-login-screen');
@@ -819,6 +822,7 @@
             // User Equipped Items
             let myEquippedChair = null;
             let myEquippedFrame = null;
+            window.myEquippedBackground = null;
 
             const showToast = (message) => {
                 globalToast.innerText = message;
@@ -829,7 +833,6 @@
             // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
-                // Background verification while timer runs
                 processDatabaseLogin(storedId, true); 
             } else {
                 hideSplashScreen();
@@ -919,6 +922,7 @@
                     if (userFound) {
                         myEquippedChair = allUsers[userKey].equippedChair || null;
                         myEquippedFrame = allUsers[userKey].equippedFrame || null;
+                        window.myEquippedBackground = allUsers[userKey].equippedBackground || null;
 
                         if (selectedAvatarFile && !isAutoLogin) {
                             set(ref(db, `users/${userKey}/avatar`), currentAvatar);
@@ -943,7 +947,7 @@
                         listenForIncomingCalls(); 
                         listenForInvites(); 
                         fetchAdminGifts(); 
-                        fetchStoreItems(); // UPDATED: Fetch All Store Categories
+                        fetchStoreItems(); 
                         
                         if(!isAutoLogin) showToast(`Welcome back, ${currentUser}!`);
                     } else {
@@ -1011,7 +1015,7 @@
                 });
             }
 
-            // --- UPDATED: FETCH ALL STORE ITEMS ---
+            // --- FETCH ALL STORE ITEMS ---
             let storeItemsData = { chairs: {}, backgrounds: {}, frames: {}, profile_icons: {}, entry_stickers: {} };
 
             function fetchStoreItems() {
@@ -1046,63 +1050,76 @@
                 }
             };
 
-            // --- UPDATED: BUY AND EQUIP ANY STORE ITEM ---
+            // --- BUY AND EQUIP ANY STORE ITEM (Buy Once Logic) ---
             window.buyAndEquipItem = function(category, itemUrl, cost, name) {
                 let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-                if(currentBal >= cost) {
-                    if(confirm(`Buy and equip '${name}' for ${cost} diamonds?`)) {
-                        let newBal = currentBal - cost;
-                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                        localStorage.setItem('zingoo_diamonds', newBal);
-                        document.getElementById('lobby-diamond-balance').innerText = newBal;
-                        
-                        // Save to DB User Profile
-                        get(ref(db, 'users')).then(snap => {
-                            let uKey = null;
-                            const users = snap.val();
-                            for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                const safeKey = itemUrl.replace(/[^a-zA-Z0-9]/g, ''); // create safe firebase key
+                
+                get(ref(db, `users/${currentUser}/ownedItems/${safeKey}`)).then(ownedSnap => {
+                    let isOwned = ownedSnap.exists();
+                    let finalCost = isOwned ? 0 : cost;
+
+                    if(currentBal >= finalCost) {
+                        if(isOwned || confirm(`Buy and equip '${name}' for ${finalCost} diamonds?`)) {
                             
-                            if(uKey) {
-                                if(category === 'chairs') set(ref(db, `users/${uKey}/equippedChair`), itemUrl);
-                                else if(category === 'frames') set(ref(db, `users/${uKey}/equippedFrame`), itemUrl);
-                                else if(category === 'profile_icons') set(ref(db, `users/${uKey}/equippedIcon`), itemUrl);
+                            // Deduct and save ownership if not owned
+                            if(!isOwned) {
+                                let newBal = currentBal - finalCost;
+                                set(ref(db, `users/${currentUser}/ownedItems/${safeKey}`), true);
+                                set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                                localStorage.setItem('zingoo_diamonds', newBal);
+                                document.getElementById('lobby-diamond-balance').innerText = newBal;
                             }
-                        });
+                            
+                            // Save to DB User Profile
+                            get(ref(db, 'users')).then(snap => {
+                                let uKey = null;
+                                const users = snap.val();
+                                for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                                
+                                if(uKey) {
+                                    if(category === 'chairs') set(ref(db, `users/${uKey}/equippedChair`), itemUrl);
+                                    else if(category === 'frames') set(ref(db, `users/${uKey}/equippedFrame`), itemUrl);
+                                    else if(category === 'profile_icons') set(ref(db, `users/${uKey}/equippedIcon`), itemUrl);
+                                    else if(category === 'backgrounds') set(ref(db, `users/${uKey}/equippedBackground`), itemUrl);
+                                }
+                            });
 
-                        // Instantly update current room if applicable
-                        if(category === 'chairs') {
-                            if(currentRoomHost !== currentUser) return showToast("Only Host can equip chairs for this room!");
-                            myEquippedChair = itemUrl;
-                            if(mySeatIndex !== -1 && currentActiveRoomId) {
-                                set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), itemUrl);
+                            // Instantly update current room if applicable
+                            if(category === 'chairs') {
+                                myEquippedChair = itemUrl;
+                                if(mySeatIndex !== -1 && currentActiveRoomId) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), itemUrl);
+                                }
+                            } else if(category === 'frames') {
+                                myEquippedFrame = itemUrl;
+                                if(mySeatIndex !== -1 && currentActiveRoomId) {
+                                    set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), itemUrl);
+                                }
+                            } else if(category === 'backgrounds') {
+                                if(currentRoomHost !== currentUser) return showToast("Only the Room Host can set the room background!");
+                                window.myEquippedBackground = itemUrl;
+                                if(currentActiveRoomId) set(ref(db, `audio_rooms/${currentActiveRoomId}/background`), itemUrl);
+                            } else if(category === 'entry_stickers') {
+                                if(currentActiveRoomId) {
+                                    push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
+                                        user: currentUser,
+                                        text: `Made a Grand Entry!`,
+                                        giftUrl: itemUrl, 
+                                        timestamp: serverTimestamp()
+                                    });
+                                }
                             }
-                        } else if(category === 'frames') {
-                            myEquippedFrame = itemUrl;
-                            if(mySeatIndex !== -1 && currentActiveRoomId) {
-                                set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), itemUrl);
-                            }
-                        } else if(category === 'backgrounds') {
-                            if(currentRoomHost !== currentUser) return showToast("Only the Room Host can set the room background!");
-                            if(currentActiveRoomId) set(ref(db, `audio_rooms/${currentActiveRoomId}/background`), itemUrl);
-                        } else if(category === 'entry_stickers') {
-                            if(currentActiveRoomId) {
-                                push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
-                                    user: currentUser,
-                                    text: `Made a Grand Entry!`,
-                                    giftUrl: itemUrl, 
-                                    timestamp: serverTimestamp()
-                                });
-                            }
+
+                            showToast(`Successfully equipped ${name}!`);
+                            closeModal();
                         }
-
-                        showToast(`Successfully equipped ${name}!`);
-                        closeModal();
+                    } else {
+                        if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
+                            window.redirectToDiamondStore();
+                        }
                     }
-                } else {
-                    if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
-                        window.redirectToDiamondStore();
-                    }
-                }
+                });
             };
 
             window.sendRoomGift = function(giftKey) {
@@ -1152,11 +1169,17 @@
             let peerConnection1v1 = null;
             let currentCallPath = null;
             let incomingCallData = null;
-            const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+            // UPGRADED WEBRTC SERVERS FOR INSTANT CONNECTION
+            const servers = { iceServers: [
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:global.stun.twilio.com:3478' }
+            ] };
 
             let roomLocalStream = null;
             let roomPeers = {}; 
             let signalUnsubscribe = null;
+            let roomSessionStartTime = Date.now();
 
             const liveRoomScreen = document.getElementById('live-room-screen');
             const modals = document.querySelectorAll('.modal-overlay');
@@ -1170,7 +1193,6 @@
                 if(modal) {
                     modal.style.display = 'flex';
                     if(modalId === 'room-settings-modal') {
-                        // Default load first category when opened
                         window.switchStoreCategory(document.getElementById('store-category-selector').value);
                     }
                 }
@@ -1277,14 +1299,20 @@
             document.getElementById("btn-end-video").addEventListener("click", stopWebRTC1v1);
             document.getElementById("btn-end-audio").addEventListener("click", stopWebRTC1v1);
 
+            // UPDATED: FASTER INSTANT AUDIO CONNECTION
             async function startRoomAudio() {
                 try {
+                    roomSessionStartTime = Date.now();
+                    // Clear old webRTC cache for my user to avoid junk connection
+                    await set(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`), null);
+                    
                     roomLocalStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
                     
                     const signalRef = ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${currentUser}`);
                     signalUnsubscribe = onChildAdded(signalRef, async (snapshot) => {
                         const data = snapshot.val();
-                        if(!data) return;
+                        // Ignore old junk data before I joined
+                        if(!data || data.timestamp < roomSessionStartTime) return; 
                         
                         const sender = data.sender;
                         if (!roomPeers[sender]) createRoomPeerConnection(sender);
@@ -1294,7 +1322,7 @@
                             const answer = await roomPeers[sender].createAnswer();
                             await roomPeers[sender].setLocalDescription(answer);
                             push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${sender}`), {
-                                sender: currentUser, type: 'answer', sdp: answer
+                                sender: currentUser, type: 'answer', sdp: answer, timestamp: Date.now()
                             });
                         } else if (data.type === 'answer') {
                             await roomPeers[sender].setRemoteDescription(new RTCSessionDescription(data.sdp));
@@ -1305,6 +1333,7 @@
                         }
                     });
 
+                    // Send offers to everyone already sitting
                     get(ref(db, `audio_rooms/${currentActiveRoomId}/seats`)).then(snap => {
                         const seats = snap.val();
                         if(seats) {
@@ -1315,7 +1344,7 @@
                                     const offer = await roomPeers[target].createOffer();
                                     await roomPeers[target].setLocalDescription(offer);
                                     push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${target}`), {
-                                        sender: currentUser, type: 'offer', sdp: offer
+                                        sender: currentUser, type: 'offer', sdp: offer, timestamp: Date.now()
                                     });
                                 }
                             });
@@ -1337,7 +1366,7 @@
                 pc.onicecandidate = event => {
                     if (event.candidate) {
                         push(ref(db, `audio_rooms/${currentActiveRoomId}/webrtc/${targetUser}`), {
-                            sender: currentUser, type: 'candidate', candidate: event.candidate.toJSON()
+                            sender: currentUser, type: 'candidate', candidate: event.candidate.toJSON(), timestamp: Date.now()
                         });
                     }
                 };
@@ -1427,14 +1456,22 @@
                 openModal('profile-popup');
             };
 
+            let myActiveRoomId = null;
+
             function listenForAudioRooms() {
                 const roomsRef = ref(db, 'audio_rooms');
                 onValue(roomsRef, (snapshot) => {
                     lobbyRoomsList.innerHTML = '';
+                    myActiveRoomId = null; // reset check
                     const rooms = snapshot.val();
                     if (rooms && Object.keys(rooms).length > 0) {
                         if(noRoomsMsg) noRoomsMsg.style.display = 'none';
                         Object.entries(rooms).forEach(([roomId, roomData]) => {
+                            // Check if I am host of any room
+                            if(roomData.host === currentUser) {
+                                myActiveRoomId = roomId;
+                            }
+
                             const seatCount = roomData.seats ? Object.keys(roomData.seats).length : 0;
                             const vacantSeats = 10 - seatCount;
                             
@@ -1529,17 +1566,23 @@
                         });
                     });
 
-                    const roomSeatsRef = ref(db, `audio_rooms/${roomId}/seats`);
+                    // LISTEN TO ENTIRE ROOM SO IF IT IS DELETED WE KNOW
                     if (roomListener) roomListener(); 
-                    roomListener = onValue(roomSeatsRef, (snapshot) => {
-                        renderSeats(snapshot.val() || {});
+                    roomListener = onValue(ref(db, `audio_rooms/${roomId}`), (snapshot) => {
+                        if(!snapshot.exists()) {
+                            showToast("The Room has been closed.");
+                            leaveCurrentRoom();
+                            return;
+                        }
+                        const roomData = snapshot.val();
+                        renderSeats(roomData.seats || {});
                     });
 
                     const chatContainer = document.getElementById('chat-messages');
                     const floatingContainer = document.getElementById('floating-live-chat');
                     
-                    chatContainer.innerHTML = '<div class="chat-msg system">Welcome to the Room! Be respectful.</div>';
-                    floatingContainer.innerHTML = '<div class="floating-system-msg">Welcome to the Room! Be respectful.</div>';
+                    chatContainer.innerHTML = '';
+                    floatingContainer.innerHTML = '';
                     
                     if (unsubscribeChat) unsubscribeChat();
                     const chatRef = ref(db, `audio_rooms/${roomId}/chats`);
@@ -1739,6 +1782,12 @@
                     showToast("Please login first to create a room!");
                     return;
                 }
+                // Check if user already created a room
+                if(myActiveRoomId) {
+                    showToast("You already have an active room! Please close it first.");
+                    return;
+                }
+
                 openModal('create-room-modal');
             });
             
@@ -1753,6 +1802,7 @@
                     host: currentUser,
                     hostAvatar: currentAvatar,
                     createdAt: serverTimestamp(),
+                    background: window.myEquippedBackground || null,
                     seats: {}
                 }).then(() => {
                     pendingInvites.forEach(user => {
@@ -1769,9 +1819,20 @@
                 });
             });
 
-            document.getElementById('close-room-btn').addEventListener('click', leaveCurrentRoom);
+            // UPDATED: Delete Room Logic
+            document.getElementById('close-room-btn').addEventListener('click', () => {
+                if(currentRoomHost === currentUser && currentActiveRoomId) {
+                    if(confirm("You are the host. Do you want to DELETE this room for everyone?")) {
+                        remove(ref(db, `audio_rooms/${currentActiveRoomId}`));
+                        // Removing the room node triggers the "snapshot.exists() == false" in everyone's listener
+                    } else {
+                        // User canceled deletion. Do nothing or just leave seat
+                    }
+                } else {
+                    leaveCurrentRoom();
+                }
+            });
             
-            // Re-attached listeners with proper IDs
             document.getElementById('bottom-more-btn').addEventListener('click', () => openModal('footer-action-modal'));
             document.getElementById('gift-btn-footer').addEventListener('click', () => openModal('gift-modal'));
             
