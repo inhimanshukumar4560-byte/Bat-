@@ -16,9 +16,11 @@
         }
     </script>
 
-    <!-- 2. Direct Unpkg CDN Scripts (Working on your mobile network) -->
-    <script src="https://unpkg.com/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js"></script>
-    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+    <!-- 2. Corrected unpkg Paths (index.js is the exact bundle filename on unpkg) -->
+    <script src="https://unpkg.com/zego-express-engine-webrtc@3.1.0/index.js" 
+            onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js';"></script>
+    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js" 
+            onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js';"></script>
 
     <!-- Tailwind CSS and FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,14 +53,14 @@
 </head>
 <body class="h-screen w-screen flex flex-col justify-between">
 
-    <!-- CONNECTION / BLOCKED SCREEN (Just in case network drops completely) -->
+    <!-- CONNECTION / BLOCKED SCREEN -->
     <div id="cdn-error-screen" class="hidden fixed inset-0 z-50 bg-neutral-950 p-6 flex flex-col justify-center items-center text-center">
         <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center text-2xl mb-4">
             <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <h3 class="text-lg font-bold text-white mb-2">Connection Blocked</h3>
         <p class="text-xs text-gray-400 mb-6 max-w-xs leading-relaxed">
-            Zingoo could not load the ZEGOCLOUD engine. Please check your internet connection.
+            Zingoo could not load the ZEGOCLOUD engine. Please ensure you are opening the site via HTTPS (https://zingoo.online/live.html) and check your internet connection.
         </p>
         <button onclick="window.location.reload()" class="bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold px-6 py-2.5 rounded-full text-sm active:scale-95 transition-transform">
             Refresh Page
