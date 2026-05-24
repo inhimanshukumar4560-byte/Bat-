@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,10 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- ZEGOCLOUD Prebuilt SDK Integration with unpkg fallback -->
-    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js" 
-            onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js';"></script>
 
     <style>
         :root {
@@ -289,20 +286,17 @@
         .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* --- ACTUAL LIVE VIEW SCREEN (Zego UI Integration Layer) --- */
+        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) - REDESIGNED FOR BETTER CHAT --- */
         #live-view-screen {
             position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
         }
         
         .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
         
-        #zego-root {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
+        #remote-live-video, #local-live-video {
+            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
+            transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
+            -webkit-transform: scaleX(-1);
         }
         
         /* AUDIO FIX: Unmute Button Overlay */
@@ -318,7 +312,7 @@
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-between; align-items: flex-start; pointer-events: none;
+            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
         }
         
         .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -329,26 +323,29 @@
         .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
         .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
         
-        /* --- CHAT UI OVERLAY FOR VIDEO --- */
+        /* --- HIGHLY IMPROVED CHAT UI SECTION --- */
         .live-overlay-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
             background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
             display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
         }
         
+        /* Massive Chat Area Upgrade */
         .chat-box { 
             pointer-events: auto;
-            max-height: 45vh; 
+            max-height: 45vh; /* Allows chat to take up almost half the screen nicely */
             overflow-y: auto; 
             margin-bottom: 20px; 
             display: flex; 
             flex-direction: column; 
             gap: 12px; 
             padding-right: 10px;
+            /* Fade effect at the top of chat */
             mask-image: linear-gradient(to top, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
         }
         
+        /* Custom scrollbar just for chat to make it neat */
         .chat-box::-webkit-scrollbar { width: 4px; display: block; }
         .chat-box::-webkit-scrollbar-track { background: transparent; }
         .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
@@ -373,7 +370,10 @@
         }
         .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
         
+        /* System message style */
         .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
+        
+        /* Gift message style */
         .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
         .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
@@ -449,7 +449,7 @@
     <!-- 2. MAIN HEADER & HOME PAGE -->
     <div id="main-app" style="display: none;">
         <header>
-            <div class="logo" onclick="window.location.href='live.html'">Zingoo</div>
+            <div class="logo" onclick="window.location.reload()">Zingoo</div>
             <div class="header-actions">
                 <div class="diamond-bal" onclick="redirectToDiamondStore()">
                     <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
@@ -481,7 +481,7 @@
                 <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
             </div>
             
-            <!-- Past Thumbnails & Schedule Options -->
+            <!-- NEW: Past Thumbnails & Schedule Options -->
             <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
                 <p>Or choose previous thumbnail:</p>
                 <div class="past-thumbs-list" id="past-thumbs-container"></div>
@@ -502,10 +502,12 @@
     <!-- 4. ACTUAL LIVE VIEW SCREEN -->
     <div id="live-view-screen">
         <div class="live-video-container">
-            <!-- Zego WebRTC Mounting Node -->
-            <div id="zego-root"></div>
+            <!-- Broadcaster Video -->
+            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            <!-- Viewer Video -->
+            <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             
-            <!-- Audio Block recovery button -->
+            <!-- THE FIX: Unmute Button for Autoplay blocked browsers -->
             <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
             </div>
@@ -513,7 +515,7 @@
         
         <div class="live-overlay-top">
             <div class="host-info">
-                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
+                <img id="live-host-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive">
                 <div class="host-text">
                     <h4 id="live-host-name">Host Name</h4>
                     <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
@@ -547,13 +549,11 @@
     <!-- ============================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, onChildAdded, onChildRemoved, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
-        // 1. Disable Right Click (Context Menu)
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
         document.addEventListener('keydown', (e) => {
             if (e.key === 'PrintScreen' || 
                 (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
@@ -563,7 +563,6 @@
             }
         });
 
-        // 3. Blur screen if app loses focus
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 document.body.classList.add('security-blur');
@@ -585,10 +584,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ZEGOCLOUD App Credentials
-        const appID = 557776684;
-        const serverSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
-
         // --- APIS ---
         const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
         const CLOUD_NAME = "dotjw6tep"; 
@@ -603,10 +598,21 @@
         let selectedThumbFile = null;
         let selectedPastThumb = null;
 
-        // Streaming Variables
+        // --- RELAY TREE WEBRTC VARIABLES ---
+        const MAX_CHILDREN = 3; // Har parent max 3 direct children handle karega
+        const iceServers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
+        
+        let localStream = null;         // Cam stream (Host ke liye) ya Received Stream (Viewer/Relay ke liye)
         let currentStreamId = null;
         let isHost = false;
-        let zpInstance = null; // UIKit Object Instance
+        
+        let currentParentId = null;     // Kisse stream receive ho rahi hai
+        let upstreamConnection = null;  // Parent connection
+        let downstreamConnections = {}; // Map mapping {childUserId -> RTCPeerConnection}
+        
+        // Listeners trackers for clean teardown
+        let signalingListeners = [];
+        let nodeTreeListeners = [];
 
         // --- TOAST FUNCTION ---
         function showToast(message) {
@@ -634,7 +640,6 @@
             const storedAv = localStorage.getItem("zingoo_avatar");
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             
-            // Auto-login trigger
             document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
             validateDatabaseLogin(storedId);
         }
@@ -796,7 +801,8 @@
                     Object.entries(streams).forEach(([streamId, data]) => {
                         if (data.isLive || data.scheduledTime) {
                             count++;
-                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
+                            const viewerCount = data.nodes ? Object.keys(data.nodes).length - 1 : 0; // Subtract host
+                            const displayViewers = viewerCount < 0 ? 0 : viewerCount;
                             const thumbUrl = data.thumbnail || data.hostAvatar; 
                             
                             const badgeHTML = data.isLive ? 
@@ -821,7 +827,7 @@
                                 <img src="${thumbUrl}" alt="Live">
                                 <div class="card-top-info">
                                     ${badgeHTML}
-                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
+                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${displayViewers}</span>` : ''}
                                 </div>
                                 <div class="card-bottom-info">
                                     <div class="user-name">${data.hostName}</div>
@@ -848,7 +854,7 @@
             document.getElementById(id).classList.remove('active');
         };
 
-        // --- 4. STREAM BROADCASTING (HOST) ---
+        // --- 4. WEBRTC BROADCASTING (HOST) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
             const scheduleInput = document.getElementById('live-schedule-time').value;
@@ -876,6 +882,7 @@
                     await set(newStreamRef, {
                         hostName: currentUser,
                         hostAvatar: currentAvatar,
+                        hostId: currentUserId,
                         title: title,
                         thumbnail: thumbUrl,
                         isLive: false,
@@ -887,6 +894,8 @@
                     return; 
                 }
 
+                showLoading("Accessing Camera & Mic...");
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 showLoading("Starting Stream...");
                 
                 const newStreamRef = push(ref(db, 'live_streams'));
@@ -896,6 +905,7 @@
                 await set(newStreamRef, {
                     hostName: currentUser,
                     hostAvatar: currentAvatar,
+                    hostId: currentUserId,
                     title: title,
                     thumbnail: thumbUrl,
                     isLive: true,
@@ -903,45 +913,18 @@
                 });
 
                 onDisconnect(newStreamRef).remove();
-
-                // Setup WebRTC using Zego Prebuilt instead of raw peer connections (Binding to window to fix ES module ReferenceError)
-                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
-                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
-                }
-
-                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
-                    appID,
-                    serverSecret,
-                    currentStreamId,
-                    currentUserId,
-                    currentUser
-                );
-                zpInstance = window.ZegoUIKitPrebuilt.create(token);
-                zpInstance.joinRoom({
-                    container: document.getElementById('zego-root'),
-                    scenario: {
-                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: window.ZegoUIKitPrebuilt.Host },
-                    },
-                    showTextChat: false, 
-                    showUserList: false, 
-                    showMyCameraToggleButton: true,
-                    showAudioVideoSettingsButton: true,
-                    showScreenSharingButton: false,
-                    turnOnCameraWhenJoining: true,
-                });
-
-                setupHostUIAndSignaling();
+                setupHostUIAndTreeSignaling();
 
             } catch (err) {
                 hideLoading();
-                alert("Could not start live: " + err.message);
+                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
             }
         });
 
         async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Starting Live...");
+            showLoading("Accessing Camera & Mic...");
             try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
                 currentStreamId = streamId;
                 isHost = true;
 
@@ -952,44 +935,23 @@
                 });
                 
                 onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
-
-                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
-                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
-                }
-
-                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
-                    appID,
-                    serverSecret,
-                    currentStreamId,
-                    currentUserId,
-                    currentUser
-                );
-                zpInstance = window.ZegoUIKitPrebuilt.create(token);
-                zpInstance.joinRoom({
-                    container: document.getElementById('zego-root'),
-                    scenario: {
-                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: window.ZegoUIKitPrebuilt.Host },
-                    },
-                    showTextChat: false,
-                    showUserList: false,
-                    showMyCameraToggleButton: true,
-                    showAudioVideoSettingsButton: true,
-                    showScreenSharingButton: false,
-                    turnOnCameraWhenJoining: true,
-                });
-
-                setupHostUIAndSignaling();
+                setupHostUIAndTreeSignaling();
             } catch (err) {
                 hideLoading();
                 alert("Could not start live: " + err.message);
             }
         }
 
-        function setupHostUIAndSignaling() {
+        // Host setup logic with Relaying architecture
+        function setupHostUIAndTreeSignaling() {
             document.getElementById('main-app').style.display = 'none';
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
+            
+            const localVideo = document.getElementById('local-live-video');
+            localVideo.style.display = 'block';
+            document.getElementById('remote-live-video').style.display = 'none';
+            localVideo.srcObject = localStream;
 
             document.getElementById('live-host-name').innerText = currentUser + " (You)";
             document.getElementById('live-host-avatar').src = currentAvatar;
@@ -998,79 +960,345 @@
             showToast("You are now LIVE! 🔴");
             setupLiveChat();
 
-            // Monitor active viewers count
-            onValue(ref(db, `live_streams/${currentStreamId}/viewers`), (snap) => {
-                document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+            // Set host node in tree
+            const hostNodeRef = ref(db, `live_streams/${currentStreamId}/nodes/${currentUserId}`);
+            set(hostNodeRef, {
+                userId: currentUserId,
+                parentId: 'root', // Root node has no parent
+                name: currentUser,
+                avatar: currentAvatar
             });
+            onDisconnect(hostNodeRef).remove();
+
+            // Setup camera dynamic track failure monitors
+            if (localStream && localStream.getVideoTracks().length > 0) {
+                const videoTrack = localStream.getVideoTracks()[0];
+                videoTrack.onmute = () => {
+                    showToast("Warning: Camera interrupted!");
+                    document.body.classList.add('security-blur');
+                };
+                videoTrack.onunmute = () => {
+                    showToast("Camera restored.");
+                    document.body.classList.remove('security-blur');
+                };
+            }
+
+            // Host handles overall viewer count and direct signaling requests
+            const streamViewerCountRef = ref(db, `live_streams/${currentStreamId}/nodes`);
+            onValue(streamViewerCountRef, (snapshot) => {
+                const nodes = snapshot.val();
+                const totalNodes = nodes ? Object.keys(nodes).length - 1 : 0;
+                document.getElementById('live-viewer-count').innerText = totalNodes < 0 ? 0 : totalNodes;
+            });
+
+            // Start signaling listener as a potential parent node
+            startParentSignalingListener(currentUserId);
         }
 
+        // --- 5. MULTI-TIER SIGNALING & RELAY FORWARDING ---
 
-        // --- 5. STREAM WATCHING (VIEWER) ---
+        // Listen for direct children connecting to this specific parentNode
+        function startParentSignalingListener(myNodeId) {
+            const incomingSignalingRef = ref(db, `live_streams/${currentStreamId}/signaling/${myNodeId}`);
+            
+            const listener = onChildAdded(incomingSignalingRef, async (snapshot) => {
+                const childId = snapshot.key;
+                const childSignalingData = snapshot.val();
+
+                if (childSignalingData && childSignalingData.offer) {
+                    // Check local slots capacity
+                    if (Object.keys(downstreamConnections).length >= MAX_CHILDREN) {
+                        return; // Ignore connection request if max capacity reached
+                    }
+
+                    const pc = new RTCPeerConnection(iceServers);
+                    downstreamConnections[childId] = pc;
+
+                    // Forward stream tracks (whether camera stream or relayed remote stream)
+                    if (localStream) {
+                        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+                    }
+
+                    pc.onicecandidate = e => {
+                        if (e.candidate) {
+                            push(ref(db, `live_streams/${currentStreamId}/signaling/${myNodeId}/${childId}/candidates/parent`), e.candidate.toJSON());
+                        }
+                    };
+
+                    const candidatesQueue = [];
+                    const childCandidatesRef = ref(db, `live_streams/${currentStreamId}/signaling/${myNodeId}/${childId}/candidates/child`);
+                    
+                    onChildAdded(childCandidatesRef, (snap) => {
+                        const candidate = snap.val();
+                        if (candidate) {
+                            if (pc.remoteDescription && pc.remoteDescription.type) {
+                                pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(err => {});
+                            } else {
+                                candidatesQueue.push(candidate);
+                            }
+                        }
+                    });
+
+                    await pc.setRemoteDescription(new RTCSessionDescription(childSignalingData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    await update(ref(db, `live_streams/${currentStreamId}/signaling/${myNodeId}/${childId}`), {
+                        answer: { type: answer.type, sdp: answer.sdp }
+                    });
+
+                    candidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)).catch(err => {}));
+                    candidatesQueue.length = 0;
+                }
+            });
+
+            signalingListeners.push({ ref: incomingSignalingRef, handler: listener });
+
+            // Watch for children disconnecting to clean up downstreams
+            const disconnectListener = onChildRemoved(incomingSignalingRef, (snapshot) => {
+                const childId = snapshot.key;
+                if (downstreamConnections[childId]) {
+                    downstreamConnections[childId].close();
+                    delete downstreamConnections[childId];
+                }
+            });
+            signalingListeners.push({ ref: incomingSignalingRef, handler: disconnectListener });
+        }
+
+        // --- TREE VIEWING & AUTORECONNECT TREE ---
         async function joinLiveStream(streamId, streamData) {
-            showLoading("Joining Room...");
+            showLoading("Finding optimal parent...");
             currentStreamId = streamId;
             isHost = false;
 
             document.getElementById('main-app').style.display = 'none';
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
+            
+            document.getElementById('local-live-video').style.display = 'none';
+            const remoteVideo = document.getElementById('remote-live-video');
+            remoteVideo.style.display = 'block';
 
             document.getElementById('live-host-name').innerText = streamData.hostName;
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
 
+            setupLiveChat();
+
+            // Track viewer counts globally
+            onValue(ref(db, `live_streams/${currentStreamId}/nodes`), (snap) => {
+                const nodes = snap.val();
+                const totalNodes = nodes ? Object.keys(nodes).length - 1 : 0;
+                document.getElementById('live-viewer-count').innerText = totalNodes < 0 ? 0 : totalNodes;
+            });
+
+            // Tree Discovery Algorithm
+            tryToConnectToTree();
+        }
+
+        // Scan Firebase tree to find a dynamic available parent (Slots < 3)
+        async function tryToConnectToTree() {
             try {
-                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
-                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
+                const snapshot = await get(ref(db, `live_streams/${currentStreamId}/nodes`));
+                const nodes = snapshot.val() || {};
+                
+                // Calculate current children counts of all active nodes
+                const childrenCount = {};
+                Object.keys(nodes).forEach(nodeId => {
+                    childrenCount[nodeId] = 0;
+                });
+                Object.values(nodes).forEach(node => {
+                    if (node.parentId && node.parentId !== 'root') {
+                        if (childrenCount[node.parentId] !== undefined) {
+                            childrenCount[node.parentId]++;
+                        }
+                    }
+                });
+
+                // Find a parent candidate that has < MAX_CHILDREN
+                let chosenParentId = null;
+
+                // Priority 1: Host
+                const hostNode = Object.values(nodes).find(n => n.parentId === 'root');
+                if (hostNode && childrenCount[hostNode.userId] < MAX_CHILDREN) {
+                    chosenParentId = hostNode.userId;
+                } else {
+                    // Priority 2: Active Relays (Shortest hierarchy path gets chosen)
+                    for (let nodeId in childrenCount) {
+                        if (childrenCount[nodeId] < MAX_CHILDREN) {
+                            chosenParentId = nodeId;
+                            break;
+                        }
+                    }
                 }
 
-                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
-                    appID,
-                    serverSecret,
-                    currentStreamId,
-                    currentUserId,
-                    currentUser
-                );
-                zpInstance = window.ZegoUIKitPrebuilt.create(token);
-                zpInstance.joinRoom({
-                    container: document.getElementById('zego-root'),
-                    scenario: {
-                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: window.ZegoUIKitPrebuilt.Audience },
-                    },
-                    showTextChat: false,
-                    showUserList: false,
-                    showMyCameraToggleButton: false,
-                    showAudioVideoSettingsButton: false,
-                    showScreenSharingButton: false,
-                    turnOnCameraWhenJoining: false,
-                });
+                if (!chosenParentId) {
+                    showToast("Server is temporarily full! Retrying in 5 seconds...");
+                    setTimeout(tryToConnectToTree, 5000);
+                    return;
+                }
 
-                // Set up viewer reference in database
-                const viewerRef = ref(db, `live_streams/${streamId}/viewers/${currentUser}`);
-                await set(viewerRef, {
-                    username: currentUser,
-                    timestamp: serverTimestamp()
-                });
+                connectToParentNode(chosenParentId);
 
-                onDisconnect(viewerRef).remove();
-
-                // Live dynamic sync of room viewers
-                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
-                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
-                });
-
-                hideLoading();
-                setupLiveChat();
-                
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
-
-            } catch(e) {
-                hideLoading();
-                showToast("Failed to join stream.");
+            } catch (err) {
+                showToast("Connection to network failed.");
                 leaveLiveStream();
             }
         }
 
+        // Establish WebRTC direct stream connection to parent
+        async function connectToParentNode(parentId) {
+            currentParentId = parentId;
+            showLoading("Initializing WebRTC Handshake...");
+
+            try {
+                upstreamConnection = new RTCPeerConnection(iceServers);
+
+                upstreamConnection.ontrack = e => {
+                    const remoteVideo = document.getElementById('remote-live-video');
+                    
+                    // Create MediaStream if missing, Add incoming track to it.
+                    if (!remoteVideo.srcObject) {
+                        remoteVideo.srcObject = new MediaStream();
+                    }
+                    remoteVideo.srcObject.addTrack(e.track);
+
+                    // Map remote stream as current localStream so this user can act as relay to others
+                    localStream = remoteVideo.srcObject;
+
+                    // Force system auto-unmuting options
+                    remoteVideo.muted = false;
+                    remoteVideo.volume = 1.0;
+
+                    const playPromise = remoteVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Autoplay blocked by browser
+                            const unmuteBtn = document.getElementById('unmute-overlay');
+                            unmuteBtn.style.display = 'flex';
+                            unmuteBtn.onclick = () => {
+                                remoteVideo.muted = false;
+                                remoteVideo.play();
+                                unmuteBtn.style.display = 'none';
+                                showToast("Audio is now Live! 🔊");
+                            };
+                        });
+                    }
+                };
+
+                upstreamConnection.onicecandidate = e => {
+                    if (e.candidate) {
+                        push(ref(db, `live_streams/${currentStreamId}/signaling/${parentId}/${currentUserId}/candidates/child`), e.candidate.toJSON());
+                    }
+                };
+
+                // Reconnect if stream state drops completely
+                upstreamConnection.onconnectionstatechange = () => {
+                    if (upstreamConnection && (upstreamConnection.connectionState === 'disconnected' || upstreamConnection.connectionState === 'failed')) {
+                        handleParentDisconnected();
+                    }
+                };
+
+                upstreamConnection.addTransceiver('video', { direction: 'recvonly' });
+                upstreamConnection.addTransceiver('audio', { direction: 'recvonly' });
+
+                const offer = await upstreamConnection.createOffer();
+                await upstreamConnection.setLocalDescription(offer);
+
+                const signalingPath = `live_streams/${currentStreamId}/signaling/${parentId}/${currentUserId}`;
+                await set(ref(db, signalingPath), {
+                    username: currentUser,
+                    offer: { type: offer.type, sdp: offer.sdp }
+                });
+
+                // Clear downstream disconnect references cleanly on browser collapse
+                onDisconnect(ref(db, signalingPath)).remove();
+
+                const hostCandidatesQueue = [];
+                onChildAdded(ref(db, `${signalingPath}/candidates/parent`), (snap) => {
+                    const cand = snap.val();
+                    if(cand) {
+                        if (upstreamConnection.remoteDescription && upstreamConnection.remoteDescription.type) {
+                            upstreamConnection.addIceCandidate(new RTCIceCandidate(cand)).catch(err => {});
+                        } else {
+                            hostCandidatesQueue.push(cand);
+                        }
+                    }
+                });
+
+                onValue(ref(db, `${signalingPath}/answer`), async (snap) => {
+                    const answer = snap.val();
+                    if (answer && upstreamConnection && upstreamConnection.signalingState !== "closed") {
+                        await upstreamConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                        hostCandidatesQueue.forEach(c => upstreamConnection.addIceCandidate(new RTCIceCandidate(c)).catch(err => {}));
+                        hostCandidatesQueue.length = 0;
+                    }
+                });
+
+                // Insert user in Node list tree database
+                const myNodeRef = ref(db, `live_streams/${currentStreamId}/nodes/${currentUserId}`);
+                await set(myNodeRef, {
+                    userId: currentUserId,
+                    parentId: parentId,
+                    name: currentUser,
+                    avatar: currentAvatar
+                });
+                onDisconnect(myNodeRef).remove();
+
+                // Setup listener to track if parent drops node hierarchy
+                const parentNodeRef = ref(db, `live_streams/${currentStreamId}/nodes/${parentId}`);
+                const parentNodeListener = onValue(parentNodeRef, (snap) => {
+                    if (!snap.exists()) {
+                        handleParentDisconnected();
+                    }
+                });
+                nodeTreeListeners.push({ ref: parentNodeRef, handler: parentNodeListener });
+
+                // Also start listening to handle connections as a parent in case we are chosen as relay node
+                startParentSignalingListener(currentUserId);
+
+                hideLoading();
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
+
+            } catch (err) {
+                hideLoading();
+                showToast("WebRTC error, retrying connect...");
+                handleParentDisconnected();
+            }
+        }
+
+        // Automatic Reconnection Logic when a parent collapses or disconnects
+        function handleParentDisconnected() {
+            showToast("Upstream relay disconnected. Finding alternative parent...");
+            
+            // Clean up connection to old parent
+            if (upstreamConnection) {
+                upstreamConnection.close();
+                upstreamConnection = null;
+            }
+
+            // Clean signaling listeners
+            signalingListeners.forEach(item => {
+                remove(item.ref); // Clean up stale DB records
+            });
+            signalingListeners = [];
+
+            // Remove listeners
+            nodeTreeListeners.forEach(item => {
+                // To unsubscribe, fetch with blank values on same ref
+                onValue(item.ref, () => {});
+            });
+            nodeTreeListeners = [];
+
+            // Discard self from old child registry of the old parent
+            if (currentStreamId && currentParentId) {
+                remove(ref(db, `live_streams/${currentStreamId}/signaling/${currentParentId}/${currentUserId}`));
+            }
+
+            // Recursively search for a new parent node in tree
+            if (currentStreamId) {
+                tryToConnectToTree();
+            }
+        }
 
         // --- 6. LEAVE/STOP STREAM ---
         document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
@@ -1078,25 +1306,52 @@
         function leaveLiveStream() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            
             document.getElementById('unmute-overlay').style.display = 'none';
 
-            if (zpInstance) {
-                zpInstance.destroy();
-                zpInstance = null;
-            }
+            // Clean active tracking listeners
+            signalingListeners.forEach(item => {
+                // Clear signaling database and disable references
+                remove(item.ref);
+            });
+            signalingListeners = [];
 
+            nodeTreeListeners.forEach(item => {
+                onValue(item.ref, () => {});
+            });
+            nodeTreeListeners = [];
+
+            // Host Cleanup
             if (isHost && currentStreamId) {
+                if (localStream) localStream.getTracks().forEach(t => t.stop());
+                Object.values(downstreamConnections).forEach(pc => pc.close());
+                downstreamConnections = {};
                 remove(ref(db, `live_streams/${currentStreamId}`));
-            } else if (!isHost && currentStreamId) {
-                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
+            } 
+            // Viewer Cleanup
+            else if (!isHost && currentStreamId) {
+                if (upstreamConnection) upstreamConnection.close();
+                upstreamConnection = null;
+
+                // Close all downstreams child nodes if we were acting as relay node
+                Object.values(downstreamConnections).forEach(pc => pc.close());
+                downstreamConnections = {};
+
+                // Clean nodes and signaling registries
+                remove(ref(db, `live_streams/${currentStreamId}/nodes/${currentUserId}`));
+                if (currentParentId) {
+                    remove(ref(db, `live_streams/${currentStreamId}/signaling/${currentParentId}/${currentUserId}`));
+                }
+                
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
 
             currentStreamId = null;
+            currentParentId = null;
+            localStream = null;
+            document.getElementById('local-live-video').srcObject = null;
+            document.getElementById('remote-live-video').srcObject = null;
             document.getElementById('live-chat-box').innerHTML = ''; 
         }
-
 
         // --- 7. LIVE CHAT FUNCTIONALITY ---
         function setupLiveChat() {
@@ -1138,7 +1393,6 @@
                 }
             }
         });
-
 
         // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
         window.handleGiftClick = function() {
