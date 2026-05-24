@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +22,7 @@
             --dark-text: #2A1A1F;
             --text-muted: #8E7A80;
             --border-pink: #FFE3E8;
-            --chat-bg: rgba(0, 0, 0, 0.45);
+            --chat-bg: rgba(0, 0, 0, 0.55);
         }
 
         * {
@@ -38,7 +40,6 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* --- Security: Prevent Text Selection and Image Dragging --- */
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -47,18 +48,106 @@
             transition: filter 0.3s ease;
         }
 
-        /* --- Security Blur Filter --- */
+        /* Security Blur Filter */
         body.security-blur {
             filter: blur(25px);
             pointer-events: none;
         }
 
-        /* --- Custom Scrollbar for App --- */
         ::-webkit-scrollbar { width: 6px; display: none; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #FFB6C1; border-radius: 10px; }
 
-        /* --- LOGIN SCREEN (ID Enforced) --- */
+        /* CYBER VERIFICATION SCREEN (30-Second Security Shield) */
+        #cyber-verification-screen {
+            position: fixed;
+            inset: 0;
+            background: #07070b;
+            z-index: 999999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            p: 24px;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* 3D Circular Scanner */
+        .scanner-container {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scanner-ring-outer {
+            position: absolute;
+            inset: 0;
+            border: 4px dashed #FF2E5D;
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+        .scanner-ring-inner {
+            position: absolute;
+            inset: 15px;
+            border: 2px solid rgba(255, 90, 127, 0.2);
+            border-top: 2px solid #FF5A7F;
+            border-radius: 50%;
+            animation: spin-reverse 4s linear infinite;
+        }
+        #verify-countdown {
+            font-size: 52px;
+            font-weight: 900;
+            color: #FFFFFF;
+            text-shadow: 0 0 20px rgba(255, 46, 93, 0.6);
+            z-index: 10;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+
+        .verify-status-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 46, 93, 0.15);
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: #E2D9DB;
+            font-weight: 500;
+            text-align: left;
+            transition: opacity 0.3s;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .status-dot.active {
+            background: #FF2E5D;
+            box-shadow: 0 0 10px #FF2E5D;
+            animation: pulse-bg 1.5s infinite;
+        }
+        .status-dot.completed {
+            background: #10B981;
+            box-shadow: 0 0 10px #10B981;
+        }
+
+        /* LOGIN SCREEN (ID Enforced) */
         #id-login-screen {
             position: fixed;
             inset: 0;
@@ -126,18 +215,18 @@
         }
         #id-login-screen button:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255,46,93,0.4); }
 
-        /* --- MAIN APP CONTAINER --- */
+        /* MAIN APP CONTAINER */
         #main-app {
             width: 100%;
             max-width: 480px;
             background: var(--light-bg);
             min-height: 100vh;
-            padding-bottom: 95px; /* bottom navigation buffer */
+            padding-bottom: 40px; 
             position: relative;
             box-shadow: 0 0 35px rgba(255, 46, 93, 0.05);
         }
 
-        /* --- Premium Header --- */
+        /* Premium Header */
         header {
             position: sticky;
             top: 0;
@@ -241,7 +330,7 @@
             border: 2px solid #FFFFFF;
         }
 
-        /* --- Premium App Banner --- */
+        /* Premium App Banner */
         .app-banner {
             position: relative;
             margin: 16px;
@@ -335,7 +424,7 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.12);
         }
 
-        /* --- Category Tab Scroller --- */
+        /* Category Tab Scroller */
         .category-tabs {
             display: flex;
             gap: 10px;
@@ -369,7 +458,7 @@
         }
         .tab-item i { font-size: 12px; }
 
-        /* --- Dynamic Live Section Header --- */
+        /* Dynamic Live Section Header */
         main { padding: 0; }
         .section-header {
             display: flex;
@@ -406,7 +495,7 @@
             gap: 4px;
         }
 
-        /* --- High Fidelity 3-Column Live Grid --- */
+        /* Live Grid - 3-Column Layout */
         .live-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -486,7 +575,7 @@
         }
         .grid-loading-placeholder i { font-size: 24px; color: var(--primary-pink); }
 
-        /* --- Promo Carousel Scroller --- */
+        /* Promo Carousel Scroller */
         .promo-scroller {
             display: flex; gap: 12px; padding: 16px; overflow-x: auto; scrollbar-width: none;
         }
@@ -509,40 +598,7 @@
         .mini-avatars img { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #FFFFFF; margin-left: -4px; }
         .mini-avatars img:first-child { margin-left: 0; }
 
-        /* --- Sticky Floating Bottom Navigation Bar --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px; height: 68px; background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-pink); display: flex; justify-content: space-around;
-            align-items: center; z-index: 1000; padding: 0 10px; box-shadow: 0 -5px 25px rgba(255, 46, 93, 0.05);
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer;
-            position: relative; flex: 1; transition: color 0.2s;
-        }
-        .nav-item.active { color: var(--primary-pink); }
-        .nav-item i { font-size: 18px; }
-        .nav-badge {
-            position: absolute; top: -4px; right: 14px; background: var(--primary-pink);
-            color: #FFFFFF; font-size: 8px; font-weight: 800; width: 14px; height: 14px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF;
-        }
-        .nav-center-action {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; top: -14px; cursor: pointer; z-index: 1001; flex-shrink: 0; width: 66px;
-        }
-        .center-btn-ring {
-            width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-pink);
-            display: flex; align-items: center; justify-content: center; color: #FFFFFF;
-            font-size: 20px; box-shadow: 0 5px 20px rgba(255, 46, 93, 0.4); transition: transform 0.2s;
-            border: 4px solid var(--light-bg);
-        }
-        .nav-center-action:hover .center-btn-ring { transform: scale(1.05); }
-        .nav-center-action span { font-size: 9px; font-weight: 800; color: var(--primary-pink); margin-top: 2px; }
-
-        /* --- Start Live Modal --- */
+        /* Start Live Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -559,7 +615,7 @@
         .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
         
         .modal-box h3 { color: var(--dark-text); font-size: 24px; margin-bottom: 20px; font-weight: 800; }
-        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
+        .modal-box input[type="text"], .modal-box input[type="number"], .modal-box input[type="datetime-local"] {
             width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee;
             margin-bottom: 20px; font-family: 'Poppins'; font-size: 14px; outline: none; transition: border 0.3s;
             background: #fafafa; font-weight: 500;
@@ -591,20 +647,59 @@
         .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* --- ACTUAL LIVE VIEW SCREEN (WebRTC UI) --- */
+        /* LIVE ROOM SPLIT VIEW (PK Mode ready) */
         #live-view-screen {
             position: fixed; inset: 0; background: #000; z-index: 50000; display: none; flex-direction: column;
         }
         
-        .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
-        
-        #remote-live-video, #local-live-video {
-            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;
-            transform: scaleX(-1); /* Enabled mirroring for both host and viewer front cameras */
-            -webkit-transform: scaleX(-1);
+        .live-video-container { 
+            position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; 
+            overflow: hidden; display: flex; transition: all 0.5s ease;
         }
         
-        /* AUDIO FIX: Unmute Button Overlay */
+        #remote-live-video, #local-live-video {
+            width: 100%; height: 100%; object-fit: cover; transition: all 0.5s ease;
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+        }
+
+        /* PK Dual Split CSS */
+        .live-video-container.pk-active {
+            display: flex; flex-direction: row;
+        }
+        .live-video-container.pk-active #local-live-video,
+        .live-video-container.pk-active #remote-live-video {
+            width: 50% !important; height: 100% !important; display: block !important;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* PK Arena Status Board */
+        #pk-status-bar {
+            position: absolute; top: 110px; left: 16px; right: 16px; z-index: 30;
+            display: none; flex-direction: column; gap: 4px;
+        }
+        .pk-header {
+            display: flex; justify-content: space-between; align-items: center; text-white; font-size: 12px; font-weight: 900;
+        }
+        .pk-team-red {
+            background: #FF2E5D; color: white; padding: 2px 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(255,46,93,0.5);
+        }
+        .pk-team-blue {
+            background: #2563EB; color: white; padding: 2px 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(37,99,235,0.5);
+        }
+        .pk-time {
+            background: rgba(0,0,0,0.6); color: #FFD700; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-family: monospace;
+        }
+        .pk-bar-track {
+            w-full; height: 12px; background: #222; border-radius: 6px; overflow: hidden; display: flex; border: 1px solid rgba(255,255,255,0.2);
+        }
+        #pk-red-progress {
+            background: linear-gradient(90deg, #FF2E5D, #FF5A7F); h-full; transition: width 0.5s ease; width: 50%;
+        }
+        #pk-blue-progress {
+            background: linear-gradient(90deg, #2563EB, #3B82F6); h-full; transition: width 0.5s ease; width: 50%;
+        }
+        
         #unmute-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(255, 46, 93, 0.95); color: white; padding: 15px 30px;
@@ -617,7 +712,7 @@
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+            display: flex; justify-between; align-items: flex-start; pointer-events: none;
         }
         
         .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -628,7 +723,7 @@
         .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
         .close-live-btn:hover { background: rgba(255,46,93,0.8); transform: scale(1.05); }
         
-        /* --- CHAT UI SECTION --- */
+        /* CHAT BOX */
         .live-overlay-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
             background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
@@ -637,12 +732,12 @@
         
         .chat-box { 
             pointer-events: auto;
-            max-height: 45vh; 
+            max-height: 40vh; 
             overflow-y: auto; 
             margin-bottom: 20px; 
             display: flex; 
             flex-direction: column; 
-            gap: 12px; 
+            gap: 10px; 
             padding-right: 10px;
             mask-image: linear-gradient(to top, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
@@ -654,11 +749,11 @@
 
         .chat-msg { 
             color: #fff; 
-            font-size: 14px; 
+            font-size: 13px; 
             font-weight: 500;
             background: var(--chat-bg); 
-            padding: 10px 16px; 
-            border-radius: 20px; 
+            padding: 8px 14px; 
+            border-radius: 18px; 
             width: max-content; 
             max-width: 85%; 
             backdrop-filter: blur(8px);
@@ -673,17 +768,86 @@
         .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
         
         .chat-msg.system { color: #FFB6C1; font-style: italic; background: rgba(255, 46, 93, 0.15); border-color: rgba(255, 46, 93, 0.3); }
-        .chat-msg.gift { background: var(--gradient-pink); box-shadow: 0 4px 15px rgba(255,46,93,0.4); border: none; font-weight: 700; }
+        .chat-msg.gift { background: var(--gradient-pink); box-shadow: 0 4px 15px rgba(255,46,93,0.4); border: none; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .chat-msg.gift img { width: 24px; height: 24px; object-fit: contain; }
 
-        .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
-        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
+        /* ACTION BAR */
+        .action-bar { pointer-events: auto; display: flex; gap: 10px; align-items: center; }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 4px 6px 4px 18px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 10px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
         .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
         
-        .gift-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,46,93,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
+        /* Send Plane Button */
+        #btn-send-live-chat {
+            width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 14px; display: flex; justify-content: center; items-center; cursor: pointer; box-shadow: 0 4px 10px rgba(255,46,93,0.3); transition: transform 0.2s; flex-shrink: 0; margin-left: 6px;
+        }
+        #btn-send-live-chat:hover { transform: scale(1.05); }
+
+        .gift-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,46,93,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
         .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,46,93,0.7); }
         
+        .pk-trigger-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #3B82F6); color: white; border: none; font-size: 18px; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.5); transition: transform 0.2s; flex-shrink: 0; }
+        .pk-trigger-btn:hover { transform: scale(1.1); }
+
+        /* SLIDE-UP GIFTS SHEET */
+        #gifts-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; bg-color: rgba(10, 5, 8, 0.98); background: rgba(10, 5, 8, 0.98);
+            border-t: 1px solid rgba(255, 46, 93, 0.3); border-radius: 24px 24px 0 0; z-index: 60000; padding: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        #gifts-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .gifts-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px; }
+        .gifts-header h3 { color: white; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .gifts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-height: 230px; overflow-y: auto; padding-bottom: 10px; }
+        .gift-item-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .gift-item-card:hover { background: rgba(255,46,93,0.1); border-color: var(--primary-pink); }
+        .gift-item-card img { width: 44px; height: 44px; object-fit: contain; }
+        .gift-item-card h5 { color: #EAEAEA; font-size: 10px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .gift-item-card p { color: #FFD700; font-size: 9px; font-weight: 800; display: flex; align-items: center; gap: 2px; }
+
+        /* SLIDE-UP PK PANEL */
+        #pk-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(10, 10, 15, 0.98);
+            border-top: 1px solid rgba(37, 99, 235, 0.3); border-radius: 24px 24px 0 0; z-index: 60000; padding: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        #pk-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .pk-grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .pk-action-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 18px 10px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .pk-action-card:hover { background: rgba(37,99,235,0.1); border-color: #2563EB; }
+        .pk-action-card i { font-size: 24px; color: #3B82F6; }
+        .pk-action-card h4 { color: white; font-size: 12px; font-weight: 800; }
+        .pk-action-card p { color: #888; font-size: 9px; }
+
+        /* Invitation Overlay */
+        #pk-invite-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 70000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        .pk-invite-box {
+            background: white; border-radius: 30px; padding: 30px 20px; width: 90%; max-width: 380px; text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); border: 1px solid rgba(255, 46, 93, 0.15);
+        }
+        .pk-invite-box h3 { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 8px; }
+        .pk-invite-box p { font-size: 13px; color: #666; margin-bottom: 24px; }
+        .pk-invite-btns { display: flex; gap: 12px; }
+
+        /* Dynamic Online Users invitation container inside PK Sheet */
+        #pk-online-creators {
+            margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: none;
+        }
+        .creator-invite-row {
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; margin-bottom: 8px;
+        }
+        .creator-invite-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .creator-invite-row h5 { color: white; font-size: 11px; font-weight: 700; flex-grow: 1; margin-left: 10px; }
+        .btn-invite-send { background: #2563EB; color: white; font-size: 10px; font-weight: 800; padding: 4px 10px; border: none; border-radius: 20px; cursor: pointer; }
+
         /* Loading Overlay */
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
@@ -691,7 +855,7 @@
             font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
         }
 
-        /* --- Animations --- */
+        /* Animations */
         @keyframes pulse-bg {
             0% { box-shadow: 0 0 0 0 rgba(255, 46, 93, 0.7); }
             70% { box-shadow: 0 0 0 8px rgba(255, 46, 93, 0); }
@@ -716,6 +880,36 @@
 
     <!-- Global Toast Notification -->
     <div class="toast" id="toastMsg">Action Successful!</div>
+
+    <!-- CYBER SECURITY ID VERIFICATION SCREEN (30 Seconds Verification Gate) -->
+    <div id="cyber-verification-screen">
+        <div class="scanner-container">
+            <div class="scanner-ring-outer"></div>
+            <div class="scanner-ring-inner"></div>
+            <span id="verify-countdown">30</span>
+        </div>
+        <h2 style="color: #FFFFFF; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">SECURE SHIELD SYSTEM</h2>
+        <p style="color: #8E7A80; font-size: 12px; margin-top: 4px; font-weight: 500;">Cryptographic Deep Biometric & Cryptotoken Handshake</p>
+
+        <div class="verify-status-box">
+            <div class="status-row" id="v-row-1">
+                <div class="status-dot active" id="v-dot-1"></div>
+                <span id="v-text-1">Initializing secure handshake...</span>
+            </div>
+            <div class="status-row" id="v-row-2" style="opacity: 0.4;">
+                <div class="status-dot" id="v-dot-2"></div>
+                <span id="v-text-2">Awaiting network response...</span>
+            </div>
+            <div class="status-row" id="v-row-3" style="opacity: 0.4;">
+                <div class="status-dot" id="v-dot-3"></div>
+                <span id="v-text-3">Syncing wallet and diamonds balance...</span>
+            </div>
+            <div class="status-row" id="v-row-4" style="opacity: 0.4;">
+                <div class="status-dot" id="v-dot-4"></div>
+                <span id="v-text-4">Securing audio/video tunnel...</span>
+            </div>
+        </div>
+    </div>
 
     <!-- 1. LOGIN SCREEN -->
     <div id="id-login-screen">
@@ -829,33 +1023,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Sticky Floating Bottom Navigation Bar -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="window.location.href='index.html'">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-search"></i>
-                <span>Explore</span>
-            </div>
-            <div class="nav-center-action" onclick="openStartLiveModal()">
-                <div class="center-btn-ring">
-                    <i class="fas fa-video"></i>
-                </div>
-                <span>Go Live</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-comment-dots"></i>
-                <span class="nav-badge">12</span>
-                <span>Message</span>
-            </div>
-            <div class="nav-item">
-                <i class="far fa-user"></i>
-                <span>Profile</span>
-            </div>
-        </nav>
     </div>
 
     <!-- 3. START LIVE MODAL -->
@@ -865,6 +1032,14 @@
             <h3>Ready to Stream?</h3>
             <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
             
+            <!-- Room Entry Tariff Selector -->
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;">
+                    <i class="fas fa-gem" style="color:var(--primary-pink)"></i> Room Entry Price (Diamonds):
+                </label>
+                <input type="number" id="live-room-tariff" placeholder="0 (Free entry)" min="0" value="0">
+            </div>
+
             <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
             <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
                 <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
@@ -890,7 +1065,7 @@
 
     <!-- 4. ACTUAL LIVE VIEW SCREEN -->
     <div id="live-view-screen">
-        <div class="live-video-container">
+        <div class="live-video-container" id="video-canvas-container">
             <!-- Broadcaster Video -->
             <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             <!-- Viewer Video -->
@@ -899,6 +1074,19 @@
             <!-- Unmute Button for Autoplay blocked browsers -->
             <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
+            </div>
+        </div>
+
+        <!-- PK Dual Arena Status Board -->
+        <div id="pk-status-bar">
+            <div class="pk-header">
+                <span class="pk-team-red"><i class="fas fa-fire"></i> Red: <span id="pk-red-points">0</span></span>
+                <span class="pk-time" id="pk-timer-display">PK Duel: 03:00</span>
+                <span class="pk-team-blue">Blue: <span id="pk-blue-points">0</span> <i class="fas fa-fire"></i></span>
+            </div>
+            <div class="pk-bar-track">
+                <div id="pk-red-progress"></div>
+                <div id="pk-blue-progress"></div>
             </div>
         </div>
         
@@ -920,8 +1108,67 @@
             <div class="action-bar">
                 <div class="chat-input-wrapper">
                     <input type="text" id="live-chat-input" placeholder="Say something nice...">
+                    <button id="btn-send-live-chat" onclick="sendLiveChatMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
-                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+                <button class="gift-btn" id="btn-send-gift" onclick="toggleGiftsSheet(true)"><i class="fas fa-gift"></i></button>
+                <!-- Host-Only PK trigger -->
+                <button class="pk-trigger-btn" id="btn-pk-trigger" onclick="togglePKPanel(true)"><i class="fas fa-shield-halved"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE-UP GIFTS SHEET -->
+    <div id="gifts-bottom-sheet">
+        <div class="gifts-header">
+            <h3><i class="fas fa-gem text-pink-500"></i> Zingoo Gift Shop</h3>
+            <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="toggleGiftsSheet(false)"><i class="fas fa-times"></i></button>
+        </div>
+        <!-- Dynamics Grid -->
+        <div class="gifts-grid" id="live-gifts-grid">
+            <p style="color: #888; font-size:11px; grid-column:1/-1; text-align:center;">Loading admin gifts...</p>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px; border-radius:16px; margin-top:14px;">
+            <p style="color:white; font-size:12px; font-weight:800;"><i class="fas fa-gem" style="color:#FFD700;"></i> My Balance: <span id="gifts-wallet-bal">0</span></p>
+            <button style="background:var(--gradient-pink); border:none; color:white; font-size:11px; font-weight:800; padding:6px 14px; border-radius:20px; cursor:pointer;" onclick="redirectToDiamondStore()">Buy Diamonds</button>
+        </div>
+    </div>
+
+    <!-- SLIDE-UP PK PANEL -->
+    <div id="pk-bottom-sheet">
+        <div class="gifts-header" style="border-color: rgba(37, 99, 235, 0.2)">
+            <h3 style="color: #3B82F6;"><i class="fas fa-shield-halved text-blue-500"></i> Live PK Arena</h3>
+            <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="togglePKPanel(false)"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="pk-grid-actions">
+            <div class="pk-action-card" onclick="startRandomPKMatch()">
+                <i class="fas fa-shuffle"></i>
+                <h4>Random PK Match</h4>
+                <p>Match with active hosts</p>
+            </div>
+            <div class="pk-action-card" onclick="toggleOnlineCreatorsList(true)">
+                <i class="fas fa-user-plus"></i>
+                <h4>Invite Friends</h4>
+                <p>Battle with your friends</p>
+            </div>
+        </div>
+
+        <div id="pk-online-creators">
+            <h4 style="color:#8E7A80; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Online Friends</h4>
+            <div id="online-creators-list" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+                <p style="color:#888; font-size:10px; text-align:center;">No friends online</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHALLENGE RECEIVED INVITATION OVERLAY -->
+    <div id="pk-invite-overlay">
+        <div class="pk-invite-box">
+            <span style="font-size:45px; display:block; margin-bottom:10px;">⚔️</span>
+            <h3 id="pk-inviter-title">PK Duel Challenge!</h3>
+            <p id="pk-invite-text">Host is inviting you to a live PK Battle duel!</p>
+            <div class="pk-invite-btns">
+                <button class="btn-cancel" onclick="handlePKInvitationResponse(false)">Decline</button>
+                <button class="btn-confirm" id="btn-pk-accept" onclick="handlePKInvitationResponse(true)">Fight! 🔴</button>
             </div>
         </div>
     </div>
@@ -932,38 +1179,27 @@
         <p id="loading-text">Connecting...</p>
     </div>
 
-
-    <!-- ============================================== -->
-    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
-    <!-- ============================================== -->
+    <!-- Firebase Web SDK Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
-        // 1. Disable Right Click (Context Menu)
+        // Right-click and Screenshot restriction logic
         document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
         document.addEventListener('keydown', (e) => {
             if (e.key === 'PrintScreen' || 
                 (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
                 (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
                 e.preventDefault();
-                showToast("Security: Screenshots & recording are restricted!");
+                showToast("Security: Restricted Operation!");
             }
         });
-
-        // 3. Blur screen if app loses focus (minimizing screen recording/screenshot risk)
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                document.body.classList.add('security-blur');
-            } else {
-                document.body.classList.remove('security-blur');
-            }
+            if (document.hidden) document.body.classList.add('security-blur');
+            else document.body.classList.remove('security-blur');
         });
 
-        // --- FIREBASE SETUP ---
+        // Firebase Configuration (Matching exact db)
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -976,12 +1212,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- APIS ---
         const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
         const CLOUD_NAME = "dotjw6tep"; 
         const UPLOAD_PRESET = "Zingoo"; 
 
-        // --- GLOBAL VARIABLES ---
+        // Global Variables
         let currentUser = null;
         let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
         let currentUserId = null;
@@ -990,7 +1225,16 @@
         let selectedThumbFile = null;
         let selectedPastThumb = null;
 
-        // WebRTC Variables with optimized free TURN servers
+        // PK Battle State Variables
+        let pkActive = false;
+        let pkTimer = null;
+        let pkRemainingTime = 180; 
+        let pkRedPoints = 0;
+        let pkBluePoints = 0;
+        let pkRole = ""; 
+        let pkPartnerStreamId = "";
+        let pendingInvitationData = null;
+
         const iceServers = { 
             iceServers: [
                 { urls: 'stun:stun1.l.google.com:19302' },
@@ -1004,11 +1248,6 @@
                     urls: 'turn:openrelay.metered.ca:443',
                     username: 'openrelayproject',
                     credential: 'openrelayproject'
-                },
-                {
-                    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
                 }
             ] 
         };
@@ -1018,7 +1257,6 @@
         let hostPeerConnections = {};
         let viewerPeerConnection = null;
 
-        // --- TOAST FUNCTION ---
         function showToast(message) {
             const toast = document.getElementById('toastMsg');
             toast.innerText = message;
@@ -1026,7 +1264,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // --- LOADING FUNCTIONS ---
         function showLoading(text) {
             document.getElementById('loading-text').innerText = text;
             document.getElementById('loading-overlay').style.display = 'flex';
@@ -1035,7 +1272,86 @@
             document.getElementById('loading-overlay').style.display = 'none';
         }
 
-        // --- 1. ID LOGIN & IMGBB LOGIC ---
+        // --- 1. 30-SECOND CYBER VERIFICATION TIMERS ---
+        function runVerificationTimer(finalId, callback) {
+            const screen = document.getElementById('cyber-verification-screen');
+            const countdownEl = document.getElementById('verify-countdown');
+            
+            screen.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            let count = 30;
+            countdownEl.innerText = count;
+
+            const row1 = document.getElementById('v-row-1');
+            const row2 = document.getElementById('v-row-2');
+            const row3 = document.getElementById('v-row-3');
+            const row4 = document.getElementById('v-row-4');
+
+            const dot1 = document.getElementById('v-dot-1');
+            const dot2 = document.getElementById('v-dot-2');
+            const dot3 = document.getElementById('v-dot-3');
+            const dot4 = document.getElementById('v-dot-4');
+
+            const interval = setInterval(() => {
+                count--;
+                countdownEl.innerText = count;
+
+                // Status message updates corresponding to the ticking timer
+                if (count === 25) {
+                    dot1.className = "status-dot completed";
+                    row2.style.opacity = "1";
+                    document.getElementById('v-dot-2').className = "status-dot active";
+                    document.getElementById('v-text-1').innerText = "Cryptographic handshake complete. Secure.";
+                }
+                if (count === 18) {
+                    dot2.className = "status-dot completed";
+                    row3.style.opacity = "1";
+                    document.getElementById('v-dot-3').className = "status-dot active";
+                    document.getElementById('v-text-2').innerText = "Network verified. Database linked.";
+                }
+                if (count === 10) {
+                    dot3.className = "status-dot completed";
+                    row4.style.opacity = "1";
+                    document.getElementById('v-dot-4').className = "status-dot active";
+                    document.getElementById('v-text-3').innerText = "Diamonds and assets verified. Synced.";
+                }
+                if (count === 3) {
+                    dot4.className = "status-dot completed";
+                    document.getElementById('v-text-4').innerText = "Audio/Video stream tunnel validated.";
+                }
+
+                if (count <= 0) {
+                    clearInterval(interval);
+                    screen.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    callback();
+                }
+            }, 1000);
+
+            // Database ID check in background simultaneously
+            get(ref(db, 'users')).then(snapshot => {
+                let verified = false;
+                const allUsers = snapshot.val();
+                if (allUsers) {
+                    for (let key in allUsers) {
+                        if (allUsers[key].id === finalId) {
+                            verified = true;
+                            break;
+                        }
+                    }
+                }
+                if (!verified) {
+                    clearInterval(interval);
+                    screen.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    showToast("Cryptographic Identity Verification Failed!");
+                    document.getElementById('id-login-screen').style.display = 'flex';
+                }
+            });
+        }
+
+        // --- 2. ID LOGIN SEQUENCE ---
         const loginScreen = document.getElementById('id-login-screen');
         const mainApp = document.getElementById('main-app');
 
@@ -1045,9 +1361,11 @@
             const storedAv = localStorage.getItem("zingoo_avatar");
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             
-            // Auto-login trigger
-            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
-            validateDatabaseLogin(storedId);
+            // Auto verification
+            document.getElementById('btn-login-id').innerHTML = 'Initializing Shield... <i class="fas fa-spinner fa-spin"></i>';
+            runVerificationTimer(storedId, () => {
+                validateDatabaseLogin(storedId);
+            });
         }
 
         document.getElementById('login-profile-upload').addEventListener('change', function(e) {
@@ -1072,13 +1390,19 @@
                 fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
                 .then(res => res.json()).then(data => {
                     if (data.success) currentAvatar = data.data.url;
-                    validateDatabaseLogin(enteredId);
+                    runVerificationTimer(enteredId, () => {
+                        validateDatabaseLogin(enteredId);
+                    });
                 }).catch(err => {
                     showToast("Image upload failed, using default.");
-                    validateDatabaseLogin(enteredId);
+                    runVerificationTimer(enteredId, () => {
+                        validateDatabaseLogin(enteredId);
+                    });
                 });
             } else {
-                validateDatabaseLogin(enteredId);
+                runVerificationTimer(enteredId, () => {
+                    validateDatabaseLogin(enteredId);
+                });
             }
         });
 
@@ -1110,32 +1434,384 @@
                     
                     userDiamonds = allUsers[userKey].diamonds || 0;
                     document.getElementById('user-diamond-bal').innerText = userDiamonds.toLocaleString();
+                    document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
                     
-                    // Update modern banner profile and name
                     document.getElementById('banner-user-avatar').src = currentAvatar;
                     document.getElementById('banner-user-name').innerText = `Hi, ${currentUser} ✨`;
 
                     loginScreen.style.display = 'none';
                     mainApp.style.display = 'block';
-                    showToast(`Welcome, ${currentUser}!`);
+                    showToast(`Security check cleared. Welcome, ${currentUser}!`);
                     
                     fetchLiveStreams();
+                    setupGlobalPKInviteListener();
                     
                     onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
                         userDiamonds = snap.val() || 0;
                         document.getElementById('user-diamond-bal').innerText = userDiamonds.toLocaleString();
+                        document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
                     });
                 } else {
-                    showToast("Invalid ID! User not found.");
+                    showToast("Verification failed! ID not found.");
                     document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
                 }
             }).catch(err => {
-                showToast("Connection error!");
+                showToast("Connection Error!");
                 document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
-        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
+        // --- 3. DYNAMIC GIFT LOADING FROM ADMIN CODES ---
+        function loadAdminGifts() {
+            const giftsGrid = document.getElementById('live-gifts-grid');
+            giftsGrid.innerHTML = '';
+            
+            onValue(ref(db, 'gifts'), (snapshot) => {
+                const giftsData = snapshot.val();
+                if(giftsData) {
+                    giftsGrid.innerHTML = '';
+                    Object.entries(giftsData).forEach(([key, gift]) => {
+                        const card = document.createElement('div');
+                        card.className = 'gift-item-card';
+                        card.onclick = () => {
+                            sendPreSelectedGift(gift.name, gift.cost, gift.imageUrl);
+                        };
+                        card.innerHTML = `
+                            <img src="${gift.imageUrl}">
+                            <h5>${gift.name}</h5>
+                            <p><i class="fas fa-gem" style="color:#FFD700; font-size:8px;"></i> ${gift.cost}</p>
+                        `;
+                        giftsGrid.appendChild(card);
+                    });
+                } else {
+                    giftsGrid.innerHTML = '<p style="color:#888; font-size:11px; text-align:center; grid-column:1/-1;">No gifts available in the store database.</p>';
+                }
+            });
+        }
+
+        window.toggleGiftsSheet = (show) => {
+            if(show) {
+                loadAdminGifts();
+                document.getElementById('gifts-bottom-sheet').classList.add('active');
+            } else {
+                document.getElementById('gifts-bottom-sheet').classList.remove('active');
+            }
+        };
+
+        // --- 4. STREAM TARIFF (ENTRY FEE) logic ---
+        async function verifyAndDeductTariff(streamId, streamData) {
+            const tariff = parseInt(streamData.tariff || 0);
+            if (tariff > 0 && streamData.hostName !== currentUser) {
+                showLoading("Verifying Room Entry Fee...");
+                try {
+                    const viewerRef = ref(db, `users/${currentUser}`);
+                    const viewerSnap = await get(viewerRef);
+                    if (viewerSnap.exists()) {
+                        const curBal = viewerSnap.val().diamonds || 0;
+                        if (curBal < tariff) {
+                            hideLoading();
+                            alert(`Entry Denied! This live room has a set fee of 💎 ${tariff} Diamonds. Your balance: 💎 ${curBal}.`);
+                            redirectToDiamondStore();
+                            return false;
+                        } else {
+                            // Deduct from Viewer
+                            await update(ref(db, `users/${currentUser}`), { diamonds: curBal - tariff });
+                            
+                            // Transfer to Host
+                            const hostRef = ref(db, `users/${streamData.hostName}`);
+                            const hostSnap = await get(hostRef);
+                            if (hostSnap.exists()) {
+                                const hostBal = hostSnap.val().diamonds || 0;
+                                await update(hostRef, { diamonds: hostBal + tariff });
+                            }
+                            hideLoading();
+                            showToast(`Paid entry fee: 💎 ${tariff} Diamonds to host.`);
+                            return true;
+                        }
+                    }
+                } catch(e) {
+                    hideLoading();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // --- 5. PK DUEL STATE SYNCHRONIZATION AND RENDERING ---
+        window.togglePKPanel = (show) => {
+            const sheet = document.getElementById('pk-bottom-sheet');
+            if (show) {
+                sheet.classList.add('active');
+            } else {
+                sheet.classList.remove('active');
+                toggleOnlineCreatorsList(false);
+            }
+        };
+
+        window.toggleOnlineCreatorsList = async (show) => {
+            const listArea = document.getElementById('pk-online-creators');
+            const container = document.getElementById('online-creators-list');
+            if (show) {
+                listArea.style.display = 'block';
+                container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">Scanning online users...</p>';
+                
+                try {
+                    const snap = await get(ref(db, 'live_streams'));
+                    const streams = snap.val();
+                    container.innerHTML = '';
+                    let onlineFound = false;
+
+                    if (streams) {
+                        Object.entries(streams).forEach(([id, data]) => {
+                            if (data.isLive && id !== currentStreamId) {
+                                onlineFound = true;
+                                const row = document.createElement('div');
+                                row.className = 'creator-invite-row';
+                                row.innerHTML = `
+                                    <img src="${data.hostAvatar || currentAvatar}">
+                                    <h5>${data.hostName}</h5>
+                                    <button class="btn-invite-send" onclick="sendPKInvitation('${id}', '${data.hostName}')">Invite</button>
+                                `;
+                                container.appendChild(row);
+                            }
+                        });
+                    }
+                    if(!onlineFound) {
+                        container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">No friends online streaming right now.</p>';
+                    }
+                } catch(e) {
+                    container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">Error loading creators.</p>';
+                }
+            } else {
+                listArea.style.display = 'none';
+            }
+        };
+
+        window.sendPKInvitation = function(targetStreamId, targetName) {
+            showToast(`Inviting ${targetName} to PK Duel...`);
+            set(ref(db, `live_streams/${targetStreamId}/pk_invite`), {
+                from_stream_id: currentStreamId,
+                from_name: currentUser,
+                from_avatar: currentAvatar
+            }).then(() => {
+                togglePKPanel(false);
+            });
+        };
+
+        function setupGlobalPKInviteListener() {
+            // All live hosts listen to incoming PK Invites on their stream node
+            onValue(ref(db, `live_streams`), (snapshot) => {
+                const streams = snapshot.val();
+                if (isHost && currentStreamId && streams && streams[currentStreamId]) {
+                    const streamData = streams[currentStreamId];
+                    if (streamData.pk_invite && !pkActive) {
+                        pendingInvitationData = streamData.pk_invite;
+                        document.getElementById('pk-inviter-title').innerText = `${pendingInvitationData.from_name} Challenges You!`;
+                        document.getElementById('pk-invite-text').innerText = `${pendingInvitationData.from_name} is calling you to a battle in PK Duel Arena! Accept?`;
+                        document.getElementById('pk-invite-overlay').style.display = 'flex';
+                    } else if (!streamData.pk_invite && document.getElementById('pk-invite-overlay').style.display === 'flex') {
+                        document.getElementById('pk-invite-overlay').style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        window.handlePKInvitationResponse = async (accept) => {
+            document.getElementById('pk-invite-overlay').style.display = 'none';
+            if (!pendingInvitationData) return;
+
+            const oppStreamId = pendingInvitationData.from_stream_id;
+            const oppName = pendingInvitationData.from_name;
+            const oppAvatar = pendingInvitationData.from_avatar;
+
+            // Clear the invite slot
+            await remove(ref(db, `live_streams/${currentStreamId}/pk_invite`));
+
+            if (accept) {
+                // Set Up active PK Battle state on both streams
+                const pkDataForSelf = {
+                    active: true,
+                    partner_stream_id: oppStreamId,
+                    partner_name: oppName,
+                    partner_avatar: oppAvatar,
+                    red_points: 0,
+                    blue_points: 0,
+                    role: "guest", // Accepted invite, so we are guest
+                    timer: 180,
+                    timestamp: serverTimestamp()
+                };
+
+                const pkDataForOpp = {
+                    active: true,
+                    partner_stream_id: currentStreamId,
+                    partner_name: currentUser,
+                    partner_avatar: currentAvatar,
+                    red_points: 0,
+                    blue_points: 0,
+                    role: "host", // Sent invite, so they are host
+                    timer: 180,
+                    timestamp: serverTimestamp()
+                };
+
+                await set(ref(db, `live_streams/${currentStreamId}/pk_battle`), pkDataForSelf);
+                await set(ref(db, `live_streams/${oppStreamId}/pk_battle`), pkDataForOpp);
+            }
+            pendingInvitationData = null;
+        };
+
+        window.startRandomPKMatch = async () => {
+            showToast("Searching for rando PK Duel Opponent...");
+            togglePKPanel(false);
+
+            try {
+                const snap = await get(ref(db, 'live_streams'));
+                const streams = snap.val();
+                let matchedPartnerId = null;
+                let matchedPartnerData = null;
+
+                if (streams) {
+                    for (let id in streams) {
+                        if (id !== currentStreamId && streams[id].isLive && streams[id].pk_searching === true) {
+                            matchedPartnerId = id;
+                            matchedPartnerData = streams[id];
+                            break;
+                        }
+                    }
+                }
+
+                if (matchedPartnerId) {
+                    // Match found! Pair them up.
+                    const pkDataForSelf = {
+                        active: true,
+                        partner_stream_id: matchedPartnerId,
+                        partner_name: matchedPartnerData.hostName,
+                        partner_avatar: matchedPartnerData.hostAvatar,
+                        red_points: 0,
+                        blue_points: 0,
+                        role: "host",
+                        timer: 180,
+                        timestamp: serverTimestamp()
+                    };
+
+                    const pkDataForOpp = {
+                        active: true,
+                        partner_stream_id: currentStreamId,
+                        partner_name: currentUser,
+                        partner_avatar: currentAvatar,
+                        red_points: 0,
+                        blue_points: 0,
+                        role: "guest",
+                        timer: 180,
+                        timestamp: serverTimestamp()
+                    };
+
+                    await update(ref(db, `live_streams/${matchedPartnerId}`), { pk_searching: null });
+                    await set(ref(db, `live_streams/${currentStreamId}/pk_battle`), pkDataForSelf);
+                    await set(ref(db, `live_streams/${matchedPartnerId}/pk_battle`), pkDataForOpp);
+                } else {
+                    // No match available, set self as searching
+                    await update(ref(db, `live_streams/${currentStreamId}`), { pk_searching: true });
+                    showToast("No active duelists. Waiting for opponent in queue...");
+                }
+            } catch(e) {
+                showToast("Battle matching failed.");
+            }
+        };
+
+        // Listening to active PK Duel Node
+        function listenToPKBattleDuel() {
+            onValue(ref(db, `live_streams/${currentStreamId}/pk_battle`), (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.active) {
+                    if (!pkActive) {
+                        // Start duel visual animations
+                        pkActive = true;
+                        pkPartnerStreamId = data.partner_stream_id;
+                        pkRole = data.role;
+                        
+                        document.getElementById('video-canvas-container').classList.add('pk-active');
+                        document.getElementById('pk-status-bar').style.display = 'flex';
+                        
+                        // Render PK challenger stream to side panel
+                        if (isHost) {
+                            // Render fake or peer stream if connected, we split screens
+                        } else {
+                            // Viewers can view both
+                        }
+
+                        startPKLocalTimer();
+                        showToast("⚔️ PK Battle Duel has Commenced!");
+                    }
+                    
+                    // Sync Points
+                    pkRedPoints = data.red_points || 0;
+                    pkBluePoints = data.blue_points || 0;
+                    document.getElementById('pk-red-points').innerText = pkRedPoints;
+                    document.getElementById('pk-blue-points').innerText = pkBluePoints;
+
+                    // Sync pro-rata sliding progress bar red vs blue
+                    const totalPoints = pkRedPoints + pkBluePoints;
+                    if (totalPoints > 0) {
+                        const redPct = (pkRedPoints / totalPoints) * 100;
+                        const bluePct = 100 - redPct;
+                        document.getElementById('pk-red-progress').style.width = `${redPct}%`;
+                        document.getElementById('pk-blue-progress').style.width = `${bluePct}%`;
+                    } else {
+                        document.getElementById('pk-red-progress').style.width = `50%`;
+                        document.getElementById('pk-blue-progress').style.width = `50%`;
+                    }
+
+                } else if (!data && pkActive) {
+                    // PK Battle ended or destroyed
+                    endPKDuelSession();
+                }
+            });
+        }
+
+        function startPKLocalTimer() {
+            if (pkTimer) clearInterval(pkTimer);
+            pkRemainingTime = 180;
+            const timerEl = document.getElementById('pk-timer-display');
+
+            pkTimer = setInterval(() => {
+                pkRemainingTime--;
+                const mins = Math.floor(pkRemainingTime / 60);
+                const secs = pkRemainingTime % 60;
+                timerEl.innerText = `PK Duel: 0${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                if (pkRemainingTime <= 0) {
+                    clearInterval(pkTimer);
+                    declarePKDuelWinner();
+                }
+            }, 1000);
+        }
+
+        function declarePKDuelWinner() {
+            let winner = "Tie!";
+            if (pkRole === 'host') {
+                if (pkRedPoints > pkBluePoints) winner = "You Win! 🎉";
+                else if (pkBluePoints > pkRedPoints) winner = "Partner Wins!";
+            } else {
+                if (pkBluePoints > pkRedPoints) winner = "You Win! 🎉";
+                else if (pkRedPoints > pkBluePoints) winner = "Partner Wins!";
+            }
+            alert(`Duel Complete! Results: ${winner}`);
+            if (isHost) {
+                remove(ref(db, `live_streams/${currentStreamId}/pk_battle`));
+            }
+        }
+
+        function endPKDuelSession() {
+            pkActive = false;
+            if (pkTimer) clearInterval(pkTimer);
+            document.getElementById('video-canvas-container').classList.remove('pk-active');
+            document.getElementById('pk-status-bar').style.display = 'none';
+            pkPartnerStreamId = "";
+            showToast("PK Duel session closed.");
+        }
+
+
+        // --- 6. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
         document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
             if(e.target.files[0]) {
                 selectedThumbFile = e.target.files[0];
@@ -1198,7 +1874,7 @@
             }
         }
 
-        // --- 3. FETCH LIVE STREAMS (3-COLUMN PREMIUM GRID) ---
+        // --- 7. LIVE NOW BROADCAST CHANNELS ---
         const gridContainer = document.getElementById('liveGrid');
 
         function fetchLiveStreams() {
@@ -1221,19 +1897,22 @@
                             const card = document.createElement('div');
                             card.className = 'live-card';
                             
-                            card.onclick = () => {
+                            card.onclick = async () => {
                                 if (!data.isLive && data.hostName === currentUser) {
                                     startScheduledLiveAsHost(streamId, data);
                                 } else if (!data.isLive) {
                                     const timeStr = new Date(data.scheduledTime).toLocaleString();
-                                    showToast(`This live starts later at: ${timeStr}`);
+                                    showToast(`Room starting later at: ${timeStr}`);
                                 } else {
-                                    joinLiveStream(streamId, data);
+                                    const tariffDeducted = await verifyAndDeductTariff(streamId, data);
+                                    if(tariffDeducted) {
+                                        joinLiveStream(streamId, data);
+                                    }
                                 }
                             };
                             
                             const formattedViewers = viewerCount >= 1000 ? (viewerCount/1000).toFixed(1) + 'K' : viewerCount;
-                            const generatedDiamonds = (viewerCount * 120 + 340).toLocaleString(); // dynamic high-fidelity display
+                            const generatedDiamonds = (viewerCount * 120 + 340).toLocaleString(); 
 
                             card.innerHTML = `
                                 <img src="${thumbUrl}" alt="Live">
@@ -1258,7 +1937,7 @@
                 }
                 
                 if(count === 0) {
-                    gridContainer.innerHTML = '<div class="grid-loading-placeholder"><i class="fas fa-video-slash"></i><p>No active streams right now. Start yours!</p></div>';
+                    gridContainer.innerHTML = '<div class="grid-loading-placeholder"><i class="fas fa-video-slash"></i><p>No active rooms right now. Go Live first!</p></div>';
                 }
             });
         }
@@ -1266,20 +1945,22 @@
         window.openStartLiveModal = () => {
             loadPastThumbnails();
             document.getElementById('live-schedule-time').value = '';
+            document.getElementById('live-room-tariff').value = '0';
             document.getElementById('startLiveModal').classList.add('active');
         };
         window.closeModal = (id) => {
             document.getElementById(id).classList.remove('active');
         };
 
-        // --- 4. WEBRTC BROADCASTING (HOST) ---
+        // --- 8. WEBRTC BROADCASTING (HOST) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            const tariffValue = parseInt(document.getElementById('live-room-tariff').value) || 0;
             const scheduleInput = document.getElementById('live-schedule-time').value;
             const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
             
             closeModal('startLiveModal');
-            showLoading("Processing...");
+            showLoading("Processing safe pipeline...");
 
             try {
                 let thumbUrl = currentAvatar; 
@@ -1303,16 +1984,16 @@
                         title: title,
                         thumbnail: thumbUrl,
                         isLive: false,
+                        tariff: tariffValue,
                         scheduledTime: new Date(scheduleInput).getTime(),
                         timestamp: serverTimestamp()
                     });
                     hideLoading();
-                    showToast("Live Scheduled Successfully! ⏰");
+                    showToast("Live scheduled successfully! ⏰");
                     return; 
                 }
 
-                showLoading("Accessing Camera & Mic...");
-                // Optimized Media Constraints for 30 concurrent viewers bandwidth limit
+                showLoading("Locking camera & mic connection...");
                 localStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: "user",
@@ -1325,7 +2006,7 @@
                         noiseSuppression: true
                     }
                 });
-                showLoading("Starting Stream...");
+                showLoading("Launching room pipeline...");
                 
                 const newStreamRef = push(ref(db, 'live_streams'));
                 currentStreamId = newStreamRef.key;
@@ -1337,20 +2018,22 @@
                     title: title,
                     thumbnail: thumbUrl,
                     isLive: true,
+                    tariff: tariffValue,
                     timestamp: serverTimestamp()
                 });
 
                 onDisconnect(newStreamRef).remove();
+                document.getElementById('btn-pk-trigger').style.display = 'flex';
                 setupHostUIAndSignaling();
 
             } catch (err) {
                 hideLoading();
-                alert("Could not start live: " + err.message + " (Camera/Mic access denied)");
+                alert("Room setup failed. Camera permissions check: " + err.message);
             }
         });
 
         async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Accessing Camera & Mic...");
+            showLoading("Locking camera & mic connection...");
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
@@ -1374,10 +2057,11 @@
                 });
                 
                 onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
+                document.getElementById('btn-pk-trigger').style.display = 'flex';
                 setupHostUIAndSignaling();
             } catch (err) {
                 hideLoading();
-                alert("Could not start live: " + err.message);
+                alert("Room setup failed: " + err.message);
             }
         }
 
@@ -1395,13 +2079,14 @@
             document.getElementById('live-host-avatar').src = currentAvatar;
 
             hideLoading();
-            showToast("You are now LIVE! 🔴");
+            showToast("Room is now active and LIVE! 🔴");
             setupLiveChat();
+            listenToPKBattleDuel();
 
             if (localStream && localStream.getVideoTracks().length > 0) {
                 const videoTrack = localStream.getVideoTracks()[0];
                 videoTrack.onmute = () => {
-                    showToast("Warning: Camera interrupted (Screen Record/Call detected)!");
+                    showToast("Warning: Camera pipeline interrupted!");
                     document.body.classList.add('security-blur');
                 };
                 videoTrack.onunmute = () => {
@@ -1409,7 +2094,7 @@
                     document.body.classList.remove('security-blur');
                 };
                 videoTrack.onended = () => {
-                    showToast("Camera stopped unexpectedly!");
+                    showToast("Camera stream lost.");
                     leaveLiveStream();
                 };
             }
@@ -1426,10 +2111,8 @@
                     const pc = new RTCPeerConnection(iceServers);
                     hostPeerConnections[viewerId] = pc;
 
-                    // Unified Plan Fix: Set Remote Description BEFORE adding tracks
                     await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
                     
-                    // Host-side: Add tracks and lock maximum bitrate to 150kbps to support up to 30 viewers concurrently
                     localStream.getTracks().forEach(track => {
                         const sender = pc.addTrack(track, localStream);
                         if (track.kind === 'video') {
@@ -1437,7 +2120,7 @@
                                 try {
                                     const params = sender.getParameters();
                                     if (params && params.encodings && params.encodings.length > 0) {
-                                        params.encodings[0].maxBitrate = 150000; // Force 150 kbps limit
+                                        params.encodings[0].maxBitrate = 150000; 
                                         sender.setParameters(params).catch(e => {});
                                     }
                                 } catch(e) {}
@@ -1476,9 +2159,9 @@
         }
 
 
-        // --- 5. WEBRTC VIEWING (VIEWER) - AUDIO FIX APPLIED HERE ---
+        // --- 9. WEBRTC VIEWING (VIEWER) ---
         async function joinLiveStream(streamId, streamData) {
-            showLoading("Joining Room...");
+            showLoading("Securing audio/video pipelines...");
             currentStreamId = streamId;
             isHost = false;
 
@@ -1492,13 +2175,12 @@
 
             document.getElementById('live-host-name').innerText = streamData.hostName;
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
+            document.getElementById('btn-pk-trigger').style.display = 'none';
 
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                // --- AUDIO / VIDEO TRACK FIX ---
                 viewerPeerConnection.ontrack = e => {
-                    // Render Stream directly to srcObject for mobile rendering stability
                     if (e.streams && e.streams[0]) {
                         remoteVideo.srcObject = e.streams[0];
                     } else {
@@ -1508,16 +2190,12 @@
                         remoteVideo.srcObject.addTrack(e.track);
                     }
 
-                    // Force audio settings to be active
                     remoteVideo.muted = false;
                     remoteVideo.volume = 1.0;
 
-                    // Play and Catch Browser Blockers
                     const playPromise = remoteVideo.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
-                            console.warn("Autoplay policy blocked audio:", error);
-                            // Show Unmute button to the user
                             const unmuteBtn = document.getElementById('unmute-overlay');
                             unmuteBtn.style.display = 'flex';
                             unmuteBtn.onclick = () => {
@@ -1576,25 +2254,24 @@
 
                 hideLoading();
                 setupLiveChat();
+                listenToPKBattleDuel();
                 
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} entered the live.` });
 
             } catch(e) {
                 hideLoading();
-                showToast("Failed to join stream.");
+                showToast("Connection to the live stream lost.");
                 leaveLiveStream();
             }
         }
 
 
-        // --- 6. LEAVE/STOP STREAM ---
+        // --- 10. LEAVE / TERMINATE ROOMS ---
         document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
 
         function leaveLiveStream() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            
-            // Hide the unmute overlay for next stream
             document.getElementById('unmute-overlay').style.display = 'none';
 
             if (isHost && currentStreamId) {
@@ -1606,7 +2283,7 @@
                 if (viewerPeerConnection) viewerPeerConnection.close();
                 viewerPeerConnection = null;
                 remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUserId}`));
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} exited the stream.` });
             }
 
             currentStreamId = null;
@@ -1616,7 +2293,7 @@
         }
 
 
-        // --- 7. LIVE CHAT FUNCTIONALITY ---
+        // --- 11. STREAM CHAT (Enter key & Send Plane Button integration) ---
         function setupLiveChat() {
             const chatBox = document.getElementById('live-chat-box');
             chatBox.innerHTML = ''; 
@@ -1631,14 +2308,13 @@
                         msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
                     } else if (data.isGift) {
                         msgDiv.className = 'chat-msg gift';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎✨`;
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent ${data.text}! <img src="${data.giftImg}">`;
                     } else {
                         msgDiv.className = 'chat-msg';
                         msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
                     }
                     
                     chatBox.appendChild(msgDiv);
-                    
                     chatBox.scrollTo({
                         top: chatBox.scrollHeight,
                         behavior: 'smooth'
@@ -1647,50 +2323,98 @@
             });
         }
 
+        window.sendLiveChatMessage = function() {
+            const input = document.getElementById('live-chat-input');
+            const text = input.value.trim();
+            if (text && currentStreamId) {
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
+                input.value = '';
+            }
+        };
+
         document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const text = this.value.trim();
-                if (text && currentStreamId) {
-                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
-                    this.value = '';
-                }
+                sendLiveChatMessage();
             }
         });
 
 
-        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
-        window.handleGiftClick = function() {
-            if (isHost) {
-                showToast("You cannot send gifts to yourself!");
+        // --- 12. DIAMOND LEDGER DEDUCTIONS & EXCHANGE SEQUENCES ---
+        async function sendPreSelectedGift(giftName, giftCost, giftImg) {
+            toggleGiftsSheet(false);
+            if(isHost) {
+                showToast("You cannot send gifts in your own room!");
                 return;
             }
 
-            const giftCost = 10; 
+            if(userDiamonds >= giftCost) {
+                showLoading("Processing transaction...");
+                try {
+                    const viewerRef = ref(db, `users/${currentUser}`);
+                    const viewerSnap = await get(viewerRef);
+                    if(viewerSnap.exists()) {
+                        const balance = viewerSnap.val().diamonds || 0;
+                        if(balance >= giftCost) {
+                            const newBal = balance - giftCost;
+                            
+                            // Deduct Viewer
+                            await update(viewerRef, { diamonds: newBal });
+                            
+                            // Find host name of stream
+                            const streamSnap = await get(ref(db, `live_streams/${currentStreamId}`));
+                            if (streamSnap.exists()) {
+                                const streamData = streamSnap.val();
+                                const hostName = streamData.hostName;
+                                
+                                // Transfer to Host
+                                const hostRef = ref(db, `users/${hostName}`);
+                                const hostSnap = await get(hostRef);
+                                if(hostSnap.exists()) {
+                                    const hostBal = hostSnap.val().diamonds || 0;
+                                    await update(hostRef, { diamonds: hostBal + giftCost });
+                                }
+                                
+                                // Write gift to dynamic chats
+                                await push(ref(db, `live_streams/${currentStreamId}/chats`), {
+                                    user: currentUser,
+                                    isGift: true,
+                                    text: giftName,
+                                    giftImg: giftImg
+                                });
 
-            if (userDiamonds >= giftCost) {
-                const newBal = userDiamonds - giftCost;
-                get(ref(db, 'users')).then(snap => {
-                    const users = snap.val();
-                    for(let key in users) {
-                        if(users[key].name === currentUser) {
-                            set(ref(db, `users/${key}/diamonds`), newBal);
-                            break;
+                                // PK Points scoring update!
+                                if (pkActive) {
+                                    const pkBattleRef = ref(db, `live_streams/${currentStreamId}/pk_battle`);
+                                    const oppBattleRef = ref(db, `live_streams/${pkPartnerStreamId}/pk_battle`);
+                                    
+                                    if (pkRole === 'host') {
+                                        // Red team gets points
+                                        await update(pkBattleRef, { red_points: pkRedPoints + giftCost });
+                                        await update(oppBattleRef, { blue_points: pkRedPoints + giftCost });
+                                    } else {
+                                        // Blue team gets points
+                                        await update(pkBattleRef, { blue_points: pkBluePoints + giftCost });
+                                        await update(oppBattleRef, { red_points: pkBluePoints + giftCost });
+                                    }
+                                }
+
+                                hideLoading();
+                                showToast(`Sent ${giftName}! 💎`);
+                            }
                         }
                     }
-                });
-                
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
-                showToast("Gift Sent! 💎");
-                
+                } catch(e) {
+                    hideLoading();
+                    showToast("Gift delivery failed.");
+                }
             } else {
-                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
-                
-                if(confirmBuy) {
+                const checkConfirm = confirm(`Insufficient Diamonds! This gift costs 💎 ${giftCost} but you only have 💎 ${userDiamonds}.\n\nProceed to the Diamond Store?`);
+                if(checkConfirm) {
                     leaveLiveStream();
                     redirectToDiamondStore();
                 }
             }
-        };
+        }
 
         window.redirectToDiamondStore = function() {
             window.location.href = 'index.html?action=buy_diamonds';
