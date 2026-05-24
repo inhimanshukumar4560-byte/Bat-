@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +26,7 @@
             --border-pink: #FFE3E8;
             --chat-bg: rgba(0, 0, 0, 0.55);
             --neon-shadow: 0 0 15px rgba(255, 46, 93, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.85);
         }
 
         * {
@@ -38,44 +40,122 @@
             background: #FCEFF2;
             color: var(--dark-text);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             user-select: none;
             -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            transition: filter 0.3s ease;
         }
 
-        /* Fast Custom Auto-Dismiss Toast Message Overlay */
-        .toast {
+        /* Security Blur Filter */
+        body.security-blur {
+            filter: blur(25px);
+            pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 6px; display: none; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #FFB6C1; border-radius: 10px; }
+
+        /* CYBER VERIFICATION SCREEN (Automated 30-Second Security Shield) */
+        #cyber-verification-screen {
             position: fixed;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 255, 255, 0.98);
-            color: var(--dark-text);
-            padding: 14px 24px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 800;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            border-left: 5px solid var(--primary-pink);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-            z-index: 1000000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            cursor: pointer;
+            inset: 0;
+            background: #07070b;
+            z-index: 999999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
             text-align: center;
+            user-select: none;
+        }
+
+        /* Animated 3D Circular Scanner */
+        .scanner-container {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scanner-ring-outer {
+            position: absolute;
+            inset: 0;
+            border: 5px dashed #FF2E5D;
+            border-radius: 50%;
+            animation: spin 6s linear infinite;
+        }
+        .scanner-ring-inner {
+            position: absolute;
+            inset: 15px;
+            border: 3px solid rgba(255, 90, 127, 0.2);
+            border-top: 3px solid #FF5A7F;
+            border-radius: 50%;
+            animation: spin-reverse 3s linear infinite;
+            box-shadow: inset 0 0 15px rgba(255, 46, 93, 0.4);
+        }
+        #verify-countdown {
+            font-size: 60px;
+            font-weight: 950;
+            color: #FFFFFF;
+            text-shadow: 0 0 25px rgba(255, 46, 93, 0.9);
+            z-index: 10;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+
+        .verify-status-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 46, 93, 0.2);
+            padding: 22px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 25px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            width: 90%;
-            max-width: 320px;
+            gap: 15px;
+            backdrop-filter: blur(10px);
         }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #E2D9DB;
+            font-weight: 600;
+            text-align: left;
+            transition: opacity 0.3s ease;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .status-dot.active {
+            background: #FF2E5D;
+            box-shadow: 0 0 12px #FF2E5D;
+            animation: pulse-bg 1s infinite;
+        }
+        .status-dot.completed {
+            background: #10B981;
+            box-shadow: 0 0 12px #10B981;
+        }
 
-        /* DIRECT SETUP LOGIN PANEL */
-        #setup-login-screen {
+        /* LOGIN SCREEN */
+        #id-login-screen {
             position: fixed;
             inset: 0;
             background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--light-bg));
@@ -85,51 +165,452 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-y: auto;
         }
         
-        .setup-card {
+        #id-login-screen .logo-container {
+            font-size: 38px;
+            font-weight: 900;
+            background: var(--gradient-pink);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-shadow: 0px 4px 15px rgba(255, 46, 93, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        #id-login-screen .login-card {
             width: 100%;
-            max-width: 410px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px 20px;
-            border-radius: 28px;
-            box-shadow: 0 15px 40px rgba(255, 46, 93, 0.12);
+            max-width: 420px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 45px 30px;
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(255, 46, 93, 0.12), inset 0 0 0 2px rgba(255,255,255,0.8);
             border: 1px solid var(--white);
             text-align: center;
-        }
-
-        .setup-card h2 { font-size: 20px; margin-bottom: 6px; color: #111; font-weight: 900; }
-        .setup-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; font-weight: 500; }
-        
-        .avatar-upload-box {
-            cursor: pointer; margin-bottom: 18px; display: inline-block; position: relative;
-        }
-        .avatar-upload-box img {
-            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
-            border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,46,93,0.2);
             transition: transform 0.3s ease;
         }
-        .avatar-upload-box p { font-size: 11px; color: var(--primary-pink); margin-top: 8px; font-weight: 700; background: rgba(255, 46, 93, 0.08); padding: 4px 12px; border-radius: 20px; }
 
-        .setup-card input[type="text"], .setup-card input[type="number"] {
-            width: 100%; padding: 14px; border-radius: 14px; border: 2px solid transparent;
-            background: #f7f3f5; font-size: 14px; margin-bottom: 14px; font-weight: 600; text-align: left;
-            outline: none; transition: all 0.3s ease;
+        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; color: #111; font-weight: 800; }
+        #id-login-screen p { font-size: 14px; color: var(--text-muted); margin-bottom: 30px; font-weight: 500; }
+        
+        .avatar-upload-box {
+            cursor: pointer; margin-bottom: 25px; display: inline-block; position: relative;
+        }
+        .avatar-upload-box img {
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
+            border: 5px solid var(--white); box-shadow: 0 10px 30px rgba(255,46,93,0.3);
+            transition: transform 0.3s ease;
+        }
+        .avatar-upload-box:hover img { transform: scale(1.08); }
+        .avatar-upload-box p { font-size: 12px; color: var(--primary-pink); margin-top: 12px; font-weight: 700; background: rgba(255, 46, 93, 0.08); padding: 6px 18px; border-radius: 20px; display: inline-block;}
+
+        #id-login-screen input[type="number"] {
+            width: 100%; padding: 18px; border-radius: 18px; border: 2px solid transparent;
+            background: #f7f3f5; font-size: 16px; margin-bottom: 20px; font-weight: 600; text-align: center;
+            outline: none; transition: all 0.3s ease; box-shadow: inset 0 3px 6px rgba(0,0,0,0.03);
             color: var(--dark-text);
         }
-        .setup-card input:focus { border-color: var(--primary-pink); background: #fff; box-shadow: 0 0 12px rgba(255, 46, 93, 0.08); }
-        
-        .setup-card button {
-            width: 100%; padding: 14px; border-radius: 14px; border: none;
-            background: var(--gradient-pink); color: #fff; font-size: 15px; font-weight: 800;
-            cursor: pointer; box-shadow: 0 8px 25px rgba(255,46,93,0.3); transition: transform 0.2s;
+        #id-login-screen input[type="number"]:focus { border-color: var(--primary-pink); background: #fff; box-shadow: 0 0 20px rgba(255, 46, 93, 0.1); transform: scale(1.02); }
+        #id-login-screen button {
+            width: 100%; padding: 18px; border-radius: 18px; border: none;
+            background: var(--gradient-pink); color: #fff; font-size: 18px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(255,46,93,0.35); transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-        .setup-card button:hover { transform: translateY(-2px); }
+        #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(255,46,93,0.5); }
 
-        /* LIVE ROOM MAIN CONTAINER */
+        /* MAIN APP CONTAINER */
+        #main-app {
+            width: 100%;
+            max-width: 480px;
+            background: var(--light-bg);
+            min-height: 100vh;
+            padding-bottom: 40px; 
+            position: relative;
+            box-shadow: 0 0 45px rgba(255, 46, 93, 0.08);
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-bottom: 1px solid rgba(255, 46, 93, 0.1);
+        }
+
+        .header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-profile-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-pink);
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(255, 46, 93, 0.3);
+            background: #FFFFFF;
+            transition: transform 0.3s;
+        }
+        .header-profile-btn:hover { transform: scale(1.1); }
+
+        .header-profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .diamond-bal {
+            background: #FFFFFF;
+            border: 1px solid var(--border-pink);
+            color: var(--primary-pink); 
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 46, 93, 0.06);
+            transition: transform 0.2s, background 0.3s;
+        }
+        .diamond-bal:hover { transform: scale(1.05); background: var(--light-bg); }
+        
+        .diamond-icon-3d {
+            background: linear-gradient(135deg, #FF2E5D 0%, #FFD700 50%, #FF2E5D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 16px;
+            filter: drop-shadow(0 0 5px rgba(255, 46, 93, 0.5));
+            animation: bounceGem 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceGem {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .add-diamond-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary-pink);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            margin-left: 6px;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 14px; }
+
+        .noti-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 1px solid var(--border-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-text);
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 46, 93, 0.06);
+            transition: transform 0.2s;
+        }
+        .noti-btn:hover { transform: scale(1.1); }
+        .noti-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--primary-pink);
+            color: #FFFFFF;
+            font-size: 9px;
+            font-weight: 800;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #FFFFFF;
+        }
+
+        /* Banner Design */
+        .app-banner-premium {
+            position: relative;
+            margin: 18px;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(255, 26, 78, 0.25);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+        .app-banner-premium:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(255, 26, 78, 0.35);
+        }
+        .app-banner-premium img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Categories */
+        .category-tabs {
+            display: flex;
+            gap: 12px;
+            padding: 0 18px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        
+        .tab-item {
+            flex-shrink: 0;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: #FFFFFF;
+            border: 1px solid var(--border-pink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .tab-item.active {
+            background: var(--gradient-pink);
+            color: #FFFFFF;
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(255, 46, 93, 0.25);
+            transform: translateY(-2px);
+        }
+        .tab-item i { font-size: 14px; }
+
+        /* Dynamic Section */
+        main { padding: 0; }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 18px;
+            margin-bottom: 14px;
+        }
+        .section-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+        .live-count-badge {
+            background: var(--border-pink);
+            color: var(--primary-pink);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+        .see-all-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-pink);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+        .see-all-link:hover { transform: translateX(3px); }
+
+        /* Grid */
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 18px;
+        }
+
+        .live-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 4/5;
+            cursor: pointer;
+            background: #FFF;
+            box-shadow: 0 6px 20px rgba(255, 46, 93, 0.08);
+            border: 1px solid rgba(255, 46, 93, 0.05);
+            transform: translateZ(0);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
+        }
+        .live-card:hover { 
+            transform: translateY(-4px) scale(1.02); 
+            box-shadow: 0 10px 25px rgba(255, 46, 93, 0.15);
+        }
+        .live-card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .live-card::after {
+            content: ''; position: absolute; inset: 0; 
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 45%, transparent 100%);
+            z-index: 1; pointer-events: none;
+        }
+
+        .card-top-info {
+            position: absolute; top: 8px; left: 8px; right: 8px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 2;
+        }
+
+        .live-badge {
+            background: var(--primary-pink); color: white; font-size: 9px; font-weight: 800;
+            padding: 3px 8px; border-radius: 8px; letter-spacing: 0.5px; animation: pulse-bg 1.5s infinite;
+            display: inline-flex; align-items: center;
+        }
+        
+        .scheduled-badge {
+            background: #f39c12; color: white; font-size: 9px; font-weight: 800;
+            padding: 3px 8px; border-radius: 8px; display: inline-flex; align-items: center;
+        }
+
+        .viewers {
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            color: white; font-size: 9px; font-weight: 700; padding: 3px 8px;
+            border-radius: 8px; display: flex; align-items: center; gap: 4px;
+        }
+
+        .card-bottom-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 10px;
+            color: white; z-index: 2; display: flex; flex-direction: column; gap: 4px;
+        }
+
+        .user-name { 
+            font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 4px; 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .card-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+        .live-title { 
+            font-size: 9px; font-weight: 600; color: #EAEAEA; text-shadow: 0 1px 3px rgba(0,0,0,0.6); 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; 
+        }
+        .card-diamond {
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 12px;
+            font-size: 8px; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 3px;
+            white-space: nowrap;
+        }
+        .card-diamond i { color: #FF5A7F; font-size: 8px; }
+
+        .grid-loading-placeholder {
+            grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 14px;
+            font-weight: 600; padding: 40px; background: #FFFFFF; border-radius: 18px;
+            border: 2px dashed var(--border-pink); display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .grid-loading-placeholder i { font-size: 28px; color: var(--primary-pink); }
+
+        /* Promo Scroller */
+        .promo-scroller {
+            display: flex; gap: 14px; padding: 18px; overflow-x: auto; scrollbar-width: none;
+        }
+        .promo-scroller::-webkit-scrollbar { display: none; }
+        
+        .promo-card {
+            flex-shrink: 0; background: #FFFFFF; border: 1px solid var(--border-pink);
+            border-radius: 20px; padding: 12px 16px; display: flex; align-items: center;
+            gap: 12px; width: 160px; box-shadow: 0 6px 20px rgba(255, 46, 93, 0.04);
+            transition: transform 0.3s;
+        }
+        .promo-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,46,93,0.1); }
+        .promo-icon {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--border-pink);
+            color: var(--primary-pink); display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+        .promo-icon i.fa-trophy { color: #f39c12; }
+        .promo-info h4 { font-size: 11px; font-weight: 800; color: var(--dark-text); white-space: nowrap; }
+        .promo-info p { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+        .mini-avatars { display: flex; align-items: center; margin-top: 3px; }
+        .mini-avatars img { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #FFFFFF; margin-left: -5px; }
+        .mini-avatars img:first-child { margin-left: 0; }
+
+        /* Modal Settings */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: white; padding: 40px 30px; border-radius: 35px; text-align: center;
+            width: 90%; max-width: 420px; transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        
+        .modal-box h3 { color: var(--dark-text); font-size: 26px; margin-bottom: 25px; font-weight: 800; }
+        .modal-box input[type="text"], .modal-box input[type="number"], .modal-box input[type="datetime-local"] {
+            width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #eee;
+            margin-bottom: 22px; font-family: 'Poppins'; font-size: 15px; outline: none; transition: border 0.3s;
+            background: #fafafa; font-weight: 500;
+        }
+        .modal-box input:focus { border-color: #FFB6C1; background: #fff; box-shadow: 0 0 15px rgba(255,46,93,0.05); }
+        
+        .thumb-upload {
+            border: 2px dashed #FFB6C1; padding: 25px; border-radius: 18px; background: #FFE4E8;
+            margin-bottom: 20px; cursor: pointer; color: var(--primary-pink); font-size: 15px; font-weight: 700;
+            transition: all 0.3s; display: flex; flex-direction: column; gap: 10px; align-items: center;
+        }
+        .thumb-upload:hover { background: #ffd1d9; border-color: var(--primary-pink); transform: scale(1.02); }
+        .thumb-upload i { font-size: 28px; }
+        
+        .past-thumbs-wrapper { margin-bottom: 25px; text-align: left; background: #f9f9f9; padding: 18px; border-radius: 18px; }
+        .past-thumbs-wrapper p { font-size: 13px; color: #555; margin-bottom: 12px; font-weight: 700; }
+        .past-thumbs-list { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .past-thumbs-list::-webkit-scrollbar { height: 5px; display: block; }
+        .past-thumbs-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+        .past-thumbs-list img {
+            width: 65px; height: 65px; border-radius: 14px; object-fit: cover; cursor: pointer;
+            border: 3px solid transparent; transition: all 0.3s;
+        }
+        .past-thumbs-list img.selected { border: 3px solid var(--primary-pink); transform: scale(1.1); box-shadow: 0 5px 15px rgba(255,46,93,0.35); }
+
+        .modal-btns { display: flex; gap: 18px; margin-top: 20px; }
+        .btn-confirm { flex: 1; background: var(--gradient-pink); color: white; border: none; padding: 18px; border-radius: 18px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(255,46,93,0.35); transition: transform 0.2s; }
+        .btn-confirm:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(255,46,93,0.45); }
+        .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 18px; border-radius: 18px; font-size: 18px; font-weight: 800; cursor: pointer; transition: background 0.2s; }
+        .btn-cancel:hover { background: #e0e0e0; color: #333; }
+
+        /* LIVE SCREEN (SCROLL COMPLETELY FIXED FOR 100VH 3D PERFECTION) */
         #live-view-screen {
             position: fixed; 
             inset: 0; 
@@ -140,7 +621,7 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.85);
+            box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
         }
         
         .live-video-container { 
@@ -151,53 +632,69 @@
             background: #050505; 
             overflow: hidden; 
             display: flex; 
+            transition: all 0.5s ease;
         }
         
         #remote-live-video, #local-live-video {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover; transition: all 0.5s ease;
             transform: scaleX(-1);
             -webkit-transform: scaleX(-1);
         }
 
-        /* PK Split Screen */
+        /* Floating Hearts Animation for Double Tap */
+        .floating-heart {
+            position: absolute;
+            color: var(--primary-pink);
+            font-size: 45px;
+            pointer-events: none;
+            z-index: 99999;
+            filter: drop-shadow(0 0 15px rgba(255,46,93,0.8));
+            animation: floatHeartAnim 1.5s ease-out forwards;
+        }
+
+        @keyframes floatHeartAnim {
+            0% { transform: scale(0.5) translateY(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.2) translateY(-60px) rotate(15deg); opacity: 0.8; }
+            100% { transform: scale(1) translateY(-150px) rotate(-15deg); opacity: 0; }
+        }
+
+        /* Video Beauty Filter classes applied to local video */
+        .beauty-none { filter: none !important; }
+        .beauty-glam { filter: brightness(1.18) contrast(0.96) saturate(1.08) blur(0.3px) !important; }
+        .beauty-warm { filter: sepia(0.18) saturate(1.22) brightness(1.12) !important; }
+        .beauty-blush { filter: hue-rotate(-8deg) saturate(1.35) brightness(1.14) !important; }
+        .beauty-dramatic { filter: contrast(1.15) saturate(0.9) brightness(1.08) !important; }
+
+        /* PK Dual Split CSS */
         .live-video-container.pk-active {
             display: flex; flex-direction: row;
         }
         .live-video-container.pk-active #local-live-video,
         .live-video-container.pk-active #remote-live-video {
             width: 50% !important; height: 100% !important; display: block !important;
-            border: 2px solid rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* PK HUD Status Board (From Screenshot 2) */
+        /* PK Board Design */
         #pk-status-bar {
-            position: absolute; 
-            top: 100px; 
-            left: 12px; 
-            right: 12px; 
-            z-index: 30;
-            display: none; 
-            flex-direction: column; 
-            gap: 4px;
+            position: absolute; top: 110px; left: 16px; right: 16px; z-index: 30;
+            display: none; flex-direction: column; gap: 6px;
         }
         .pk-header {
-            display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 900;
+            display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 900;
         }
         .pk-team-red {
-            background: #FF2E5D; color: white; padding: 4px 12px; border-radius: 12px; box-shadow: var(--neon-shadow); display: flex; align-items: center; gap: 4px;
+            background: #FF2E5D; color: white; padding: 4px 14px; border-radius: 14px; box-shadow: var(--neon-shadow);
         }
         .pk-team-blue {
-            background: #2563EB; color: white; padding: 4px 12px; border-radius: 12px; box-shadow: 0 0 15px rgba(37,99,235,0.6); display: flex; align-items: center; gap: 4px;
-        }
-        .pk-win-badge {
-            background: #FFD700; color: #111; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; margin-left: 4px;
+            background: #2563EB; color: white; padding: 4px 14px; border-radius: 14px; box-shadow: 0 0 15px rgba(37,99,235,0.6);
         }
         .pk-time {
-            background: rgba(0,0,0,0.75); color: #FFD700; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-family: monospace;
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.7); color: #FFD700; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-family: monospace;
+            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .pk-bar-track {
-            width: 100%; height: 16px; background: #1a1a1a; border-radius: 8px; overflow: hidden; display: flex; border: 1.5px solid rgba(255,255,255,0.3);
+            width: 100%; height: 16px; background: #1a1a1a; border-radius: 8px; overflow: hidden; display: flex; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         #pk-red-progress {
             background: linear-gradient(90deg, #FF2E5D, #FF5A7F); height: 100%; transition: width 0.5s ease; width: 50%;
@@ -205,138 +702,19 @@
         #pk-blue-progress {
             background: linear-gradient(90deg, #2563EB, #3B82F6); height: 100%; transition: width 0.5s ease; width: 50%;
         }
-
-        /* PK Contribute Action triggers */
-        .pk-contribute-row {
-            display: none; justify-content: space-between; position: absolute; top: 180px; left: 15px; right: 15px; z-index: 35; pointer-events: none;
-        }
-        .pk-contrib-btn {
-            background: rgba(255, 46, 93, 0.9); color: white; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: none; cursor: pointer; pointer-events: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .pk-contrib-btn.blue { background: rgba(37, 99, 235, 0.9); }
         
-        /* ELEVATED BOTTOM LIVE LAYOUT (Fixed buttons not visible issue) */
-        .live-overlay-bottom {
-            position: absolute; 
-            bottom: 85px; /* Shifted UP from 0px to clear browser address bar overlapping */
-            left: 0; 
-            width: 100%; 
-            padding: 0 15px 15px 15px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.9)); 
-            z-index: 10;
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            height: 55vh; 
-            pointer-events: none;
+        #unmute-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 46, 93, 0.95); color: white; padding: 18px 35px;
+            border-radius: 35px; font-weight: 800; cursor: pointer; z-index: 50; display: none;
+            box-shadow: 0 10px 30px rgba(255,46,93,0.5); font-size: 18px;
+            align-items: center; gap: 12px; animation: pulse-bg 1.5s infinite;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
 
-        .chat-box { 
-            pointer-events: auto;
-            max-height: 28vh; 
-            overflow-y: auto; 
-            margin-bottom: 15px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            padding-right: 10px;
-            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
-        }
-        .chat-box::-webkit-scrollbar { width: 3px; display: block; }
-        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-
-        .chat-msg { 
-            color: #fff; 
-            font-size: 13px; 
-            font-weight: 700;
-            background: transparent !important; 
-            padding: 2px 4px !important; 
-            width: max-content; 
-            max-width: 95%; 
-            word-wrap: break-word;
-            line-height: 1.3;
-            animation: slideInUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 2px 5px rgba(0, 0, 0, 0.95);
-        }
-        .chat-msg span { color: #ff9fb3; font-weight: 900; margin-right: 4px; }
-        .chat-msg.system { color: #FFB6C1; font-style: italic; }
-        .chat-msg.gift { font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .chat-msg.gift span { color: #ffd700; }
-        .chat-msg.gift img { width: 22px; height: 22px; object-fit: contain; }
-
-        /* ACTION CONTROLS BAR */
-        .action-bar { 
-            pointer-events: auto; 
-            display: flex; 
-            gap: 12px; 
-            align-items: center; 
-            justify-content: center;
-            width: 100%;
-        }
-
-        .circle-action-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.25);
-            flex-shrink: 0;
-        }
-        .circle-action-btn:hover { transform: scale(1.1) translateY(-2px); }
-
-        #btn-chat-trigger {
-            background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
-        }
-        .gift-btn { 
-            background: var(--gradient-pink); 
-        }
-        .pk-trigger-btn { 
-            background: linear-gradient(135deg, #2563EB, #3B82F6); 
-            display: flex; 
-        }
-        .beauty-trigger-btn { 
-            background: linear-gradient(135deg, #8B5CF6, #EC4899); 
-            display: flex; 
-        }
-
-        /* CHAT INPUT EXPANSION */
-        #live-chat-input-overlay {
-            display: none;
-            position: absolute;
-            bottom: 75px;
-            left: 12px;
-            right: 12px;
-            z-index: 1000;
-        }
-        .chat-input-wrapper-3d { 
-            background: rgba(10, 5, 8, 0.95); 
-            border-radius: 25px; 
-            padding: 4px 6px 4px 15px; 
-            display: flex; 
-            align-items: center; 
-            border: 1.5px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); 
-        }
-        .chat-input-wrapper-3d input { 
-            background: transparent; border: none; color: white; padding: 8px 0; width: 100%; outline: none; font-size: 13px; 
-        }
-
-        #btn-send-live-chat {
-            width: 34px; height: 34px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer;
-        }
-
-        /* HEADER & TOP OVERLAY */
         .live-overlay-top {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 15px;
-            background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
+            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
+            background: linear-gradient(rgba(0,0,0,0.85), transparent); z-index: 10;
             display: flex; justify-content: space-between; align-items: center; pointer-events: none;
         }
         
@@ -344,108 +722,556 @@
             pointer-events: auto; 
             display: flex; 
             align-items: center; 
-            gap: 8px; 
-            background: rgba(0, 0, 0, 0.5); 
-            padding: 5px 12px 5px 5px; 
-            border-radius: 40px; 
-            border: 1px solid rgba(255,255,255,0.15); 
+            gap: 12px; 
+            background: rgba(0, 0, 0, 0.55); 
+            padding: 8px 18px 8px 8px; 
+            border-radius: 45px; 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
         }
-        .host-info img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary-pink); object-fit: cover; }
-        .host-text h4 { color: white; font-size: 13px; font-weight: 800; }
-        .host-text p { color: #ccc; font-size: 10px; }
+        .host-info img { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--primary-pink); object-fit: cover; }
+        .host-text h4 { color: white; font-size: 15px; font-weight: 800; line-height: 1.2; text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+        .host-text p { color: #ddd; font-size: 12px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        
+        /* Interactive 3D Follow Button */
+        .follow-btn-3d {
+            background: linear-gradient(135deg, #FF2E5D 0%, #FF5A7F 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-left: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 5px 12px rgba(255, 46, 93, 0.4), inset 0 1px 2px rgba(255,255,255,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .follow-btn-3d:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 18px rgba(255, 46, 93, 0.6);
+        }
 
-        /* SLIDE-UP SHEETS CSS */
-        #gifts-bottom-sheet, #beauty-bottom-sheet, #pk-bottom-sheet {
+        .close-live-btn { 
+            pointer-events: auto; 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 50%; 
+            background: rgba(0,0,0,0.6); 
+            color: white; 
+            border: 1.5px solid rgba(255,255,255,0.4); 
+            font-size: 18px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            transition: all 0.3s; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 2px 2px rgba(255,255,255,0.15);
+        }
+        .close-live-btn:hover { background: rgba(255,46,93,0.95); border-color: transparent; transform: scale(1.1); }
+        
+        /* CHATS (TRANSPARENT BACKGROUND & 3D NEON LOOKS) */
+        .live-overlay-bottom {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 18px 30px 18px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.95)); z-index: 10;
+            display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
+        }
+        
+        .chat-box { 
+            pointer-events: auto;
+            max-height: 45vh; 
+            overflow-y: auto; 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            padding-right: 12px;
+            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+        }
+        
+        .chat-box::-webkit-scrollbar { width: 5px; display: block; }
+        .chat-box::-webkit-scrollbar-track { background: transparent; }
+        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.4); border-radius: 10px; }
+
+        /* Completely Transparent strip with drop shadow text */
+        .chat-msg { 
+            color: #fff; 
+            font-size: 14px; 
+            font-weight: 700;
+            background: transparent !important; 
+            padding: 5px 8px !important; 
+            width: max-content; 
+            max-width: 95%; 
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            transform-origin: bottom left;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95), 0 3px 8px rgba(0, 0, 0, 0.95);
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .chat-msg span { 
+            color: #ff9fb3; 
+            font-weight: 900; 
+            margin-right: 8px; 
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+        }
+        
+        .chat-msg.system { 
+            color: #FFB6C1; 
+            font-style: italic; 
+            text-shadow: 0 2px 4px rgba(255, 46, 93, 0.9);
+        }
+        .chat-msg.gift { 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            text-shadow: 0 2px 4px rgba(255, 46, 93, 0.95);
+        }
+        .chat-msg.gift span { color: #ffd700; }
+        .chat-msg.gift img { width: 28px; height: 28px; object-fit: contain; }
+
+        /* 3D ACTION BAR */
+        .action-bar { 
+            pointer-events: auto; 
+            display: flex; 
+            gap: 14px; 
+            align-items: center; 
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* 3D Circular Buttons */
+        .circle-action-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 22px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+        .circle-action-btn:hover {
+            transform: scale(1.12) translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.45);
+        }
+
+        #btn-chat-trigger {
+            background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+            box-shadow: 0 6px 18px rgba(0, 240, 255, 0.5), inset 0 2px 3px rgba(255,255,255,0.35);
+        }
+
+        .gift-btn { 
+            background: var(--gradient-pink); 
+            box-shadow: 0 6px 18px rgba(255, 46, 93, 0.5), inset 0 2px 3px rgba(255,255,255,0.35);
+        }
+        
+        .share-btn-trigger {
+            background: linear-gradient(135deg, #10B981, #059669); 
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5), inset 0 2px 3px rgba(255,255,255,0.35);
+        }
+
+        .pk-trigger-btn { 
+            background: linear-gradient(135deg, #2563EB, #3B82F6); 
+            display: none; 
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5), inset 0 2px 3px rgba(255,255,255,0.35);
+        }
+
+        .beauty-trigger-btn { 
+            background: linear-gradient(135deg, #8B5CF6, #EC4899); 
+            display: none; 
+            box-shadow: 0 6px 18px rgba(139, 92, 246, 0.5), inset 0 2px 3px rgba(255,255,255,0.35);
+        }
+
+        /* FLOATING CHAT INPUT OVERLAY (SLIDE UP 3D LOOK) */
+        #live-chat-input-overlay {
+            display: none;
+            position: absolute;
+            bottom: 95px;
+            left: 18px;
+            right: 18px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .chat-input-wrapper-3d { 
+            background: rgba(10, 5, 8, 0.96); 
+            border-radius: 35px; 
+            padding: 5px 8px 5px 20px; 
+            display: flex; 
+            align-items: center; 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 2px solid rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), inset 0 2px 3px rgba(255,255,255,0.15); 
+        }
+        .chat-input-wrapper-3d input { 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            padding: 12px 0; 
+            width: 100%; 
+            outline: none; 
+            font-family: 'Poppins'; 
+            font-size: 15px; 
+            font-weight: 500; 
+        }
+        .chat-input-wrapper-3d input::placeholder { color: #ccc; font-weight: 400; }
+        
+        #btn-send-live-chat {
+            width: 42px; height: 42px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 5px 12px rgba(255,46,93,0.4); transition: transform 0.2s; flex-shrink: 0; margin-left: 8px;
+        }
+
+        /* SLIDE-UP GIFTS SHEET */
+        #gifts-bottom-sheet {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
-            width: 100%; max-width: 480px; background: rgba(10, 5, 8, 0.98);
-            border-top: 1.5px solid rgba(255, 46, 93, 0.3); border-radius: 22px 22px 0 0; z-index: 60000; padding: 20px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            width: 100%; max-width: 480px; background: rgba(10, 5, 8, 0.99);
+            border-top: 1px solid rgba(255, 46, 93, 0.4); border-radius: 28px 28px 0 0; z-index: 60000; padding: 25px;
+            box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
         }
-        #gifts-bottom-sheet.active, #beauty-bottom-sheet.active, #pk-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
-        .gifts-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; }
-        .gifts-header h3 { color: white; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .gifts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 200px; overflow-y: auto; }
-        .gift-item-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-        .gift-item-card img { width: 38px; height: 38px; object-fit: contain; }
-        .gift-item-card h5 { color: #EAEAEA; font-size: 10px; font-weight: 700; }
-        .gift-item-card p { color: #FFD700; font-size: 8px; font-weight: 800; display: flex; align-items: center; gap: 2px; }
+        #gifts-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .gifts-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 14px; margin-bottom: 18px; }
+        .gifts-header h3 { color: white; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .gifts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-height: 250px; overflow-y: auto; padding-bottom: 12px; }
+        .gift-item-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px 6px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .gift-item-card:hover { background: rgba(255,46,93,0.15); border-color: var(--primary-pink); transform: scale(1.05); }
+        .gift-item-card img { width: 48px; height: 48px; object-fit: contain; }
+        .gift-item-card h5 { color: #EAEAEA; font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .gift-item-card p { color: #FFD700; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
 
-        /* Dynamic Online Creators invitations row style */
+        /* SLIDE-UP BEAUTY FILTERS SHEET */
+        #beauty-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(12, 10, 15, 0.99);
+            border-top: 1px solid rgba(139, 92, 246, 0.4); border-radius: 28px 28px 0 0; z-index: 60000; padding: 25px;
+            box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        }
+        #beauty-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .beauty-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding-bottom: 12px; }
+        .beauty-item-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px 6px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .beauty-item-card:hover, .beauty-item-card.selected { background: rgba(139,92,246,0.2); border-color: #8B5CF6; transform: scale(1.05); }
+        .beauty-item-card i { font-size: 22px; color: #EC4899; }
+        .beauty-item-card h5 { color: white; font-size: 10px; font-weight: 700; }
+
+        /* SLIDE-UP DIAMONDS RECHARGE SHEET */
+        #diamonds-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(10, 10, 12, 0.99);
+            border-top: 1px solid rgba(255, 215, 0, 0.4); border-radius: 28px 28px 0 0; z-index: 61000; padding: 25px;
+            box-shadow: 0 -12px 40px rgba(0,0,0,0.7); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        }
+        #diamonds-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .diamonds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-bottom: 12px; }
+        .diamond-item-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 120px; }
+        .diamond-item-card:hover { background: rgba(255, 215, 0, 0.12); border-color: #FFD700; transform: scale(1.03); }
+        .diamond-item-card h4 { color: white; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .diamond-item-card span { font-size: 28px; }
+        .diamond-item-card button { background: #FFD700; color: #111; border: none; font-size: 11px; font-weight: 800; width: 100%; padding: 6px 0; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(255,215,0,0.3); }
+
+        /* SLIDE-UP PK PANEL */
+        #pk-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(10, 10, 15, 0.99);
+            border-top: 1px solid rgba(37, 99, 235, 0.4); border-radius: 28px 28px 0 0; z-index: 60000; padding: 25px;
+            box-shadow: 0 -12px 40px rgba(0,0,0,0.6); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+        }
+        #pk-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .pk-grid-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+        .pk-action-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px 12px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .pk-action-card:hover { background: rgba(37,99,235,0.15); border-color: #2563EB; transform: scale(1.03); }
+        .pk-action-card i { font-size: 28px; color: #3B82F6; }
+        .pk-action-card h4 { color: white; font-size: 14px; font-weight: 800; }
+        .pk-action-card p { color: #888; font-size: 10px; }
+
+        /* Invitation Overlay */
+        #pk-invite-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 70000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 25px;
+        }
+        .pk-invite-box {
+            background: white; border-radius: 35px; padding: 35px 25px; width: 90%; max-width: 400px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 1px solid rgba(255, 46, 93, 0.2);
+        }
+        .pk-invite-box h3 { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 10px; }
+        .pk-invite-box p { font-size: 14px; color: #666; margin-bottom: 28px; }
+        .pk-invite-btns { display: flex; gap: 14px; }
+
+        /* Dynamic Online Users invitation container */
+        #pk-online-creators {
+            margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 18px; display: none;
+        }
         .creator-invite-row {
-            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 14px; margin-bottom: 10px;
         }
-        .creator-invite-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-        .creator-invite-row h5 { color: white; font-size: 11px; font-weight: 700; flex-grow: 1; margin-left: 10px; }
-        .btn-invite-send { background: #2563EB; color: white; font-size: 10px; font-weight: 800; padding: 4px 10px; border: none; border-radius: 20px; cursor: pointer; }
+        .creator-invite-row img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .creator-invite-row h5 { color: white; font-size: 12px; font-weight: 700; flex-grow: 1; margin-left: 12px; }
+        .btn-invite-send { background: #2563EB; color: white; font-size: 11px; font-weight: 800; padding: 6px 14px; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
 
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); color: white;
+            display: none; justify-content: center; align-items: center; z-index: 100000;
+            font-size: 22px; font-weight: 800; flex-direction: column; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
+
+        /* Animations */
+        @keyframes pulse-bg {
+            0% { box-shadow: 0 0 0 0 rgba(255, 46, 93, 0.75); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 46, 93, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 46, 93, 0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(18px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes floaty {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(4deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .toast {
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%) translateY(-120px);
+            background: rgba(255, 255, 255, 0.98); color: var(--dark-text); padding: 16px 32px; border-radius: 35px;
+            font-size: 15px; font-weight: 700; box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            border-left: 6px solid var(--primary-pink); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000000;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            cursor: pointer;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <!-- Global Toast (Instant Tap to Dismiss) -->
+    <!-- Global Toast Notification (Tappable & 5-Sec Timeout) -->
     <div class="toast" id="toastMsg" onclick="this.classList.remove('show')">Action Successful!</div>
 
-    <!-- 1. SIMPLIFIED NO-ID SETUP SCREEN -->
-    <div id="setup-login-screen">
-        <div class="setup-card">
-            <h2>Zingoo Live Setup</h2>
-            <p>Customize your room name and profile details to start streaming instantly.</p>
+    <!-- HIGH-TECH SHIELD AUTOMATED SCANNER (Exactly 30 Seconds Gate for Security & Easy Registration) -->
+    <div id="cyber-verification-screen">
+        <div class="scanner-container">
+            <div class="scanner-ring-outer"></div>
+            <div class="scanner-ring-inner"></div>
+            <span id="verify-countdown">30</span>
+        </div>
+        <h2 style="color: #FFFFFF; font-size: 22px; font-weight: 900; letter-spacing: 0.5px;">ZINGOO AUTOMATED SHIELD</h2>
+        <p style="color: #8E7A80; font-size: 13px; margin-top: 6px; font-weight: 500;">Direct Realtime Secure Handshake Verification</p>
+
+        <div class="verify-status-box">
+            <div class="status-row" id="v-row-1">
+                <div class="status-dot active" id="v-dot-1"></div>
+                <span id="v-text-1">Securing communication port...</span>
+            </div>
+            <div class="status-row" id="v-row-2" style="opacity: 0.3;">
+                <div class="status-dot" id="v-dot-2"></div>
+                <span id="v-text-2">Validating profile credentials...</span>
+            </div>
+            <div class="status-row" id="v-row-3" style="opacity: 0.3;">
+                <div class="status-dot" id="v-dot-3"></div>
+                <span id="v-text-3">Linking secure wallet node...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="id-login-screen">
+        <div class="logo-container"><i class="fas fa-fire" style="color:var(--primary-pink);"></i> ZINGOO LIVE</div>
+        <div class="login-card">
+            <h2>Live Room Access</h2>
+            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives. <br><span style="color:var(--primary-pink); font-size:11px;">New ID? We will auto-register you!</span></p>
             
             <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
             <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
                 <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
-                <p><i class="fas fa-camera"></i> Change Avatar</p>
+                <p><i class="fas fa-camera"></i> Upload Photo</p>
             </div>
 
-            <input type="text" id="setup-host-name" placeholder="Enter Host Name (e.g. Miss Anjali)">
-            <input type="text" id="stream-title" placeholder="Enter Stream Title (e.g. Join the PK battle! ⚔️)">
-            <input type="number" id="live-room-tariff" placeholder="Entry Price in Diamonds (optional)" min="0" value="0">
-
-            <button id="btn-login-id">Start Direct Live Room 🔴</button>
+            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
+            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
         </div>
     </div>
 
-    <!-- 2. ACTUAL LIVE ROOM SCREEN -->
+    <!-- 2. MAIN HEADER & HOME PAGE -->
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="header-left-group">
+                <div class="header-profile-btn" onclick="document.getElementById('login-profile-upload').click()">
+                    <img id="header-user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8" alt="Profile">
+                </div>
+                <div class="diamond-bal" onclick="toggleDiamondsSheet(true)">
+                    <i class="fas fa-gem diamond-icon-3d"></i>
+                    <span id="user-diamond-bal">0</span>
+                    <div class="add-diamond-btn"><i class="fas fa-plus"></i></div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <!-- Highly Visible Pulsing Go Live Button in Header -->
+                <button onclick="openStartLiveModal()" style="background: var(--gradient-pink); color: white; border: none; padding: 8px 18px; border-radius: 25px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 12px rgba(255, 46, 93, 0.35); animation: pulse-bg 2s infinite; transition: transform 0.2s;"><i class="fas fa-circle" style="font-size: 8px; color: white;"></i> Go Live</button>
+                <div class="noti-btn">
+                    <i class="far fa-bell"></i>
+                    <span class="noti-badge">8</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Premium Live Banner Card (Displays provided image with no text overlay) -->
+        <div class="app-banner-premium" onclick="openStartLiveModal()">
+            <img src="https://i.ibb.co/LDkPnkvx/IMG-20260524-165349.png" alt="Zingoo Premium Banner">
+        </div>
+
+        <!-- Pulse Glowing Circular Go Live FAB Button (Impossible to miss) -->
+        <button onclick="openStartLiveModal()" style="position: absolute; bottom: 85px; right: 22px; width: 68px; height: 68px; border-radius: 50%; background: var(--gradient-pink); border: none; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 10px 30px rgba(255, 46, 93, 0.5); z-index: 99; animation: pulse-bg 1.5s infinite; transition: transform 0.2s;">
+            <i class="fas fa-broadcast-tower" style="font-size: 22px;"></i>
+            <span style="font-size: 9px; font-weight: 900; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px;">Live</span>
+        </button>
+
+        <!-- Categories -->
+        <div class="category-tabs">
+            <div class="tab-item active"><i class="fas fa-broadcast-tower"></i> Live Now</div>
+            <div class="tab-item"><i class="fas fa-fire"></i> Popular</div>
+            <div class="tab-item"><i class="fas fa-map-marker-alt"></i> Nearby</div>
+            <div class="tab-item"><i class="fas fa-star"></i> New Star</div>
+        </div>
+
+        <main class="main-content">
+            <div class="section-header">
+                <div class="section-title-wrapper">
+                    <span class="section-title">Live Now</span>
+                    <span class="live-count-badge">128 Live</span>
+                </div>
+                <a href="#" class="see-all-link">See All <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <!-- Grid -->
+            <div class="live-grid" id="liveGrid">
+                <div class="grid-loading-placeholder">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <p>Fetching active streams...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Promo Scroller -->
+        <div class="promo-scroller">
+            <div class="promo-card">
+                <div class="promo-icon"><i class="fas fa-gift"></i></div>
+                <div class="promo-info">
+                    <h4>Daily Bonus</h4>
+                    <p>23:45:10</p>
+                </div>
+            </div>
+            <div class="promo-card">
+                <div class="promo-icon"><i class="fas fa-gem"></i></div>
+                <div class="promo-info">
+                    <h4>Diamond Pass</h4>
+                    <p>Level 3</p>
+                </div>
+            </div>
+            <div class="promo-card">
+                <div class="promo-icon"><i class="fas fa-trophy"></i></div>
+                <div class="promo-info">
+                    <h4>Top Room</h4>
+                    <div class="mini-avatars">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=tr1" alt="Top Room 1">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=tr2" alt="Top Room 2">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=tr3" alt="Top Room 3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. START LIVE MODAL -->
+    <div class="modal-overlay" id="startLiveModal">
+        <div class="modal-box">
+            <i class="fas fa-podcast" style="font-size: 50px; color: var(--primary-pink); margin-bottom: 18px; filter: drop-shadow(0 5px 15px rgba(255,46,93,0.35));"></i>
+            <h3>Ready to Stream?</h3>
+            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
+            
+            <div style="text-align: left; margin-bottom: 22px;">
+                <label style="font-size:13px; color:#555; font-weight:700; display:block; margin-bottom:6px;">
+                    <i class="fas fa-gem" style="color:var(--primary-pink)"></i> Room Entry Price (Diamonds):
+                </label>
+                <input type="number" id="live-room-tariff" placeholder="0 (Free entry)" min="0" value="0">
+            </div>
+
+            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
+            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
+                <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
+            </div>
+            
+            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
+                <p>Or choose previous thumbnail:</p>
+                <div class="past-thumbs-list" id="past-thumbs-container"></div>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 12px;">
+                <label style="font-size:13px; color:#555; font-weight:700; display:block; margin-bottom:6px;"><i class="far fa-clock"></i> Schedule Live (Optional):</label>
+                <input type="datetime-local" id="live-schedule-time">
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
+                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
     <div id="live-view-screen">
         <div class="live-video-container" id="video-canvas-container">
             <!-- Broadcaster Video -->
-            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            <video id="local-live-video" class="beauty-none" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             <!-- Viewer Video -->
             <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             
-            <div id="unmute-overlay" style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(255,46,93,0.9); padding:10px 20px; border-radius:20px; color:white; font-size:12px; font-weight:800; cursor:pointer; display:none;">
+            <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
             </div>
         </div>
 
-        <!-- Real PK Dual Arena Status Board (Screenshot 2 Match) -->
+        <!-- GORGEOUS BIG GIFT CELEBRATION SCREEN OVERLAY -->
+        <div id="big-gift-celebration" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0; pointer-events: none; z-index: 9999; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(0, 0, 0, 0.85); padding: 30px 40px; border-radius: 28px; border: 2px solid #FFD700; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(255, 46, 93, 0.45), inset 0 0 20px rgba(255, 215, 0, 0.35); width: 85%; max-width: 340px;">
+            <div id="celebration-shine" style="position: absolute; inset: 0; border-radius: 26px; background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%); animation: pulse-bg 2s infinite; pointer-events: none;"></div>
+            <span style="font-size: 12px; font-weight: 900; color: #FFD700; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 6px;"><i class="fas fa-crown"></i> GIFT RECEIVED <i class="fas fa-crown"></i></span>
+            <h4 id="gift-sender-name" style="color: #FFFFFF; font-size: 18px; font-weight: 800; margin-top: 12px; text-shadow: 0 2px 6px rgba(0,0,0,0.8); line-height: 1.2;">Name</h4>
+            <p id="gift-sending-text" style="color: #FFB6C1; font-size: 13px; font-weight: 600; margin-top: 3px;">sent a precious gift!</p>
+            <div style="position: relative; margin: 18px 0; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center;">
+                <img id="gift-celebration-img" src="" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 18px rgba(255, 46, 93, 0.7)); animation: floaty 2s ease-in-out infinite;">
+            </div>
+            <h3 id="gift-celebration-name" style="color: #FFD700; font-size: 20px; font-weight: 900; text-shadow: 0 2px 10px rgba(255, 46, 93, 0.85); letter-spacing: 0.5px;">GIFT NAME</h3>
+        </div>
+
+        <!-- PK Dual Arena Status Board -->
         <div id="pk-status-bar">
             <div class="pk-header">
-                <span class="pk-team-red">
-                    <i class="fas fa-fire"></i> Red: <span id="pk-red-points">0</span>
-                    <span class="pk-win-badge">WIN x 2</span>
-                </span>
+                <span class="pk-team-red"><i class="fas fa-fire"></i> Red: <span id="pk-red-points">0</span></span>
                 <span class="pk-time" id="pk-timer-display">PK Duel: 03:00</span>
-                <span class="pk-team-blue">
-                    <span class="pk-win-badge">WIN x 2</span>
-                    Blue: <span id="pk-blue-points">0</span> <i class="fas fa-fire"></i>
-                </span>
+                <span class="pk-team-blue">Blue: <span id="pk-blue-points">0</span> <i class="fas fa-fire"></i></span>
             </div>
             <div class="pk-bar-track">
                 <div id="pk-red-progress"></div>
                 <div id="pk-blue-progress"></div>
             </div>
-        </div>
-
-        <!-- PK Contribute Buttons -->
-        <div class="pk-contribute-row" id="pk-contribute-row">
-            <button class="pk-contrib-btn" onclick="sendQuickPKContribution(10, 'Red')">Contribute Red ></button>
-            <button class="pk-contrib-btn blue" onclick="sendQuickPKContribution(10, 'Blue')">Contribute Blue ></button>
         </div>
         
         <div class="live-overlay-top">
@@ -455,17 +1281,18 @@
                     <h4 id="live-host-name">Host Name</h4>
                     <p><i class="fas fa-eye" style="color:var(--primary-pink);"></i> <span id="live-viewer-count">0</span> watching</p>
                 </div>
-                <!-- Interactive 3D Edit Setup Button -->
-                <button class="follow-btn-3d" id="btn-edit-setup" style="background:#8B5CF6; border-radius:20px; padding:3px 10px; font-size:10px; font-weight:800; color:white; border:none; margin-left:8px; cursor:pointer;" onclick="editSetupBeforeLive(event)">
-                    <i class="fas fa-edit"></i> Edit Setup
+                <!-- Interactive 3D Follow Button -->
+                <button class="follow-btn-3d" id="btn-follow-host" onclick="followHostUser(event)">
+                    <i class="fas fa-plus"></i> Follow
                 </button>
             </div>
+            <!-- Back Arrow Navigation Button replacing standard Cross -->
             <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-arrow-left"></i></button>
         </div>
         
         <div class="live-overlay-bottom">
             <div class="chat-box" id="live-chat-box">
-                <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
+                <div class="chat-msg system"><span>System:</span> Welcome to the premium Zingoo live stream!</div>
             </div>
             
             <!-- Floating Chat Input Overlay Container -->
@@ -477,11 +1304,17 @@
             </div>
 
             <div class="action-bar">
+                <!-- 3D Comment/Chat Trigger icon button -->
                 <button class="circle-action-btn" id="btn-chat-trigger" onclick="toggleChatInput(true, event)">
                     <i class="fas fa-comment-dots"></i>
                 </button>
+                <!-- 3D Gift Icon Button -->
                 <button class="gift-btn circle-action-btn" id="btn-send-gift" onclick="toggleGiftsSheet(true)"><i class="fas fa-gift"></i></button>
+                <!-- 3D Share Button -->
+                <button class="share-btn-trigger circle-action-btn" id="btn-share-trigger" onclick="shareStream()"><i class="fas fa-share"></i></button>
+                <!-- Host-Only Beauty trigger -->
                 <button class="beauty-trigger-btn circle-action-btn" id="btn-beauty-trigger" onclick="toggleBeautySheet(true)"><i class="fas fa-magic"></i></button>
+                <!-- Host-Only PK trigger -->
                 <button class="pk-trigger-btn circle-action-btn" id="btn-pk-trigger" onclick="togglePKPanel(true)"><i class="fas fa-shield-halved"></i></button>
             </div>
         </div>
@@ -491,51 +1324,104 @@
     <div id="gifts-bottom-sheet">
         <div class="gifts-header">
             <h3><i class="fas fa-gem text-pink-500"></i> Zingoo Gift Shop</h3>
-            <button class="close-live-btn" style="width:28px; height:28px; font-size:11px;" onclick="toggleGiftsSheet(false)"><i class="fas fa-times"></i></button>
+            <button class="close-live-btn" style="width:34px; height:34px; font-size:14px;" onclick="toggleGiftsSheet(false)"><i class="fas fa-times"></i></button>
         </div>
         <div class="gifts-grid" id="live-gifts-grid">
-            <p style="color: #888; font-size:11px; text-align:center; grid-column:1/-1;">Loading gifts...</p>
+            <p style="color: #888; font-size:12px; grid-column:1/-1; text-align:center;">Loading premium gifts...</p>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 14px; border-radius:18px; margin-top:16px;">
+            <p style="color:white; font-size:14px; font-weight:800;"><i class="fas fa-gem" style="color:#FFD700;"></i> My Balance: <span id="gifts-wallet-bal">0</span></p>
+            <button style="background:var(--gradient-pink); border:none; color:white; font-size:12px; font-weight:800; padding:8px 18px; border-radius:22px; cursor:pointer; box-shadow: 0 4px 12px rgba(255,46,93,0.3);" onclick="redirectToDiamondStore()">Buy Diamonds</button>
         </div>
     </div>
 
     <!-- SLIDE-UP BEAUTY FILTERS SHEET -->
     <div id="beauty-bottom-sheet">
-        <div class="gifts-header">
+        <div class="gifts-header" style="border-color: rgba(139, 92, 246, 0.25)">
             <h3 style="color: #8B5CF6;"><i class="fas fa-magic text-purple-400"></i> Studio Beauty Filters</h3>
-            <button class="close-live-btn" style="width:28px; height:28px; font-size:11px;" onclick="toggleBeautySheet(false)"><i class="fas fa-times"></i></button>
+            <button class="close-live-btn" style="width:34px; height:34px; font-size:14px;" onclick="toggleBeautySheet(false)"><i class="fas fa-times"></i></button>
         </div>
-        <div class="beauty-grid" style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
-            <div class="beauty-item-card" onclick="applyBeautyFilter('none')"><h5>Original</h5></div>
-            <div class="beauty-item-card" onclick="applyBeautyFilter('glam')"><h5>Glam</h5></div>
-            <div class="beauty-item-card" onclick="applyBeautyFilter('warm')"><h5>Warm</h5></div>
-            <div class="beauty-item-card" onclick="applyBeautyFilter('blush')"><h5>Blush</h5></div>
-            <div class="beauty-item-card" onclick="applyBeautyFilter('dramatic')"><h5>Dramatic</h5></div>
+        <div class="beauty-grid">
+            <div class="beauty-item-card selected" id="filter-none" onclick="applyBeautyFilter('none')">
+                <i class="fas fa-circle-xmark"></i>
+                <h5>Original</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-glam" onclick="applyBeautyFilter('glam')">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                <h5>Smooth Glam</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-warm" onclick="applyBeautyFilter('warm')">
+                <i class="fas fa-sun"></i>
+                <h5>Warm Glow</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-blush" onclick="applyBeautyFilter('blush')">
+                <i class="fas fa-face-smile-wink"></i>
+                <h5>Pink Blush</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-dramatic" onclick="applyBeautyFilter('dramatic')">
+                <i class="fas fa-film"></i>
+                <h5>Dramatic</h5>
+            </div>
         </div>
     </div>
 
-    <!-- SLIDE-UP PK PANEL -->
-    <div id="pk-bottom-sheet">
-        <div class="gifts-header" style="border-color: rgba(37, 99, 235, 0.3)">
-            <h3 style="color: #3B82F6;"><i class="fas fa-shield-halved"></i> Battle Setup</h3>
-            <button class="close-live-btn" style="width:28px; height:28px; font-size:11px;" onclick="togglePKPanel(false)"><i class="fas fa-times"></i></button>
+    <!-- SLIDE-UP DIAMONDS RECHARGE SHEET (Redirects direct to pay context) -->
+    <div id="diamonds-bottom-sheet">
+        <div class="gifts-header" style="border-color: rgba(255, 215, 0, 0.25)">
+            <h3 style="color: #FFD700;"><i class="fas fa-gem text-yellow-400"></i> Recharge Diamonds</h3>
+            <button class="close-live-btn" style="width:34px; height:34px; font-size:14px;" onclick="toggleDiamondsSheet(false)"><i class="fas fa-times"></i></button>
         </div>
-        <button style="background:#2563EB; color:white; border:none; width:100%; padding:10px; border-radius:12px; font-weight:800; cursor:pointer;" onclick="toggleOnlineCreatorsList(true)">Challenge Active Creators</button>
-        <div id="pk-online-creators" style="display:none; margin-top:12px;">
-            <p style="color:white; font-size:11px; margin-bottom:8px;">Online Rooms:</p>
-            <div id="online-creators-list"></div>
+        <div class="diamonds-grid">
+            <div class="diamond-item-card" onclick="triggerDirectPay(50, 150)">
+                <h4>150 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>🔮</span>
+                <button>₹ 50.00</button>
+            </div>
+            <div class="diamond-item-card" style="border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.15);" onclick="triggerDirectPay(100, 300)">
+                <h4>300 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>💰</span>
+                <button style="background: var(--gradient-pink); color: white;">₹ 100.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(200, 600)">
+                <h4>600 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>📦</span>
+                <button>₹ 200.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(500, 1500)">
+                <h4>1500 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>🛍️</span>
+                <button>₹ 500.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(1000, 3000)">
+                <h4>3000 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>🧰</span>
+                <button>₹ 1000.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(2000, 6000)">
+                <h4>6000 <i class="fas fa-gem" style="font-size:11px;"></i></h4>
+                <span>👑</span>
+                <button>₹ 2000.00</button>
+            </div>
         </div>
     </div>
 
     <!-- CHALLENGE RECEIVED INVITATION OVERLAY -->
-    <div id="pk-invite-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:70000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-        <div class="pk-invite-box" style="background:white; border-radius:24px; padding:25px; text-align:center; max-width:350px;">
-            <h3>⚔️ Battle Duel!</h3>
-            <p id="pk-invite-text">Host is calling you out for a Duel in the PK Arena!</p>
-            <div class="modal-btns" style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-cancel" onclick="handlePKInvitationResponse(false)" style="flex:1; padding:10px; border:none; border-radius:10px;">Decline</button>
-                <button class="btn-confirm" onclick="handlePKInvitationResponse(true)" style="flex:1; background:#FF2E5D; color:white; padding:10px; border:none; border-radius:10px;">Fight!</button>
+    <div id="pk-invite-overlay">
+        <div class="pk-invite-box">
+            <span style="font-size:50px; display:block; margin-bottom:12px;">⚔️</span>
+            <h3 id="pk-inviter-title">PK Duel Challenge!</h3>
+            <p id="pk-invite-text">Host is inviting you to a live PK Battle duel!</p>
+            <div class="pk-invite-btns">
+                <button class="btn-cancel" onclick="handlePKInvitationResponse(false)">Decline</button>
+                <button class="btn-confirm" id="btn-pk-accept" onclick="handlePKInvitationResponse(true)">Fight! 🔴</button>
             </div>
         </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 50px; margin-bottom: 22px; color: var(--primary-pink);"></i>
+        <p id="loading-text">Connecting to Server...</p>
     </div>
 
     <!-- Firebase Web SDK Integration -->
@@ -545,7 +1431,22 @@
 
         const LivekitClient = window.LivekitClient;
 
-        // Configuration Parameters
+        // Security Lockouts & Screen blur
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
+                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+                e.preventDefault();
+                showToast("Security Handshake active!");
+            }
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) document.body.classList.add('security-blur');
+            else document.body.classList.remove('security-blur');
+        });
+
+        // Exact DB Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -558,15 +1459,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // API Configurations
+        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
         const CLOUD_NAME = "dotjw6tep"; 
         const UPLOAD_PRESET = "Zingoo"; 
         const LIVEKIT_WS_URL = "wss://zingoo-live-r84wm81r.livekit.cloud";
         const TOKENS_SERVER_URL = "https://zingoo-api-server.onrender.com/get-token";
 
         // Global Variables
-        let currentUser = localStorage.getItem("live_nickname") || "";
-        let currentAvatar = localStorage.getItem("live_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive";
+        let currentUser = null;
+        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
+        let currentUserId = null;
+        let userDiamonds = 0;
         let selectedAvatarFile = null;
+        let selectedThumbFile = null;
+        let selectedPastThumb = null;
 
         // PK Variables
         let pkActive = false;
@@ -584,38 +1491,91 @@
         let currentRoom = null;
         let pkPartnerRoom = null;
 
-        // Initial setup validation
-        if(currentUser) {
-            document.getElementById('setup-host-name').value = currentUser;
-            document.getElementById('login-avatar-preview').src = currentAvatar;
-        }
-
         function showToast(message) {
             const toast = document.getElementById('toastMsg');
             toast.innerText = message;
             toast.classList.add('show');
-            
-            // Exact 3.5 seconds automatic dismiss timeout
-            if(window.toastTimeout) clearTimeout(window.toastTimeout);
-            window.toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
+            setTimeout(() => toast.classList.remove('show'), 5000); // 5 Seconds exact automatic dismiss
         }
 
-        // Edit Profile/Setup Button Handler
-        window.editSetupBeforeLive = function(e) {
-            if(e) e.stopPropagation();
-            if (isHost) {
-                if(confirm("Exit current live to edit setup?")) {
-                    leaveLiveStream();
-                    document.getElementById('setup-login-screen').style.display = 'flex';
-                }
-            } else {
-                document.getElementById('setup-login-screen').style.display = 'flex';
-            }
-        };
+        function showLoading(text) {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
 
-        // --- 1. DIRECT LOG IN / GO LIVE ---
+        // --- 1. AUTOMATED 30-SECOND SECURITY HANDSHAKE ---
+        function runVerificationTimer(finalId, callback) {
+            const screen = document.getElementById('cyber-verification-screen');
+            const countdownEl = document.getElementById('verify-countdown');
+            
+            screen.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            let count = 30; // UPDATED to 30 Seconds for smooth Auto-Registration flow
+            countdownEl.innerText = count;
+
+            const row1 = document.getElementById('v-row-1');
+            const row2 = document.getElementById('v-row-2');
+            const row3 = document.getElementById('v-row-3');
+
+            const dot1 = document.getElementById('v-dot-1');
+            const dot2 = document.getElementById('v-dot-2');
+            const dot3 = document.getElementById('v-dot-3');
+
+            const interval = setInterval(() => {
+                count--;
+                countdownEl.innerText = count;
+
+                if (count === 22) {
+                    dot1.className = "status-dot completed";
+                    row2.style.opacity = "1";
+                    dot2.className = "status-dot active";
+                    document.getElementById('v-text-1').innerText = "Port cryptographically linked. [SECURE]";
+                }
+                if (count === 12) {
+                    dot2.className = "status-dot completed";
+                    row3.style.opacity = "1";
+                    dot3.className = "status-dot active";
+                    document.getElementById('v-text-2').innerText = "Identity matches server records. [VERIFIED]";
+                }
+                if (count === 4) {
+                    dot3.className = "status-dot completed";
+                    document.getElementById('v-text-3').innerText = "Wallet ledger synchronised. [READY]";
+                }
+
+                if (count <= 0) {
+                    clearInterval(interval);
+                    screen.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    callback(); // Validation & Registration callback
+                }
+            }, 1000);
+        }
+
+        // --- 2. ID LOGIN SEQUENCE WITH AUTO REGISTRATION ---
+        const loginScreen = document.getElementById('id-login-screen');
+        const mainApp = document.getElementById('main-app');
+
+        const storedId = localStorage.getItem("zingoo_id");
+        if (storedId) {
+            document.getElementById('login-zingoo-id').value = storedId;
+            const storedAv = localStorage.getItem("zingoo_avatar");
+            if (storedAv) {
+                document.getElementById('login-avatar-preview').src = storedAv;
+                if(document.getElementById('header-user-avatar')) {
+                    document.getElementById('header-user-avatar').src = storedAv;
+                }
+            }
+            
+            document.getElementById('btn-login-id').innerHTML = 'Verifying ID Security Tunnel... <i class="fas fa-spinner fa-spin"></i>';
+            runVerificationTimer(storedId, () => {
+                validateDatabaseLogin(storedId);
+            });
+        }
+
         document.getElementById('login-profile-upload').addEventListener('change', function(e) {
             if(e.target.files[0]) {
                 const reader = new FileReader();
@@ -625,135 +1585,110 @@
             }
         });
 
-        document.getElementById('btn-login-id').addEventListener('click', async () => {
-            const enteredName = document.getElementById('setup-host-name').value.trim();
-            const enteredTitle = document.getElementById('stream-title').value.trim() || `${enteredName}'s Live Room`;
-            const tariffValue = parseInt(document.getElementById('live-room-tariff').value) || 0;
-
-            if(!enteredName) { showToast("Please enter a Host Name!"); return; }
-
-            currentUser = enteredName;
-            localStorage.setItem("live_nickname", currentUser);
-
-            document.getElementById('btn-login-id').innerHTML = 'Creating Live Room... <i class="fas fa-spinner fa-spin"></i>';
+        document.getElementById('btn-login-id').addEventListener('click', () => {
+            const enteredId = document.getElementById('login-zingoo-id').value.trim();
+            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
+            
+            const btn = document.getElementById('btn-login-id');
+            btn.innerHTML = 'Securing pipeline... <i class="fas fa-spinner fa-spin"></i>';
 
             if (selectedAvatarFile) {
-                const uploaded = await uploadToCloudinary(selectedAvatarFile);
-                if(uploaded) {
-                    currentAvatar = uploaded;
-                    localStorage.setItem("live_avatar", currentAvatar);
-                }
-            }
-
-            // Direct Go Live Setup
-            try {
-                currentRoom = new LivekitClient.Room();
-                const newStreamRef = push(ref(db, 'live_streams'));
-                currentStreamId = newStreamRef.key;
-                isHost = true;
-
-                // Request LiveKit token
-                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${currentStreamId}&identity=${currentUser}`);
-                const tokenData = await tokenRes.json();
-                const token = tokenData.token;
-
-                // Connect and publish camera
-                await currentRoom.connect(LIVEKIT_WS_URL, token);
-                await currentRoom.localParticipant.enableCameraAndMicrophone({
-                    video: { facingMode: "user" },
-                    audio: true
+                const formData = new FormData();
+                formData.append("image", selectedAvatarFile);
+                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
+                .then(res => res.json()).then(data => {
+                    if (data.success) currentAvatar = data.data.url;
+                    runVerificationTimer(enteredId, () => {
+                        validateDatabaseLogin(enteredId);
+                    });
+                }).catch(err => {
+                    showToast("Image upload failed. Defaults used.");
+                    runVerificationTimer(enteredId, () => {
+                        validateDatabaseLogin(enteredId);
+                    });
                 });
-
-                // Attach local video track
-                const localVideo = document.getElementById('local-live-video');
-                localVideo.style.display = 'block';
-                document.getElementById('remote-live-video').style.display = 'none';
-
-                currentRoom.localParticipant.videoTrackPublications.forEach(pub => {
-                    if (pub.track) pub.track.attach(localVideo);
+            } else {
+                runVerificationTimer(enteredId, () => {
+                    validateDatabaseLogin(enteredId);
                 });
-
-                await set(newStreamRef, {
-                    hostName: currentUser,
-                    hostAvatar: currentAvatar,
-                    title: enteredTitle,
-                    isLive: true,
-                    tariff: tariffValue,
-                    timestamp: serverTimestamp()
-                });
-
-                onDisconnect(newStreamRef).remove();
-                
-                // Show Host UI
-                document.getElementById('setup-login-screen').style.display = 'none';
-                document.getElementById('live-view-screen').style.display = 'flex';
-                document.getElementById('live-host-name').innerText = currentUser + " (You)";
-                document.getElementById('live-host-avatar').src = currentAvatar;
-
-                showToast("Broadcast stream initiated! You are LIVE! 🔴");
-                setupLiveChat();
-                listenToPKBattleDuel();
-                setupGlobalPKInviteListener();
-                loadAdminGifts();
-
-                document.getElementById('btn-login-id').innerHTML = 'Start Direct Live Room 🔴';
-
-            } catch (err) {
-                showToast("Stream connection failed.");
-                document.getElementById('btn-login-id').innerHTML = 'Start Direct Live Room 🔴';
             }
         });
 
-        // --- 2. WEBRTC CONNECTIVITY ---
-        function setupLiveChat() {
-            const chatBox = document.getElementById('live-chat-box');
-            chatBox.innerHTML = ''; 
-            
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
-                const data = snap.val();
-                if(data) {
-                    const msgDiv = document.createElement('div');
-                    
-                    if (data.user === 'System') {
-                        msgDiv.className = 'chat-msg system';
-                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
-                    } else if (data.isGift) {
-                        msgDiv.className = 'chat-msg gift';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent ${data.text}! <img src="${data.giftImg}">`;
-                        
-                        // Spectacular floating screen alert celebration
-                        triggerBigGiftCelebration(data.user, data.text, data.giftImg);
-                    } else {
-                        msgDiv.className = 'chat-msg';
-                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+        function validateDatabaseLogin(enteredId) {
+            get(ref(db, 'users')).then(snapshot => {
+                let userFound = false;
+                const allUsers = snapshot.val();
+                let userKey = null;
+                
+                if (allUsers) {
+                    for (let key in allUsers) {
+                        if (String(allUsers[key].id).trim() === String(enteredId).trim()) {
+                            currentUser = allUsers[key].name || "User_" + enteredId;
+                            currentUserId = enteredId;
+                            userKey = key;
+                            userFound = true;
+                            userDiamonds = allUsers[key].diamonds || 0;
+                            break;
+                        }
                     }
-                    
-                    chatBox.appendChild(msgDiv);
-                    chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
                 }
+                
+                if (userFound) {
+                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
+                    else if (allUsers && allUsers[userKey]) { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+                    proceedWithLogin(userKey);
+                } else {
+                    // NEW FEATURE: Auto Register new user if not found instead of Authentication failure.
+                    const newUserRef = push(ref(db, 'users'));
+                    userKey = newUserRef.key;
+                    currentUser = "User_" + enteredId;
+                    currentUserId = enteredId;
+                    userDiamonds = 100; // Free 100 Diamonds Bonus for new users!
+                    
+                    set(newUserRef, {
+                        id: enteredId,
+                        name: currentUser,
+                        avatar: currentAvatar,
+                        diamonds: userDiamonds
+                    }).then(() => {
+                        showToast("New Account Auto-Registered! +100 Diamonds Gifted! 💎");
+                        proceedWithLogin(userKey);
+                    }).catch(err => {
+                        showToast("System handshake failure.");
+                        document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
+                    });
+                }
+            }).catch(err => {
+                showToast("System handshake failure.");
+                document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
-        window.sendLiveChatMessage = function() {
-            const input = document.getElementById('live-chat-input');
-            const text = input.value.trim();
-            if (text && currentStreamId) {
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
-                input.value = '';
-                toggleChatInput(false);
+        function proceedWithLogin(userKey) {
+            localStorage.setItem("zingoo_user", currentUser);
+            localStorage.setItem("zingoo_avatar", currentAvatar);
+            localStorage.setItem("zingoo_id", currentUserId);
+            
+            document.getElementById('user-diamond-bal').innerText = userDiamonds.toLocaleString();
+            document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
+            
+            if(document.getElementById('header-user-avatar')) {
+                document.getElementById('header-user-avatar').src = currentAvatar;
             }
-        };
 
-        window.toggleChatInput = (show, event) => {
-            if (event) event.stopPropagation();
-            const overlay = document.getElementById('live-chat-input-overlay');
-            if (show) {
-                overlay.style.display = 'block';
-                document.getElementById('live-chat-input').focus();
-            } else {
-                overlay.style.display = 'none';
-            }
-        };
+            loginScreen.style.display = 'none';
+            mainApp.style.display = 'block';
+            showToast(`Logged in successfully as ${currentUser}!`);
+            
+            fetchLiveStreams();
+            setupGlobalPKInviteListener();
+            
+            onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                userDiamonds = snap.val() || 0;
+                document.getElementById('user-diamond-bal').innerText = userDiamonds.toLocaleString();
+                document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
+            });
+        }
 
         // --- 3. DYNAMIC GIFT LOADING ---
         function loadAdminGifts() {
@@ -768,119 +1703,187 @@
                         const card = document.createElement('div');
                         card.className = 'gift-item-card';
                         card.onclick = () => {
-                            sendPreSelectedGift(gift.name, gift.imageUrl);
+                            sendPreSelectedGift(gift.name, gift.cost, gift.imageUrl);
                         };
                         card.innerHTML = `
                             <img src="${gift.imageUrl}">
                             <h5>${gift.name}</h5>
-                            <p><i class="fas fa-gem" style="color:#FFD700;"></i> ${gift.cost}</p>
+                            <p><i class="fas fa-gem" style="color:#FFD700; font-size:9px;"></i> ${gift.cost}</p>
                         `;
                         giftsGrid.appendChild(card);
                     });
+                } else {
+                    giftsGrid.innerHTML = '<p style="color:#888; font-size:12px; text-align:center; grid-column:1/-1;">No store gifts matching Admin specs.</p>';
                 }
             });
         }
 
         window.toggleGiftsSheet = (show) => {
             if(show) {
+                loadAdminGifts();
                 document.getElementById('gifts-bottom-sheet').classList.add('active');
             } else {
                 document.getElementById('gifts-bottom-sheet').classList.remove('active');
             }
         };
 
-        async function sendPreSelectedGift(giftName, giftImg) {
-            toggleGiftsSheet(false);
-            if (currentStreamId) {
-                await push(ref(db, `live_streams/${currentStreamId}/chats`), {
-                    user: currentUser,
-                    isGift: true,
-                    text: giftName,
-                    giftImg: giftImg
-                });
+        // --- 4. BEAUTY FILTERS SETUP FOR HOSTS ---
+        window.toggleBeautySheet = (show) => {
+            const sheet = document.getElementById('beauty-bottom-sheet');
+            if (show) sheet.classList.add('active');
+            else sheet.classList.remove('active');
+        };
 
-                // PK Points update logic
-                if (pkActive) {
-                    const pkBattleRef = ref(db, `live_streams/${currentStreamId}/pk_battle`);
-                    const oppBattleRef = ref(db, `live_streams/${pkPartnerStreamId}/pk_battle`);
-                    
-                    if (pkRole === 'host') {
-                        await update(pkBattleRef, { red_points: pkRedPoints + 50 });
-                        await update(oppBattleRef, { blue_points: pkRedPoints + 50 });
-                    } else {
-                        await update(pkBattleRef, { blue_points: pkBluePoints + 50 });
-                        await update(oppBattleRef, { red_points: pkBluePoints + 50 });
+        window.applyBeautyFilter = (filterType) => {
+            const localVid = document.getElementById('local-live-video');
+            if (!localVid) return;
+
+            localVid.className = "";
+            
+            if (filterType === 'none') localVid.className = 'beauty-none';
+            else if (filterType === 'glam') localVid.className = 'beauty-glam';
+            else if (filterType === 'warm') localVid.className = 'beauty-warm';
+            else if (filterType === 'blush') localVid.className = 'beauty-blush';
+            else if (filterType === 'dramatic') localVid.className = 'beauty-dramatic';
+
+            document.querySelectorAll('.beauty-item-card').forEach(card => card.classList.remove('selected'));
+            const selectedCard = document.getElementById(`filter-${filterType}`);
+            if (selectedCard) selectedCard.classList.add('selected');
+
+            showToast(`Filter Preset: ${filterType.toUpperCase()} Activated`);
+            toggleBeautySheet(false);
+        };
+
+        // --- 5. DIAMONDS SHEET (Direct Payment) ---
+        window.toggleDiamondsSheet = (show) => {
+            const sheet = document.getElementById('diamonds-bottom-sheet');
+            if (show) sheet.classList.add('active');
+            else sheet.classList.remove('active');
+        };
+
+        window.triggerDirectPay = (amount, diamonds) => {
+            toggleDiamondsSheet(false);
+            showLoading("Directing to Razorpay pipeline...");
+            window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
+        };
+
+        // --- 6. STREAM TARIFF ENTRY FEES ---
+        async function verifyAndDeductTariff(streamId, streamData) {
+            const tariff = parseInt(streamData.tariff || 0);
+            if (tariff > 0 && streamData.hostName !== currentUser) {
+                showLoading("Verifying room access fee...");
+                try {
+                    const viewerRef = ref(db, `users/${currentUser}`);
+                    const viewerSnap = await get(viewerRef);
+                    if (viewerSnap.exists()) {
+                        const curBal = viewerSnap.val().diamonds || 0;
+                        if (curBal < tariff) {
+                            hideLoading();
+                            alert(`Access Denied! Entering this room requires 💎 ${tariff} Diamonds. Balance: 💎 ${curBal}.`);
+                            redirectToDiamondStore();
+                            return false;
+                        } else {
+                            await update(ref(db, `users/${currentUser}`), { diamonds: curBal - tariff });
+                            
+                            const hostRef = ref(db, `users/${streamData.hostName}`);
+                            const hostSnap = await get(hostRef);
+                            if (hostSnap.exists()) {
+                                const hostBal = hostSnap.val().diamonds || 0;
+                                await update(hostRef, { diamonds: hostBal + tariff });
+                            }
+                            hideLoading();
+                            showToast(`Access Granted! Paid 💎 ${tariff} Diamonds entrance fee.`);
+                            return true;
+                        }
                     }
+                } catch(e) {
+                    hideLoading();
+                    return false;
                 }
+            }
+            return true;
+        }
+
+        // --- 7. SHARE STREAM FEATURE ---
+        window.shareStream = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join my Zingoo Live Room!',
+                    text: `Watch ${document.getElementById('live-host-name').innerText} live on Zingoo right now!`,
+                    url: window.location.href
+                }).catch(err => console.log('Share failed:', err));
+            } else {
+                showToast("Share link copied to clipboard!");
             }
         };
 
-        // Gifting Celebration Overlay trigger
-        window.triggerBigGiftCelebration = function(senderName, giftName, giftImg) {
-            const overlay = document.getElementById('big-gift-celebration');
-            const senderEl = document.getElementById('gift-sender-name');
-            const giftImgEl = document.getElementById('gift-celebration-img');
-            const giftNameEl = document.getElementById('gift-celebration-name');
+        // --- DOUBLE TAP HEART FEATURE ---
+        const videoCanvasContainer = document.getElementById('video-canvas-container');
+        videoCanvasContainer.addEventListener('dblclick', (e) => {
+            createFloatingHeart(e.clientX, e.clientY);
+        });
 
-            senderEl.innerText = senderName;
-            giftImgEl.src = giftImg;
-            giftNameEl.innerText = giftName;
+        function createFloatingHeart(x, y) {
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart floating-heart';
+            heart.style.left = (x - 20) + 'px'; // Center alignment offset
+            heart.style.top = (y - 20) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
+        }
 
-            overlay.style.opacity = '1';
-            overlay.style.transform = 'translate(-50%, -50%) scale(1.1)';
-            overlay.style.pointerEvents = 'auto';
-
-            setTimeout(() => {
-                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 150);
-
-            setTimeout(() => {
-                overlay.style.opacity = '0';
-                overlay.style.transform = 'translate(-50%, -50%) scale(0.5)';
-                overlay.style.pointerEvents = 'none';
-            }, 3500); // Dismisess in exact 3.5 seconds
-        };
-
-        // --- 4. PK DUEL STATE MANAGEMENT ---
+        // --- 8. PK DUEL STATE SYNCHRONIZATION AND RENDERING ---
         window.togglePKPanel = (show) => {
             const sheet = document.getElementById('pk-bottom-sheet');
-            if (show) sheet.classList.add('active');
-            else {
+            if (show) {
+                sheet.classList.add('active');
+            } else {
                 sheet.classList.remove('active');
-                document.getElementById('pk-online-creators').style.display = 'none';
+                toggleOnlineCreatorsList(false);
             }
         };
 
         window.toggleOnlineCreatorsList = async (show) => {
+            const listArea = document.getElementById('pk-online-creators');
             const container = document.getElementById('online-creators-list');
-            document.getElementById('pk-online-creators').style.display = 'block';
-            container.innerHTML = 'Scanning live rooms...';
-            
-            const snap = await get(ref(db, 'live_streams'));
-            const streams = snap.val();
-            container.innerHTML = '';
-            let onlineFound = false;
+            if (show) {
+                listArea.style.display = 'block';
+                container.innerHTML = '<p style="color:#888; font-size:11px; text-align:center;">Scanning online users...</p>';
+                
+                try {
+                    const snap = await get(ref(db, 'live_streams'));
+                    const streams = snap.val();
+                    container.innerHTML = '';
+                    let onlineFound = false;
 
-            if (streams) {
-                Object.entries(streams).forEach(([id, data]) => {
-                    if (data.isLive && id !== currentStreamId) {
-                        onlineFound = true;
-                        const row = document.createElement('div');
-                        row.className = 'creator-invite-row';
-                        row.innerHTML = `
-                            <img src="${data.hostAvatar || currentAvatar}">
-                            <h5>${data.hostName}</h5>
-                            <button class="btn-invite-send" onclick="sendPKInvitation('${id}', '${data.hostName}')">Invite</button>
-                        `;
-                        container.appendChild(row);
+                    if (streams) {
+                        Object.entries(streams).forEach(([id, data]) => {
+                            if (data.isLive && id !== currentStreamId) {
+                                onlineFound = true;
+                                const row = document.createElement('div');
+                                row.className = 'creator-invite-row';
+                                row.innerHTML = `
+                                    <img src="${data.hostAvatar || currentAvatar}">
+                                    <h5>${data.hostName}</h5>
+                                    <button class="btn-invite-send" onclick="sendPKInvitation('${id}', '${data.hostName}')">Invite</button>
+                                `;
+                                container.appendChild(row);
+                            }
+                        });
                     }
-                });
+                    if(!onlineFound) {
+                        container.innerHTML = '<p style="color:#888; font-size:11px; text-align:center;">No matchable creators active.</p>';
+                    }
+                } catch(e) {
+                    container.innerHTML = '<p style="color:#888; font-size:11px; text-align:center;">Lookup failed.</p>';
+                }
+            } else {
+                listArea.style.display = 'none';
             }
-            if(!onlineFound) container.innerHTML = 'No active battle opponents found.';
         };
 
         window.sendPKInvitation = function(targetStreamId, targetName) {
-            showToast(`Battle invite dispatched to ${targetName}!`);
+            showToast(`Challenging ${targetName}...`);
             set(ref(db, `live_streams/${targetStreamId}/pk_invite`), {
                 from_stream_id: currentStreamId,
                 from_name: currentUser,
@@ -897,8 +1900,10 @@
                     const streamData = streams[currentStreamId];
                     if (streamData.pk_invite && !pkActive) {
                         pendingInvitationData = streamData.pk_invite;
+                        document.getElementById('pk-inviter-title').innerText = `${pendingInvitationData.from_name} Challenges You!`;
+                        document.getElementById('pk-invite-text').innerText = `${pendingInvitationData.from_name} calls you out for a Duel in the PK Arena! Accept?`;
                         document.getElementById('pk-invite-overlay').style.display = 'flex';
-                    } else if (!streamData.pk_invite) {
+                    } else if (!streamData.pk_invite && document.getElementById('pk-invite-overlay').style.display === 'flex') {
                         document.getElementById('pk-invite-overlay').style.display = 'none';
                     }
                 }
@@ -917,16 +1922,90 @@
 
             if (accept) {
                 const pkDataForSelf = {
-                    active: true, partner_stream_id: oppStreamId, partner_name: oppName, partner_avatar: oppAvatar, red_points: 0, blue_points: 0, role: "guest", timer: 180, timestamp: serverTimestamp()
+                    active: true,
+                    partner_stream_id: oppStreamId,
+                    partner_name: oppName,
+                    partner_avatar: oppAvatar,
+                    red_points: 0,
+                    blue_points: 0,
+                    role: "guest",
+                    timer: 180,
+                    timestamp: serverTimestamp()
                 };
+
                 const pkDataForOpp = {
-                    active: true, partner_stream_id: currentStreamId, partner_name: currentUser, partner_avatar: currentAvatar, red_points: 0, blue_points: 0, role: "host", timer: 180, timestamp: serverTimestamp()
+                    active: true,
+                    partner_stream_id: currentStreamId,
+                    partner_name: currentUser,
+                    partner_avatar: currentAvatar,
+                    red_points: 0,
+                    blue_points: 0,
+                    role: "host",
+                    timer: 180,
+                    timestamp: serverTimestamp()
                 };
 
                 await set(ref(db, `live_streams/${currentStreamId}/pk_battle`), pkDataForSelf);
                 await set(ref(db, `live_streams/${oppStreamId}/pk_battle`), pkDataForOpp);
             }
             pendingInvitationData = null;
+        };
+
+        window.startRandomPKMatch = async () => {
+            showToast("Searching for match in battle queues...");
+            togglePKPanel(false);
+
+            try {
+                const snap = await get(ref(db, 'live_streams'));
+                const streams = snap.val();
+                let matchedPartnerId = null;
+                let matchedPartnerData = null;
+
+                if (streams) {
+                    for (let id in streams) {
+                        if (id !== currentStreamId && streams[id].isLive && streams[id].pk_searching === true) {
+                            matchedPartnerId = id;
+                            matchedPartnerData = streams[id];
+                            break;
+                        }
+                    }
+                }
+
+                if (matchedPartnerId) {
+                    const pkDataForSelf = {
+                        active: true,
+                        partner_stream_id: matchedPartnerId,
+                        partner_name: matchedPartnerData.hostName,
+                        partner_avatar: matchedPartnerData.hostAvatar,
+                        red_points: 0,
+                        blue_points: 0,
+                        role: "host",
+                        timer: 180,
+                        timestamp: serverTimestamp()
+                    };
+
+                    const pkDataForOpp = {
+                        active: true,
+                        partner_stream_id: currentStreamId,
+                        partner_name: currentUser,
+                        partner_avatar: currentAvatar,
+                        red_points: 0,
+                        blue_points: 0,
+                        role: "guest",
+                        timer: 180,
+                        timestamp: serverTimestamp()
+                    };
+
+                    await update(ref(db, `live_streams/${matchedPartnerId}`), { pk_searching: null });
+                    await set(ref(db, `live_streams/${currentStreamId}/pk_battle`), pkDataForSelf);
+                    await set(ref(db, `live_streams/${matchedPartnerId}/pk_battle`), pkDataForOpp);
+                } else {
+                    await update(ref(db, `live_streams/${currentStreamId}`), { pk_searching: true });
+                    showToast("Queue active. Awaiting matched challenger...");
+                }
+            } catch(e) {
+                showToast("Match queue error.");
+            }
         };
 
         function listenToPKBattleDuel() {
@@ -940,11 +2019,11 @@
                         
                         document.getElementById('video-canvas-container').classList.add('pk-active');
                         document.getElementById('pk-status-bar').style.display = 'flex';
-                        document.getElementById('pk-contribute-row').style.display = 'flex';
                         
                         connectToPKPartnerStream(pkPartnerStreamId);
+                        
                         startPKLocalTimer();
-                        showToast("⚔️ PK Duel Arena Commenced!");
+                        showToast("⚔️ PK Battle Commenced!");
                     }
                     
                     pkRedPoints = data.red_points || 0;
@@ -955,12 +2034,14 @@
                     const totalPoints = pkRedPoints + pkBluePoints;
                     if (totalPoints > 0) {
                         const redPct = (pkRedPoints / totalPoints) * 100;
+                        const bluePct = 100 - redPct;
                         document.getElementById('pk-red-progress').style.width = `${redPct}%`;
-                        document.getElementById('pk-blue-progress').style.width = `${100 - redPct}%`;
+                        document.getElementById('pk-blue-progress').style.width = `${bluePct}%`;
                     } else {
                         document.getElementById('pk-red-progress').style.width = `50%`;
                         document.getElementById('pk-blue-progress').style.width = `50%`;
                     }
+
                 } else if (!data && pkActive) {
                     endPKDuelSession();
                 }
@@ -975,35 +2056,26 @@
 
                 pkPartnerRoom = new LivekitClient.Room();
                 
-                pkPartnerRoom.on(LivekitClient.RoomEvent.TrackSubscribed, (track) => {
+                pkPartnerRoom.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
                     if (track.kind === 'video') {
-                        const partnerVideoElement = document.getElementById('remote-live-video');
+                        const partnerVideoElement = isHost ? document.getElementById('remote-live-video') : document.getElementById('local-live-video');
                         partnerVideoElement.style.display = 'block';
                         track.attach(partnerVideoElement);
+                    }
+                    if (track.kind === 'audio') {
+                        const partnerVideoElement = isHost ? document.getElementById('remote-live-video') : document.getElementById('local-live-video');
+                        track.attach(partnerVideoElement);
+                        partnerVideoElement.muted = false;
+                        partnerVideoElement.volume = 1.0;
                     }
                 });
 
                 await pkPartnerRoom.connect(LIVEKIT_WS_URL, token);
+                showToast("Connected to partner stream!");
             } catch(e) {
-                showToast("Failed to link partner video.");
+                console.error("Failed to connect to partner stream in PK:", e);
             }
         }
-
-        window.sendQuickPKContribution = async (amount, team) => {
-            showToast(`Contributed 💎 ${amount} to ${team} Side!`);
-            if (pkActive) {
-                const pkBattleRef = ref(db, `live_streams/${currentStreamId}/pk_battle`);
-                const oppBattleRef = ref(db, `live_streams/${pkPartnerStreamId}/pk_battle`);
-                
-                if (team === 'Red') {
-                    await update(pkBattleRef, { red_points: pkRedPoints + amount });
-                    await update(oppBattleRef, { red_points: pkRedPoints + amount });
-                } else {
-                    await update(pkBattleRef, { blue_points: pkBluePoints + amount });
-                    await update(oppBattleRef, { blue_points: pkBluePoints + amount });
-                }
-            }
-        };
 
         function startPKLocalTimer() {
             if (pkTimer) clearInterval(pkTimer);
@@ -1018,9 +2090,24 @@
 
                 if (pkRemainingTime <= 0) {
                     clearInterval(pkTimer);
-                    endPKDuelSession();
+                    declarePKDuelWinner();
                 }
             }, 1000);
+        }
+
+        function declarePKDuelWinner() {
+            let winner = "Draw Battle!";
+            if (pkRole === 'host') {
+                if (pkRedPoints > pkBluePoints) winner = "You Win! 🎉";
+                else if (pkBluePoints > pkRedPoints) winner = "Partner Wins!";
+            } else {
+                if (pkBluePoints > pkRedPoints) winner = "You Win! 🎉";
+                else if (pkRedPoints > pkBluePoints) winner = "Partner Wins!";
+            }
+            alert(`Result: ${winner}`);
+            if (isHost) {
+                remove(ref(db, `live_streams/${currentStreamId}/pk_battle`));
+            }
         }
 
         function endPKDuelSession() {
@@ -1028,43 +2115,35 @@
             if (pkTimer) clearInterval(pkTimer);
             document.getElementById('video-canvas-container').classList.remove('pk-active');
             document.getElementById('pk-status-bar').style.display = 'none';
-            document.getElementById('pk-contribute-row').style.display = 'none';
             
             if (pkPartnerRoom) {
                 pkPartnerRoom.disconnect();
                 pkPartnerRoom = null;
             }
-            showToast("PK Duel finished.");
+            
+            if (isHost) {
+                document.getElementById('remote-live-video').style.display = 'none';
+                document.getElementById('local-live-video').style.display = 'block';
+            } else {
+                document.getElementById('local-live-video').style.display = 'none';
+                document.getElementById('remote-live-video').style.display = 'block';
+            }
+            
+            pkPartnerStreamId = "";
+            showToast("Duel closed.");
         }
 
-        // --- 5. DISCONNECT & EXIT ---
-        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
 
-        function leaveLiveStream() {
-            document.getElementById('live-view-screen').style.display = 'none';
-            document.getElementById('setup-login-screen').style.display = 'flex';
-            document.body.style.overflow = 'auto';
-
-            if (currentRoom) {
-                currentRoom.disconnect();
-                currentRoom = null;
+        // --- 9. THUMBNAILS & DYNAMIC IMAGES ---
+        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedThumbFile = e.target.files[0];
+                selectedPastThumb = null; 
+                document.getElementById('thumb-name-display').innerText = "Selected: " + selectedThumbFile.name;
+                clearPastThumbSelection();
             }
-            if (pkPartnerRoom) {
-                pkPartnerRoom.disconnect();
-                pkPartnerRoom = null;
-            }
+        });
 
-            if (isHost && currentStreamId) {
-                remove(ref(db, `live_streams/${currentStreamId}`));
-            }
-
-            currentStreamId = null;
-            document.getElementById('local-live-video').srcObject = null;
-            document.getElementById('remote-live-video').srcObject = null;
-            document.getElementById('live-chat-box').innerHTML = ''; 
-        }
-
-        // --- 6. UTILITIES ---
         async function uploadToCloudinary(file) {
             try {
                 const formData = new FormData();
@@ -1077,20 +2156,615 @@
             } catch (err) { return null; }
         }
 
-        window.toggleBeautySheet = (show) => {
-            const sheet = document.getElementById('beauty-bottom-sheet');
-            if (show) sheet.classList.add('active');
-            else sheet.classList.remove('active');
+        function loadPastThumbnails() {
+            const container = document.getElementById('past-thumbs-container');
+            const wrapper = document.getElementById('past-thumbs-wrapper');
+            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+            
+            if(pastThumbs.length > 0) {
+                wrapper.style.display = 'block';
+                container.innerHTML = '';
+                pastThumbs.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.onclick = () => {
+                        selectedPastThumb = url;
+                        selectedThumbFile = null; 
+                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
+                        clearPastThumbSelection();
+                        img.classList.add('selected');
+                    };
+                    container.appendChild(img);
+                });
+            } else {
+                wrapper.style.display = 'none';
+            }
+        }
+
+        function clearPastThumbSelection() {
+            const imgs = document.querySelectorAll('#past-thumbs-container img');
+            imgs.forEach(i => i.classList.remove('selected'));
+        }
+
+        function saveThumbToPast(url) {
+            if(url && url !== currentAvatar) {
+                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+                if(!pastThumbs.includes(url)) {
+                    pastThumbs.unshift(url); 
+                    if(pastThumbs.length > 5) pastThumbs.pop(); 
+                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
+                }
+            }
+        }
+
+        // --- 10. LIVE ROOMS SECTIONS GRID ---
+        const gridContainer = document.getElementById('liveGrid');
+
+        function fetchLiveStreams() {
+            onValue(ref(db, 'live_streams'), (snapshot) => {
+                gridContainer.innerHTML = '';
+                const streams = snapshot.val();
+                let count = 0;
+                
+                if (snapshot.exists()) {
+                    Object.entries(streams).forEach(([streamId, data]) => {
+                        if (data.isLive || data.scheduledTime) {
+                            count++;
+                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
+                            const thumbUrl = data.thumbnail || data.hostAvatar; 
+                            
+                            const badgeHTML = data.isLive ? 
+                                `<span class="live-badge"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i>LIVE</span>` : 
+                                `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
+
+                            const card = document.createElement('div');
+                            card.className = 'live-card';
+                            
+                            card.onclick = async () => {
+                                if (!data.isLive && data.hostName === currentUser) {
+                                    startScheduledLiveAsHost(streamId, data);
+                                } else if (!data.isLive) {
+                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
+                                    showToast(`Stream scheduled for: ${timeStr}`);
+                                } else {
+                                    const tariffDeducted = await verifyAndDeductTariff(streamId, data);
+                                    if(tariffDeducted) {
+                                        joinLiveStream(streamId, data);
+                                    }
+                                }
+                            };
+                            
+                            const formattedViewers = viewerCount >= 1000 ? (viewerCount/1000).toFixed(1) + 'K' : viewerCount;
+                            const generatedDiamonds = (viewerCount * 120 + 340).toLocaleString(); 
+
+                            card.innerHTML = `
+                                <img src="${thumbUrl}" alt="Live">
+                                <div class="card-top-info">
+                                    ${badgeHTML}
+                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${formattedViewers}</span>` : ''}
+                                </div>
+                                <div class="card-bottom-info">
+                                    <div class="user-name">
+                                        <span>${data.hostName}</span>
+                                        <i class="fas fa-check-circle verified-badge" style="color:var(--primary-pink); font-size:12px; margin-left:4px;"></i>
+                                    </div>
+                                    <div class="card-meta-row">
+                                        <span class="live-title">${data.title || "Let's connect!"}</span>
+                                        <span class="card-diamond"><i class="fas fa-gem"></i> ${generatedDiamonds}</span>
+                                    </div>
+                                </div>
+                            `;
+                            gridContainer.appendChild(card);
+                        }
+                    });
+                }
+                
+                if(count === 0) {
+                    gridContainer.innerHTML = '<div class="grid-loading-placeholder"><i class="fas fa-video-slash"></i><p>Awaiting active hosts. Begin yours!</p></div>';
+                }
+            });
+        }
+
+        window.openStartLiveModal = () => {
+            loadPastThumbnails();
+            document.getElementById('live-schedule-time').value = '';
+            document.getElementById('live-room-tariff').value = '0';
+            document.getElementById('startLiveModal').classList.add('active');
+        };
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.remove('active');
         };
 
-        window.applyBeautyFilter = (filterType) => {
-            const localVid = document.getElementById('local-live-video');
-            if (!localVid) return;
-            localVid.className = "";
-            localVid.className = filterType === 'none' ? 'beauty-none' : `beauty-${filterType}`;
-            showToast(`Filter: ${filterType.toUpperCase()}`);
-            toggleBeautySheet(false);
+        // --- 11. LIVEKIT STREAM CREATION (HOSTS) ---
+        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
+            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Room`;
+            const tariffValue = parseInt(document.getElementById('live-room-tariff').value) || 0;
+            const scheduleInput = document.getElementById('live-schedule-time').value;
+            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
+            
+            closeModal('startLiveModal');
+            showLoading("Securing WebRTC channel...");
+
+            try {
+                let thumbUrl = currentAvatar; 
+                
+                if(selectedThumbFile) {
+                    showLoading("Uploading room thumbnail...");
+                    const uploaded = await uploadToCloudinary(selectedThumbFile);
+                    if(uploaded) {
+                        thumbUrl = uploaded;
+                        saveThumbToPast(thumbUrl);
+                    }
+                } else if (selectedPastThumb) {
+                    thumbUrl = selectedPastThumb;
+                }
+
+                if(isScheduled) {
+                    const newStreamRef = push(ref(db, 'live_streams'));
+                    await set(newStreamRef, {
+                        hostName: currentUser,
+                        hostAvatar: currentAvatar,
+                        title: title,
+                        thumbnail: thumbUrl,
+                        isLive: false,
+                        tariff: tariffValue,
+                        scheduledTime: new Date(scheduleInput).getTime(),
+                        timestamp: serverTimestamp()
+                    });
+                    hideLoading();
+                    showToast("Room Scheduled! ⏰");
+                    return; 
+                }
+
+                showLoading("Authorizing input streams...");
+                currentRoom = new LivekitClient.Room();
+                
+                const newStreamRef = push(ref(db, 'live_streams'));
+                currentStreamId = newStreamRef.key;
+                isHost = true;
+
+                // Request LiveKit Token
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${currentStreamId}&identity=${currentUser}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                // Connect to LiveKit Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
+
+                // Publish tracks
+                await currentRoom.localParticipant.enableCameraAndMicrophone({
+                    video: {
+                        facingMode: "user",
+                        resolution: LivekitClient.VideoPresets.h360.resolution,
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
+
+                // Attach local track
+                const localVideo = document.getElementById('local-live-video');
+                localVideo.style.display = 'block';
+                document.getElementById('remote-live-video').style.display = 'none';
+
+                // Attach track from local participant
+                currentRoom.localParticipant.videoTrackPublications.forEach(pub => {
+                    if (pub.track) pub.track.attach(localVideo);
+                });
+
+                await set(newStreamRef, {
+                    hostName: currentUser,
+                    hostAvatar: currentAvatar,
+                    title: title,
+                    thumbnail: thumbUrl,
+                    isLive: true,
+                    tariff: tariffValue,
+                    timestamp: serverTimestamp()
+                });
+
+                onDisconnect(newStreamRef).remove();
+                document.getElementById('btn-pk-trigger').style.display = 'flex';
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; 
+                setupHostUIAndSignaling();
+
+            } catch (err) {
+                hideLoading();
+                alert("Initialization failure. Camera access block: " + err.message);
+            }
+        });
+
+        async function startScheduledLiveAsHost(streamId, data) {
+            showLoading("Authorizing input streams...");
+            try {
+                currentRoom = new LivekitClient.Room();
+                currentStreamId = streamId;
+                isHost = true;
+
+                // Request LiveKit Token
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${currentStreamId}&identity=${currentUser}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                // Connect to LiveKit Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
+
+                // Publish tracks
+                await currentRoom.localParticipant.enableCameraAndMicrophone({
+                    video: {
+                        facingMode: "user",
+                        resolution: LivekitClient.VideoPresets.h360.resolution,
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
+
+                // Attach local track
+                const localVideo = document.getElementById('local-live-video');
+                localVideo.style.display = 'block';
+                document.getElementById('remote-live-video').style.display = 'none';
+
+                // Attach track from local participant
+                currentRoom.localParticipant.videoTrackPublications.forEach(pub => {
+                    if (pub.track) pub.track.attach(localVideo);
+                });
+
+                await update(ref(db, `live_streams/${streamId}`), {
+                    isLive: true,
+                    scheduledTime: null,
+                    timestamp: serverTimestamp()
+                });
+                
+                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
+                document.getElementById('btn-pk-trigger').style.display = 'flex';
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; 
+                setupHostUIAndSignaling();
+            } catch (err) {
+                hideLoading();
+                alert("Room setup failed: " + err.message);
+            }
+        }
+
+        function setupHostUIAndSignaling() {
+            document.getElementById('main-app').style.display = 'none';
+            document.body.style.overflow = 'hidden'; 
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+
+            document.getElementById('live-host-name').innerText = currentUser + " (You)";
+            document.getElementById('live-host-avatar').src = currentAvatar;
+
+            hideLoading();
+            showToast("Broadcast stream initiated! You are LIVE! 🔴");
+            setupLiveChat();
+            listenToPKBattleDuel();
+
+            currentRoom.on(LivekitClient.RoomEvent.Disconnected, () => {
+                showToast("Live stream disconnected.");
+                leaveLiveStream();
+            });
+        }
+
+
+        // --- 12. WEBRTC STREAM CONSUMPTION (VIEWERS) ---
+        async function joinLiveStream(streamId, streamData) {
+            showLoading("Verifying secure WebRTC tunnel...");
+            currentStreamId = streamId;
+            isHost = false;
+
+            document.getElementById('main-app').style.display = 'none';
+            document.body.style.overflow = 'hidden'; 
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+            
+            document.getElementById('local-live-video').style.display = 'none';
+            const remoteVideo = document.getElementById('remote-live-video');
+            remoteVideo.style.display = 'block';
+
+            document.getElementById('live-host-name').innerText = streamData.hostName;
+            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
+            document.getElementById('btn-pk-trigger').style.display = 'none';
+            document.getElementById('btn-beauty-trigger').style.display = 'none'; 
+
+            try {
+                // Request Token for Viewer
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${streamId}&identity=${currentUser}_${Math.floor(Math.random() * 1000)}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                currentRoom = new LivekitClient.Room();
+
+                // Set up Track Subscribed Events
+                currentRoom.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                    if (track.kind === 'video') {
+                        remoteVideo.style.display = 'block';
+                        track.attach(remoteVideo);
+                    }
+                    if (track.kind === 'audio') {
+                        track.attach(remoteVideo);
+                        remoteVideo.muted = false;
+                        remoteVideo.volume = 1.0;
+
+                        const playPromise = remoteVideo.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                const unmuteBtn = document.getElementById('unmute-overlay');
+                                unmuteBtn.style.display = 'flex';
+                                unmuteBtn.onclick = () => {
+                                    remoteVideo.muted = false;
+                                    remoteVideo.play();
+                                    unmuteBtn.style.display = 'none';
+                                    showToast("Audio is active! 🔊");
+                                };
+                            });
+                        }
+                    }
+                });
+
+                // Connect to Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
+
+                // Add to viewer node in Firebase
+                await set(ref(db, `live_streams/${streamId}/viewers/${currentUserId}`), {
+                    username: currentUser
+                });
+
+                onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUserId}`)).remove();
+
+                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
+                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+                });
+
+                hideLoading();
+                setupLiveChat();
+                listenToPKBattleDuel();
+                
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} entered the room.` });
+
+            } catch(e) {
+                console.error(e);
+                hideLoading();
+                showToast("Connection failed.");
+                leaveLiveStream();
+            }
+        }
+
+
+        // --- 13. DISCONNECT STREAM/ROOM ---
+        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
+
+        function leaveLiveStream() {
+            document.getElementById('live-view-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.body.style.overflow = 'auto'; 
+            document.getElementById('unmute-overlay').style.display = 'none';
+
+            // Disconnect standard room
+            if (currentRoom) {
+                currentRoom.disconnect();
+                currentRoom = null;
+            }
+
+            // Disconnect PK room if any
+            if (pkPartnerRoom) {
+                pkPartnerRoom.disconnect();
+                pkPartnerRoom = null;
+            }
+
+            if (isHost && currentStreamId) {
+                remove(ref(db, `live_streams/${currentStreamId}`));
+            } else if (!isHost && currentStreamId) {
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUserId}`));
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
+            }
+
+            currentStreamId = null;
+            document.getElementById('local-live-video').srcObject = null;
+            document.getElementById('remote-live-video').srcObject = null;
+            document.getElementById('live-chat-box').innerHTML = ''; 
+        }
+
+
+        // --- 14. LIVE CHAT SYSTEM & CELEBRATION DISPATCHER ---
+        window.triggerBigGiftCelebration = function(senderName, giftName, giftImg) {
+            const overlay = document.getElementById('big-gift-celebration');
+            const senderEl = document.getElementById('gift-sender-name');
+            const giftImgEl = document.getElementById('gift-celebration-img');
+            const giftNameEl = document.getElementById('gift-celebration-name');
+
+            senderEl.innerText = senderName;
+            giftImgEl.src = giftImg;
+            giftNameEl.innerText = giftName;
+
+            // Trigger animation
+            overlay.style.opacity = '1';
+            overlay.style.transform = 'translate(-50%, -50%) scale(1.1)';
+            overlay.style.pointerEvents = 'auto';
+
+            setTimeout(() => {
+                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 150);
+
+            // Hide automatically after 4 seconds
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                overlay.style.pointerEvents = 'none';
+            }, 4000);
         };
+
+        function setupLiveChat() {
+            const chatBox = document.getElementById('live-chat-box');
+            chatBox.innerHTML = ''; 
+            
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
+                const data = snap.val();
+                if(data) {
+                    const msgDiv = document.createElement('div');
+                    
+                    if (data.user === 'System') {
+                        msgDiv.className = 'chat-msg system';
+                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
+                    } else if (data.isGift) {
+                        msgDiv.className = 'chat-msg gift';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent ${data.text}! <img src="${data.giftImg}">`;
+                        
+                        // Trigger spectacular visual gift celebration overlay for all users in live
+                        triggerBigGiftCelebration(data.user, data.text, data.giftImg);
+                    } else {
+                        msgDiv.className = 'chat-msg';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+                    }
+                    
+                    chatBox.appendChild(msgDiv);
+                    chatBox.scrollTo({
+                        top: chatBox.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+
+        window.sendLiveChatMessage = function() {
+            const input = document.getElementById('live-chat-input');
+            const text = input.value.trim();
+            if (text && currentStreamId) {
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
+                input.value = '';
+                toggleChatInput(false); 
+            }
+        };
+
+        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendLiveChatMessage();
+            }
+        });
+
+
+        // --- 15. DIAMOND AND GIFT LEDGERS ---
+        async function sendPreSelectedGift(giftName, giftCost, giftImg) {
+            toggleGiftsSheet(false);
+            if(isHost) {
+                showToast("You cannot gift yourself!");
+                return;
+            }
+
+            if(userDiamonds >= giftCost) {
+                showLoading("Deducting diamonds...");
+                try {
+                    const viewerRef = ref(db, `users/${currentUser}`);
+                    const viewerSnap = await get(viewerRef);
+                    if(viewerSnap.exists()) {
+                        const balance = viewerSnap.val().diamonds || 0;
+                        if(balance >= giftCost) {
+                            const newBal = balance - giftCost;
+                            
+                            await update(viewerRef, { diamonds: newBal });
+                            
+                            const streamSnap = await get(ref(db, `live_streams/${currentStreamId}`));
+                            if (streamSnap.exists()) {
+                                const streamData = streamSnap.val();
+                                const hostName = streamData.hostName;
+                                
+                                const hostRef = ref(db, `users/${hostName}`);
+                                const hostSnap = await get(hostRef);
+                                if(hostSnap.exists()) {
+                                    const hostBal = hostSnap.val().diamonds || 0;
+                                    await update(hostRef, { diamonds: hostBal + giftCost });
+                                }
+                                
+                                await push(ref(db, `live_streams/${currentStreamId}/chats`), {
+                                    user: currentUser,
+                                    isGift: true,
+                                    text: giftName,
+                                    giftImg: giftImg
+                                });
+
+                                // PK Points syncing
+                                if (pkActive) {
+                                    const pkBattleRef = ref(db, `live_streams/${currentStreamId}/pk_battle`);
+                                    const oppBattleRef = ref(db, `live_streams/${pkPartnerStreamId}/pk_battle`);
+                                    
+                                    if (pkRole === 'host') {
+                                        await update(pkBattleRef, { red_points: pkRedPoints + giftCost });
+                                        await update(oppBattleRef, { blue_points: pkRedPoints + giftCost });
+                                    } else {
+                                        await update(pkBattleRef, { blue_points: pkBluePoints + giftCost });
+                                        await update(oppBattleRef, { red_points: pkBluePoints + giftCost });
+                                    }
+                                }
+
+                                hideLoading();
+                                showToast(`Sent ${giftName}! 💎`);
+                            }
+                        }
+                    }
+                } catch(e) {
+                    hideLoading();
+                    showToast("Failed to complete transaction.");
+                }
+            } else {
+                const checkConfirm = confirm(`Required: 💎 ${giftCost} Diamonds. You have 💎 ${userDiamonds}.\n\nBuy more now?`);
+                if(checkConfirm) {
+                    redirectToDiamondStore();
+                }
+            }
+        }
+
+        window.redirectToDiamondStore = function() {
+            toggleGiftsSheet(false);
+            toggleDiamondsSheet(true); 
+        };
+
+        // --- 16. DYNAMIC INTERACTIVE CHAT OVERLAY MANAGEMENT ---
+        window.toggleChatInput = (show, event) => {
+            if (event) event.stopPropagation();
+            const overlay = document.getElementById('live-chat-input-overlay');
+            if (show) {
+                overlay.style.display = 'block';
+                document.getElementById('live-chat-input').focus();
+            } else {
+                overlay.style.display = 'none';
+            }
+        };
+
+        // Screen click/tap listener to close chat input dynamically
+        document.getElementById('live-view-screen').addEventListener('click', (e) => {
+            if (e.target.closest('#live-chat-input-overlay') || 
+                e.target.closest('.circle-action-btn') || 
+                e.target.closest('.gift-btn') ||
+                e.target.closest('.beauty-trigger-btn') ||
+                e.target.closest('.pk-trigger-btn') ||
+                e.target.closest('.share-btn-trigger') ||
+                e.target.closest('#gifts-bottom-sheet') ||
+                e.target.closest('#beauty-bottom-sheet') ||
+                e.target.closest('#pk-bottom-sheet') ||
+                e.target.closest('#diamonds-bottom-sheet') ||
+                e.target.closest('.host-info') ||
+                e.target.closest('#btn-leave-live')) {
+                return; 
+            }
+            toggleChatInput(false);
+        });
+
+        // Interactive follow toggler inside Live overlay Top
+        window.followHostUser = (event) => {
+            event.stopPropagation();
+            const followBtn = document.getElementById('btn-follow-host');
+            if (followBtn.innerHTML.includes("Followed")) {
+                followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
+                followBtn.style.background = 'linear-gradient(135deg, #FF2E5D 0%, #FF5A7F 100%)';
+                showToast("Unfollowed host.");
+            } else {
+                followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
+                followBtn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+                showToast("You are now following the host!");
+            }
+        };
+
     </script>
 </body>
 </html>
