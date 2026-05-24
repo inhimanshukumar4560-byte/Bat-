@@ -318,7 +318,7 @@
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+            display: flex; justify-between; align-items: flex-start; pointer-events: none;
         }
         
         .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -904,20 +904,24 @@
 
                 onDisconnect(newStreamRef).remove();
 
-                // Setup WebRTC using Zego Prebuilt instead of raw peer connections
-                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                // Setup WebRTC using Zego Prebuilt instead of raw peer connections (Binding to window to fix ES module ReferenceError)
+                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
+                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
+                }
+
+                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
                     appID,
                     serverSecret,
                     currentStreamId,
                     currentUserId,
                     currentUser
                 );
-                zpInstance = ZegoUIKitPrebuilt.create(token);
+                zpInstance = window.ZegoUIKitPrebuilt.create(token);
                 zpInstance.joinRoom({
                     container: document.getElementById('zego-root'),
                     scenario: {
-                        mode: ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: ZegoUIKitPrebuilt.Host },
+                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: window.ZegoUIKitPrebuilt.Host },
                     },
                     showTextChat: false, 
                     showUserList: false, 
@@ -949,19 +953,23 @@
                 
                 onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
 
-                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
+                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
+                }
+
+                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
                     appID,
                     serverSecret,
                     currentStreamId,
                     currentUserId,
                     currentUser
                 );
-                zpInstance = ZegoUIKitPrebuilt.create(token);
+                zpInstance = window.ZegoUIKitPrebuilt.create(token);
                 zpInstance.joinRoom({
                     container: document.getElementById('zego-root'),
                     scenario: {
-                        mode: ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: ZegoUIKitPrebuilt.Host },
+                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: window.ZegoUIKitPrebuilt.Host },
                     },
                     showTextChat: false,
                     showUserList: false,
@@ -1011,19 +1019,23 @@
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
 
             try {
-                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
+                    throw new Error("ZegoUIKitPrebuilt is not loaded on window.");
+                }
+
+                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
                     appID,
                     serverSecret,
                     currentStreamId,
                     currentUserId,
                     currentUser
                 );
-                zpInstance = ZegoUIKitPrebuilt.create(token);
+                zpInstance = window.ZegoUIKitPrebuilt.create(token);
                 zpInstance.joinRoom({
                     container: document.getElementById('zego-root'),
                     scenario: {
-                        mode: ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: ZegoUIKitPrebuilt.Audience },
+                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: window.ZegoUIKitPrebuilt.Audience },
                     },
                     showTextChat: false,
                     showUserList: false,
