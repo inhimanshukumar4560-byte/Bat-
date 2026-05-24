@@ -230,7 +230,7 @@
             box-shadow: 0 0 35px rgba(255, 46, 93, 0.05);
         }
 
-        /* Header UI (Profile & Diamonds on Left, Colorful & 3D) */
+        /* Header */
         header {
             position: sticky;
             top: 0;
@@ -239,73 +239,78 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1.5px solid rgba(255, 46, 93, 0.12);
-            box-shadow: 0 4px 15px rgba(255,46,93,0.05);
+            border-bottom: 1px solid rgba(255, 46, 93, 0.08);
         }
 
-        .header-left-profile {
+        .header-left-group {
             display: flex;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
         }
-        .header-avatar-container {
-            position: relative;
-            width: 44px;
-            height: 44px;
+
+        .header-profile-btn {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            padding: 2px;
-            background: var(--gradient-pink);
-            box-shadow: 0 4px 12px rgba(255, 46, 93, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 2px solid var(--primary-pink);
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 46, 93, 0.25);
+            background: #FFFFFF;
         }
-        .header-avatar-container img {
+
+        .header-profile-btn img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
-            border: 1.5px solid #fff;
         }
-        .header-diamond-display {
-            background: linear-gradient(135deg, #FFF3F5 0%, #FFFFFF 100%);
-            border: 2px solid #FF2E5D;
-            box-shadow: 0 6px 12px rgba(255, 46, 93, 0.2), inset 0 2px 3px rgba(255, 255, 255, 0.9);
-            padding: 5px 12px;
+
+        .diamond-bal {
+            background: #FFFFFF;
+            border: 1px solid var(--border-pink);
+            color: var(--primary-pink); 
+            padding: 4px 10px 4px 12px;
             border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-weight: 900;
-            font-size: 14px;
-            color: var(--primary-pink);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 46, 93, 0.04);
             transition: transform 0.2s;
         }
-        .header-diamond-display:hover {
-            transform: scale(1.05);
+        .diamond-bal:hover { transform: scale(1.02); }
+        
+        .diamond-icon-3d {
+            background: linear-gradient(135deg, #FF2E5D 0%, #FFD700 50%, #FF2E5D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 15px;
+            filter: drop-shadow(0 0 4px rgba(255, 46, 93, 0.4));
+            animation: bounceGem 2s ease-in-out infinite;
         }
-        .header-diamond-display i {
-            color: #FF2E5D;
-            font-size: 14px;
-            filter: drop-shadow(0 2px 4px rgba(255, 46, 93, 0.45));
+
+        @keyframes bounceGem {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
         }
-        .header-add-diamond {
-            width: 18px;
-            height: 18px;
+        
+        .add-diamond-btn {
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--primary-pink);
-            color: #FFF;
+            color: #FFFFFF;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 900;
-            margin-left: 2px;
-            box-shadow: 0 2px 5px rgba(255,46,93,0.3);
+            margin-left: 4px;
         }
 
         .header-actions { display: flex; align-items: center; gap: 12px; }
@@ -316,14 +321,14 @@
             height: 36px;
             border-radius: 50%;
             background: #FFFFFF;
-            border: 1.5px solid var(--border-pink);
+            border: 1px solid var(--border-pink);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-pink);
+            color: var(--dark-text);
             font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(255, 46, 93, 0.04);
         }
         .noti-badge {
             position: absolute;
@@ -342,25 +347,24 @@
             border: 2px solid #FFFFFF;
         }
 
-        /* Banner Style Upgrade (Fully Image Card, No Text Overlays) */
-        .app-banner {
+        /* Banner Design (No headings/text as requested) */
+        .app-banner-premium {
             position: relative;
             margin: 16px;
-            height: 180px;
             border-radius: 22px;
+            overflow: hidden;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(255, 26, 78, 0.22);
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
-            overflow: hidden;
-            border-bottom: 4px solid rgba(255, 46, 93, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .app-banner:hover {
-            transform: translateY(-2px);
+        .app-banner-premium:hover {
+            transform: scale(1.02);
             box-shadow: 0 12px 30px rgba(255, 26, 78, 0.3);
         }
-        .banner-bg-img {
+        .app-banner-premium img {
             width: 100%;
-            height: 100%;
+            height: auto;
+            display: block;
             object-fit: cover;
         }
 
@@ -394,7 +398,7 @@
             background: var(--gradient-pink);
             color: #FFFFFF;
             border-color: transparent;
-            box-shadow: 0 4px 0px #C02246, 0 6px 15px rgba(255, 46, 93, 0.25);
+            box-shadow: 0 5px 15px rgba(255, 46, 93, 0.18);
         }
         .tab-item i { font-size: 12px; }
 
@@ -450,8 +454,8 @@
             aspect-ratio: 4/5;
             cursor: pointer;
             background: #FFF;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border-bottom: 3px solid rgba(255, 46, 93, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 46, 93, 0.04);
+            border: 1px solid rgba(255, 46, 93, 0.03);
             transform: translateZ(0);
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -587,7 +591,7 @@
         .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* LIVE SCREEN (PK SPLIT COMPATIBLE - STATIC NO SCROLL) */
+        /* LIVE SCREEN (SCROLL COMPLETELY FIXED FOR 100VH 3D PERFECTION) */
         #live-view-screen {
             position: fixed; 
             inset: 0; 
@@ -595,13 +599,21 @@
             z-index: 50000; 
             display: none; 
             flex-direction: column;
-            height: 100dvh;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.85);
         }
         
         .live-video-container { 
-            position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; 
-            overflow: hidden; display: flex; transition: all 0.5s ease;
+            position: absolute; 
+            inset: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: #050505; 
+            overflow: hidden; 
+            display: flex; 
+            transition: all 0.5s ease;
         }
         
         #remote-live-video, #local-live-video {
@@ -667,21 +679,72 @@
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+            display: flex; justify-content: space-between; align-items: center; pointer-events: none;
         }
         
-        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.45); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .host-info { 
+            pointer-events: auto; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: rgba(0, 0, 0, 0.45); 
+            padding: 6px 16px 6px 6px; 
+            border-radius: 40px; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+        }
         .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-pink); object-fit: cover; }
         .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
         
-        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
-        .close-live-btn:hover { background: rgba(255,46,93,0.8); transform: scale(1.05); }
+        /* Interactive 3D Follow Button */
+        .follow-btn-3d {
+            background: linear-gradient(135deg, #FF2E5D 0%, #FF5A7F 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(255, 46, 93, 0.4), inset 0 1px 1px rgba(255,255,255,0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .follow-btn-3d:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 46, 93, 0.6);
+        }
+
+        .close-live-btn { 
+            pointer-events: auto; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: rgba(0,0,0,0.5); 
+            color: white; 
+            border: 1.5px solid rgba(255,255,255,0.3); 
+            font-size: 16px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            transition: all 0.3s; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+        .close-live-btn:hover { background: rgba(255,46,93,0.9); border-color: transparent; transform: scale(1.05); }
         
-        /* CHATS (TRANSPARENT BACKGROUND & 3D FLOATING FEEL) */
+        /* CHATS (TRANSPARENT BACKGROUND & 3D NEON LOOKS) */
         .live-overlay-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
-            background: transparent !important; z-index: 10;
+            background: linear-gradient(transparent, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.9)); z-index: 10;
             display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
         }
         
@@ -692,7 +755,7 @@
             margin-bottom: 20px; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 8px; 
             padding-right: 10px;
             mask-image: linear-gradient(to top, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
@@ -702,77 +765,137 @@
         .chat-box::-webkit-scrollbar-track { background: transparent; }
         .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
 
+        /* Completely Transparent strip with drop shadow text */
         .chat-msg { 
             color: #fff; 
             font-size: 13px; 
-            font-weight: 500;
-            background: var(--chat-bg); 
-            padding: 8px 14px; 
-            border-radius: 18px; 
+            font-weight: 700;
+            background: transparent !important; 
+            padding: 4px 6px !important; 
             width: max-content; 
-            max-width: 85%; 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.05);
+            max-width: 95%; 
             word-wrap: break-word;
             white-space: normal;
             line-height: 1.4;
             animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
             transform-origin: bottom left;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.95);
+            border: none !important;
+            box-shadow: none !important;
         }
-        .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
+        .chat-msg span { 
+            color: #ff9fb3; 
+            font-weight: 900; 
+            margin-right: 6px; 
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+        }
         
-        .chat-msg.system { color: #FFB6C1; font-style: italic; background: rgba(255, 46, 93, 0.15); border-color: rgba(255, 46, 93, 0.3); }
-        .chat-msg.gift { background: var(--gradient-pink); box-shadow: 0 4px 15px rgba(255,46,93,0.4); border: none; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .chat-msg.system { 
+            color: #FFB6C1; 
+            font-style: italic; 
+            text-shadow: 0 1px 3px rgba(255, 46, 93, 0.8);
+        }
+        .chat-msg.gift { 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            text-shadow: 0 1px 3px rgba(255, 46, 93, 0.9);
+        }
+        .chat-msg.gift span { color: #ffd700; }
         .chat-msg.gift img { width: 24px; height: 24px; object-fit: contain; }
 
-        /* ACTION BAR & TOGGLED CHAT INPUT PANEL */
-        .action-bar { pointer-events: auto; display: flex; gap: 8px; align-items: center; }
-        
-        /* Floating / Pop-Up Chat Panel Style */
-        #floating-chat-input-panel {
-            display: none;
+        /* 3D ACTION BAR */
+        .action-bar { 
+            pointer-events: auto; 
+            display: flex; 
+            gap: 12px; 
+            align-items: center; 
+            justify-content: center;
             width: 100%;
-            margin-bottom: 12px;
-            z-index: 99;
-            pointer-events: auto;
-            animation: slideInUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 3D Circular Buttons */
+        .circle-action-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.25);
+            flex-shrink: 0;
+        }
+        .circle-action-btn:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 2px 2px rgba(255,255,255,0.4);
+        }
+
+        #btn-chat-trigger {
+            background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+            box-shadow: 0 6px 16px rgba(0, 240, 255, 0.45), inset 0 2px 2px rgba(255,255,255,0.3);
+        }
+
+        .gift-btn { 
+            background: var(--gradient-pink); 
+            box-shadow: 0 6px 16px rgba(255, 46, 93, 0.45), inset 0 2px 2px rgba(255,255,255,0.3);
         }
         
-        .chat-input-wrapper { 
-            background: rgba(10, 5, 8, 0.9); 
+        .pk-trigger-btn { 
+            background: linear-gradient(135deg, #2563EB, #3B82F6); 
+            display: none; 
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45), inset 0 2px 2px rgba(255,255,255,0.3);
+        }
+
+        .beauty-trigger-btn { 
+            background: linear-gradient(135deg, #8B5CF6, #EC4899); 
+            display: none; 
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.45), inset 0 2px 2px rgba(255,255,255,0.3);
+        }
+
+        /* FLOATING CHAT INPUT OVERLAY (SLIDE UP 3D LOOK) */
+        #live-chat-input-overlay {
+            display: none;
+            position: absolute;
+            bottom: 85px;
+            left: 16px;
+            right: 16px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .chat-input-wrapper-3d { 
+            background: rgba(10, 5, 8, 0.95); 
             border-radius: 30px; 
             padding: 4px 6px 4px 18px; 
             display: flex; 
             align-items: center; 
             backdrop-filter: blur(20px); 
             -webkit-backdrop-filter: blur(20px); 
-            border: 2px solid var(--primary-pink); 
-            box-shadow: 0 8px 30px rgba(255, 46, 93, 0.4); 
+            border: 2px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 2px 2px rgba(255,255,255,0.1); 
         }
-        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 10px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
-        .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
+        .chat-input-wrapper-3d input { 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            padding: 10px 0; 
+            width: 100%; 
+            outline: none; 
+            font-family: 'Poppins'; 
+            font-size: 14px; 
+            font-weight: 500; 
+        }
+        .chat-input-wrapper-3d input::placeholder { color: #bbb; font-weight: 400; }
         
         #btn-send-live-chat {
             width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(255,46,93,0.3); transition: transform 0.2s; flex-shrink: 0; margin-left: 6px;
         }
-        #btn-send-live-chat:hover { transform: scale(1.05); }
-
-        /* Icon Controls - 3D Glow Feel */
-        .chat-trigger-btn {
-            width: 48px; height: 48px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,46,93,0.5), inset 0 2px 2px rgba(255,255,255,0.3); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0;
-        }
-        .chat-trigger-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,46,93,0.7); }
-
-        .gift-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,165,0,0.5), inset 0 2px 2px rgba(255,255,255,0.3); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
-        .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,165,0,0.7); }
-        
-        .pk-trigger-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #3B82F6); color: white; border: none; font-size: 18px; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.5); transition: transform 0.2s; flex-shrink: 0; }
-        .pk-trigger-btn:hover { transform: scale(1.1); }
-
-        .beauty-trigger-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: white; border: none; font-size: 18px; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(139,92,246,0.5); transition: transform 0.2s; flex-shrink: 0; }
-        .beauty-trigger-btn:hover { transform: scale(1.1); }
 
         /* SLIDE-UP GIFTS SHEET */
         #gifts-bottom-sheet {
@@ -943,20 +1066,17 @@
     <!-- 2. MAIN HEADER & HOME PAGE -->
     <div id="main-app" style="display: none;">
         <header>
-            <!-- Left Header: Profile Icon & 3D Diamond Status (Replaces 'ZiNGOO' text) -->
-            <div class="header-left-profile" onclick="toggleDiamondsSheet(true)">
-                <div class="header-avatar-container">
-                    <img id="banner-user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8" alt="Avatar">
+            <div class="header-left-group">
+                <div class="header-profile-btn" onclick="document.getElementById('login-profile-upload').click()">
+                    <img id="header-user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8" alt="Profile">
                 </div>
-                <div class="header-diamond-display">
-                    <i class="fas fa-gem"></i>
+                <div class="diamond-bal" onclick="toggleDiamondsSheet(true)">
+                    <i class="fas fa-gem diamond-icon-3d"></i>
                     <span id="user-diamond-bal">0</span>
-                    <div class="header-add-diamond"><i class="fas fa-plus"></i></div>
+                    <div class="add-diamond-btn"><i class="fas fa-plus"></i></div>
                 </div>
             </div>
-            
             <div class="header-actions">
-                <span style="font-size: 16px; font-weight: 900; background: var(--gradient-pink); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px;">ZINGOO LIVE</span>
                 <div class="noti-btn">
                     <i class="far fa-bell"></i>
                     <span class="noti-badge">8</span>
@@ -964,11 +1084,9 @@
             </div>
         </header>
 
-        <!-- Premium Live Banner (Only Image Card - Click to Live, No Overlays) -->
-        <div class="app-banner" onclick="openStartLiveModal()">
-            <img class="banner-bg-img" src="https://i.ibb.co/LDkPnkvx/IMG-20260524-165349.png" alt="Zingoo Premium Banner">
-            <!-- Hidden elements to preserve JS bindings and prevent layout crash -->
-            <span id="banner-user-name" style="display: none;"></span>
+        <!-- Premium Live Banner Card (Displays provided image with no text overlay) -->
+        <div class="app-banner-premium" onclick="openStartLiveModal()">
+            <img src="https://i.ibb.co/LDkPnkvx/IMG-20260524-165349.png" alt="Zingoo Premium Banner">
         </div>
 
         <!-- Categories -->
@@ -1063,10 +1181,9 @@
         </div>
     </div>
 
-    <!-- 4. ACTUAL LIVE VIEW SCREEN (STATIC FULL-SCREEN VIEWPORT) -->
+    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
     <div id="live-view-screen">
-        <!-- Clicking video background auto-closes chat overlay -->
-        <div class="live-video-container" id="video-canvas-container" onclick="closeChatInputPanel()">
+        <div class="live-video-container" id="video-canvas-container">
             <!-- Broadcaster Video -->
             <video id="local-live-video" class="beauty-none" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             <!-- Viewer Video -->
@@ -1097,44 +1214,39 @@
                     <h4 id="live-host-name">Host Name</h4>
                     <p><i class="fas fa-eye" style="color:var(--primary-pink);"></i> <span id="live-viewer-count">0</span> watching</p>
                 </div>
-                <!-- 3D Pink/Green Follow Toggle Button -->
-                <button id="btn-follow-host" onclick="toggleFollowHost(event)" style="pointer-events: auto; background: var(--gradient-pink); color: #fff; border: none; padding: 5px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer; box-shadow: 0 4px 10px rgba(255,46,93,0.3); margin-left: 8px; transition: all 0.2s;">
-                    <i class="fas fa-heart"></i> <span id="follow-btn-text">Follow</span>
+                <!-- Interactive 3D Follow Button -->
+                <button class="follow-btn-3d" id="btn-follow-host" onclick="followHostUser(event)">
+                    <i class="fas fa-plus"></i> Follow
                 </button>
             </div>
-            <!-- Back Arrow icon replaces Close button (Maintains existing logic) -->
+            <!-- Back Arrow Navigation Button replacing standard Cross -->
             <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-arrow-left"></i></button>
         </div>
         
-        <!-- Live Chat Floating Layout without bottom strip background -->
         <div class="live-overlay-bottom">
             <div class="chat-box" id="live-chat-box">
                 <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
             </div>
-
-            <!-- Floating / Slide-Up Chat Input Field Panel -->
-            <div id="floating-chat-input-panel" onclick="event.stopPropagation()">
-                <div class="chat-input-wrapper">
-                    <input type="text" id="live-chat-input" placeholder="Say something nice...">
-                    <button id="btn-send-live-chat" onclick="sendLiveChatMessage()"><i class="fas fa-paper-plane"></i></button>
+            
+            <!-- Floating Chat Input Overlay Container -->
+            <div id="live-chat-input-overlay">
+                <div class="chat-input-wrapper-3d">
+                    <input type="text" id="live-chat-input" placeholder="Say something nice..." onclick="event.stopPropagation()">
+                    <button id="btn-send-live-chat" onclick="sendLiveChatMessage(); event.stopPropagation();"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
 
-            <!-- Fixed Custom Action Bar Controls -->
             <div class="action-bar">
-                <!-- Chat Toggler Button replaces input footer always-on state -->
-                <button class="chat-trigger-btn" id="btn-chat-trigger" onclick="openChatInputPanel(event)">
+                <!-- 3D Comment/Chat Trigger icon button -->
+                <button class="circle-action-btn" id="btn-chat-trigger" onclick="toggleChatInput(true, event)">
                     <i class="fas fa-comment-dots"></i>
                 </button>
-                
-                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-                    <!-- Host-Only PK trigger -->
-                    <button class="pk-trigger-btn" id="btn-pk-trigger" onclick="togglePKPanel(true)"><i class="fas fa-shield-halved"></i></button>
-                    <!-- Host-Only Beauty trigger -->
-                    <button class="beauty-trigger-btn" id="btn-beauty-trigger" onclick="toggleBeautySheet(true)"><i class="fas fa-magic"></i></button>
-                    <!-- Gift Trigger Button -->
-                    <button class="gift-btn" id="btn-send-gift" onclick="toggleGiftsSheet(true)"><i class="fas fa-gift"></i></button>
-                </div>
+                <!-- 3D Gift Icon Button -->
+                <button class="gift-btn circle-action-btn" id="btn-send-gift" onclick="toggleGiftsSheet(true)"><i class="fas fa-gift"></i></button>
+                <!-- Host-Only Beauty trigger -->
+                <button class="beauty-trigger-btn circle-action-btn" id="btn-beauty-trigger" onclick="toggleBeautySheet(true)"><i class="fas fa-magic"></i></button>
+                <!-- Host-Only PK trigger -->
+                <button class="pk-trigger-btn circle-action-btn" id="btn-pk-trigger" onclick="togglePKPanel(true)"><i class="fas fa-shield-halved"></i></button>
             </div>
         </div>
     </div>
@@ -1402,7 +1514,12 @@
         if (storedId) {
             document.getElementById('login-zingoo-id').value = storedId;
             const storedAv = localStorage.getItem("zingoo_avatar");
-            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+            if (storedAv) {
+                document.getElementById('login-avatar-preview').src = storedAv;
+                if(document.getElementById('header-user-avatar')) {
+                    document.getElementById('header-user-avatar').src = storedAv;
+                }
+            }
             
             document.getElementById('btn-login-id').innerHTML = 'Verifying ID Security Tunnel... <i class="fas fa-spinner fa-spin"></i>';
             runVerificationTimer(storedId, () => {
@@ -1478,8 +1595,9 @@
                     document.getElementById('user-diamond-bal').innerText = userDiamonds.toLocaleString();
                     document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
                     
-                    document.getElementById('banner-user-avatar').src = currentAvatar;
-                    document.getElementById('banner-user-name').innerText = `Hi, ${currentUser} ✨`;
+                    if(document.getElementById('header-user-avatar')) {
+                        document.getElementById('header-user-avatar').src = currentAvatar;
+                    }
 
                     loginScreen.style.display = 'none';
                     mainApp.style.display = 'block';
@@ -2214,6 +2332,7 @@
 
         function setupHostUIAndSignaling() {
             document.getElementById('main-app').style.display = 'none';
+            document.body.style.overflow = 'hidden'; // Stop scrolling on body when live
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
 
@@ -2239,6 +2358,7 @@
             isHost = false;
 
             document.getElementById('main-app').style.display = 'none';
+            document.body.style.overflow = 'hidden'; // Stop scrolling on body when live
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
             
@@ -2321,6 +2441,7 @@
         function leaveLiveStream() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
+            document.body.style.overflow = 'auto'; // Restore original scrolling context
             document.getElementById('unmute-overlay').style.display = 'none';
 
             // Disconnect standard room
@@ -2385,6 +2506,7 @@
             if (text && currentStreamId) {
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
                 input.value = '';
+                toggleChatInput(false); // Close input overlay dynamically upon sending
             }
         };
 
@@ -2470,37 +2592,49 @@
             toggleDiamondsSheet(true); 
         };
 
-        // --- 15. CUSTOM DESIGN INTERACTION HELPERS ---
-        window.openChatInputPanel = (e) => {
-            if (e) e.stopPropagation();
-            const panel = document.getElementById('floating-chat-input-panel');
-            if (panel) {
-                panel.style.display = 'block';
+        // --- 15. DYNAMIC INTERACTIVE CHAT OVERLAY MANAGEMENT ---
+        window.toggleChatInput = (show, event) => {
+            if (event) event.stopPropagation();
+            const overlay = document.getElementById('live-chat-input-overlay');
+            if (show) {
+                overlay.style.display = 'block';
                 document.getElementById('live-chat-input').focus();
+            } else {
+                overlay.style.display = 'none';
             }
         };
 
-        window.closeChatInputPanel = () => {
-            const panel = document.getElementById('floating-chat-input-panel');
-            if (panel && panel.style.display === 'block') {
-                panel.style.display = 'none';
+        // Screen click/tap listener to close chat input dynamically
+        document.getElementById('live-view-screen').addEventListener('click', (e) => {
+            // Safe guard selectors
+            if (e.target.closest('#live-chat-input-overlay') || 
+                e.target.closest('.circle-action-btn') || 
+                e.target.closest('.gift-btn') ||
+                e.target.closest('.beauty-trigger-btn') ||
+                e.target.closest('.pk-trigger-btn') ||
+                e.target.closest('#gifts-bottom-sheet') ||
+                e.target.closest('#beauty-bottom-sheet') ||
+                e.target.closest('#pk-bottom-sheet') ||
+                e.target.closest('#diamonds-bottom-sheet') ||
+                e.target.closest('.host-info') ||
+                e.target.closest('#btn-leave-live')) {
+                return; 
             }
-        };
+            toggleChatInput(false);
+        });
 
-        window.toggleFollowHost = (e) => {
-            if (e) e.stopPropagation();
+        // Interactive follow toggler inside Live overlay Top
+        window.followHostUser = (event) => {
+            event.stopPropagation();
             const followBtn = document.getElementById('btn-follow-host');
-            const btnText = document.getElementById('follow-btn-text');
-            if (followBtn.classList.contains('following')) {
-                followBtn.classList.remove('following');
-                followBtn.style.background = 'var(--gradient-pink)';
-                btnText.innerText = "Follow";
+            if (followBtn.innerHTML.includes("Followed")) {
+                followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
+                followBtn.style.background = 'linear-gradient(135deg, #FF2E5D 0%, #FF5A7F 100%)';
                 showToast("Unfollowed host.");
             } else {
-                followBtn.classList.add('following');
-                followBtn.style.background = '#10B981'; // Green active state
-                btnText.innerText = "Following";
-                showToast("Following host! ❤️");
+                followBtn.innerHTML = '<i class="fas fa-check"></i> Followed';
+                followBtn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+                showToast("You are now following the host!");
             }
         };
 
