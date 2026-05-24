@@ -1,0 +1,14 @@
+{
+  "name": "zingoo-token-server",
+  "version": "1.0.0",
+  "description": "LiveKit Token Server for Zingoo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "livekit-server-sdk": "^2.2.0"
+  }
+}
