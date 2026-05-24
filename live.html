@@ -1,610 +1,1029 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zingoo Live</title>
+    <title>Zingoo - Live Streaming</title>
     
-    <!-- 1. Force HTTPS Auto-Redirect (Ignoring Local IP & Localhost for testing) -->
-    <script>
-        const isIPAddress = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(window.location.hostname);
-        if (window.location.protocol !== 'https:' && 
-            window.location.hostname !== 'localhost' && 
-            window.location.hostname !== '127.0.0.1' &&
-            !isIPAddress) {
-            window.location.href = 'https://' + window.location.hostname + window.location.pathname + window.location.search;
-        }
-    </script>
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 2. Secure Zego UIKit Prebuilt SDK (Which loads perfectly on your network) -->
+    <!-- ZEGOCLOUD Prebuilt SDK Integration with unpkg fallback -->
     <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js" 
             onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js';"></script>
 
-    <!-- Tailwind CSS and FontAwesome Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
     <style>
+        :root {
+            --baby-pink: #FFE4E8;
+            --pink-dark: #FFB6C1;
+            --primary-red: #FF3366;
+            --dark-text: #2c2c2c;
+            --white: #FFFFFF;
+            --gradient-main: linear-gradient(135deg, #FF3366, #ff758c);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e, #16213e);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --chat-bg: rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            background-color: #0c080e;
-            color: #f3f4f6;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--baby-pink) 0%, #FFF0F5 100%);
+            background-attachment: fixed;
+            color: var(--dark-text);
+            min-height: 100vh;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+            /* --- Security: Prevent Text Selection and Image Dragging --- */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            transition: filter 0.3s ease;
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+
+        /* --- Security Blur Filter --- */
+        body.security-blur {
+            filter: blur(25px);
+            pointer-events: none;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        /* --- Custom Scrollbar for App --- */
+        ::-webkit-scrollbar { width: 6px; display: none; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--pink-dark); border-radius: 10px; }
+
+        /* --- LOGIN SCREEN (ID Enforced) --- */
+        #id-login-screen {
+            position: fixed;
+            inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #fffafa, var(--baby-pink));
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .page-transition {
-            transition: all 0.3s ease-in-out;
+        
+        #id-login-screen .logo-container {
+            font-size: 38px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+            letter-spacing: 2.5px;
+            text-shadow: 0px 4px 15px rgba(255, 51, 102, 0.2);
         }
-        /* Custom Diamond Fly Animation */
-        @keyframes floatUpAndFade {
-            0% {
-                transform: translateY(100px) scale(0.5);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-250px) scale(1.5) rotate(45deg);
-                opacity: 0;
-            }
+        
+        #id-login-screen .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(255, 51, 102, 0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
+            border: 1px solid var(--white);
+            text-align: center;
         }
-        .gift-flying-diamond {
-            animation: floatUpAndFade 2s ease-out forwards;
+
+        #id-login-screen h2 { font-size: 24px; margin-bottom: 12px; color: #111; font-weight: 800; }
+        #id-login-screen p { font-size: 14px; color: #555; margin-bottom: 30px; font-weight: 500; }
+        
+        .avatar-upload-box {
+            cursor: pointer; margin-bottom: 25px; display: inline-block; position: relative;
         }
+        .avatar-upload-box img {
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover; 
+            border: 4px solid var(--white); box-shadow: 0 8px 25px rgba(255,51,102,0.3);
+            transition: transform 0.3s ease;
+        }
+        .avatar-upload-box:hover img { transform: scale(1.05); }
+        .avatar-upload-box p { font-size: 12px; color: var(--primary-red); margin-top: 10px; font-weight: 700; background: rgba(255, 51, 102, 0.1); padding: 5px 15px; border-radius: 20px; }
+
+        #id-login-screen input[type="number"] {
+            width: 100%; padding: 16px; border-radius: 15px; border: 2px solid transparent;
+            background: #f0f2f5; font-size: 16px; margin-bottom: 25px; font-weight: 600; text-align: center;
+            outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        #id-login-screen input[type="number"]:focus { border-color: var(--primary-red); background: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.1); }
+        #id-login-screen button {
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: var(--gradient-main); color: #fff; font-size: 18px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 8px 25px rgba(255,51,102,0.4); transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #id-login-screen button:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,51,102,0.5); }
+
+        /* --- Header Styling (Glassmorphism) --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 4px 20px rgba(255, 182, 193, 0.2);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .diamond-bal {
+            background: linear-gradient(135deg, #fff, #f9f9f9); border: 1px solid var(--pink-dark); color: #d97706; 
+            padding: 8px 16px; border-radius: 25px; font-size: 14px; font-weight: 800;
+            display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .diamond-bal i { font-size: 16px; animation: shine 2s infinite linear; }
+
+        .start-live-btn {
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .start-live-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+            background: linear-gradient(135deg, #ff4070, #ff2055);
+        }
+
+        .start-live-btn i { animation: pulse-icon 1.5s infinite; }
+
+        /* --- Main Content & Grid (2-2 Layout) --- */
+        main { padding: 25px; max-width: 900px; margin: 0 auto; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--primary-red); display: flex; align-items: center; gap: 10px; }
+
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .live-card {
+            position: relative;
+            border-radius: 25px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            background: #fff;
+            transform: translateZ(0);
+        }
+
+        .live-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .live-card:hover img { transform: scale(1.1); }
+        .live-card::after {
+            content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+            z-index: 1; pointer-events: none;
+        }
+
+        .card-top-info {
+            position: absolute; top: 12px; left: 12px; right: 12px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 2;
+        }
+
+        .live-badge {
+            background: var(--primary-red); color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; animation: pulse-bg 1.5s infinite;
+        }
+        
+        .scheduled-badge {
+            background: #f39c12; color: white; font-size: 11px; font-weight: 800;
+            padding: 5px 10px; border-radius: 10px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
+        }
+
+        .viewers {
+            background: rgba(0, 0, 0, 0.6); color: white; font-size: 12px; font-weight: 600; padding: 5px 10px;
+            border-radius: 10px; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 5px;
+        }
+
+        .card-bottom-info {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 25px 15px 15px;
+            color: white; z-index: 2; display: flex; flex-direction: column; gap: 4px;
+        }
+
+        .user-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .live-title { font-size: 12px; font-weight: 500; color: #f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* --- Start Live Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: white; padding: 35px 25px; border-radius: 30px; text-align: center;
+            width: 90%; max-width: 400px; transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        
+        .modal-box h3 { color: var(--dark-text); font-size: 24px; margin-bottom: 20px; font-weight: 800; }
+        .modal-box input[type="text"], .modal-box input[type="datetime-local"] {
+            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #eee;
+            margin-bottom: 20px; font-family: 'Poppins'; font-size: 14px; outline: none; transition: border 0.3s;
+            background: #fafafa; font-weight: 500;
+        }
+        .modal-box input:focus { border-color: var(--pink-dark); background: #fff; }
+        
+        .thumb-upload {
+            border: 2px dashed var(--pink-dark); padding: 20px; border-radius: 15px; background: var(--baby-pink);
+            margin-bottom: 15px; cursor: pointer; color: var(--primary-red); font-size: 14px; font-weight: 700;
+            transition: all 0.3s; display: flex; flex-direction: column; gap: 8px; align-items: center;
+        }
+        .thumb-upload:hover { background: #ffd1d9; border-color: var(--primary-red); }
+        .thumb-upload i { font-size: 24px; }
+        
+        .past-thumbs-wrapper { margin-bottom: 20px; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 15px; }
+        .past-thumbs-wrapper p { font-size: 12px; color: #555; margin-bottom: 10px; font-weight: 700; }
+        .past-thumbs-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+        .past-thumbs-list::-webkit-scrollbar { height: 4px; display: block; }
+        .past-thumbs-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .past-thumbs-list img {
+            width: 60px; height: 60px; border-radius: 12px; object-fit: cover; cursor: pointer;
+            border: 3px solid transparent; transition: all 0.3s;
+        }
+        .past-thumbs-list img.selected { border: 3px solid var(--primary-red); transform: scale(1.1); box-shadow: 0 4px 10px rgba(255,51,102,0.3); }
+
+        .modal-btns { display: flex; gap: 15px; margin-top: 15px; }
+        .btn-confirm { flex: 1; background: var(--gradient-main); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 15px rgba(255,51,102,0.3); transition: transform 0.2s; }
+        .btn-confirm:hover { transform: translateY(-2px); }
+        .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-cancel:hover { background: #e0e0e0; color: #333; }
+
+        /* --- ACTUAL LIVE VIEW SCREEN (Zego UI Integration Layer) --- */
+        #live-view-screen {
+            position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column;
+        }
+        
+        .live-video-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #050505; overflow: hidden; }
+        
+        #zego-root {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        /* AUDIO FIX: Unmute Button Overlay */
+        #unmute-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 51, 102, 0.95); color: white; padding: 15px 30px;
+            border-radius: 30px; font-weight: 800; cursor: pointer; z-index: 50; display: none;
+            box-shadow: 0 8px 25px rgba(255,51,102,0.5); font-size: 16px;
+            align-items: center; gap: 10px; animation: pulse-bg 1.5s infinite;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+
+        .live-overlay-top {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
+            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+        }
+        
+        .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .host-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-red); object-fit: cover; }
+        .host-text h4 { color: white; font-size: 14px; font-weight: 800; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .host-text p { color: #ddd; font-size: 11px; margin-top: 2px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        
+        .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
+        .close-live-btn:hover { background: rgba(255,51,102,0.8); transform: scale(1.05); }
+        
+        /* --- CHAT UI OVERLAY FOR VIDEO --- */
+        .live-overlay-bottom {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
+            display: flex; flex-direction: column; justify-content: flex-end; height: 60vh; pointer-events: none;
+        }
+        
+        .chat-box { 
+            pointer-events: auto;
+            max-height: 45vh; 
+            overflow-y: auto; 
+            margin-bottom: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            padding-right: 10px;
+            mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+            -webkit-mask-image: linear-gradient(to top, black 85%, transparent 100%); 
+        }
+        
+        .chat-box::-webkit-scrollbar { width: 4px; display: block; }
+        .chat-box::-webkit-scrollbar-track { background: transparent; }
+        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+
+        .chat-msg { 
+            color: #fff; 
+            font-size: 14px; 
+            font-weight: 500;
+            background: var(--chat-bg); 
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            width: max-content; 
+            max-width: 85%; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+            animation: slideInUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            transform-origin: bottom left;
+        }
+        .chat-msg span { color: #ff9fb3; font-weight: 800; margin-right: 6px; letter-spacing: 0.5px; }
+        
+        .chat-msg.system { color: var(--pink-dark); font-style: italic; background: rgba(255, 51, 102, 0.15); border-color: rgba(255, 51, 102, 0.3); }
+        .chat-msg.gift { background: var(--gradient-main); box-shadow: 0 4px 15px rgba(255,51,102,0.4); border: none; font-weight: 700; }
+        .chat-msg.gift span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        .action-bar { pointer-events: auto; display: flex; gap: 12px; align-items: center; }
+        .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 5px 20px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 12px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
+        .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
+        
+        .gift-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main); color: white; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(255,51,102,0.5); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
+        .gift-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255,51,102,0.7); }
+        
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white;
+            display: none; justify-content: center; align-items: center; z-index: 9999;
+            font-size: 20px; font-weight: 800; flex-direction: column; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* --- Animations --- */
+        @keyframes pulse-bg {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+        @keyframes pulse-icon {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shine {
+            0% { color: #d97706; text-shadow: none; }
+            50% { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.8); }
+            100% { color: #d97706; text-shadow: none; }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 255, 255, 0.95); color: var(--dark-text); padding: 14px 28px; border-radius: 30px;
+            font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-left: 5px solid var(--primary-red); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100000;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col justify-between">
+<body>
 
-    <!-- CONNECTION / BLOCKED SCREEN (Triggers if Zego SDK is absolutely blocked) -->
-    <div id="cdn-error-screen" class="hidden fixed inset-0 z-50 bg-neutral-950 p-6 flex flex-col justify-center items-center text-center">
-        <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center text-2xl mb-4">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+    <!-- Global Toast Notification -->
+    <div class="toast" id="toastMsg">Action Successful!</div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="id-login-screen">
+        <div class="logo-container"><i class="fas fa-fire" style="color:var(--primary-red);"></i> ZINGOO LIVE</div>
+        <div class="login-card">
+            <h2>Live Room Access</h2>
+            <p>Verify your Zingoo ID & Avatar to broadcast or watch lives.</p>
+            
+            <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
+            <div class="avatar-upload-box" onclick="document.getElementById('login-profile-upload').click()">
+                <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8">
+                <p><i class="fas fa-camera"></i> Upload Photo</p>
+            </div>
+
+            <input type="number" id="login-zingoo-id" placeholder="Enter your ID (e.g. 14873198)">
+            <button id="btn-login-id">Enter Live App <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Connection Blocked</h3>
-        <p class="text-xs text-gray-400 mb-6 max-w-xs leading-relaxed">
-            Zingoo could not load the ZEGOCLOUD engine. Please open via HTTPS (https://zingoo.online/live.html) and try again.
-        </p>
-        <button onclick="window.location.reload()" class="bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold px-6 py-2.5 rounded-full text-sm">
-            Refresh Page
-        </button>
     </div>
 
-    <!-- MAIN APP WRAPPER -->
-    <div id="app" class="relative w-full h-full max-w-md mx-auto bg-neutral-950 flex flex-col shadow-2xl overflow-hidden">
-        
-        <!-- ==================== DASHBOARD VIEW ==================== -->
-        <div id="dashboard-view" class="page-transition flex flex-col h-full w-full">
-            <!-- Header -->
-            <header class="p-4 bg-neutral-900 border-b border-neutral-800 flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl font-black tracking-wider text-pink-500">ZINGOO</span>
-                    <span class="bg-red-500 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full text-white animate-pulse">Live</span>
+    <!-- 2. MAIN HEADER & HOME PAGE -->
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="logo" onclick="window.location.href='live.html'">Zingoo</div>
+            <div class="header-actions">
+                <div class="diamond-bal" onclick="redirectToDiamondStore()">
+                    <i class="fas fa-gem"></i> <span id="user-diamond-bal">0</span>
                 </div>
-                <!-- Profile Area -->
-                <div class="flex items-center gap-2 bg-neutral-800/80 px-3 py-1.5 rounded-full border border-neutral-700">
-                    <img id="user-avatar" src="https://api.dicebear.com/7.x/adventurer/svg?seed=zingoo" alt="User Avatar" class="w-6 h-6 rounded-full border border-pink-500">
-                    <div class="flex flex-col text-left">
-                        <span id="user-display-name" class="text-xs font-bold truncate max-w-[80px]">Guest</span>
-                        <span class="text-[10px] text-yellow-400 font-semibold flex items-center gap-1">
-                            <i class="fa-solid fa-gem"></i> <span id="user-diamonds">0</span>
-                        </span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Main Content Area / Streams Grid -->
-            <main class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
-                <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Trending Streams</h2>
-                
-                <!-- Dynamic Grid container -->
-                <div id="streams-grid" class="grid grid-cols-2 gap-3">
-                    <div id="streams-placeholder" class="col-span-2 text-center py-12 text-gray-500">
-                        <i class="fa-solid fa-circle-notch animate-spin text-3xl text-pink-500 mb-2"></i>
-                        <p class="text-sm">Finding active streams...</p>
-                    </div>
-                </div>
-            </main>
-
-            <!-- Bottom Create Stream Button -->
-            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                <button id="btn-trigger-go-live" class="bg-gradient-to-r from-pink-500 to-red-500 text-white font-extrabold px-8 py-3.5 rounded-full shadow-lg shadow-pink-500/30 flex items-center gap-2 transform active:scale-95 transition-transform">
-                    <i class="fa-solid fa-video"></i> GO LIVE
+                <button class="start-live-btn" onclick="openStartLiveModal()">
+                    <i class="fas fa-video"></i> Go Live
                 </button>
             </div>
-        </div>
+        </header>
 
-        <!-- ==================== LIVE STREAM SCREEN ==================== -->
-        <div id="live-room-view" class="page-transition hidden absolute inset-0 z-20 bg-black flex flex-col justify-between">
-            
-            <!-- Video Container (Zego UIKit Prebuilt Mounts Here) -->
-            <div id="zego-video-container" class="absolute inset-0 w-full h-full bg-neutral-950 z-0"></div>
-
-            <!-- Custom Bigo/TikTok transparent Overlay UI over Zego Video -->
-            <div class="relative z-10 flex flex-col justify-between h-full p-4 pointer-events-none w-full">
-                
-                <!-- Top Panel (Branding, Host Info, Close Button) -->
-                <div class="flex justify-between items-center pointer-events-auto w-full">
-                    <!-- Host Badge -->
-                    <div class="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 p-1.5 pr-4 rounded-full">
-                        <img id="room-host-avatar" src="https://api.dicebear.com/7.x/adventurer/svg?seed=host" class="w-8 h-8 rounded-full border border-pink-500" alt="Host">
-                        <div class="flex flex-col text-left">
-                            <span id="room-host-name" class="text-xs font-bold text-white max-w-[80px] truncate">HostName</span>
-                            <span id="room-viewer-count" class="text-[9px] text-gray-300 flex items-center gap-1">
-                                <i class="fa-solid fa-eye text-pink-500"></i> 1 Viewer
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Exit Button -->
-                    <button id="btn-leave-room" class="bg-red-500/80 hover:bg-red-600 text-white p-2.5 rounded-full border border-white/10 active:scale-95 transition-transform flex items-center justify-center w-10 h-10">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Middle Stream Banner Title -->
-                <div class="absolute top-20 left-4 right-4 pointer-events-none">
-                    <div class="bg-black/45 backdrop-blur-sm p-2 rounded-lg border border-white/5 inline-block text-left max-w-xs">
-                        <span class="text-[10px] text-pink-400 uppercase font-bold tracking-wider block">Topic</span>
-                        <h3 id="room-stream-title" class="text-xs font-semibold text-white truncate">Chilling with guys!</h3>
-                    </div>
-                </div>
-
-                <!-- Floating Custom Animation Container (For Flying Gifts) -->
-                <div id="flying-animation-area" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center">
-                    <!-- Flying diamonds inject here -->
-                </div>
-
-                <!-- Bottom Panel (Chat logs & Interactive Input controls) -->
-                <div class="flex flex-col gap-3 pointer-events-auto w-full mt-auto">
-                    <!-- Live Chat Messages Scroll Box -->
-                    <div id="chat-box" class="h-40 overflow-y-auto flex flex-col gap-1.5 p-2 rounded-xl no-scrollbar bg-gradient-to-t from-black/75 to-transparent">
-                        <!-- Chat elements dynamic load -->
-                    </div>
-
-                    <!-- Input Controls -->
-                    <div class="flex items-center gap-2 w-full">
-                        <div class="flex-1 flex bg-black/60 backdrop-blur-md border border-white/15 rounded-full px-3 py-1.5 items-center">
-                            <input id="chat-input" type="text" placeholder="Send a message..." class="bg-transparent border-none outline-none flex-1 text-sm text-white placeholder-gray-400">
-                            <button id="btn-send-chat" class="text-pink-500 p-1.5 active:scale-90 transition-transform">
-                                <i class="fa-solid fa-paper-plane text-base"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Gift button -->
-                        <button id="btn-send-gift" class="bg-gradient-to-r from-yellow-400 to-amber-500 text-neutral-950 p-3 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform font-bold w-12 h-12 shrink-0">
-                            <i class="fa-solid fa-gem text-lg animate-bounce"></i>
-                        </button>
-                    </div>
-                </div>
+        <main>
+            <h2 class="section-title"><i class="fas fa-fire-flame-curved"></i> Trending Now</h2>
+            <!-- Dynamic Grid -->
+            <div class="live-grid" id="liveGrid">
+                <p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;">Fetching active streams...</p>
             </div>
-        </div>
-
-        <!-- ==================== GO LIVE MODAL ==================== -->
-        <div id="modal-go-live" class="hidden fixed inset-0 z-30 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div class="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 w-full max-w-xs text-center flex flex-col gap-4">
-                <div class="w-16 h-16 bg-pink-500/10 border border-pink-500/20 text-pink-500 rounded-full flex items-center justify-center mx-auto text-2xl">
-                    <i class="fa-solid fa-video"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Create Broadcast</h3>
-                    <p class="text-xs text-gray-400 mt-1">Set a catchy title for your trending stream</p>
-                </div>
-                <input id="live-title-input" type="text" placeholder="e.g. Daily chit-chat 🚀" class="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm outline-none text-white focus:border-pink-500">
-                
-                <div class="flex gap-2">
-                    <button id="btn-cancel-live" class="flex-1 bg-neutral-800 hover:bg-neutral-700 text-gray-300 font-bold py-2.5 rounded-xl text-sm transition-colors">
-                        Cancel
-                    </button>
-                    <button id="btn-start-live" class="flex-1 bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">
-                        Go Live Now
-                    </button>
-                </div>
-            </div>
-        </div>
-
+        </main>
     </div>
 
-    <!-- ==================== FIREBASE & ZEGO HYBRID IMPLEMENTATION ==================== -->
+    <!-- 3. START LIVE MODAL -->
+    <div class="modal-overlay" id="startLiveModal">
+        <div class="modal-box">
+            <i class="fas fa-podcast" style="font-size: 45px; color: var(--primary-red); margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(255,51,102,0.3));"></i>
+            <h3>Ready to Stream?</h3>
+            <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
+            
+            <input type="file" id="thumb-upload-input" accept="image/*" style="display:none;">
+            <div class="thumb-upload" onclick="document.getElementById('thumb-upload-input').click()">
+                <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
+            </div>
+            
+            <!-- Past Thumbnails & Schedule Options -->
+            <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
+                <p>Or choose previous thumbnail:</p>
+                <div class="past-thumbs-list" id="past-thumbs-container"></div>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 10px;">
+                <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;"><i class="far fa-clock"></i> Schedule Live (Optional):</label>
+                <input type="datetime-local" id="live-schedule-time">
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal('startLiveModal')">Cancel</button>
+                <button class="btn-confirm" id="btn-confirm-go-live">Go Live 🔴</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ACTUAL LIVE VIEW SCREEN -->
+    <div id="live-view-screen">
+        <div class="live-video-container">
+            <!-- Zego WebRTC Mounting Node -->
+            <div id="zego-root"></div>
+            
+            <!-- Audio Block recovery button -->
+            <div id="unmute-overlay">
+                <i class="fas fa-volume-up"></i> Tap to Unmute Voice
+            </div>
+        </div>
+        
+        <div class="live-overlay-top">
+            <div class="host-info">
+                <img id="live-host-avatar" src="https://i.pravatar.cc/100">
+                <div class="host-text">
+                    <h4 id="live-host-name">Host Name</h4>
+                    <p><i class="fas fa-eye" style="color:var(--primary-red);"></i> <span id="live-viewer-count">0</span> watching</p>
+                </div>
+            </div>
+            <button class="close-live-btn" id="btn-leave-live"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="live-overlay-bottom">
+            <div class="chat-box" id="live-chat-box">
+                <div class="chat-msg system"><span>System:</span> Welcome to the live stream!</div>
+            </div>
+            <div class="action-bar">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="live-chat-input" placeholder="Say something nice...">
+                </div>
+                <button class="gift-btn" id="btn-send-gift" onclick="handleGiftClick()"><i class="fas fa-gift"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 45px; margin-bottom: 20px; color: var(--primary-red);"></i>
+        <p id="loading-text">Connecting...</p>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- JAVASCRIPT LOGIC (Firebase, ImgBB, Cloudinary) -->
+    <!-- ============================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, push, onValue, off, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Configuration (Direct Inject)
+        // --- SECURITY / ANTI-SCREENSHOT LOGIC ---
+        // 1. Disable Right Click (Context Menu)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. Disable Keyboard Shortcuts for Screenshots/Saving
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
+                (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
+                e.preventDefault();
+                showToast("Security: Screenshots & recording are restricted!");
+            }
+        });
+
+        // 3. Blur screen if app loses focus
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                document.body.classList.add('security-blur');
+            } else {
+                document.body.classList.remove('security-blur');
+            }
+        });
+
+        // --- FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
             databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
             projectId: "benchtopinnovations12",
-            storageBucket: "benchtopinnovations12.firebasestorage.app"
+            storageBucket: "benchtopinnovations12.firebasestorage.app",
+            messagingSenderId: "113274194106",
+            appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
         };
-
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ZEGOCLOUD Technical Specifications
-        const AppID = 557776684;
-        const ServerSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
+        // ZEGOCLOUD App Credentials
+        const appID = 557776684;
+        const serverSecret = "d595b7c54719d1f52d8b1e8f0bb446c6";
 
-        // Core App State Tracking
+        // --- APIS ---
+        const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
+        const CLOUD_NAME = "dotjw6tep"; 
+        const UPLOAD_PRESET = "Zingoo"; 
+
+        // --- GLOBAL VARIABLES ---
         let currentUser = null;
-        let zpInstance = null; // Holds the active UIKit instance
-        let currentRoomId = null;
-        let currentRole = null; // 'host' or 'viewer'
-        let chatListenerRef = null;
-        let viewersListenerRef = null;
+        let currentAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zingooLive&backgroundColor=FFE4E8";
+        let currentUserId = null;
+        let userDiamonds = 0;
+        let selectedAvatarFile = null;
+        let selectedThumbFile = null;
+        let selectedPastThumb = null;
 
-        // UI References
-        const userAvatar = document.getElementById('user-avatar');
-        const userDisplayName = document.getElementById('user-display-name');
-        const userDiamondsVal = document.getElementById('user-diamonds');
-        const streamsGrid = document.getElementById('streams-grid');
-        const streamsPlaceholder = document.getElementById('streams-placeholder');
-        
-        const dashboardView = document.getElementById('dashboard-view');
-        const liveRoomView = document.getElementById('live-room-view');
-        const cdnErrorScreen = document.getElementById('cdn-error-screen');
-        
-        const btnTriggerGoLive = document.getElementById('btn-trigger-go-live');
-        const modalGoLive = document.getElementById('modal-go-live');
-        const liveTitleInput = document.getElementById('live-title-input');
-        const btnCancelLive = document.getElementById('btn-cancel-live');
-        const btnStartLive = document.getElementById('btn-start-live');
+        // Streaming Variables
+        let currentStreamId = null;
+        let isHost = false;
+        let zpInstance = null; // UIKit Object Instance
 
-        const btnLeaveRoom = document.getElementById('btn-leave-room');
-        const roomHostAvatar = document.getElementById('room-host-avatar');
-        const roomHostName = document.getElementById('room-host-name');
-        const roomViewerCount = document.getElementById('room-viewer-count');
-        const roomStreamTitle = document.getElementById('room-stream-title');
-        
-        const chatBox = document.getElementById('chat-box');
-        const chatInput = document.getElementById('chat-input');
-        const btnSendChat = document.getElementById('btn-send-chat');
-        const btnSendGift = document.getElementById('btn-send-gift');
-        const flyingAnimationArea = document.getElementById('flying-animation-area');
-
-        // SDK Guard Check
-        function checkZegoSDK() {
-            if (typeof window.ZegoUIKitPrebuilt === 'undefined') {
-                cdnErrorScreen.classList.remove('hidden');
-                return false;
-            }
-            return true;
+        // --- TOAST FUNCTION ---
+        function showToast(message) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Firebase User Setup & Automatic Login (Startup balance 100 diamonds)
-        async function setupUserAuth() {
-            let userId = localStorage.getItem('zingoo_id');
-            let isNewUser = false;
-
-            if (!userId) {
-                userId = "177952" + Math.floor(100000 + Math.random() * 900000);
-                const generatedName = "LiveUser_" + Math.floor(1000 + Math.random() * 9000);
-                const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${generatedName}`;
-                
-                currentUser = {
-                    id: userId,
-                    name: generatedName,
-                    phone: "0000000000",
-                    gender: "all",
-                    state: "Global",
-                    avatar: avatarUrl,
-                    diamonds: 100,
-                    status: "online",
-                    golden: false,
-                    timestamp: Date.now()
-                };
-
-                await set(ref(db, `users/${userId}`), currentUser);
-                localStorage.setItem('zingoo_id', userId);
-                isNewUser = true;
-            }
-
-            if (!isNewUser) {
-                const snapshot = await get(ref(db, `users/${userId}`));
-                if (snapshot.exists()) {
-                    currentUser = snapshot.val();
-                } else {
-                    localStorage.removeItem('zingoo_id');
-                    return setupUserAuth();
-                }
-            }
-
-            // Sync User profile elements
-            userAvatar.src = currentUser.avatar;
-            userDisplayName.textContent = currentUser.name;
-            userDiamondsVal.textContent = currentUser.diamonds;
-
-            // Live-sync active state changes (diamonds, avatar, name)
-            onValue(ref(db, `users/${currentUser.id}/diamonds`), (snap) => {
-                if (snap.exists()) {
-                    currentUser.diamonds = snap.val();
-                    userDiamondsVal.textContent = currentUser.diamonds;
-                }
-            });
+        function showLoading(text) {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
         }
 
-        // Real-time grid syncing for Dashboard active rooms
-        function syncActiveStreams() {
-            const streamsRef = ref(db, 'live_streams');
-            onValue(streamsRef, (snapshot) => {
-                streamsGrid.innerHTML = '';
-                
-                if (!snapshot.exists()) {
-                    streamsPlaceholder.classList.remove('hidden');
-                    streamsGrid.appendChild(streamsPlaceholder);
-                    return;
-                }
+        // --- 1. ID LOGIN & IMGBB LOGIC ---
+        const loginScreen = document.getElementById('id-login-screen');
+        const mainApp = document.getElementById('main-app');
 
-                streamsPlaceholder.classList.add('hidden');
-                const data = snapshot.val();
-                let activeCount = 0;
+        const storedId = localStorage.getItem("zingoo_id");
+        if (storedId) {
+            document.getElementById('login-zingoo-id').value = storedId;
+            const storedAv = localStorage.getItem("zingoo_avatar");
+            if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
+            
+            // Auto-login trigger
+            document.getElementById('btn-login-id').innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
+            validateDatabaseLogin(storedId);
+        }
 
-                Object.keys(data).forEach(roomId => {
-                    const stream = data[roomId];
-                    if (!stream.isLive) return;
-                    activeCount++;
+        document.getElementById('login-profile-upload').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => { document.getElementById('login-avatar-preview').src = event.target.result; };
+                reader.readAsDataURL(e.target.files[0]);
+                selectedAvatarFile = e.target.files[0];
+            }
+        });
 
-                    const viewersCount = stream.viewers ? Object.keys(stream.viewers).length : 0;
-                    
-                    const card = document.createElement('div');
-                    card.className = "bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform";
-                    card.innerHTML = `
-                        <div class="h-32 bg-gradient-to-br from-pink-900/40 to-neutral-800 relative flex items-center justify-center">
-                            <img src="${stream.hostAvatar}" alt="${stream.hostName}" class="w-14 h-14 rounded-full border-2 border-pink-500 shadow-lg">
-                            <span class="absolute top-2 left-2 bg-pink-500 text-white font-bold text-[8px] px-2 py-0.5 rounded flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> LIVE
-                            </span>
-                            <span class="absolute top-2 right-2 bg-black/50 text-white font-bold text-[8px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                                <i class="fa-solid fa-eye text-pink-500"></i> ${viewersCount}
-                            </span>
-                        </div>
-                        <div class="p-3 flex flex-col gap-1 text-left">
-                            <span class="text-xs font-bold text-white truncate">${stream.title}</span>
-                            <span class="text-[10px] text-gray-400 truncate">@${stream.hostName}</span>
-                        </div>
-                    `;
+        document.getElementById('btn-login-id').addEventListener('click', () => {
+            const enteredId = document.getElementById('login-zingoo-id').value.trim();
+            if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
+            
+            const btn = document.getElementById('btn-login-id');
+            btn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
 
-                    card.addEventListener('click', () => {
-                        joinLiveRoom(roomId, stream);
-                    });
-
-                    streamsGrid.appendChild(card);
+            if (selectedAvatarFile) {
+                const formData = new FormData();
+                formData.append("image", selectedAvatarFile);
+                fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData })
+                .then(res => res.json()).then(data => {
+                    if (data.success) currentAvatar = data.data.url;
+                    validateDatabaseLogin(enteredId);
+                }).catch(err => {
+                    showToast("Image upload failed, using default.");
+                    validateDatabaseLogin(enteredId);
                 });
+            } else {
+                validateDatabaseLogin(enteredId);
+            }
+        });
 
-                if (activeCount === 0) {
-                    streamsPlaceholder.classList.remove('hidden');
-                    streamsGrid.appendChild(streamsPlaceholder);
+        function validateDatabaseLogin(enteredId) {
+            get(ref(db, 'users')).then(snapshot => {
+                let userFound = false;
+                const allUsers = snapshot.val();
+                let userKey = null;
+                
+                if (allUsers) {
+                    for (let key in allUsers) {
+                        if (allUsers[key].id === enteredId) {
+                            currentUser = allUsers[key].name;
+                            currentUserId = enteredId;
+                            userKey = key;
+                            userFound = true;
+                            break;
+                        }
+                    }
                 }
+                
+                if (userFound) {
+                    if (selectedAvatarFile) { set(ref(db, `users/${userKey}/avatar`), currentAvatar); } 
+                    else { currentAvatar = allUsers[userKey].avatar || currentAvatar; }
+
+                    localStorage.setItem("zingoo_user", currentUser);
+                    localStorage.setItem("zingoo_avatar", currentAvatar);
+                    localStorage.setItem("zingoo_id", enteredId);
+                    
+                    userDiamonds = allUsers[userKey].diamonds || 0;
+                    document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    
+                    loginScreen.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    showToast(`Welcome, ${currentUser}!`);
+                    
+                    fetchLiveStreams();
+                    
+                    onValue(ref(db, `users/${userKey}/diamonds`), (snap) => {
+                        userDiamonds = snap.val() || 0;
+                        document.getElementById('user-diamond-bal').innerText = userDiamonds;
+                    });
+                } else {
+                    showToast("Invalid ID! User not found.");
+                    document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
+                }
+            }).catch(err => {
+                showToast("Connection error!");
+                document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
 
-        function switchView(viewName) {
-            if (viewName === 'dashboard') {
-                liveRoomView.classList.add('hidden');
-                dashboardView.classList.remove('hidden');
-            } else if (viewName === 'room') {
-                dashboardView.classList.add('hidden');
-                liveRoomView.classList.remove('hidden');
+        // --- 2. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
+        document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
+            if(e.target.files[0]) {
+                selectedThumbFile = e.target.files[0];
+                selectedPastThumb = null; 
+                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
+                clearPastThumbSelection();
             }
+        });
+
+        async function uploadToCloudinary(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET); 
+                formData.append('cloud_name', CLOUD_NAME);
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+                const data = await res.json();
+                return data.secure_url || null;
+            } catch (err) { return null; }
         }
 
-        // ==================== REAL-TIME INTERACTIVE UI CHAT/GIFTING ====================
-
-        function appendChatMessage(user, text, type = 'user') {
-            const wrapper = document.createElement('div');
-            wrapper.className = "text-xs text-left max-w-full flex items-start gap-1 p-1 rounded";
+        function loadPastThumbnails() {
+            const container = document.getElementById('past-thumbs-container');
+            const wrapper = document.getElementById('past-thumbs-wrapper');
+            const pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
             
-            if (type === 'system') {
-                wrapper.innerHTML = `<span class="text-pink-400 font-bold italic">${user} ${text}</span>`;
-            } else if (type === 'gift') {
-                wrapper.innerHTML = `
-                    <span class="bg-amber-500/10 border border-amber-500/20 text-yellow-400 px-2 py-1 rounded-lg font-bold flex items-center gap-1 animate-pulse">
-                        <i class="fa-solid fa-gift"></i> ${user} sent a Diamond! 💎
-                    </span>
-                `;
+            if(pastThumbs.length > 0) {
+                wrapper.style.display = 'block';
+                container.innerHTML = '';
+                pastThumbs.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.onclick = () => {
+                        selectedPastThumb = url;
+                        selectedThumbFile = null; 
+                        document.getElementById('thumb-name-display').innerText = "Upload New Thumbnail";
+                        clearPastThumbSelection();
+                        img.classList.add('selected');
+                    };
+                    container.appendChild(img);
+                });
             } else {
-                wrapper.innerHTML = `
-                    <span class="text-pink-400 font-bold shrink-0">${user}:</span>
-                    <span class="text-gray-200 break-all">${text}</span>
-                `;
+                wrapper.style.display = 'none';
             }
-
-            chatBox.appendChild(wrapper);
-            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Trigger visual animated gem flying on screen
-        function triggerFlyingDiamondAnimation() {
-            const gem = document.createElement('div');
-            gem.className = "gift-flying-diamond absolute text-yellow-400 text-5xl z-30 pointer-events-none";
-            gem.innerHTML = `<i class="fa-solid fa-gem drop-shadow-[0_0_15px_rgba(234,179,8,0.8)]"></i>`;
-            
-            // Random horizontal positioning offset
-            const offset = Math.floor(Math.random() * 120) - 60;
-            gem.style.marginLeft = `${offset}px`;
-            
-            flyingAnimationArea.appendChild(gem);
-            
-            // Auto clean up element
-            setTimeout(() => {
-                gem.remove();
-            }, 2000);
+        function clearPastThumbSelection() {
+            const imgs = document.querySelectorAll('#past-thumbs-container img');
+            imgs.forEach(i => i.classList.remove('selected'));
         }
 
-        function setupRoomListeners(roomId) {
-            // Listen to custom live chats and gifts
-            const chatRef = ref(db, `live_streams/${roomId}/chats`);
-            chatListenerRef = onValue(chatRef, (snapshot) => {
-                chatBox.innerHTML = '';
-                if (snapshot.exists()) {
-                    const chats = snapshot.val();
-                    Object.keys(chats).forEach(key => {
-                        const chat = chats[key];
-                        if (chat.isGift) {
-                            appendChatMessage(chat.user, 'Gift', 'gift');
-                        } else if (chat.system) {
-                            appendChatMessage(chat.user, chat.text, 'system');
-                        } else {
-                            appendChatMessage(chat.user, chat.text, 'user');
+        function saveThumbToPast(url) {
+            if(url && url !== currentAvatar) {
+                let pastThumbs = JSON.parse(localStorage.getItem('zingoo_past_thumbs') || '[]');
+                if(!pastThumbs.includes(url)) {
+                    pastThumbs.unshift(url); 
+                    if(pastThumbs.length > 5) pastThumbs.pop(); 
+                    localStorage.setItem('zingoo_past_thumbs', JSON.stringify(pastThumbs));
+                }
+            }
+        }
+
+        // --- 3. FETCH LIVE STREAMS (GRID) ---
+        const gridContainer = document.getElementById('liveGrid');
+
+        function fetchLiveStreams() {
+            onValue(ref(db, 'live_streams'), (snapshot) => {
+                gridContainer.innerHTML = '';
+                const streams = snapshot.val();
+                let count = 0;
+                
+                if (streams) {
+                    Object.entries(streams).forEach(([streamId, data]) => {
+                        if (data.isLive || data.scheduledTime) {
+                            count++;
+                            const viewerCount = data.viewers ? Object.keys(data.viewers).length : 0;
+                            const thumbUrl = data.thumbnail || data.hostAvatar; 
+                            
+                            const badgeHTML = data.isLive ? 
+                                `<span class="live-badge"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i>LIVE</span>` : 
+                                `<span class="scheduled-badge"><i class="far fa-clock" style="margin-right:4px;"></i>SCHED</span>`;
+
+                            const card = document.createElement('div');
+                            card.className = 'live-card';
+                            
+                            card.onclick = () => {
+                                if (!data.isLive && data.hostName === currentUser) {
+                                    startScheduledLiveAsHost(streamId, data);
+                                } else if (!data.isLive) {
+                                    const timeStr = new Date(data.scheduledTime).toLocaleString();
+                                    showToast(`This live starts later at: ${timeStr}`);
+                                } else {
+                                    joinLiveStream(streamId, data);
+                                }
+                            };
+                            
+                            card.innerHTML = `
+                                <img src="${thumbUrl}" alt="Live">
+                                <div class="card-top-info">
+                                    ${badgeHTML}
+                                    ${data.isLive ? `<span class="viewers"><i class="fas fa-eye"></i> ${viewerCount}</span>` : ''}
+                                </div>
+                                <div class="card-bottom-info">
+                                    <div class="user-name">${data.hostName}</div>
+                                    <div class="live-title">${data.title}</div>
+                                </div>
+                            `;
+                            gridContainer.appendChild(card);
                         }
                     });
                 }
-            });
-
-            // Listen to dynamic viewer counts
-            const viewersRef = ref(db, `live_streams/${roomId}/viewers`);
-            viewersListenerRef = onValue(viewersRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const count = Object.keys(snapshot.val()).length;
-                    roomViewerCount.innerHTML = `<i class="fa-solid fa-eye text-pink-500"></i> ${count} Viewer${count > 1 ? 's' : ''}`;
-                } else {
-                    roomViewerCount.innerHTML = `<i class="fa-solid fa-eye text-pink-500"></i> 0 Viewers`;
-                }
-            });
-
-            // Listen for Gifting Alerts on top of the stream
-            const giftingRef = ref(db, `live_streams/${roomId}/gifting_triggers`);
-            onValue(giftingRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const triggers = snapshot.val();
-                    const latestKey = Object.keys(triggers).pop();
-                    const latestTrigger = triggers[latestKey];
-                    
-                    // Ignore triggers older than 4 seconds
-                    if (Date.now() - latestTrigger.timestamp < 4000) {
-                        triggerFlyingDiamondAnimation();
-                    }
+                
+                if(count === 0) {
+                    gridContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 15px; font-weight: 600; margin-top: 30px; background: rgba(255,255,255,0.5); padding: 20px; border-radius: 15px;"><i class="fas fa-video-slash" style="display:block; font-size:30px; margin-bottom:10px; color:#ccc;"></i>No one is currently live. Be the first!</p>';
                 }
             });
         }
 
-        function detachRoomListeners(roomId) {
-            if (chatListenerRef) off(ref(db, `live_streams/${roomId}/chats`));
-            if (viewersListenerRef) off(ref(db, `live_streams/${roomId}/viewers`));
-            off(ref(db, `live_streams/${roomId}/gifting_triggers`));
-        }
+        window.openStartLiveModal = () => {
+            loadPastThumbnails();
+            document.getElementById('live-schedule-time').value = '';
+            document.getElementById('startLiveModal').classList.add('active');
+        };
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.remove('active');
+        };
 
-        // ==================== ZEGO MEDIA FLOWS (POWERED BY UIKIT ENGINE) ====================
-
-        // [HOST STREAM PIPELINE]
-        async function hostLiveRoom(title) {
-            currentRole = 'host';
-            currentRoomId = "room_" + currentUser.id;
-
-            roomHostAvatar.src = currentUser.avatar;
-            roomHostName.textContent = currentUser.name;
-            roomStreamTitle.textContent = title;
-            chatBox.innerHTML = '';
-
-            switchView('room');
+        // --- 4. STREAM BROADCASTING (HOST) ---
+        document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
+            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            const scheduleInput = document.getElementById('live-schedule-time').value;
+            const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
+            
+            closeModal('startLiveModal');
+            showLoading("Processing...");
 
             try {
-                // Register stream metadata in database
-                const streamRef = ref(db, `live_streams/${currentRoomId}`);
-                await set(streamRef, {
-                    hostName: currentUser.name,
-                    hostAvatar: currentUser.avatar,
+                let thumbUrl = currentAvatar; 
+                
+                if(selectedThumbFile) {
+                    showLoading("Uploading Thumbnail...");
+                    const uploaded = await uploadToCloudinary(selectedThumbFile);
+                    if(uploaded) {
+                        thumbUrl = uploaded;
+                        saveThumbToPast(thumbUrl);
+                    }
+                } else if (selectedPastThumb) {
+                    thumbUrl = selectedPastThumb;
+                }
+
+                if(isScheduled) {
+                    const newStreamRef = push(ref(db, 'live_streams'));
+                    await set(newStreamRef, {
+                        hostName: currentUser,
+                        hostAvatar: currentAvatar,
+                        title: title,
+                        thumbnail: thumbUrl,
+                        isLive: false,
+                        scheduledTime: new Date(scheduleInput).getTime(),
+                        timestamp: serverTimestamp()
+                    });
+                    hideLoading();
+                    showToast("Live Scheduled Successfully! ⏰");
+                    return; 
+                }
+
+                showLoading("Starting Stream...");
+                
+                const newStreamRef = push(ref(db, 'live_streams'));
+                currentStreamId = newStreamRef.key;
+                isHost = true;
+
+                await set(newStreamRef, {
+                    hostName: currentUser,
+                    hostAvatar: currentAvatar,
                     title: title,
+                    thumbnail: thumbUrl,
                     isLive: true,
-                    timestamp: Date.now()
+                    timestamp: serverTimestamp()
                 });
 
-                // Set up crash-safe onDisconnect cleanup
-                onDisconnect(streamRef).remove();
+                onDisconnect(newStreamRef).remove();
 
-                const systemChatRef = push(ref(db, `live_streams/${currentRoomId}/chats`));
-                await set(systemChatRef, {
-                    user: currentUser.name,
-                    text: "started live stream",
-                    system: true
-                });
-
-                // Generate kit test token securely
-                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
-                    AppID,
-                    ServerSecret,
-                    currentRoomId,
-                    currentUser.id,
-                    currentUser.name
+                // Setup WebRTC using Zego Prebuilt instead of raw peer connections
+                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                    appID,
+                    serverSecret,
+                    currentStreamId,
+                    currentUserId,
+                    currentUser
                 );
-
-                // Initialize Prebuilt engine with custom configuration overlay
-                zpInstance = window.ZegoUIKitPrebuilt.create(token);
+                zpInstance = ZegoUIKitPrebuilt.create(token);
                 zpInstance.joinRoom({
-                    container: document.querySelector("#zego-video-container"),
+                    container: document.getElementById('zego-root'),
                     scenario: {
-                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: window.ZegoUIKitPrebuilt.Host },
+                        mode: ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: ZegoUIKitPrebuilt.Host },
                     },
-                    showTextChat: false, // Turn off default Zego layout chat
-                    showUserList: false, // Turn off default user panel
+                    showTextChat: false, 
+                    showUserList: false, 
                     showMyCameraToggleButton: true,
                     showAudioVideoSettingsButton: true,
                     showScreenSharingButton: false,
                     turnOnCameraWhenJoining: true,
                 });
 
-                setupRoomListeners(currentRoomId);
+                setupHostUIAndSignaling();
 
             } catch (err) {
-                console.error("Host setup crashed:", err);
-                alert("Could not start broadcast: " + err.message);
-                leaveLiveRoom();
+                hideLoading();
+                alert("Could not start live: " + err.message);
+            }
+        });
+
+        async function startScheduledLiveAsHost(streamId, data) {
+            showLoading("Starting Live...");
+            try {
+                currentStreamId = streamId;
+                isHost = true;
+
+                await update(ref(db, `live_streams/${streamId}`), {
+                    isLive: true,
+                    scheduledTime: null,
+                    timestamp: serverTimestamp()
+                });
+                
+                onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
+
+                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                    appID,
+                    serverSecret,
+                    currentStreamId,
+                    currentUserId,
+                    currentUser
+                );
+                zpInstance = ZegoUIKitPrebuilt.create(token);
+                zpInstance.joinRoom({
+                    container: document.getElementById('zego-root'),
+                    scenario: {
+                        mode: ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: ZegoUIKitPrebuilt.Host },
+                    },
+                    showTextChat: false,
+                    showUserList: false,
+                    showMyCameraToggleButton: true,
+                    showAudioVideoSettingsButton: true,
+                    showScreenSharingButton: false,
+                    turnOnCameraWhenJoining: true,
+                });
+
+                setupHostUIAndSignaling();
+            } catch (err) {
+                hideLoading();
+                alert("Could not start live: " + err.message);
             }
         }
 
-        // [VIEWER PLAY PIPELINE]
-        async function joinLiveRoom(roomId, stream) {
-            currentRole = 'viewer';
-            currentRoomId = roomId;
+        function setupHostUIAndSignaling() {
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
 
-            roomHostAvatar.src = stream.hostAvatar;
-            roomHostName.textContent = stream.hostName;
-            roomStreamTitle.textContent = stream.title;
-            chatBox.innerHTML = '';
+            document.getElementById('live-host-name').innerText = currentUser + " (You)";
+            document.getElementById('live-host-avatar').src = currentAvatar;
 
-            switchView('room');
+            hideLoading();
+            showToast("You are now LIVE! 🔴");
+            setupLiveChat();
+
+            // Monitor active viewers count
+            onValue(ref(db, `live_streams/${currentStreamId}/viewers`), (snap) => {
+                document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+            });
+        }
+
+
+        // --- 5. STREAM WATCHING (VIEWER) ---
+        async function joinLiveStream(streamId, streamData) {
+            showLoading("Joining Room...");
+            currentStreamId = streamId;
+            isHost = false;
+
+            document.getElementById('main-app').style.display = 'none';
+            const liveScreen = document.getElementById('live-view-screen');
+            liveScreen.style.display = 'flex';
+
+            document.getElementById('live-host-name').innerText = streamData.hostName;
+            document.getElementById('live-host-avatar').src = streamData.hostAvatar;
 
             try {
-                const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
-                    AppID,
-                    ServerSecret,
-                    roomId,
-                    currentUser.id,
-                    currentUser.name
+                const token = ZegoUIKitPrebuilt.generateKitTokenForTest(
+                    appID,
+                    serverSecret,
+                    currentStreamId,
+                    currentUserId,
+                    currentUser
                 );
-
-                setupRoomListeners(roomId);
-
-                // Log viewer presence
-                const viewerRecordRef = ref(db, `live_streams/${roomId}/viewers/${currentUser.id}`);
-                await set(viewerRecordRef, true);
-                onDisconnect(viewerRecordRef).remove();
-
-                const systemJoinRef = push(ref(db, `live_streams/${roomId}/chats`));
-                set(systemJoinRef, {
-                    user: currentUser.name,
-                    text: "joined active stream",
-                    system: true
-                });
-
-                // Mount Prebuilt Viewer Player
-                zpInstance = window.ZegoUIKitPrebuilt.create(token);
+                zpInstance = ZegoUIKitPrebuilt.create(token);
                 zpInstance.joinRoom({
-                    container: document.querySelector("#zego-video-container"),
+                    container: document.getElementById('zego-root'),
                     scenario: {
-                        mode: window.ZegoUIKitPrebuilt.LiveStreaming,
-                        config: { role: window.ZegoUIKitPrebuilt.Audience },
+                        mode: ZegoUIKitPrebuilt.LiveStreaming,
+                        config: { role: ZegoUIKitPrebuilt.Audience },
                     },
                     showTextChat: false,
                     showUserList: false,
@@ -614,139 +1033,139 @@
                     turnOnCameraWhenJoining: false,
                 });
 
-            } catch (err) {
-                console.error("Viewer join flow crashed:", err);
-                alert("Could not join live room: " + err.message);
-                leaveLiveRoom();
-            }
-        }
-
-        // [EXIT/CLEANUP LOGIC]
-        async function leaveLiveRoom() {
-            if (!currentRoomId) return;
-
-            try {
-                if (currentRole === 'host') {
-                    // Remove stream room index node completely
-                    const streamRef = ref(db, `live_streams/${currentRoomId}`);
-                    await remove(streamRef);
-                } else if (currentRole === 'viewer') {
-                    // Remove viewer presence
-                    const viewerRecordRef = ref(db, `live_streams/${currentRoomId}/viewers/${currentUser.id}`);
-                    await remove(viewerRecordRef);
-                }
-
-                if (zpInstance) {
-                    zpInstance.destroy();
-                    zpInstance = null;
-                }
-
-                detachRoomListeners(currentRoomId);
-
-            } catch (err) {
-                console.error("Room exit process encountered errors:", err);
-            } finally {
-                currentRoomId = null;
-                currentRole = null;
-                switchView('dashboard');
-            }
-        }
-
-        // ==================== INTERACTION ACTION HANDLERS ====================
-
-        btnTriggerGoLive.addEventListener('click', () => {
-            modalGoLive.classList.remove('hidden');
-            liveTitleInput.value = '';
-        });
-
-        btnCancelLive.addEventListener('click', () => {
-            modalGoLive.classList.add('hidden');
-        });
-
-        btnStartLive.addEventListener('click', () => {
-            const title = liveTitleInput.value.trim() || `${currentUser.name}'s Live Room`;
-            modalGoLive.classList.add('hidden');
-            hostLiveRoom(title);
-        });
-
-        btnLeaveRoom.addEventListener('click', () => {
-            if (confirm("Are you sure you want to leave this session?")) {
-                leaveLiveRoom();
-            }
-        });
-
-        // Chat text messaging trigger
-        async function handleSendChat() {
-            const text = chatInput.value.trim();
-            if (!text || !currentRoomId) return;
-
-            try {
-                const msgRef = push(ref(db, `live_streams/${currentRoomId}/chats`));
-                await set(msgRef, {
-                    user: currentUser.name,
-                    text: text,
-                    isGift: false
+                // Set up viewer reference in database
+                const viewerRef = ref(db, `live_streams/${streamId}/viewers/${currentUser}`);
+                await set(viewerRef, {
+                    username: currentUser,
+                    timestamp: serverTimestamp()
                 });
-                chatInput.value = '';
-            } catch (err) {
-                console.error("Text delivery transaction failed:", err);
-            }
-        }
 
-        btnSendChat.addEventListener('click', handleSendChat);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSendChat();
-        });
+                onDisconnect(viewerRef).remove();
 
-        // Virtual Diamond gift button trigger
-        btnSendGift.addEventListener('click', async () => {
-            if (!currentRoomId) return;
+                // Live dynamic sync of room viewers
+                onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
+                    document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+                });
 
-            if (currentRole === 'host') {
-                alert("Hosts cannot send gifts to their own broadcast.");
-                return;
-            }
-
-            if (currentUser.diamonds < 10) {
-                alert("Insufficient Diamonds! You need at least 10 diamonds to send a gift.");
-                return;
-            }
-
-            try {
-                const newDiamondsVal = currentUser.diamonds - 10;
+                hideLoading();
+                setupLiveChat();
                 
-                // Deduct balance
-                await update(ref(db, `users/${currentUser.id}`), {
-                    diamonds: newDiamondsVal
-                });
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} joined the live!` });
 
-                // Post chat gift event
-                const giftRef = push(ref(db, `live_streams/${currentRoomId}/chats`));
-                await set(giftRef, {
-                    user: currentUser.name,
-                    text: "Gift",
-                    isGift: true
-                });
+            } catch(e) {
+                hideLoading();
+                showToast("Failed to join stream.");
+                leaveLiveStream();
+            }
+        }
 
-                // Push animated visual fly trigger
-                const animRef = push(ref(db, `live_streams/${currentRoomId}/gifting_triggers`));
-                await set(animRef, {
-                    timestamp: Date.now()
-                });
 
-            } catch (err) {
-                console.error("Gifting database transaction crash:", err);
+        // --- 6. LEAVE/STOP STREAM ---
+        document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
+
+        function leaveLiveStream() {
+            document.getElementById('live-view-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            
+            document.getElementById('unmute-overlay').style.display = 'none';
+
+            if (zpInstance) {
+                zpInstance.destroy();
+                zpInstance = null;
+            }
+
+            if (isHost && currentStreamId) {
+                remove(ref(db, `live_streams/${currentStreamId}`));
+            } else if (!isHost && currentStreamId) {
+                remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUser}`));
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
+            }
+
+            currentStreamId = null;
+            document.getElementById('live-chat-box').innerHTML = ''; 
+        }
+
+
+        // --- 7. LIVE CHAT FUNCTIONALITY ---
+        function setupLiveChat() {
+            const chatBox = document.getElementById('live-chat-box');
+            chatBox.innerHTML = ''; 
+            
+            onChildAdded(ref(db, `live_streams/${currentStreamId}/chats`), (snap) => {
+                const data = snap.val();
+                if(data) {
+                    const msgDiv = document.createElement('div');
+                    
+                    if (data.user === 'System') {
+                        msgDiv.className = 'chat-msg system';
+                        msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${data.text}`;
+                    } else if (data.isGift) {
+                        msgDiv.className = 'chat-msg gift';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> Sent a Gift! 💎✨`;
+                    } else {
+                        msgDiv.className = 'chat-msg';
+                        msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
+                    }
+                    
+                    chatBox.appendChild(msgDiv);
+                    
+                    chatBox.scrollTo({
+                        top: chatBox.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+
+        document.getElementById('live-chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const text = this.value.trim();
+                if (text && currentStreamId) {
+                    push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
+                    this.value = '';
+                }
             }
         });
 
-        // Initialization Pipeline
-        window.addEventListener('DOMContentLoaded', async () => {
-            const isLoaded = checkZegoSDK();
-            if (isLoaded) {
-                await setupUserAuth();
-                syncActiveStreams();
+
+        // --- 8. GIFTS & DIAMOND REDIRECT LOGIC ---
+        window.handleGiftClick = function() {
+            if (isHost) {
+                showToast("You cannot send gifts to yourself!");
+                return;
             }
-        });
+
+            const giftCost = 10; 
+
+            if (userDiamonds >= giftCost) {
+                const newBal = userDiamonds - giftCost;
+                get(ref(db, 'users')).then(snap => {
+                    const users = snap.val();
+                    for(let key in users) {
+                        if(users[key].name === currentUser) {
+                            set(ref(db, `users/${key}/diamonds`), newBal);
+                            break;
+                        }
+                    }
+                });
+                
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, isGift: true, text: "Sent a Gift!" });
+                showToast("Gift Sent! 💎");
+                
+            } else {
+                const confirmBuy = confirm(`You don't have enough diamonds! Cost: ${giftCost}, Your balance: ${userDiamonds}.\n\nDo you want to go to the store to buy diamonds?`);
+                
+                if(confirmBuy) {
+                    leaveLiveStream();
+                    redirectToDiamondStore();
+                }
+            }
+        };
+
+        window.redirectToDiamondStore = function() {
+            window.location.href = 'index.html?action=buy_diamonds';
+        };
+
     </script>
 </body>
 </html>
