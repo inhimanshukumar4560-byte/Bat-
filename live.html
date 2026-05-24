@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- LiveKit Client Browser SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 
     <style>
         :root {
@@ -1263,6 +1266,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        const LivekitClient = window.LivekitClient;
+
         // Security Lockouts & Screen blur
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', (e) => {
@@ -1291,9 +1296,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // API Configurations
         const IMGBB_API_KEY = "74f145f340cd03006d649ab081ebdc9c";
         const CLOUD_NAME = "dotjw6tep"; 
         const UPLOAD_PRESET = "Zingoo"; 
+        const LIVEKIT_WS_URL = "wss://zingoo-live-r84wm81r.livekit.cloud";
+        const TOKENS_SERVER_URL = "https://zingoo-api-server.onrender.com/get-token";
 
         // Global Variables
         let currentUser = null;
@@ -1314,27 +1322,11 @@
         let pkPartnerStreamId = "";
         let pendingInvitationData = null;
 
-        const iceServers = { 
-            iceServers: [
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' },
-                {
-                    urls: 'turn:openrelay.metered.ca:80',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
-                },
-                {
-                    urls: 'turn:openrelay.metered.ca:443',
-                    username: 'openrelayproject',
-                    credential: 'openrelayproject'
-                }
-            ] 
-        };
-        let localStream = null;
+        // LiveKit Variables
         let currentStreamId = null;
         let isHost = false;
-        let hostPeerConnections = {};
-        let viewerPeerConnection = null;
+        let currentRoom = null;
+        let pkPartnerRoom = null;
 
         function showToast(message) {
             const toast = document.getElementById('toastMsg');
@@ -1351,7 +1343,7 @@
             document.getElementById('loading-overlay').style.display = 'none';
         }
 
-        // --- 1. AUTOMATED 5-SECOND SECURITY HANDSHAKE (No Button Required) --- [1, 2]
+        // --- 1. AUTOMATED 5-SECOND SECURITY HANDSHAKE ---
         function runVerificationTimer(finalId, callback) {
             const screen = document.getElementById('cyber-verification-screen');
             const countdownEl = document.getElementById('verify-countdown');
@@ -1359,7 +1351,7 @@
             screen.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            let count = 5; // Reduced 30s to 5s [1]
+            let count = 5; 
             countdownEl.innerText = count;
 
             const row1 = document.getElementById('v-row-1');
@@ -1374,7 +1366,6 @@
                 count--;
                 countdownEl.innerText = count;
 
-                // Stepwise status updates as clock ticks down rapidly
                 if (count === 4) {
                     dot1.className = "status-dot completed";
                     row2.style.opacity = "1";
@@ -1400,7 +1391,6 @@
                 }
             }, 1000);
 
-            // Parallel verification [1]
             get(ref(db, 'users')).then(snapshot => {
                 let verified = false;
                 const allUsers = snapshot.val();
@@ -1531,7 +1521,7 @@
             });
         }
 
-        // --- 3. DYNAMIC GIFT LOADING FROM ADMIN CODES ---
+        // --- 3. DYNAMIC GIFT LOADING ---
         function loadAdminGifts() {
             const giftsGrid = document.getElementById('live-gifts-grid');
             giftsGrid.innerHTML = '';
@@ -1568,7 +1558,7 @@
             }
         };
 
-        // --- 4. BEAUTY FILTERS SETUP FOR HOSTS --- [1, 2]
+        // --- 4. BEAUTY FILTERS SETUP FOR HOSTS ---
         window.toggleBeautySheet = (show) => {
             const sheet = document.getElementById('beauty-bottom-sheet');
             if (show) sheet.classList.add('active');
@@ -1579,17 +1569,14 @@
             const localVid = document.getElementById('local-live-video');
             if (!localVid) return;
 
-            // Remove previous classes
             localVid.className = "";
             
-            // Apply corresponding styling preset [2]
             if (filterType === 'none') localVid.className = 'beauty-none';
             else if (filterType === 'glam') localVid.className = 'beauty-glam';
             else if (filterType === 'warm') localVid.className = 'beauty-warm';
             else if (filterType === 'blush') localVid.className = 'beauty-blush';
             else if (filterType === 'dramatic') localVid.className = 'beauty-dramatic';
 
-            // Visual Card highlighting [2]
             document.querySelectorAll('.beauty-item-card').forEach(card => card.classList.remove('selected'));
             const selectedCard = document.getElementById(`filter-${filterType}`);
             if (selectedCard) selectedCard.classList.add('selected');
@@ -1598,7 +1585,7 @@
             toggleBeautySheet(false);
         };
 
-        // --- 5. DIAMONDS SHEET (Direct Payment to github code) --- [1, 2]
+        // --- 5. DIAMONDS SHEET (Direct Payment) ---
         window.toggleDiamondsSheet = (show) => {
             const sheet = document.getElementById('diamonds-bottom-sheet');
             if (show) sheet.classList.add('active');
@@ -1608,7 +1595,6 @@
         window.triggerDirectPay = (amount, diamonds) => {
             toggleDiamondsSheet(false);
             showLoading("Directing to Razorpay pipeline...");
-            // Redirects to zingoo-pay.html located in the same repository path seamlessly
             window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
         };
 
@@ -1837,6 +1823,8 @@
                         document.getElementById('video-canvas-container').classList.add('pk-active');
                         document.getElementById('pk-status-bar').style.display = 'flex';
                         
+                        connectToPKPartnerStream(pkPartnerStreamId);
+                        
                         startPKLocalTimer();
                         showToast("⚔️ PK Battle Commenced!");
                     }
@@ -1861,6 +1849,35 @@
                     endPKDuelSession();
                 }
             });
+        }
+
+        async function connectToPKPartnerStream(partnerStreamId) {
+            try {
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${partnerStreamId}&identity=${currentUser}_pk_${Math.floor(Math.random() * 10000)}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                pkPartnerRoom = new LivekitClient.Room();
+                
+                pkPartnerRoom.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                    if (track.kind === 'video') {
+                        const partnerVideoElement = isHost ? document.getElementById('remote-live-video') : document.getElementById('local-live-video');
+                        partnerVideoElement.style.display = 'block';
+                        track.attach(partnerVideoElement);
+                    }
+                    if (track.kind === 'audio') {
+                        const partnerVideoElement = isHost ? document.getElementById('remote-live-video') : document.getElementById('local-live-video');
+                        track.attach(partnerVideoElement);
+                        partnerVideoElement.muted = false;
+                        partnerVideoElement.volume = 1.0;
+                    }
+                });
+
+                await pkPartnerRoom.connect(LIVEKIT_WS_URL, token);
+                showToast("Connected to partner stream!");
+            } catch(e) {
+                console.error("Failed to connect to partner stream in PK:", e);
+            }
         }
 
         function startPKLocalTimer() {
@@ -1901,6 +1918,20 @@
             if (pkTimer) clearInterval(pkTimer);
             document.getElementById('video-canvas-container').classList.remove('pk-active');
             document.getElementById('pk-status-bar').style.display = 'none';
+            
+            if (pkPartnerRoom) {
+                pkPartnerRoom.disconnect();
+                pkPartnerRoom = null;
+            }
+            
+            if (isHost) {
+                document.getElementById('remote-live-video').style.display = 'none';
+                document.getElementById('local-live-video').style.display = 'block';
+            } else {
+                document.getElementById('local-live-video').style.display = 'none';
+                document.getElementById('remote-live-video').style.display = 'block';
+            }
+            
             pkPartnerStreamId = "";
             showToast("Duel closed.");
         }
@@ -2047,7 +2078,7 @@
             document.getElementById(id).classList.remove('active');
         };
 
-        // --- 10. WEBRTC STREAM CREATION (HOSTS) ---
+        // --- 10. LIVEKIT STREAM CREATION (HOSTS) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
             const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Room`;
             const tariffValue = parseInt(document.getElementById('live-room-tariff').value) || 0;
@@ -2089,23 +2120,41 @@
                 }
 
                 showLoading("Authorizing input streams...");
-                localStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
+                currentRoom = new LivekitClient.Room();
+                
+                const newStreamRef = push(ref(db, 'live_streams'));
+                currentStreamId = newStreamRef.key;
+                isHost = true;
+
+                // Request LiveKit Token
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${currentStreamId}&identity=${currentUser}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                // Connect to LiveKit Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
+
+                // Publish tracks
+                await currentRoom.localParticipant.enableCameraAndMicrophone({
+                    video: {
                         facingMode: "user",
-                        width: { ideal: 320, max: 480 },
-                        height: { ideal: 240, max: 360 },
-                        frameRate: { ideal: 15, max: 15 }
-                    }, 
+                        resolution: LivekitClient.VideoPresets.h360.resolution,
+                    },
                     audio: {
                         echoCancellation: true,
                         noiseSuppression: true
                     }
                 });
-                showLoading("Directing feed to server node...");
-                
-                const newStreamRef = push(ref(db, 'live_streams'));
-                currentStreamId = newStreamRef.key;
-                isHost = true;
+
+                // Attach local track
+                const localVideo = document.getElementById('local-live-video');
+                localVideo.style.display = 'block';
+                document.getElementById('remote-live-video').style.display = 'none';
+
+                // Attach track from local participant
+                currentRoom.localParticipant.videoTrackPublications.forEach(pub => {
+                    if (pub.track) pub.track.attach(localVideo);
+                });
 
                 await set(newStreamRef, {
                     hostName: currentUser,
@@ -2119,7 +2168,7 @@
 
                 onDisconnect(newStreamRef).remove();
                 document.getElementById('btn-pk-trigger').style.display = 'flex';
-                document.getElementById('btn-beauty-trigger').style.display = 'flex'; // Expose filters exclusively for host
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; 
                 setupHostUIAndSignaling();
 
             } catch (err) {
@@ -2131,20 +2180,39 @@
         async function startScheduledLiveAsHost(streamId, data) {
             showLoading("Authorizing input streams...");
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
+                currentRoom = new LivekitClient.Room();
+                currentStreamId = streamId;
+                isHost = true;
+
+                // Request LiveKit Token
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${currentStreamId}&identity=${currentUser}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                // Connect to LiveKit Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
+
+                // Publish tracks
+                await currentRoom.localParticipant.enableCameraAndMicrophone({
+                    video: {
                         facingMode: "user",
-                        width: { ideal: 320, max: 480 },
-                        height: { ideal: 240, max: 360 },
-                        frameRate: { ideal: 15, max: 15 }
-                    }, 
+                        resolution: LivekitClient.VideoPresets.h360.resolution,
+                    },
                     audio: {
                         echoCancellation: true,
                         noiseSuppression: true
                     }
                 });
-                currentStreamId = streamId;
-                isHost = true;
+
+                // Attach local track
+                const localVideo = document.getElementById('local-live-video');
+                localVideo.style.display = 'block';
+                document.getElementById('remote-live-video').style.display = 'none';
+
+                // Attach track from local participant
+                currentRoom.localParticipant.videoTrackPublications.forEach(pub => {
+                    if (pub.track) pub.track.attach(localVideo);
+                });
 
                 await update(ref(db, `live_streams/${streamId}`), {
                     isLive: true,
@@ -2154,7 +2222,7 @@
                 
                 onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
                 document.getElementById('btn-pk-trigger').style.display = 'flex';
-                document.getElementById('btn-beauty-trigger').style.display = 'flex'; // Expose filters exclusively for host
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; 
                 setupHostUIAndSignaling();
             } catch (err) {
                 hideLoading();
@@ -2166,11 +2234,6 @@
             document.getElementById('main-app').style.display = 'none';
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
-            
-            const localVideo = document.getElementById('local-live-video');
-            localVideo.style.display = 'block';
-            document.getElementById('remote-live-video').style.display = 'none';
-            localVideo.srcObject = localStream;
 
             document.getElementById('live-host-name').innerText = currentUser + " (You)";
             document.getElementById('live-host-avatar').src = currentAvatar;
@@ -2180,78 +2243,9 @@
             setupLiveChat();
             listenToPKBattleDuel();
 
-            if (localStream && localStream.getVideoTracks().length > 0) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                videoTrack.onmute = () => {
-                    showToast("Alert: Live stream feed suspended!");
-                    document.body.classList.add('security-blur');
-                };
-                videoTrack.onunmute = () => {
-                    showToast("Feed restored.");
-                    document.body.classList.remove('security-blur');
-                };
-                videoTrack.onended = () => {
-                    showToast("Feed stream disconnected.");
-                    leaveLiveStream();
-                };
-            }
-
-            onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers`), async (snapshot) => {
-                const viewerId = snapshot.key;
-                const viewerData = snapshot.val();
-                
-                get(ref(db, `live_streams/${currentStreamId}/viewers`)).then(s => {
-                    document.getElementById('live-viewer-count').innerText = s.val() ? Object.keys(s.val()).length : 0;
-                });
-
-                if (viewerData.offer) {
-                    const pc = new RTCPeerConnection(iceServers);
-                    hostPeerConnections[viewerId] = pc;
-
-                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
-                    
-                    localStream.getTracks().forEach(track => {
-                        const sender = pc.addTrack(track, localStream);
-                        if (track.kind === 'video') {
-                            setTimeout(() => {
-                                try {
-                                    const params = sender.getParameters();
-                                    if (params && params.encodings && params.encodings.length > 0) {
-                                        params.encodings[0].maxBitrate = 150000; 
-                                        sender.setParameters(params).catch(e => {});
-                                    }
-                                } catch(e) {}
-                            }, 1000);
-                        }
-                    });
-
-                    pc.onicecandidate = e => {
-                        if (e.candidate) {
-                            push(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/host`), e.candidate.toJSON());
-                        }
-                    };
-
-                    const viewerCandidatesQueue = [];
-                    onChildAdded(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/candidates/viewer`), (snap) => {
-                        if(snap.val()) {
-                            if(pc.remoteDescription && pc.remoteDescription.type) {
-                                pc.addIceCandidate(new RTCIceCandidate(snap.val())).catch(err => {});
-                            } else {
-                                viewerCandidatesQueue.push(snap.val());
-                            }
-                        }
-                    });
-
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-
-                    await set(ref(db, `live_streams/${currentStreamId}/viewers/${viewerId}/answer`), {
-                        type: answer.type, sdp: answer.sdp
-                    });
-
-                    viewerCandidatesQueue.forEach(c => pc.addIceCandidate(new RTCIceCandidate(c)).catch(err => {}));
-                    viewerCandidatesQueue.length = 0;
-                }
+            currentRoom.on(LivekitClient.RoomEvent.Disconnected, () => {
+                showToast("Live stream disconnected.");
+                leaveLiveStream();
             });
         }
 
@@ -2273,78 +2267,52 @@
             document.getElementById('live-host-name').innerText = streamData.hostName;
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
             document.getElementById('btn-pk-trigger').style.display = 'none';
-            document.getElementById('btn-beauty-trigger').style.display = 'none'; // Filters not allowed for viewers
+            document.getElementById('btn-beauty-trigger').style.display = 'none'; 
 
             try {
-                viewerPeerConnection = new RTCPeerConnection(iceServers);
+                // Request Token for Viewer
+                const tokenRes = await fetch(`${TOKENS_SERVER_URL}?room=${streamId}&identity=${currentUser}_${Math.floor(Math.random() * 1000)}`);
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
 
-                viewerPeerConnection.ontrack = e => {
-                    if (e.streams && e.streams[0]) {
-                        remoteVideo.srcObject = e.streams[0];
-                    } else {
-                        if (!remoteVideo.srcObject) {
-                            remoteVideo.srcObject = new MediaStream();
+                currentRoom = new LivekitClient.Room();
+
+                // Set up Track Subscribed Events
+                currentRoom.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                    if (track.kind === 'video') {
+                        remoteVideo.style.display = 'block';
+                        track.attach(remoteVideo);
+                    }
+                    if (track.kind === 'audio') {
+                        track.attach(remoteVideo);
+                        remoteVideo.muted = false;
+                        remoteVideo.volume = 1.0;
+
+                        const playPromise = remoteVideo.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                const unmuteBtn = document.getElementById('unmute-overlay');
+                                unmuteBtn.style.display = 'flex';
+                                unmuteBtn.onclick = () => {
+                                    remoteVideo.muted = false;
+                                    remoteVideo.play();
+                                    unmuteBtn.style.display = 'none';
+                                    showToast("Audio is active! 🔊");
+                                };
+                            });
                         }
-                        remoteVideo.srcObject.addTrack(e.track);
                     }
+                });
 
-                    remoteVideo.muted = false;
-                    remoteVideo.volume = 1.0;
+                // Connect to Room
+                await currentRoom.connect(LIVEKIT_WS_URL, token);
 
-                    const playPromise = remoteVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            const unmuteBtn = document.getElementById('unmute-overlay');
-                            unmuteBtn.style.display = 'flex';
-                            unmuteBtn.onclick = () => {
-                                remoteVideo.muted = false;
-                                remoteVideo.play();
-                                unmuteBtn.style.display = 'none';
-                                showToast("Audio is active! 🔊");
-                            };
-                        });
-                    }
-                };
-
-                viewerPeerConnection.onicecandidate = e => {
-                    if (e.candidate) {
-                        push(ref(db, `live_streams/${streamId}/viewers/${currentUserId}/candidates/viewer`), e.candidate.toJSON());
-                    }
-                };
-
-                viewerPeerConnection.addTransceiver('video', { direction: 'recvonly' });
-                viewerPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
-                
-                const offer = await viewerPeerConnection.createOffer();
-                await viewerPeerConnection.setLocalDescription(offer);
-
+                // Add to viewer node in Firebase
                 await set(ref(db, `live_streams/${streamId}/viewers/${currentUserId}`), {
-                    username: currentUser,
-                    offer: { type: offer.type, sdp: offer.sdp }
+                    username: currentUser
                 });
 
                 onDisconnect(ref(db, `live_streams/${streamId}/viewers/${currentUserId}`)).remove();
-
-                const hostCandidatesQueue = [];
-                onChildAdded(ref(db, `live_streams/${streamId}/viewers/${currentUserId}/candidates/host`), (snap) => {
-                    if(snap.val()) {
-                        if (viewerPeerConnection.remoteDescription && viewerPeerConnection.remoteDescription.type) {
-                            viewerPeerConnection.addIceCandidate(new RTCIceCandidate(snap.val())).catch(err => {});
-                        } else {
-                            hostCandidatesQueue.push(snap.val());
-                        }
-                    }
-                });
-
-                onValue(ref(db, `live_streams/${streamId}/viewers/${currentUserId}/answer`), async (snap) => {
-                    const answer = snap.val();
-                    if (answer && viewerPeerConnection.signalingState !== "closed") {
-                        await viewerPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-                        
-                        hostCandidatesQueue.forEach(c => viewerPeerConnection.addIceCandidate(new RTCIceCandidate(c)).catch(err => {}));
-                        hostCandidatesQueue.length = 0;
-                    }
-                });
 
                 onValue(ref(db, `live_streams/${streamId}/viewers`), (snap) => {
                     document.getElementById('live-viewer-count').innerText = snap.val() ? Object.keys(snap.val()).length : 0;
@@ -2357,6 +2325,7 @@
                 push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} entered the room.` });
 
             } catch(e) {
+                console.error(e);
                 hideLoading();
                 showToast("Connection failed.");
                 leaveLiveStream();
@@ -2372,14 +2341,21 @@
             document.getElementById('main-app').style.display = 'block';
             document.getElementById('unmute-overlay').style.display = 'none';
 
+            // Disconnect standard room
+            if (currentRoom) {
+                currentRoom.disconnect();
+                currentRoom = null;
+            }
+
+            // Disconnect PK room if any
+            if (pkPartnerRoom) {
+                pkPartnerRoom.disconnect();
+                pkPartnerRoom = null;
+            }
+
             if (isHost && currentStreamId) {
-                if (localStream) localStream.getTracks().forEach(t => t.stop());
-                Object.values(hostPeerConnections).forEach(pc => pc.close());
-                hostPeerConnections = {};
                 remove(ref(db, `live_streams/${currentStreamId}`));
             } else if (!isHost && currentStreamId) {
-                if (viewerPeerConnection) viewerPeerConnection.close();
-                viewerPeerConnection = null;
                 remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUserId}`));
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
@@ -2509,7 +2485,7 @@
 
         window.redirectToDiamondStore = function() {
             toggleGiftsSheet(false);
-            toggleDiamondsSheet(true); // Direct launch slide up diamonds sheet [1, 2]
+            toggleDiamondsSheet(true); 
         };
 
     </script>
