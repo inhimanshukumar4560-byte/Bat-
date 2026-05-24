@@ -5,24 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zingoo Live</title>
     
-    <!-- 1. Force HTTPS Auto-Redirect (Ignoring Localhost for development) -->
+    <!-- 1. Force HTTPS Auto-Redirect (Ignoring Localhost & Local IP setups for development) -->
     <script>
-        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const isIPAddress = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(window.location.hostname);
+        if (window.location.protocol !== 'https:' && 
+            window.location.hostname !== 'localhost' && 
+            window.location.hostname !== '127.0.0.1' &&
+            !isIPAddress) {
             window.location.href = 'https://' + window.location.hostname + window.location.pathname + window.location.search;
         }
     </script>
 
-    <!-- 2. Synchronous/Static CDN Script Loading (Zero Async-Loader to prevent 4G timeouts) -->
-    <!-- ZEGOCLOUD SDKs -->
-    <script src="https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+    <!-- 2. Robust CDN Scripts with automatic unpkg.com fallback if jsDelivr fails/is blocked -->
+    <script src="https://cdn.jsdelivr.net/npm/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js" 
+            onerror="this.onerror=null; this.src='https://unpkg.com/zego-express-engine-webrtc@3.1.0/ZegoExpressWebRTC.js';"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js" 
+            onerror="this.onerror=null; this.src='https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js';"></script>
 
-    <!-- Tailwind CSS for smooth and scalable layouts -->
+    <!-- Tailwind CSS for smooth layouts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Mobile-First and Native App feel overrides */
         body {
             background-color: #0c080e;
             color: #f3f4f6;
@@ -30,7 +34,6 @@
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Custom scrollbar for chat box */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -38,11 +41,9 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        /* Smooth transitions */
         .page-transition {
             transition: all 0.3s ease-in-out;
         }
-        /* Video wrapper styling */
         #video-container video {
             width: 100%;
             height: 100%;
@@ -52,7 +53,27 @@
 </head>
 <body class="h-screen w-screen flex flex-col justify-between">
 
-    <!-- APP WRAPPER -->
+    <!-- CONNECTION / BLOCKED SCREEN (Displays only when CDN loading is entirely blocked by ISP) -->
+    <div id="cdn-error-screen" class="hidden fixed inset-0 z-50 bg-neutral-950 p-6 flex flex-col justify-center items-center text-center">
+        <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center text-2xl mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Connection Blocked by Network / ISP</h3>
+        <p class="text-xs text-gray-400 mb-6 max-w-xs leading-relaxed">
+            Zingoo could not load the ZEGOCLOUD engine. This usually happens when your mobile network blocks developer networks.
+        </p>
+        <div class="bg-neutral-900 border border-neutral-800 p-4 rounded-2xl text-left text-xs text-gray-300 w-full max-w-xs mb-6 space-y-2">
+            <p class="font-bold text-pink-500">Quick steps to solve:</p>
+            <p>1. Switch your network (e.g. from Mobile Data to Wi-Fi, or vice versa).</p>
+            <p>2. Disable any Adblocker, VPN, or Brave Shields if active.</p>
+            <p>3. Refresh the page to load assets.</p>
+        </div>
+        <button onclick="window.location.reload()" class="bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold px-6 py-2.5 rounded-full text-sm active:scale-95 transition-transform">
+            Refresh Page
+        </button>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
     <div id="app" class="relative w-full h-full max-w-md mx-auto bg-neutral-950 flex flex-col shadow-2xl overflow-hidden">
         
         <!-- ==================== DASHBOARD VIEW ==================== -->
@@ -81,7 +102,6 @@
                 
                 <!-- Dynamic Grid container -->
                 <div id="streams-grid" class="grid grid-cols-2 gap-3">
-                    <!-- Loading state placeholder -->
                     <div id="streams-placeholder" class="col-span-2 text-center py-12 text-gray-500">
                         <i class="fa-solid fa-circle-notch animate-spin text-3xl text-pink-500 mb-2"></i>
                         <p class="text-sm">Finding active streams...</p>
@@ -91,7 +111,7 @@
 
             <!-- Bottom Create Stream Button -->
             <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                <button id="btn-trigger-go-live" class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-extrabold px-8 py-3.5 rounded-full shadow-lg shadow-pink-500/30 flex items-center gap-2 transform active:scale-95 transition-transform">
+                <button id="btn-trigger-go-live" class="bg-gradient-to-r from-pink-500 to-red-500 text-white font-extrabold px-8 py-3.5 rounded-full shadow-lg shadow-pink-500/30 flex items-center gap-2 transform active:scale-95 transition-transform">
                     <i class="fa-solid fa-video"></i> GO LIVE
                 </button>
             </div>
@@ -101,7 +121,6 @@
         <div id="live-room-view" class="page-transition hidden absolute inset-0 z-20 bg-black flex flex-col justify-between">
             <!-- Video Box -->
             <div id="video-container" class="absolute inset-0 w-full h-full bg-neutral-900 z-0 flex items-center justify-center">
-                <!-- Single flexible video element. Host plays local camera stream, viewer plays remote stream -->
                 <video id="live-video" autoplay playsinline class="w-full h-full object-cover"></video>
                 <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-white gap-3 z-10 hidden">
                     <i class="fa-solid fa-spinner animate-spin text-4xl text-pink-500"></i>
@@ -156,7 +175,7 @@
                             </button>
                         </div>
                         
-                        <!-- Gift button (Diamond transfer helper) -->
+                        <!-- Gift button -->
                         <button id="btn-send-gift" class="bg-gradient-to-r from-yellow-400 to-amber-500 text-neutral-950 p-3 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform font-bold w-12 h-12">
                             <i class="fa-solid fa-gem text-lg animate-bounce"></i>
                         </button>
@@ -195,7 +214,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, push, onValue, off, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Configuration (Direct Inject)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -232,6 +251,7 @@
         
         const dashboardView = document.getElementById('dashboard-view');
         const liveRoomView = document.getElementById('live-room-view');
+        const cdnErrorScreen = document.getElementById('cdn-error-screen');
         
         const btnTriggerGoLive = document.getElementById('btn-trigger-go-live');
         const modalGoLive = document.getElementById('modal-go-live');
@@ -256,13 +276,17 @@
         function initZego() {
             try {
                 if (typeof window.ZegoExpressEngine === 'undefined') {
-                    throw new Error("ZEGOCLOUD WebRTC Bundle could not be loaded statically.");
+                    // Show a custom full-screen recovery interface instead of throwing raw errors
+                    cdnErrorScreen.classList.remove('hidden');
+                    return false;
                 }
                 zg = new window.ZegoExpressEngine(AppID, ServerURL);
                 console.log("ZEGOCLOUD Express Engine successfully initialized.");
+                return true;
             } catch (err) {
                 console.error("Zego Initialization Failed:", err);
-                alert("Technical Alert: WebRTC hardware devices initialization failed. Web browsers enforce secure contexts (HTTPS or localhost). If using normal IP access, internal device drivers will crash.\nDetails: " + err.message);
+                cdnErrorScreen.classList.remove('hidden');
+                return false;
             }
         }
 
@@ -272,7 +296,6 @@
             let isNewUser = false;
 
             if (!userId) {
-                // Generate secure random ID sequence matching Database schema design
                 userId = "177952" + Math.floor(100000 + Math.random() * 900000);
                 const generatedName = "LiveUser_" + Math.floor(1000 + Math.random() * 9000);
                 const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${generatedName}`;
@@ -296,12 +319,10 @@
             }
 
             if (!isNewUser) {
-                // Fetch existing profile records
                 const snapshot = await get(ref(db, `users/${userId}`));
                 if (snapshot.exists()) {
                     currentUser = snapshot.val();
                 } else {
-                    // Profile cleared from RTDB node - force regeneration
                     localStorage.removeItem('zingoo_id');
                     return setupUserAuth();
                 }
@@ -312,7 +333,7 @@
             userDisplayName.textContent = currentUser.name;
             userDiamondsVal.textContent = currentUser.diamonds;
 
-            // Live-sync active state changes (like diamond deduction/addition)
+            // Live-sync active state changes
             onValue(ref(db, `users/${currentUser.id}/diamonds`), (snap) => {
                 if (snap.exists()) {
                     currentUser.diamonds = snap.val();
@@ -345,7 +366,6 @@
                     const card = document.createElement('div');
                     card.className = "bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform";
                     card.innerHTML = `
-                        <!-- Cover placeholder (Host Avatar Backdrop) -->
                         <div class="h-32 bg-gradient-to-br from-pink-900/40 to-neutral-800 relative flex items-center justify-center">
                             <img src="${stream.hostAvatar}" alt="${stream.hostName}" class="w-14 h-14 rounded-full border-2 border-pink-500 shadow-lg">
                             <span class="absolute top-2 left-2 bg-pink-500 text-white font-bold text-[8px] px-2 py-0.5 rounded flex items-center gap-1">
@@ -370,7 +390,6 @@
             });
         }
 
-        // Switch application viewport states
         function switchView(viewName) {
             if (viewName === 'dashboard') {
                 liveRoomView.classList.add('hidden');
@@ -405,12 +424,10 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Monitor Real-Time Room Events
         function setupRoomListeners(roomId) {
-            // Listen to Live Chat & Gifts
             const chatRef = ref(db, `live_streams/${roomId}/chats`);
             chatListenerRef = onValue(chatRef, (snapshot) => {
-                chatBox.innerHTML = ''; // Keep dynamic reset clean
+                chatBox.innerHTML = '';
                 if (snapshot.exists()) {
                     const chats = snapshot.val();
                     Object.keys(chats).forEach(key => {
@@ -426,7 +443,6 @@
                 }
             });
 
-            // Listen to Dynamic Viewers Count Updates
             const viewersRef = ref(db, `live_streams/${roomId}/viewers`);
             viewersListenerRef = onValue(viewersRef, (snapshot) => {
                 if (snapshot.exists()) {
@@ -438,7 +454,6 @@
             });
         }
 
-        // Tear down room listener structures
         function detachRoomListeners(roomId) {
             if (chatListenerRef) off(ref(db, `live_streams/${roomId}/chats`));
             if (viewersListenerRef) off(ref(db, `live_streams/${roomId}/viewers`));
@@ -446,17 +461,15 @@
 
         // ==================== ZEGOCLOUD MEDIA PIPELINE FLOWS ====================
 
-        // [HOST FLOW]
         async function hostLiveRoom(title) {
             if (!zg) {
-                alert("Zego Express SDK has failed to initialize. Operation canceled.");
+                alert("Zego Express SDK offline. Start request aborted.");
                 return;
             }
 
             currentRole = 'host';
             currentRoomId = "room_" + currentUser.id;
 
-            // Sync Stream Headers
             roomHostAvatar.src = currentUser.avatar;
             roomHostName.textContent = currentUser.name;
             roomStreamTitle.textContent = title;
@@ -466,7 +479,6 @@
             switchView('room');
 
             try {
-                // Create stream node in RTDB first
                 const streamRef = ref(db, `live_streams/${currentRoomId}`);
                 await set(streamRef, {
                     hostName: currentUser.name,
@@ -476,10 +488,8 @@
                     timestamp: Date.now()
                 });
 
-                // Force dynamic node removal upon connection failure or page unload
                 onDisconnect(streamRef).remove();
 
-                // Setup system alerts inside Firebase
                 const systemChatRef = push(ref(db, `live_streams/${currentRoomId}/chats`));
                 await set(systemChatRef, {
                     user: currentUser.name,
@@ -487,7 +497,6 @@
                     system: true
                 });
 
-                // Generate kit test token dynamically utilizing Prebuilt SDK fallback mechanism
                 const token = window.ZegoUIKitPrebuilt.generateKitTokenForTest(
                     AppID,
                     ServerSecret,
@@ -496,10 +505,8 @@
                     currentUser.name
                 );
 
-                // Log into ZEGOCLOUD WebRTC Space
                 await zg.loginRoom(currentRoomId, token, { userID: currentUser.id, userName: currentUser.name }, { userUpdate: true });
                 
-                // Initialize internal camera and microphone assets
                 localStream = await zg.createStream({
                     camera: {
                         video: true,
@@ -508,14 +515,10 @@
                 });
 
                 videoPlaceholder.classList.add('hidden');
-                
-                // Attach captured stream logic into raw HTML Video node
                 liveVideo.srcObject = localStream;
-                liveVideo.muted = true; // Avoid feedback lookback from native microphone
+                liveVideo.muted = true;
 
-                // Begin publishing live visual track to other connected viewers
                 zg.startPublishingStream(currentRoomId, localStream);
-
                 setupRoomListeners(currentRoomId);
 
             } catch (err) {
@@ -525,10 +528,9 @@
             }
         }
 
-        // [VIEWER FLOW]
         async function joinLiveRoom(roomId, stream) {
             if (!zg) {
-                alert("Zego Engine offline. Playback disabled.");
+                alert("Zego Engine offline. Join request aborted.");
                 return;
             }
 
@@ -552,15 +554,12 @@
                     currentUser.name
                 );
 
-                // Setup Real-time dynamic listeners
                 setupRoomListeners(roomId);
 
-                // Register Viewer presence dynamic status
                 const viewerRecordRef = ref(db, `live_streams/${roomId}/viewers/${currentUser.id}`);
                 await set(viewerRecordRef, true);
                 onDisconnect(viewerRecordRef).remove();
 
-                // Broadcast join system notice
                 const systemJoinRef = push(ref(db, `live_streams/${roomId}/chats`));
                 set(systemJoinRef, {
                     user: currentUser.name,
@@ -568,10 +567,8 @@
                     system: true
                 });
 
-                // Join ZEGOCLOUD room Space
                 await zg.loginRoom(roomId, token, { userID: currentUser.id, userName: currentUser.name }, { userUpdate: true });
 
-                // Catch additions inside dynamic media list tracks
                 zg.on('roomStreamUpdate', async (roomID, updateType, streamList) => {
                     if (updateType === 'ADD' && streamList.length > 0) {
                         const streamID = streamList[0].streamID;
@@ -579,7 +576,7 @@
                             remoteStream = await zg.startPlayingStream(streamID);
                             videoPlaceholder.classList.add('hidden');
                             liveVideo.srcObject = remoteStream;
-                            liveVideo.muted = false; // Viewers must hear the broadcast audio
+                            liveVideo.muted = false;
                         } catch (mediaErr) {
                             console.error("Playback play process error:", mediaErr);
                         }
@@ -596,44 +593,35 @@
             }
         }
 
-        // [CLEAN EXIT SYSTEM]
         async function leaveLiveRoom() {
             if (!currentRoomId) return;
-
-            // Turn off loaders
             videoPlaceholder.classList.add('hidden');
 
             try {
                 if (currentRole === 'host') {
-                    // Destroy stream dynamic parameters from global db mapping
                     const streamRef = ref(db, `live_streams/${currentRoomId}`);
                     await remove(streamRef);
 
-                    // Stop Zego stream tracks publishing
                     if (localStream) {
                         zg.stopPublishingStream(currentRoomId);
                         zg.destroyStream(localStream);
                         localStream = null;
                     }
                 } else if (currentRole === 'viewer') {
-                    // Stop stream rendering engines
                     if (remoteStream) {
                         zg.stopPlayingStream(currentRoomId);
                         remoteStream = null;
                     }
-                    // Remove current active user reference as viewer
                     const viewerRecordRef = ref(db, `live_streams/${currentRoomId}/viewers/${currentUser.id}`);
                     await remove(viewerRecordRef);
                 }
 
-                // Disengage Room environment completely
                 zg.logoutRoom(currentRoomId);
                 detachRoomListeners(currentRoomId);
 
             } catch (err) {
                 console.error("Room exit process encountered clean errors:", err);
             } finally {
-                // Clear UI references
                 liveVideo.srcObject = null;
                 currentRoomId = null;
                 currentRole = null;
@@ -643,7 +631,6 @@
 
         // ==================== INTERACTION ACTION HANDLERS ====================
 
-        // Trigger Live Settings Modal opening
         btnTriggerGoLive.addEventListener('click', () => {
             modalGoLive.classList.remove('hidden');
             liveTitleInput.value = '';
@@ -653,21 +640,18 @@
             modalGoLive.classList.add('hidden');
         });
 
-        // Initialize user-created custom Live Stream session
         btnStartLive.addEventListener('click', () => {
             const title = liveTitleInput.value.trim() || `${currentUser.name}'s Live Room`;
             modalGoLive.classList.add('hidden');
             hostLiveRoom(title);
         });
 
-        // Exit Broadcast Area
         btnLeaveRoom.addEventListener('click', () => {
             if (confirm("Are you sure you want to leave this session?")) {
                 leaveLiveRoom();
             }
         });
 
-        // Chat Submission trigger handler
         async function handleSendChat() {
             const text = chatInput.value.trim();
             if (!text || !currentRoomId) return;
@@ -690,7 +674,6 @@
             if (e.key === 'Enter') handleSendChat();
         });
 
-        // Dynamic Virtual Gift (Diamonds) Mechanism
         btnSendGift.addEventListener('click', async () => {
             if (!currentRoomId) return;
 
@@ -699,7 +682,6 @@
                 return;
             }
 
-            // Real-time balance and safe transaction verification checks
             if (currentUser.diamonds < 10) {
                 alert("Insufficient Diamonds! You need at least 10 diamonds to send a gift.");
                 return;
@@ -707,13 +689,10 @@
 
             try {
                 const newDiamondsVal = currentUser.diamonds - 10;
-                
-                // Perform dynamic balances deduction
                 await update(ref(db, `users/${currentUser.id}`), {
                     diamonds: newDiamondsVal
                 });
 
-                // Post live animation/visual signal inside Chat interface
                 const giftRef = push(ref(db, `live_streams/${currentRoomId}/chats`));
                 await set(giftRef, {
                     user: currentUser.name,
@@ -728,9 +707,11 @@
 
         // Initialization Pipeline
         window.addEventListener('DOMContentLoaded', async () => {
-            initZego();
-            await setupUserAuth();
-            syncActiveStreams();
+            const isLoaded = initZego();
+            if (isLoaded) {
+                await setupUserAuth();
+                syncActiveStreams();
+            }
         });
     </script>
 </body>
