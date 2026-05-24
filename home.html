@@ -201,32 +201,11 @@
 <!-- ================= MAIN CONTENT ================= -->
 <main class="relative z-20 w-full max-w-[1200px] mx-auto flex flex-col gap-6 mt-4 px-4" id="main-dashboard">
 
-    <!-- PROMO BANNER (Late Night Talks Style) -->
-    <section class="w-full relative rounded-2xl overflow-hidden bg-gradient-to-br from-red-500 to-red-600 shadow-md p-5 text-white animate-fade-up">
-        <div class="flex justify-between items-start">
-            <div>
-                <div class="bg-white/20 inline-flex px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase mb-2 flex items-center gap-1">
-                    <span class="text-yellow-300">🔥</span> Trending Room
-                </div>
-                <h3 class="text-2xl font-bold leading-tight mb-1">Late Night<br>Talks 🌙</h3>
-                <p class="text-white/80 text-xs mb-4 max-w-[60%]">Let's talk about anything and everything!</p>
-                <div class="flex items-center gap-1">
-                    <div class="flex -space-x-2">
-                        <img src="https://i.pravatar.cc/100?img=1" class="w-6 h-6 rounded-full border-2 border-red-500">
-                        <img src="https://i.pravatar.cc/100?img=2" class="w-6 h-6 rounded-full border-2 border-red-500">
-                        <img src="https://i.pravatar.cc/100?img=3" class="w-6 h-6 rounded-full border-2 border-red-500">
-                    </div>
-                    <span class="text-[10px] ml-1">+28</span>
-                </div>
-            </div>
-            
-            <div class="flex flex-col items-end h-full justify-between">
-                <div class="bg-black/30 rounded-full px-2 py-1 text-[10px] flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[12px]">person</span> 10/10
-                </div>
-                <button class="bg-white text-red-600 font-bold px-6 py-1.5 rounded-full text-sm mt-10 shadow-sm" onclick="openAudioRoomLobby()">Join</button>
-            </div>
-        </div>
+    <!-- PROMO BANNER (REPLACED WITH CUSTOM BANNER IMAGE) -->
+    <section class="w-full relative rounded-2xl overflow-hidden shadow-md animate-fade-up">
+        <a href="https://ibb.co/DHPK0PFH" target="_blank" class="block w-full rounded-2xl overflow-hidden shadow-md hover:scale-[1.01] transition-transform duration-300">
+            <img src="https://i.ibb.co/NdgYcgqd/file-0000000071047208aff42164a8f71ba7.png" alt="Zingoo Promo Banner" border="0" class="w-full h-auto object-cover">
+        </a>
     </section>
 
     <!-- LIVE NOW SECTION (Vertical Portrait Cards) -->
@@ -702,7 +681,7 @@
 
             <!-- Pack 6 (Best Value) (2000 Rs = 6000 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="absolute -top-[10px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-t-lg whitespace-nowrap z-10">👑 Best Value</div>
+                <div class="absolute -top-[10px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">👑 Best Value</div>
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
                     6000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
@@ -1085,6 +1064,9 @@
   let currentUser = localStorage.getItem("zingoo_user");
   let currentAvatar = localStorage.getItem("zingoo_avatar") || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
   let currentId = localStorage.getItem("zingoo_id");
+  
+  // Track if a custom avatar image has been uploaded (Mandatory for signup)
+  let avatarUploaded = localStorage.getItem("zingoo_avatar") ? true : false;
 
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
@@ -1679,6 +1661,7 @@
                   const safeCategory = (vid.category || 'For You Feed').replace(' Feed', '');
                   const tagCategory = safeCategory.replace(/\s+/g, '');
 
+                  // REELS: SIDEBAR SHARE BUTTON COMPLETELY REMOVED FROM BELOW RENDER
                   shortsContainer.insertAdjacentHTML('beforeend', `
                   <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden group">
                       <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-xl z-0 pointer-events-none">
@@ -1688,7 +1671,7 @@
                       <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10"></div>
                       <div class="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none z-10"></div>
                       
-                      <!-- Side Actions Column -->
+                      <!-- Side Actions Column (Share icon removed perfectly) -->
                       <div class="absolute bottom-8 right-3 z-20 flex flex-col items-center gap-4 pointer-events-auto pb-2">
                           <!-- Profile -->
                           <div class="relative w-[46px] h-[46px] mb-2 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
@@ -1706,11 +1689,6 @@
                           <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
                               <span class="material-symbols-outlined text-white text-[32px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
                               <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${commentCount}</span>
-                          </div>
-                          <!-- Share -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
-                              <span class="material-symbols-outlined text-white text-[34px] drop-shadow-md" style="font-variation-settings: 'FILL' 1; transform: scaleX(-1);">reply</span>
-                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${shareCount}</span>
                           </div>
                           <!-- Gift -->
                           <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="giftDiamonds('${vid.author}', '${vidId}')">
@@ -1792,6 +1770,7 @@
           reader.onload = (event) => {
               currentAvatar = event.target.result;
               document.getElementById("auth-avatar-preview").src = currentAvatar;
+              avatarUploaded = true; // Set flag to true once custom photo is uploaded
           };
           reader.readAsDataURL(e.target.files[0]);
       }
@@ -1810,6 +1789,12 @@
       
       if (!name) {
           alert("Please enter a valid nickname without special characters (. # $ [ ]).");
+          return;
+      }
+
+      // STRICT VALIDATION: Block account creation if they didn't upload a profile image
+      if (!avatarUploaded) {
+          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars. / कृपया अपना प्रोफाइल फोटो अपलोड करें! अकाउंट बनाने के लिए फोटो जरूरी है।");
           return;
       }
 
@@ -1956,6 +1941,12 @@
       usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
 
       let usersArray = Object.values(allUsersData).filter(user => user.name !== currentUser);
+      
+      // STRIKT FILTER: Users who haven't uploaded an image (relying on default dicebear placeholder) won't be shown in "Active Users" or "All Creators" Grid.
+      usersArray = usersArray.filter(user => {
+          const avatar = user.avatar || "";
+          return avatar && !avatar.includes("dicebear.com") && !avatar.includes("avataaars");
+      });
       
       usersArray.sort((a, b) => {
           let aStatus = a.status === 'online' ? 1 : 0;
