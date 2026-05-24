@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zingoo - Live Streaming</title>
+    <title>Zingoo - Premium Live Streaming</title>
     
     <!-- Google Fonts for Modern Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
             --text-muted: #8E7A80;
             --border-pink: #FFE3E8;
             --chat-bg: rgba(0, 0, 0, 0.55);
+            --neon-shadow: 0 0 15px rgba(255, 46, 93, 0.6);
         }
 
         * {
@@ -58,7 +59,7 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #FFB6C1; border-radius: 10px; }
 
-        /* CYBER VERIFICATION SCREEN (30-Second Security Shield) */
+        /* CYBER VERIFICATION SCREEN (Automated 5-Second Security Shield) */
         #cyber-verification-screen {
             position: fixed;
             inset: 0;
@@ -68,16 +69,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            p: 24px;
+            padding: 24px;
             text-align: center;
             user-select: none;
         }
 
-        /* 3D Circular Scanner */
+        /* Animated 3D Circular Scanner */
         .scanner-container {
             position: relative;
-            width: 190px;
-            height: 190px;
+            width: 170px;
+            height: 170px;
             margin-bottom: 30px;
             display: flex;
             align-items: center;
@@ -88,7 +89,7 @@
             inset: 0;
             border: 4px dashed #FF2E5D;
             border-radius: 50%;
-            animation: spin 10s linear infinite;
+            animation: spin 6s linear infinite;
         }
         .scanner-ring-inner {
             position: absolute;
@@ -96,13 +97,13 @@
             border: 2px solid rgba(255, 90, 127, 0.2);
             border-top: 2px solid #FF5A7F;
             border-radius: 50%;
-            animation: spin-reverse 4s linear infinite;
+            animation: spin-reverse 3s linear infinite;
         }
         #verify-countdown {
             font-size: 52px;
-            font-weight: 900;
+            font-weight: 950;
             color: #FFFFFF;
-            text-shadow: 0 0 20px rgba(255, 46, 93, 0.6);
+            text-shadow: 0 0 25px rgba(255, 46, 93, 0.8);
             z-index: 10;
         }
 
@@ -129,7 +130,7 @@
             color: #E2D9DB;
             font-weight: 500;
             text-align: left;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s;
         }
         .status-dot {
             width: 8px;
@@ -140,14 +141,14 @@
         .status-dot.active {
             background: #FF2E5D;
             box-shadow: 0 0 10px #FF2E5D;
-            animation: pulse-bg 1.5s infinite;
+            animation: pulse-bg 1s infinite;
         }
         .status-dot.completed {
             background: #10B981;
             box-shadow: 0 0 10px #10B981;
         }
 
-        /* LOGIN SCREEN (ID Enforced) */
+        /* LOGIN SCREEN */
         #id-login-screen {
             position: fixed;
             inset: 0;
@@ -226,7 +227,7 @@
             box-shadow: 0 0 35px rgba(255, 46, 93, 0.05);
         }
 
-        /* Premium Header */
+        /* Header */
         header {
             position: sticky;
             top: 0;
@@ -330,7 +331,7 @@
             border: 2px solid #FFFFFF;
         }
 
-        /* Premium App Banner */
+        /* Banner */
         .app-banner {
             position: relative;
             margin: 16px;
@@ -424,7 +425,7 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.12);
         }
 
-        /* Category Tab Scroller */
+        /* Categories */
         .category-tabs {
             display: flex;
             gap: 10px;
@@ -458,7 +459,7 @@
         }
         .tab-item i { font-size: 12px; }
 
-        /* Dynamic Live Section Header */
+        /* Dynamic Section */
         main { padding: 0; }
         .section-header {
             display: flex;
@@ -495,7 +496,7 @@
             gap: 4px;
         }
 
-        /* Live Grid - 3-Column Layout */
+        /* Grid */
         .live-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -575,7 +576,7 @@
         }
         .grid-loading-placeholder i { font-size: 24px; color: var(--primary-pink); }
 
-        /* Promo Carousel Scroller */
+        /* Promo Scroller */
         .promo-scroller {
             display: flex; gap: 12px; padding: 16px; overflow-x: auto; scrollbar-width: none;
         }
@@ -598,7 +599,7 @@
         .mini-avatars img { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #FFFFFF; margin-left: -4px; }
         .mini-avatars img:first-child { margin-left: 0; }
 
-        /* Start Live Modal */
+        /* Modal Settings */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -647,7 +648,7 @@
         .btn-cancel { flex: 1; background: #f0f0f0; color: #555; border: none; padding: 15px; border-radius: 15px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-cancel:hover { background: #e0e0e0; color: #333; }
 
-        /* LIVE ROOM SPLIT VIEW (PK Mode ready) */
+        /* LIVE SCREEN (PK SPLIT COMPATIBLE) */
         #live-view-screen {
             position: fixed; inset: 0; background: #000; z-index: 50000; display: none; flex-direction: column;
         }
@@ -663,6 +664,13 @@
             -webkit-transform: scaleX(-1);
         }
 
+        /* Video Beauty Filter classes applied to local video */
+        .beauty-none { filter: none !important; }
+        .beauty-glam { filter: brightness(1.18) contrast(0.96) saturate(1.08) blur(0.3px) !important; }
+        .beauty-warm { filter: sepia(0.18) saturate(1.22) brightness(1.12) !important; }
+        .beauty-blush { filter: hue-rotate(-8deg) saturate(1.35) brightness(1.14) !important; }
+        .beauty-dramatic { filter: contrast(1.15) saturate(0.9) brightness(1.08) !important; }
+
         /* PK Dual Split CSS */
         .live-video-container.pk-active {
             display: flex; flex-direction: row;
@@ -670,34 +678,35 @@
         .live-video-container.pk-active #local-live-video,
         .live-video-container.pk-active #remote-live-video {
             width: 50% !important; height: 100% !important; display: block !important;
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* PK Arena Status Board */
+        /* PK Board Design */
         #pk-status-bar {
             position: absolute; top: 110px; left: 16px; right: 16px; z-index: 30;
             display: none; flex-direction: column; gap: 4px;
         }
         .pk-header {
-            display: flex; justify-content: space-between; align-items: center; text-white; font-size: 12px; font-weight: 900;
+            display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 900;
         }
         .pk-team-red {
-            background: #FF2E5D; color: white; padding: 2px 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(255,46,93,0.5);
+            background: #FF2E5D; color: white; padding: 3px 12px; border-radius: 12px; box-shadow: var(--neon-shadow);
         }
         .pk-team-blue {
-            background: #2563EB; color: white; padding: 2px 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(37,99,235,0.5);
+            background: #2563EB; color: white; padding: 3px 12px; border-radius: 12px; box-shadow: 0 0 15px rgba(37,99,235,0.6);
         }
         .pk-time {
-            background: rgba(0,0,0,0.6); color: #FFD700; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-family: monospace;
+            background: rgba(0,0,0,0.65); color: #FFD700; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-family: monospace;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .pk-bar-track {
-            w-full; height: 12px; background: #222; border-radius: 6px; overflow: hidden; display: flex; border: 1px solid rgba(255,255,255,0.2);
+            width: 100%; height: 14px; background: #1a1a1a; border-radius: 7px; overflow: hidden; display: flex; border: 1.5px solid rgba(255,255,255,0.25);
         }
         #pk-red-progress {
-            background: linear-gradient(90deg, #FF2E5D, #FF5A7F); h-full; transition: width 0.5s ease; width: 50%;
+            background: linear-gradient(90deg, #FF2E5D, #FF5A7F); height: 100%; transition: width 0.5s ease; width: 50%;
         }
         #pk-blue-progress {
-            background: linear-gradient(90deg, #2563EB, #3B82F6); h-full; transition: width 0.5s ease; width: 50%;
+            background: linear-gradient(90deg, #2563EB, #3B82F6); height: 100%; transition: width 0.5s ease; width: 50%;
         }
         
         #unmute-overlay {
@@ -712,7 +721,7 @@
         .live-overlay-top {
             position: absolute; top: 0; left: 0; width: 100%; padding: 25px 20px;
             background: linear-gradient(rgba(0,0,0,0.8), transparent); z-index: 10;
-            display: flex; justify-between; align-items: flex-start; pointer-events: none;
+            display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
         }
         
         .host-info { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.4); padding: 6px 16px 6px 6px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -723,7 +732,7 @@
         .close-live-btn { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.3s; }
         .close-live-btn:hover { background: rgba(255,46,93,0.8); transform: scale(1.05); }
         
-        /* CHAT BOX */
+        /* CHATS */
         .live-overlay-bottom {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 15px 25px 15px;
             background: linear-gradient(transparent, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.95)); z-index: 10;
@@ -773,14 +782,13 @@
         .chat-msg.gift img { width: 24px; height: 24px; object-fit: contain; }
 
         /* ACTION BAR */
-        .action-bar { pointer-events: auto; display: flex; gap: 10px; align-items: center; }
+        .action-bar { pointer-events: auto; display: flex; gap: 8px; align-items: center; }
         .chat-input-wrapper { flex-grow: 1; background: rgba(0, 0, 0, 0.5); border-radius: 30px; padding: 4px 6px 4px 18px; display: flex; align-items: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .chat-input-wrapper input { background: transparent; border: none; color: white; padding: 10px 0; width: 100%; outline: none; font-family: 'Poppins'; font-size: 14px; font-weight: 500; }
         .chat-input-wrapper input::placeholder { color: #aaa; font-weight: 400; }
         
-        /* Send Plane Button */
         #btn-send-live-chat {
-            width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 14px; display: flex; justify-content: center; items-center; cursor: pointer; box-shadow: 0 4px 10px rgba(255,46,93,0.3); transition: transform 0.2s; flex-shrink: 0; margin-left: 6px;
+            width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-pink); color: white; border: none; font-size: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(255,46,93,0.3); transition: transform 0.2s; flex-shrink: 0; margin-left: 6px;
         }
         #btn-send-live-chat:hover { transform: scale(1.05); }
 
@@ -790,11 +798,14 @@
         .pk-trigger-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #3B82F6); color: white; border: none; font-size: 18px; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.5); transition: transform 0.2s; flex-shrink: 0; }
         .pk-trigger-btn:hover { transform: scale(1.1); }
 
+        .beauty-trigger-btn { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #8B5CF6, #EC4899); color: white; border: none; font-size: 18px; display: none; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 6px 20px rgba(139,92,246,0.5); transition: transform 0.2s; flex-shrink: 0; }
+        .beauty-trigger-btn:hover { transform: scale(1.1); }
+
         /* SLIDE-UP GIFTS SHEET */
         #gifts-bottom-sheet {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
-            width: 100%; max-width: 480px; bg-color: rgba(10, 5, 8, 0.98); background: rgba(10, 5, 8, 0.98);
-            border-t: 1px solid rgba(255, 46, 93, 0.3); border-radius: 24px 24px 0 0; z-index: 60000; padding: 20px;
+            width: 100%; max-width: 480px; background: rgba(10, 5, 8, 0.98);
+            border-top: 1px solid rgba(255, 46, 93, 0.3); border-radius: 24px 24px 0 0; z-index: 60000; padding: 20px;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
@@ -807,6 +818,37 @@
         .gift-item-card img { width: 44px; height: 44px; object-fit: contain; }
         .gift-item-card h5 { color: #EAEAEA; font-size: 10px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .gift-item-card p { color: #FFD700; font-size: 9px; font-weight: 800; display: flex; align-items: center; gap: 2px; }
+
+        /* SLIDE-UP BEAUTY FILTERS SHEET */
+        #beauty-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(12, 10, 15, 0.98);
+            border-top: 1px solid rgba(139, 92, 246, 0.3); border-radius: 24px 24px 0 0; z-index: 60000; padding: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        #beauty-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .beauty-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-bottom: 10px; }
+        .beauty-item-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px 4px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .beauty-item-card:hover, .beauty-item-card.selected { background: rgba(139,92,246,0.15); border-color: #8B5CF6; }
+        .beauty-item-card i { font-size: 20px; color: #EC4899; }
+        .beauty-item-card h5 { color: white; font-size: 9px; font-weight: 700; }
+
+        /* SLIDE-UP DIAMONDS RECHARGE SHEET */
+        #diamonds-bottom-sheet {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 480px; background: rgba(10, 10, 12, 0.98);
+            border-top: 1px solid rgba(255, 215, 0, 0.3); border-radius: 24px 24px 0 0; z-index: 61000; padding: 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+        #diamonds-bottom-sheet.active { transform: translateX(-50%) translateY(0); }
+        .diamonds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-bottom: 10px; }
+        .diamond-item-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px 6px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 110px; }
+        .diamond-item-card:hover { background: rgba(255, 215, 0, 0.08); border-color: #FFD700; }
+        .diamond-item-card h4 { color: white; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
+        .diamond-item-card span { font-size: 24px; }
+        .diamond-item-card button { background: #FFD700; color: #111; border: none; font-size: 10px; font-weight: 800; width: 100%; padding: 4px 0; border-radius: 20px; cursor: pointer; }
 
         /* SLIDE-UP PK PANEL */
         #pk-bottom-sheet {
@@ -837,7 +879,7 @@
         .pk-invite-box p { font-size: 13px; color: #666; margin-bottom: 24px; }
         .pk-invite-btns { display: flex; gap: 12px; }
 
-        /* Dynamic Online Users invitation container inside PK Sheet */
+        /* Dynamic Online Users invitation container */
         #pk-online-creators {
             margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: none;
         }
@@ -881,32 +923,28 @@
     <!-- Global Toast Notification -->
     <div class="toast" id="toastMsg">Action Successful!</div>
 
-    <!-- CYBER SECURITY ID VERIFICATION SCREEN (30 Seconds Verification Gate) -->
+    <!-- HIGH-TECH SHIELD AUTOMATED SCANNER (Exactly 5 Seconds Gate) -->
     <div id="cyber-verification-screen">
         <div class="scanner-container">
             <div class="scanner-ring-outer"></div>
             <div class="scanner-ring-inner"></div>
-            <span id="verify-countdown">30</span>
+            <span id="verify-countdown">5</span>
         </div>
-        <h2 style="color: #FFFFFF; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">SECURE SHIELD SYSTEM</h2>
-        <p style="color: #8E7A80; font-size: 12px; margin-top: 4px; font-weight: 500;">Cryptographic Deep Biometric & Cryptotoken Handshake</p>
+        <h2 style="color: #FFFFFF; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">ZINGOO AUTOMATED SHIELD</h2>
+        <p style="color: #8E7A80; font-size: 11px; margin-top: 4px; font-weight: 500;">Direct Realtime Secure Handshake Verification</p>
 
         <div class="verify-status-box">
             <div class="status-row" id="v-row-1">
                 <div class="status-dot active" id="v-dot-1"></div>
-                <span id="v-text-1">Initializing secure handshake...</span>
+                <span id="v-text-1">Securing communication port...</span>
             </div>
-            <div class="status-row" id="v-row-2" style="opacity: 0.4;">
+            <div class="status-row" id="v-row-2" style="opacity: 0.3;">
                 <div class="status-dot" id="v-dot-2"></div>
-                <span id="v-text-2">Awaiting network response...</span>
+                <span id="v-text-2">Validating profile credentials...</span>
             </div>
-            <div class="status-row" id="v-row-3" style="opacity: 0.4;">
+            <div class="status-row" id="v-row-3" style="opacity: 0.3;">
                 <div class="status-dot" id="v-dot-3"></div>
-                <span id="v-text-3">Syncing wallet and diamonds balance...</span>
-            </div>
-            <div class="status-row" id="v-row-4" style="opacity: 0.4;">
-                <div class="status-dot" id="v-dot-4"></div>
-                <span id="v-text-4">Securing audio/video tunnel...</span>
+                <span id="v-text-3">Linking secure wallet node...</span>
             </div>
         </div>
     </div>
@@ -937,7 +975,7 @@
                 <span class="logo-badge">LIVE</span>
             </div>
             <div class="header-actions">
-                <div class="diamond-bal" onclick="redirectToDiamondStore()">
+                <div class="diamond-bal" onclick="toggleDiamondsSheet(true)">
                     <i class="fas fa-gem diamond-icon"></i>
                     <span id="user-diamond-bal">0</span>
                     <div class="add-diamond-btn"><i class="fas fa-plus"></i></div>
@@ -949,7 +987,7 @@
             </div>
         </header>
 
-        <!-- New Premium Live Banner -->
+        <!-- Premium Live Banner -->
         <div class="app-banner">
             <div class="banner-overlay"></div>
             <div class="banner-content">
@@ -969,7 +1007,7 @@
             </div>
         </div>
 
-        <!-- Category Scroll Tab -->
+        <!-- Categories -->
         <div class="category-tabs">
             <div class="tab-item active"><i class="fas fa-broadcast-tower"></i> Live Now</div>
             <div class="tab-item"><i class="fas fa-fire"></i> Popular</div>
@@ -986,7 +1024,7 @@
                 <a href="#" class="see-all-link">See All <i class="fas fa-chevron-right"></i></a>
             </div>
 
-            <!-- Modern 3-Column Grid -->
+            <!-- Grid -->
             <div class="live-grid" id="liveGrid">
                 <div class="grid-loading-placeholder">
                     <i class="fas fa-circle-notch fa-spin"></i>
@@ -995,7 +1033,7 @@
             </div>
         </main>
 
-        <!-- Promo scroller card -->
+        <!-- Promo Scroller -->
         <div class="promo-scroller">
             <div class="promo-card">
                 <div class="promo-icon"><i class="fas fa-gift"></i></div>
@@ -1032,7 +1070,6 @@
             <h3>Ready to Stream?</h3>
             <input type="text" id="stream-title" placeholder="Enter stream title (e.g. Chilling with guys!)">
             
-            <!-- Room Entry Tariff Selector -->
             <div style="text-align: left; margin-bottom: 20px;">
                 <label style="font-size:12px; color:#555; font-weight:700; display:block; margin-bottom:5px;">
                     <i class="fas fa-gem" style="color:var(--primary-pink)"></i> Room Entry Price (Diamonds):
@@ -1045,7 +1082,6 @@
                 <i class="fas fa-cloud-upload-alt"></i> <span id="thumb-name-display">Upload New Thumbnail</span>
             </div>
             
-            <!-- Past Thumbnails & Schedule Options -->
             <div class="past-thumbs-wrapper" id="past-thumbs-wrapper" style="display:none;">
                 <p>Or choose previous thumbnail:</p>
                 <div class="past-thumbs-list" id="past-thumbs-container"></div>
@@ -1067,11 +1103,10 @@
     <div id="live-view-screen">
         <div class="live-video-container" id="video-canvas-container">
             <!-- Broadcaster Video -->
-            <video id="local-live-video" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
+            <video id="local-live-video" class="beauty-none" autoplay playsinline muted style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             <!-- Viewer Video -->
             <video id="remote-live-video" autoplay playsinline style="display:none; transform: scaleX(-1); -webkit-transform: scaleX(-1);"></video>
             
-            <!-- Unmute Button for Autoplay blocked browsers -->
             <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
             </div>
@@ -1111,6 +1146,8 @@
                     <button id="btn-send-live-chat" onclick="sendLiveChatMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <button class="gift-btn" id="btn-send-gift" onclick="toggleGiftsSheet(true)"><i class="fas fa-gift"></i></button>
+                <!-- Host-Only Beauty trigger -->
+                <button class="beauty-trigger-btn" id="btn-beauty-trigger" onclick="toggleBeautySheet(true)"><i class="fas fa-magic"></i></button>
                 <!-- Host-Only PK trigger -->
                 <button class="pk-trigger-btn" id="btn-pk-trigger" onclick="togglePKPanel(true)"><i class="fas fa-shield-halved"></i></button>
             </div>
@@ -1123,7 +1160,6 @@
             <h3><i class="fas fa-gem text-pink-500"></i> Zingoo Gift Shop</h3>
             <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="toggleGiftsSheet(false)"><i class="fas fa-times"></i></button>
         </div>
-        <!-- Dynamics Grid -->
         <div class="gifts-grid" id="live-gifts-grid">
             <p style="color: #888; font-size:11px; grid-column:1/-1; text-align:center;">Loading admin gifts...</p>
         </div>
@@ -1133,29 +1169,72 @@
         </div>
     </div>
 
-    <!-- SLIDE-UP PK PANEL -->
-    <div id="pk-bottom-sheet">
-        <div class="gifts-header" style="border-color: rgba(37, 99, 235, 0.2)">
-            <h3 style="color: #3B82F6;"><i class="fas fa-shield-halved text-blue-500"></i> Live PK Arena</h3>
-            <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="togglePKPanel(false)"><i class="fas fa-times"></i></button>
+    <!-- SLIDE-UP BEAUTY FILTERS SHEET -->
+    <div id="beauty-bottom-sheet">
+        <div class="gifts-header" style="border-color: rgba(139, 92, 246, 0.2)">
+            <h3 style="color: #8B5CF6;"><i class="fas fa-magic text-purple-400"></i> Studio Beauty Filters</h3>
+            <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="toggleBeautySheet(false)"><i class="fas fa-times"></i></button>
         </div>
-        <div class="pk-grid-actions">
-            <div class="pk-action-card" onclick="startRandomPKMatch()">
-                <i class="fas fa-shuffle"></i>
-                <h4>Random PK Match</h4>
-                <p>Match with active hosts</p>
+        <div class="beauty-grid">
+            <div class="beauty-item-card selected" id="filter-none" onclick="applyBeautyFilter('none')">
+                <i class="fas fa-circle-xmark"></i>
+                <h5>Original</h5>
             </div>
-            <div class="pk-action-card" onclick="toggleOnlineCreatorsList(true)">
-                <i class="fas fa-user-plus"></i>
-                <h4>Invite Friends</h4>
-                <p>Battle with your friends</p>
+            <div class="beauty-item-card" id="filter-glam" onclick="applyBeautyFilter('glam')">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                <h5>Smooth Glam</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-warm" onclick="applyBeautyFilter('warm')">
+                <i class="fas fa-sun"></i>
+                <h5>Warm Glow</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-blush" onclick="applyBeautyFilter('blush')">
+                <i class="fas fa-face-smile-wink"></i>
+                <h5>Pink Blush</h5>
+            </div>
+            <div class="beauty-item-card" id="filter-dramatic" onclick="applyBeautyFilter('dramatic')">
+                <i class="fas fa-film"></i>
+                <h5>Dramatic</h5>
             </div>
         </div>
+    </div>
 
-        <div id="pk-online-creators">
-            <h4 style="color:#8E7A80; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Online Friends</h4>
-            <div id="online-creators-list" style="max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
-                <p style="color:#888; font-size:10px; text-align:center;">No friends online</p>
+    <!-- SLIDE-UP DIAMONDS RECHARGE SHEET (Redirects direct to pay context) -->
+    <div id="diamonds-bottom-sheet">
+        <div class="gifts-header" style="border-color: rgba(255, 215, 0, 0.2)">
+            <h3 style="color: #FFD700;"><i class="fas fa-gem text-yellow-400"></i> Recharge Diamonds</h3>
+            <button class="close-live-btn" style="width:30px; height:30px; font-size:12px;" onclick="toggleDiamondsSheet(false)"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="diamonds-grid">
+            <div class="diamond-item-card" onclick="triggerDirectPay(50, 150)">
+                <h4>150 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>🔮</span>
+                <button>₹ 50.00</button>
+            </div>
+            <div class="diamond-item-card" style="border-color: #FFD700" onclick="triggerDirectPay(100, 300)">
+                <h4>300 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>💰</span>
+                <button style="background: var(--gradient-pink); color: white;">₹ 100.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(200, 600)">
+                <h4>600 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>📦</span>
+                <button>₹ 200.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(500, 1500)">
+                <h4>1500 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>🛍️</span>
+                <button>₹ 500.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(1000, 3000)">
+                <h4>3000 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>🧰</span>
+                <button>₹ 1000.00</button>
+            </div>
+            <div class="diamond-item-card" onclick="triggerDirectPay(2000, 6000)">
+                <h4>6000 <i class="fas fa-gem" style="font-size:10px;"></i></h4>
+                <span>👑</span>
+                <button>₹ 2000.00</button>
             </div>
         </div>
     </div>
@@ -1184,14 +1263,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue, onChildAdded, remove, serverTimestamp, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Right-click and Screenshot restriction logic
+        // Security Lockouts & Screen blur
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', (e) => {
             if (e.key === 'PrintScreen' || 
                 (e.ctrlKey && ['p', 's', 'c', 'u'].includes(e.key.toLowerCase())) || 
                 (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key))) {
                 e.preventDefault();
-                showToast("Security: Restricted Operation!");
+                showToast("Security Handshake active!");
             }
         });
         document.addEventListener('visibilitychange', () => {
@@ -1199,7 +1278,7 @@
             else document.body.classList.remove('security-blur');
         });
 
-        // Firebase Configuration (Matching exact db)
+        // Exact DB Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
             authDomain: "benchtopinnovations12.firebaseapp.com",
@@ -1225,7 +1304,7 @@
         let selectedThumbFile = null;
         let selectedPastThumb = null;
 
-        // PK Battle State Variables
+        // PK Variables
         let pkActive = false;
         let pkTimer = null;
         let pkRemainingTime = 180; 
@@ -1272,7 +1351,7 @@
             document.getElementById('loading-overlay').style.display = 'none';
         }
 
-        // --- 1. 30-SECOND CYBER VERIFICATION TIMERS ---
+        // --- 1. AUTOMATED 5-SECOND SECURITY HANDSHAKE (No Button Required) --- [1, 2]
         function runVerificationTimer(finalId, callback) {
             const screen = document.getElementById('cyber-verification-screen');
             const countdownEl = document.getElementById('verify-countdown');
@@ -1280,45 +1359,37 @@
             screen.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            let count = 30;
+            let count = 5; // Reduced 30s to 5s [1]
             countdownEl.innerText = count;
 
             const row1 = document.getElementById('v-row-1');
             const row2 = document.getElementById('v-row-2');
             const row3 = document.getElementById('v-row-3');
-            const row4 = document.getElementById('v-row-4');
 
             const dot1 = document.getElementById('v-dot-1');
             const dot2 = document.getElementById('v-dot-2');
             const dot3 = document.getElementById('v-dot-3');
-            const dot4 = document.getElementById('v-dot-4');
 
             const interval = setInterval(() => {
                 count--;
                 countdownEl.innerText = count;
 
-                // Status message updates corresponding to the ticking timer
-                if (count === 25) {
+                // Stepwise status updates as clock ticks down rapidly
+                if (count === 4) {
                     dot1.className = "status-dot completed";
                     row2.style.opacity = "1";
-                    document.getElementById('v-dot-2').className = "status-dot active";
-                    document.getElementById('v-text-1').innerText = "Cryptographic handshake complete. Secure.";
+                    dot2.className = "status-dot active";
+                    document.getElementById('v-text-1').innerText = "Port cryptographically linked. [SECURE]";
                 }
-                if (count === 18) {
+                if (count === 2) {
                     dot2.className = "status-dot completed";
                     row3.style.opacity = "1";
-                    document.getElementById('v-dot-3').className = "status-dot active";
-                    document.getElementById('v-text-2').innerText = "Network verified. Database linked.";
+                    dot3.className = "status-dot active";
+                    document.getElementById('v-text-2').innerText = "Identity matches server records. [VERIFIED]";
                 }
-                if (count === 10) {
+                if (count === 1) {
                     dot3.className = "status-dot completed";
-                    row4.style.opacity = "1";
-                    document.getElementById('v-dot-4').className = "status-dot active";
-                    document.getElementById('v-text-3').innerText = "Diamonds and assets verified. Synced.";
-                }
-                if (count === 3) {
-                    dot4.className = "status-dot completed";
-                    document.getElementById('v-text-4').innerText = "Audio/Video stream tunnel validated.";
+                    document.getElementById('v-text-3').innerText = "Wallet ledger synchronised. [READY]";
                 }
 
                 if (count <= 0) {
@@ -1329,7 +1400,7 @@
                 }
             }, 1000);
 
-            // Database ID check in background simultaneously
+            // Parallel verification [1]
             get(ref(db, 'users')).then(snapshot => {
                 let verified = false;
                 const allUsers = snapshot.val();
@@ -1345,7 +1416,7 @@
                     clearInterval(interval);
                     screen.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    showToast("Cryptographic Identity Verification Failed!");
+                    showToast("Authentication Check Failed!");
                     document.getElementById('id-login-screen').style.display = 'flex';
                 }
             });
@@ -1361,8 +1432,7 @@
             const storedAv = localStorage.getItem("zingoo_avatar");
             if (storedAv) document.getElementById('login-avatar-preview').src = storedAv;
             
-            // Auto verification
-            document.getElementById('btn-login-id').innerHTML = 'Initializing Shield... <i class="fas fa-spinner fa-spin"></i>';
+            document.getElementById('btn-login-id').innerHTML = 'Verifying ID Security Tunnel... <i class="fas fa-spinner fa-spin"></i>';
             runVerificationTimer(storedId, () => {
                 validateDatabaseLogin(storedId);
             });
@@ -1382,7 +1452,7 @@
             if (!enteredId) { showToast("Please enter your Zingoo ID!"); return; }
             
             const btn = document.getElementById('btn-login-id');
-            btn.innerHTML = 'Verifying... <i class="fas fa-spinner fa-spin"></i>';
+            btn.innerHTML = 'Securing pipeline... <i class="fas fa-spinner fa-spin"></i>';
 
             if (selectedAvatarFile) {
                 const formData = new FormData();
@@ -1394,7 +1464,7 @@
                         validateDatabaseLogin(enteredId);
                     });
                 }).catch(err => {
-                    showToast("Image upload failed, using default.");
+                    showToast("Image upload failed. Defaults used.");
                     runVerificationTimer(enteredId, () => {
                         validateDatabaseLogin(enteredId);
                     });
@@ -1441,7 +1511,7 @@
 
                     loginScreen.style.display = 'none';
                     mainApp.style.display = 'block';
-                    showToast(`Security check cleared. Welcome, ${currentUser}!`);
+                    showToast(`Logged in successfully as ${currentUser}!`);
                     
                     fetchLiveStreams();
                     setupGlobalPKInviteListener();
@@ -1452,11 +1522,11 @@
                         document.getElementById('gifts-wallet-bal').innerText = userDiamonds.toLocaleString();
                     });
                 } else {
-                    showToast("Verification failed! ID not found.");
+                    showToast("Identity lookup failed. Verify ID.");
                     document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
                 }
             }).catch(err => {
-                showToast("Connection Error!");
+                showToast("System handshake failure.");
                 document.getElementById('btn-login-id').innerHTML = 'Enter Live App <i class="fas fa-arrow-right"></i>';
             });
         }
@@ -1484,7 +1554,7 @@
                         giftsGrid.appendChild(card);
                     });
                 } else {
-                    giftsGrid.innerHTML = '<p style="color:#888; font-size:11px; text-align:center; grid-column:1/-1;">No gifts available in the store database.</p>';
+                    giftsGrid.innerHTML = '<p style="color:#888; font-size:11px; text-align:center; grid-column:1/-1;">No store gifts matching Admin specs.</p>';
                 }
             });
         }
@@ -1498,11 +1568,55 @@
             }
         };
 
-        // --- 4. STREAM TARIFF (ENTRY FEE) logic ---
+        // --- 4. BEAUTY FILTERS SETUP FOR HOSTS --- [1, 2]
+        window.toggleBeautySheet = (show) => {
+            const sheet = document.getElementById('beauty-bottom-sheet');
+            if (show) sheet.classList.add('active');
+            else sheet.classList.remove('active');
+        };
+
+        window.applyBeautyFilter = (filterType) => {
+            const localVid = document.getElementById('local-live-video');
+            if (!localVid) return;
+
+            // Remove previous classes
+            localVid.className = "";
+            
+            // Apply corresponding styling preset [2]
+            if (filterType === 'none') localVid.className = 'beauty-none';
+            else if (filterType === 'glam') localVid.className = 'beauty-glam';
+            else if (filterType === 'warm') localVid.className = 'beauty-warm';
+            else if (filterType === 'blush') localVid.className = 'beauty-blush';
+            else if (filterType === 'dramatic') localVid.className = 'beauty-dramatic';
+
+            // Visual Card highlighting [2]
+            document.querySelectorAll('.beauty-item-card').forEach(card => card.classList.remove('selected'));
+            const selectedCard = document.getElementById(`filter-${filterType}`);
+            if (selectedCard) selectedCard.classList.add('selected');
+
+            showToast(`Filter Preset: ${filterType.toUpperCase()} Activated`);
+            toggleBeautySheet(false);
+        };
+
+        // --- 5. DIAMONDS SHEET (Direct Payment to github code) --- [1, 2]
+        window.toggleDiamondsSheet = (show) => {
+            const sheet = document.getElementById('diamonds-bottom-sheet');
+            if (show) sheet.classList.add('active');
+            else sheet.classList.remove('active');
+        };
+
+        window.triggerDirectPay = (amount, diamonds) => {
+            toggleDiamondsSheet(false);
+            showLoading("Directing to Razorpay pipeline...");
+            // Redirects to zingoo-pay.html located in the same repository path seamlessly
+            window.location.href = `zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
+        };
+
+        // --- 6. STREAM TARIFF ENTRY FEES ---
         async function verifyAndDeductTariff(streamId, streamData) {
             const tariff = parseInt(streamData.tariff || 0);
             if (tariff > 0 && streamData.hostName !== currentUser) {
-                showLoading("Verifying Room Entry Fee...");
+                showLoading("Verifying room access fee...");
                 try {
                     const viewerRef = ref(db, `users/${currentUser}`);
                     const viewerSnap = await get(viewerRef);
@@ -1510,14 +1624,12 @@
                         const curBal = viewerSnap.val().diamonds || 0;
                         if (curBal < tariff) {
                             hideLoading();
-                            alert(`Entry Denied! This live room has a set fee of 💎 ${tariff} Diamonds. Your balance: 💎 ${curBal}.`);
+                            alert(`Access Denied! Entering this room requires 💎 ${tariff} Diamonds. Balance: 💎 ${curBal}.`);
                             redirectToDiamondStore();
                             return false;
                         } else {
-                            // Deduct from Viewer
                             await update(ref(db, `users/${currentUser}`), { diamonds: curBal - tariff });
                             
-                            // Transfer to Host
                             const hostRef = ref(db, `users/${streamData.hostName}`);
                             const hostSnap = await get(hostRef);
                             if (hostSnap.exists()) {
@@ -1525,7 +1637,7 @@
                                 await update(hostRef, { diamonds: hostBal + tariff });
                             }
                             hideLoading();
-                            showToast(`Paid entry fee: 💎 ${tariff} Diamonds to host.`);
+                            showToast(`Access Granted! Paid 💎 ${tariff} Diamonds entrance fee.`);
                             return true;
                         }
                     }
@@ -1537,7 +1649,7 @@
             return true;
         }
 
-        // --- 5. PK DUEL STATE SYNCHRONIZATION AND RENDERING ---
+        // --- 7. PK DUEL STATE SYNCHRONIZATION AND RENDERING ---
         window.togglePKPanel = (show) => {
             const sheet = document.getElementById('pk-bottom-sheet');
             if (show) {
@@ -1577,10 +1689,10 @@
                         });
                     }
                     if(!onlineFound) {
-                        container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">No friends online streaming right now.</p>';
+                        container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">No matchable creators active.</p>';
                     }
                 } catch(e) {
-                    container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">Error loading creators.</p>';
+                    container.innerHTML = '<p style="color:#888; font-size:10px; text-align:center;">Lookup failed.</p>';
                 }
             } else {
                 listArea.style.display = 'none';
@@ -1588,7 +1700,7 @@
         };
 
         window.sendPKInvitation = function(targetStreamId, targetName) {
-            showToast(`Inviting ${targetName} to PK Duel...`);
+            showToast(`Challenging ${targetName}...`);
             set(ref(db, `live_streams/${targetStreamId}/pk_invite`), {
                 from_stream_id: currentStreamId,
                 from_name: currentUser,
@@ -1599,7 +1711,6 @@
         };
 
         function setupGlobalPKInviteListener() {
-            // All live hosts listen to incoming PK Invites on their stream node
             onValue(ref(db, `live_streams`), (snapshot) => {
                 const streams = snapshot.val();
                 if (isHost && currentStreamId && streams && streams[currentStreamId]) {
@@ -1607,7 +1718,7 @@
                     if (streamData.pk_invite && !pkActive) {
                         pendingInvitationData = streamData.pk_invite;
                         document.getElementById('pk-inviter-title').innerText = `${pendingInvitationData.from_name} Challenges You!`;
-                        document.getElementById('pk-invite-text').innerText = `${pendingInvitationData.from_name} is calling you to a battle in PK Duel Arena! Accept?`;
+                        document.getElementById('pk-invite-text').innerText = `${pendingInvitationData.from_name} calls you out for a Duel in the PK Arena! Accept?`;
                         document.getElementById('pk-invite-overlay').style.display = 'flex';
                     } else if (!streamData.pk_invite && document.getElementById('pk-invite-overlay').style.display === 'flex') {
                         document.getElementById('pk-invite-overlay').style.display = 'none';
@@ -1624,11 +1735,9 @@
             const oppName = pendingInvitationData.from_name;
             const oppAvatar = pendingInvitationData.from_avatar;
 
-            // Clear the invite slot
             await remove(ref(db, `live_streams/${currentStreamId}/pk_invite`));
 
             if (accept) {
-                // Set Up active PK Battle state on both streams
                 const pkDataForSelf = {
                     active: true,
                     partner_stream_id: oppStreamId,
@@ -1636,7 +1745,7 @@
                     partner_avatar: oppAvatar,
                     red_points: 0,
                     blue_points: 0,
-                    role: "guest", // Accepted invite, so we are guest
+                    role: "guest",
                     timer: 180,
                     timestamp: serverTimestamp()
                 };
@@ -1648,7 +1757,7 @@
                     partner_avatar: currentAvatar,
                     red_points: 0,
                     blue_points: 0,
-                    role: "host", // Sent invite, so they are host
+                    role: "host",
                     timer: 180,
                     timestamp: serverTimestamp()
                 };
@@ -1660,7 +1769,7 @@
         };
 
         window.startRandomPKMatch = async () => {
-            showToast("Searching for rando PK Duel Opponent...");
+            showToast("Searching for match in battle queues...");
             togglePKPanel(false);
 
             try {
@@ -1680,7 +1789,6 @@
                 }
 
                 if (matchedPartnerId) {
-                    // Match found! Pair them up.
                     const pkDataForSelf = {
                         active: true,
                         partner_stream_id: matchedPartnerId,
@@ -1709,22 +1817,19 @@
                     await set(ref(db, `live_streams/${currentStreamId}/pk_battle`), pkDataForSelf);
                     await set(ref(db, `live_streams/${matchedPartnerId}/pk_battle`), pkDataForOpp);
                 } else {
-                    // No match available, set self as searching
                     await update(ref(db, `live_streams/${currentStreamId}`), { pk_searching: true });
-                    showToast("No active duelists. Waiting for opponent in queue...");
+                    showToast("Queue active. Awaiting matched challenger...");
                 }
             } catch(e) {
-                showToast("Battle matching failed.");
+                showToast("Match queue error.");
             }
         };
 
-        // Listening to active PK Duel Node
         function listenToPKBattleDuel() {
             onValue(ref(db, `live_streams/${currentStreamId}/pk_battle`), (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.active) {
                     if (!pkActive) {
-                        // Start duel visual animations
                         pkActive = true;
                         pkPartnerStreamId = data.partner_stream_id;
                         pkRole = data.role;
@@ -1732,24 +1837,15 @@
                         document.getElementById('video-canvas-container').classList.add('pk-active');
                         document.getElementById('pk-status-bar').style.display = 'flex';
                         
-                        // Render PK challenger stream to side panel
-                        if (isHost) {
-                            // Render fake or peer stream if connected, we split screens
-                        } else {
-                            // Viewers can view both
-                        }
-
                         startPKLocalTimer();
-                        showToast("⚔️ PK Battle Duel has Commenced!");
+                        showToast("⚔️ PK Battle Commenced!");
                     }
                     
-                    // Sync Points
                     pkRedPoints = data.red_points || 0;
                     pkBluePoints = data.blue_points || 0;
                     document.getElementById('pk-red-points').innerText = pkRedPoints;
                     document.getElementById('pk-blue-points').innerText = pkBluePoints;
 
-                    // Sync pro-rata sliding progress bar red vs blue
                     const totalPoints = pkRedPoints + pkBluePoints;
                     if (totalPoints > 0) {
                         const redPct = (pkRedPoints / totalPoints) * 100;
@@ -1762,7 +1858,6 @@
                     }
 
                 } else if (!data && pkActive) {
-                    // PK Battle ended or destroyed
                     endPKDuelSession();
                 }
             });
@@ -1787,7 +1882,7 @@
         }
 
         function declarePKDuelWinner() {
-            let winner = "Tie!";
+            let winner = "Draw Battle!";
             if (pkRole === 'host') {
                 if (pkRedPoints > pkBluePoints) winner = "You Win! 🎉";
                 else if (pkBluePoints > pkRedPoints) winner = "Partner Wins!";
@@ -1795,7 +1890,7 @@
                 if (pkBluePoints > pkRedPoints) winner = "You Win! 🎉";
                 else if (pkRedPoints > pkBluePoints) winner = "Partner Wins!";
             }
-            alert(`Duel Complete! Results: ${winner}`);
+            alert(`Result: ${winner}`);
             if (isHost) {
                 remove(ref(db, `live_streams/${currentStreamId}/pk_battle`));
             }
@@ -1807,16 +1902,16 @@
             document.getElementById('video-canvas-container').classList.remove('pk-active');
             document.getElementById('pk-status-bar').style.display = 'none';
             pkPartnerStreamId = "";
-            showToast("PK Duel session closed.");
+            showToast("Duel closed.");
         }
 
 
-        // --- 6. CLOUDINARY THUMBNAIL UPLOAD & REUSE ---
+        // --- 8. THUMBNAILS & DYNAMIC IMAGES ---
         document.getElementById('thumb-upload-input').addEventListener('change', function(e) {
             if(e.target.files[0]) {
                 selectedThumbFile = e.target.files[0];
                 selectedPastThumb = null; 
-                document.getElementById('thumb-name-display').innerText = "Thumb: " + selectedThumbFile.name;
+                document.getElementById('thumb-name-display').innerText = "Selected: " + selectedThumbFile.name;
                 clearPastThumbSelection();
             }
         });
@@ -1874,7 +1969,7 @@
             }
         }
 
-        // --- 7. LIVE NOW BROADCAST CHANNELS ---
+        // --- 9. LIVE ROOMS SECTIONS GRID ---
         const gridContainer = document.getElementById('liveGrid');
 
         function fetchLiveStreams() {
@@ -1902,7 +1997,7 @@
                                     startScheduledLiveAsHost(streamId, data);
                                 } else if (!data.isLive) {
                                     const timeStr = new Date(data.scheduledTime).toLocaleString();
-                                    showToast(`Room starting later at: ${timeStr}`);
+                                    showToast(`Stream scheduled for: ${timeStr}`);
                                 } else {
                                     const tariffDeducted = await verifyAndDeductTariff(streamId, data);
                                     if(tariffDeducted) {
@@ -1937,7 +2032,7 @@
                 }
                 
                 if(count === 0) {
-                    gridContainer.innerHTML = '<div class="grid-loading-placeholder"><i class="fas fa-video-slash"></i><p>No active rooms right now. Go Live first!</p></div>';
+                    gridContainer.innerHTML = '<div class="grid-loading-placeholder"><i class="fas fa-video-slash"></i><p>Awaiting active hosts. Begin yours!</p></div>';
                 }
             });
         }
@@ -1952,21 +2047,21 @@
             document.getElementById(id).classList.remove('active');
         };
 
-        // --- 8. WEBRTC BROADCASTING (HOST) ---
+        // --- 10. WEBRTC STREAM CREATION (HOSTS) ---
         document.getElementById('btn-confirm-go-live').addEventListener('click', async () => {
-            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Stream`;
+            const title = document.getElementById('stream-title').value.trim() || `${currentUser}'s Live Room`;
             const tariffValue = parseInt(document.getElementById('live-room-tariff').value) || 0;
             const scheduleInput = document.getElementById('live-schedule-time').value;
             const isScheduled = scheduleInput ? new Date(scheduleInput).getTime() > Date.now() : false;
             
             closeModal('startLiveModal');
-            showLoading("Processing safe pipeline...");
+            showLoading("Securing WebRTC channel...");
 
             try {
                 let thumbUrl = currentAvatar; 
                 
                 if(selectedThumbFile) {
-                    showLoading("Uploading Thumbnail...");
+                    showLoading("Uploading room thumbnail...");
                     const uploaded = await uploadToCloudinary(selectedThumbFile);
                     if(uploaded) {
                         thumbUrl = uploaded;
@@ -1989,11 +2084,11 @@
                         timestamp: serverTimestamp()
                     });
                     hideLoading();
-                    showToast("Live scheduled successfully! ⏰");
+                    showToast("Room Scheduled! ⏰");
                     return; 
                 }
 
-                showLoading("Locking camera & mic connection...");
+                showLoading("Authorizing input streams...");
                 localStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: "user",
@@ -2006,7 +2101,7 @@
                         noiseSuppression: true
                     }
                 });
-                showLoading("Launching room pipeline...");
+                showLoading("Directing feed to server node...");
                 
                 const newStreamRef = push(ref(db, 'live_streams'));
                 currentStreamId = newStreamRef.key;
@@ -2024,16 +2119,17 @@
 
                 onDisconnect(newStreamRef).remove();
                 document.getElementById('btn-pk-trigger').style.display = 'flex';
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; // Expose filters exclusively for host
                 setupHostUIAndSignaling();
 
             } catch (err) {
                 hideLoading();
-                alert("Room setup failed. Camera permissions check: " + err.message);
+                alert("Initialization failure. Camera access block: " + err.message);
             }
         });
 
         async function startScheduledLiveAsHost(streamId, data) {
-            showLoading("Locking camera & mic connection...");
+            showLoading("Authorizing input streams...");
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
@@ -2058,6 +2154,7 @@
                 
                 onDisconnect(ref(db, `live_streams/${streamId}`)).remove();
                 document.getElementById('btn-pk-trigger').style.display = 'flex';
+                document.getElementById('btn-beauty-trigger').style.display = 'flex'; // Expose filters exclusively for host
                 setupHostUIAndSignaling();
             } catch (err) {
                 hideLoading();
@@ -2079,22 +2176,22 @@
             document.getElementById('live-host-avatar').src = currentAvatar;
 
             hideLoading();
-            showToast("Room is now active and LIVE! 🔴");
+            showToast("Broadcast stream initiated! You are LIVE! 🔴");
             setupLiveChat();
             listenToPKBattleDuel();
 
             if (localStream && localStream.getVideoTracks().length > 0) {
                 const videoTrack = localStream.getVideoTracks()[0];
                 videoTrack.onmute = () => {
-                    showToast("Warning: Camera pipeline interrupted!");
+                    showToast("Alert: Live stream feed suspended!");
                     document.body.classList.add('security-blur');
                 };
                 videoTrack.onunmute = () => {
-                    showToast("Camera restored.");
+                    showToast("Feed restored.");
                     document.body.classList.remove('security-blur');
                 };
                 videoTrack.onended = () => {
-                    showToast("Camera stream lost.");
+                    showToast("Feed stream disconnected.");
                     leaveLiveStream();
                 };
             }
@@ -2159,9 +2256,9 @@
         }
 
 
-        // --- 9. WEBRTC VIEWING (VIEWER) ---
+        // --- 11. WEBRTC STREAM CONSUMPTION (VIEWERS) ---
         async function joinLiveStream(streamId, streamData) {
-            showLoading("Securing audio/video pipelines...");
+            showLoading("Verifying secure WebRTC tunnel...");
             currentStreamId = streamId;
             isHost = false;
 
@@ -2176,6 +2273,7 @@
             document.getElementById('live-host-name').innerText = streamData.hostName;
             document.getElementById('live-host-avatar').src = streamData.hostAvatar;
             document.getElementById('btn-pk-trigger').style.display = 'none';
+            document.getElementById('btn-beauty-trigger').style.display = 'none'; // Filters not allowed for viewers
 
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
@@ -2202,7 +2300,7 @@
                                 remoteVideo.muted = false;
                                 remoteVideo.play();
                                 unmuteBtn.style.display = 'none';
-                                showToast("Audio is now Live! 🔊");
+                                showToast("Audio is active! 🔊");
                             };
                         });
                     }
@@ -2256,17 +2354,17 @@
                 setupLiveChat();
                 listenToPKBattleDuel();
                 
-                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} entered the live.` });
+                push(ref(db, `live_streams/${streamId}/chats`), { user: 'System', text: `${currentUser} entered the room.` });
 
             } catch(e) {
                 hideLoading();
-                showToast("Connection to the live stream lost.");
+                showToast("Connection failed.");
                 leaveLiveStream();
             }
         }
 
 
-        // --- 10. LEAVE / TERMINATE ROOMS ---
+        // --- 12. DISCONNECT STREAM/ROOM ---
         document.getElementById('btn-leave-live').addEventListener('click', leaveLiveStream);
 
         function leaveLiveStream() {
@@ -2283,7 +2381,7 @@
                 if (viewerPeerConnection) viewerPeerConnection.close();
                 viewerPeerConnection = null;
                 remove(ref(db, `live_streams/${currentStreamId}/viewers/${currentUserId}`));
-                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} exited the stream.` });
+                push(ref(db, `live_streams/${currentStreamId}/chats`), { user: 'System', text: `${currentUser} left.` });
             }
 
             currentStreamId = null;
@@ -2293,7 +2391,7 @@
         }
 
 
-        // --- 11. STREAM CHAT (Enter key & Send Plane Button integration) ---
+        // --- 13. LIVE CHAT SYSTEM ---
         function setupLiveChat() {
             const chatBox = document.getElementById('live-chat-box');
             chatBox.innerHTML = ''; 
@@ -2339,16 +2437,16 @@
         });
 
 
-        // --- 12. DIAMOND LEDGER DEDUCTIONS & EXCHANGE SEQUENCES ---
+        // --- 14. DIAMOND AND GIFT LEDGERS ---
         async function sendPreSelectedGift(giftName, giftCost, giftImg) {
             toggleGiftsSheet(false);
             if(isHost) {
-                showToast("You cannot send gifts in your own room!");
+                showToast("You cannot gift yourself!");
                 return;
             }
 
             if(userDiamonds >= giftCost) {
-                showLoading("Processing transaction...");
+                showLoading("Deducting diamonds...");
                 try {
                     const viewerRef = ref(db, `users/${currentUser}`);
                     const viewerSnap = await get(viewerRef);
@@ -2357,16 +2455,13 @@
                         if(balance >= giftCost) {
                             const newBal = balance - giftCost;
                             
-                            // Deduct Viewer
                             await update(viewerRef, { diamonds: newBal });
                             
-                            // Find host name of stream
                             const streamSnap = await get(ref(db, `live_streams/${currentStreamId}`));
                             if (streamSnap.exists()) {
                                 const streamData = streamSnap.val();
                                 const hostName = streamData.hostName;
                                 
-                                // Transfer to Host
                                 const hostRef = ref(db, `users/${hostName}`);
                                 const hostSnap = await get(hostRef);
                                 if(hostSnap.exists()) {
@@ -2374,7 +2469,6 @@
                                     await update(hostRef, { diamonds: hostBal + giftCost });
                                 }
                                 
-                                // Write gift to dynamic chats
                                 await push(ref(db, `live_streams/${currentStreamId}/chats`), {
                                     user: currentUser,
                                     isGift: true,
@@ -2382,17 +2476,15 @@
                                     giftImg: giftImg
                                 });
 
-                                // PK Points scoring update!
+                                // PK Points syncing
                                 if (pkActive) {
                                     const pkBattleRef = ref(db, `live_streams/${currentStreamId}/pk_battle`);
                                     const oppBattleRef = ref(db, `live_streams/${pkPartnerStreamId}/pk_battle`);
                                     
                                     if (pkRole === 'host') {
-                                        // Red team gets points
                                         await update(pkBattleRef, { red_points: pkRedPoints + giftCost });
                                         await update(oppBattleRef, { blue_points: pkRedPoints + giftCost });
                                     } else {
-                                        // Blue team gets points
                                         await update(pkBattleRef, { blue_points: pkBluePoints + giftCost });
                                         await update(oppBattleRef, { red_points: pkBluePoints + giftCost });
                                     }
@@ -2405,19 +2497,19 @@
                     }
                 } catch(e) {
                     hideLoading();
-                    showToast("Gift delivery failed.");
+                    showToast("Failed to complete transaction.");
                 }
             } else {
-                const checkConfirm = confirm(`Insufficient Diamonds! This gift costs 💎 ${giftCost} but you only have 💎 ${userDiamonds}.\n\nProceed to the Diamond Store?`);
+                const checkConfirm = confirm(`Required: 💎 ${giftCost} Diamonds. You have 💎 ${userDiamonds}.\n\nBuy more now?`);
                 if(checkConfirm) {
-                    leaveLiveStream();
                     redirectToDiamondStore();
                 }
             }
         }
 
         window.redirectToDiamondStore = function() {
-            window.location.href = 'index.html?action=buy_diamonds';
+            toggleGiftsSheet(false);
+            toggleDiamondsSheet(true); // Direct launch slide up diamonds sheet [1, 2]
         };
 
     </script>
