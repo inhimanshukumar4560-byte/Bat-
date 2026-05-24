@@ -636,6 +636,7 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
+        // --- LOADING FUNCTIONS ---
         function showLoading(text) {
             document.getElementById('loading-text').innerText = text;
             document.getElementById('loading-overlay').style.display = 'flex';
@@ -1000,6 +1001,8 @@
                     const pc = new RTCPeerConnection(iceServers);
                     hostPeerConnections[viewerId] = pc;
 
+                    // Unified Plan Fix: Set Remote Description BEFORE adding tracks
+                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
                     localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
                     pc.onicecandidate = e => {
@@ -1019,7 +1022,6 @@
                         }
                     });
 
-                    await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
                     const answer = await pc.createAnswer();
                     await pc.setLocalDescription(answer);
 
@@ -1054,13 +1056,17 @@
             try {
                 viewerPeerConnection = new RTCPeerConnection(iceServers);
 
-                // --- AUDIO / SUDO TRACK FIX ---
+                // --- AUDIO / VIDEO TRACK FIX ---
                 viewerPeerConnection.ontrack = e => {
-                    // Create MediaStream if missing, Add incoming track to it.
-                    if (!remoteVideo.srcObject) {
-                        remoteVideo.srcObject = new MediaStream();
+                    // Render Stream directly to srcObject for mobile rendering stability
+                    if (e.streams && e.streams[0]) {
+                        remoteVideo.srcObject = e.streams[0];
+                    } else {
+                        if (!remoteVideo.srcObject) {
+                            remoteVideo.srcObject = new MediaStream();
+                        }
+                        remoteVideo.srcObject.addTrack(e.track);
                     }
-                    remoteVideo.srcObject.addTrack(e.track);
 
                     // Force audio settings to be active
                     remoteVideo.muted = false;
