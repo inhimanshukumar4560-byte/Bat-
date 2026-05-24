@@ -600,7 +600,7 @@
         let selectedThumbFile = null;
         let selectedPastThumb = null;
 
-        // WebRTC Variables
+        // WebRTC Variables with optimized free TURN servers
         const iceServers = { 
             iceServers: [
                 { urls: 'stun:stun1.l.google.com:19302' },
@@ -909,8 +909,19 @@
                 }
 
                 showLoading("Accessing Camera & Mic...");
-                // Guaranteed microphone access capture
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                // Optimized Media Constraints for 30 concurrent viewers bandwidth limit
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: "user",
+                        width: { ideal: 320, max: 480 },
+                        height: { ideal: 240, max: 360 },
+                        frameRate: { ideal: 15, max: 15 }
+                    }, 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
                 showLoading("Starting Stream...");
                 
                 const newStreamRef = push(ref(db, 'live_streams'));
@@ -938,7 +949,18 @@
         async function startScheduledLiveAsHost(streamId, data) {
             showLoading("Accessing Camera & Mic...");
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: "user",
+                        width: { ideal: 320, max: 480 },
+                        height: { ideal: 240, max: 360 },
+                        frameRate: { ideal: 15, max: 15 }
+                    }, 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
                 currentStreamId = streamId;
                 isHost = true;
 
@@ -1003,7 +1025,22 @@
 
                     // Unified Plan Fix: Set Remote Description BEFORE adding tracks
                     await pc.setRemoteDescription(new RTCSessionDescription(viewerData.offer));
-                    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+                    
+                    // Host-side: Add tracks and lock maximum bitrate to 150kbps to support up to 30 viewers concurrently
+                    localStream.getTracks().forEach(track => {
+                        const sender = pc.addTrack(track, localStream);
+                        if (track.kind === 'video') {
+                            setTimeout(() => {
+                                try {
+                                    const params = sender.getParameters();
+                                    if (params && params.encodings && params.encodings.length > 0) {
+                                        params.encodings[0].maxBitrate = 150000; // Force 150 kbps limit
+                                        sender.setParameters(params).catch(e => {});
+                                    }
+                                } catch(e) {}
+                            }, 1000);
+                        }
+                    });
 
                     pc.onicecandidate = e => {
                         if (e.candidate) {
