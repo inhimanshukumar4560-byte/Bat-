@@ -1003,6 +1003,11 @@
             from { opacity: 0; transform: translateY(15px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
+        @keyframes floaty {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
 
         .toast {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
@@ -1010,14 +1015,15 @@
             font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             border-left: 5px solid var(--primary-pink); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000000;
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            cursor: pointer;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <!-- Global Toast Notification -->
-    <div class="toast" id="toastMsg">Action Successful!</div>
+    <!-- Global Toast Notification (Tappable & 5-Sec Timeout) -->
+    <div class="toast" id="toastMsg" onclick="this.classList.remove('show')">Action Successful!</div>
 
     <!-- HIGH-TECH SHIELD AUTOMATED SCANNER (Exactly 5 Seconds Gate) -->
     <div id="cyber-verification-screen">
@@ -1077,6 +1083,8 @@
                 </div>
             </div>
             <div class="header-actions">
+                <!-- Highly Visible Pulsing Go Live Button in Header -->
+                <button onclick="openStartLiveModal()" style="background: var(--gradient-pink); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(255, 46, 93, 0.3); animation: pulse-bg 2s infinite;"><i class="fas fa-circle" style="font-size: 6px; color: white;"></i> Go Live</button>
                 <div class="noti-btn">
                     <i class="far fa-bell"></i>
                     <span class="noti-badge">8</span>
@@ -1088,6 +1096,12 @@
         <div class="app-banner-premium" onclick="openStartLiveModal()">
             <img src="https://i.ibb.co/LDkPnkvx/IMG-20260524-165349.png" alt="Zingoo Premium Banner">
         </div>
+
+        <!-- Pulse Glowing Circular Go Live FAB Button (Impossible to miss) -->
+        <button onclick="openStartLiveModal()" style="position: absolute; bottom: 80px; right: 20px; width: 62px; height: 62px; border-radius: 50%; background: var(--gradient-pink); border: none; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 8px 25px rgba(255, 46, 93, 0.45); z-index: 99; animation: pulse-bg 1.5s infinite; transition: transform 0.2s;">
+            <i class="fas fa-broadcast-tower" style="font-size: 20px;"></i>
+            <span style="font-size: 8px; font-weight: 900; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Live</span>
+        </button>
 
         <!-- Categories -->
         <div class="category-tabs">
@@ -1192,6 +1206,18 @@
             <div id="unmute-overlay">
                 <i class="fas fa-volume-up"></i> Tap to Unmute Voice
             </div>
+        </div>
+
+        <!-- GORGEOUS BIG GIFT CELEBRATION SCREEN OVERLAY -->
+        <div id="big-gift-celebration" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0; pointer-events: none; z-index: 9999; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: rgba(0, 0, 0, 0.8); padding: 25px 35px; border-radius: 24px; border: 2px solid #FFD700; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 15px 45px rgba(255, 46, 93, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.3); width: 80%; max-width: 320px;">
+            <div id="celebration-shine" style="position: absolute; inset: 0; border-radius: 22px; background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%); animation: pulse-bg 2s infinite; pointer-events: none;"></div>
+            <span style="font-size: 11px; font-weight: 900; color: #FFD700; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 5px;"><i class="fas fa-crown"></i> GIFT RECEIVED <i class="fas fa-crown"></i></span>
+            <h4 id="gift-sender-name" style="color: #FFFFFF; font-size: 16px; font-weight: 800; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); line-height: 1.2;">Name</h4>
+            <p id="gift-sending-text" style="color: #FFB6C1; font-size: 12px; font-weight: 600; margin-top: 2px;">sent a precious gift!</p>
+            <div style="position: relative; margin: 15px 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                <img id="gift-celebration-img" src="" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(255, 46, 93, 0.6)); animation: floaty 2s ease-in-out infinite;">
+            </div>
+            <h3 id="gift-celebration-name" style="color: #FFD700; font-size: 18px; font-weight: 900; text-shadow: 0 2px 8px rgba(255, 46, 93, 0.8); letter-spacing: 0.5px;">GIFT NAME</h3>
         </div>
 
         <!-- PK Dual Arena Status Board -->
@@ -1426,7 +1452,7 @@
             const toast = document.getElementById('toastMsg');
             toast.innerText = message;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            setTimeout(() => toast.classList.remove('show'), 5000); // 5 Seconds exact automatic dismiss
         }
 
         function showLoading(text) {
@@ -1490,7 +1516,7 @@
                 const allUsers = snapshot.val();
                 if (allUsers) {
                     for (let key in allUsers) {
-                        if (allUsers[key].id === finalId) {
+                        if (String(allUsers[key].id).trim() === String(finalId).trim()) {
                             verified = true;
                             break;
                         }
@@ -1573,7 +1599,7 @@
                 
                 if (allUsers) {
                     for (let key in allUsers) {
-                        if (allUsers[key].id === enteredId) {
+                        if (String(allUsers[key].id).trim() === String(enteredId).trim()) {
                             currentUser = allUsers[key].name;
                             currentUserId = enteredId;
                             userKey = key;
@@ -2109,7 +2135,7 @@
                 const streams = snapshot.val();
                 let count = 0;
                 
-                if (streams) {
+                if (snapshot.exists()) {
                     Object.entries(streams).forEach(([streamId, data]) => {
                         if (data.isLive || data.scheduledTime) {
                             count++;
@@ -2332,7 +2358,7 @@
 
         function setupHostUIAndSignaling() {
             document.getElementById('main-app').style.display = 'none';
-            document.body.style.overflow = 'hidden'; // Stop scrolling on body when live
+            document.body.style.overflow = 'hidden'; 
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
 
@@ -2358,7 +2384,7 @@
             isHost = false;
 
             document.getElementById('main-app').style.display = 'none';
-            document.body.style.overflow = 'hidden'; // Stop scrolling on body when live
+            document.body.style.overflow = 'hidden'; 
             const liveScreen = document.getElementById('live-view-screen');
             liveScreen.style.display = 'flex';
             
@@ -2441,7 +2467,7 @@
         function leaveLiveStream() {
             document.getElementById('live-view-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            document.body.style.overflow = 'auto'; // Restore original scrolling context
+            document.body.style.overflow = 'auto'; 
             document.getElementById('unmute-overlay').style.display = 'none';
 
             // Disconnect standard room
@@ -2470,7 +2496,34 @@
         }
 
 
-        // --- 13. LIVE CHAT SYSTEM ---
+        // --- 13. LIVE CHAT SYSTEM & CELEBRATION DISPATCHER ---
+        window.triggerBigGiftCelebration = function(senderName, giftName, giftImg) {
+            const overlay = document.getElementById('big-gift-celebration');
+            const senderEl = document.getElementById('gift-sender-name');
+            const giftImgEl = document.getElementById('gift-celebration-img');
+            const giftNameEl = document.getElementById('gift-celebration-name');
+
+            senderEl.innerText = senderName;
+            giftImgEl.src = giftImg;
+            giftNameEl.innerText = giftName;
+
+            // Trigger animation
+            overlay.style.opacity = '1';
+            overlay.style.transform = 'translate(-50%, -50%) scale(1.1)';
+            overlay.style.pointerEvents = 'auto';
+
+            setTimeout(() => {
+                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 150);
+
+            // Hide automatically after 4 seconds
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                overlay.style.pointerEvents = 'none';
+            }, 4000);
+        };
+
         function setupLiveChat() {
             const chatBox = document.getElementById('live-chat-box');
             chatBox.innerHTML = ''; 
@@ -2486,6 +2539,9 @@
                     } else if (data.isGift) {
                         msgDiv.className = 'chat-msg gift';
                         msgDiv.innerHTML = `<span>${data.user}:</span> Sent ${data.text}! <img src="${data.giftImg}">`;
+                        
+                        // Trigger spectacular visual gift celebration overlay for all users in live
+                        triggerBigGiftCelebration(data.user, data.text, data.giftImg);
                     } else {
                         msgDiv.className = 'chat-msg';
                         msgDiv.innerHTML = `<span>${data.user}:</span> ${data.text}`;
@@ -2506,7 +2562,7 @@
             if (text && currentStreamId) {
                 push(ref(db, `live_streams/${currentStreamId}/chats`), { user: currentUser, text: text });
                 input.value = '';
-                toggleChatInput(false); // Close input overlay dynamically upon sending
+                toggleChatInput(false); 
             }
         };
 
@@ -2606,7 +2662,6 @@
 
         // Screen click/tap listener to close chat input dynamically
         document.getElementById('live-view-screen').addEventListener('click', (e) => {
-            // Safe guard selectors
             if (e.target.closest('#live-chat-input-overlay') || 
                 e.target.closest('.circle-action-btn') || 
                 e.target.closest('.gift-btn') ||
