@@ -17,7 +17,8 @@ try {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com"
+        // Naye Zingoo Database URL ke sath connect kiya gaya hai
+        databaseURL: "https://zingoo-ae309-default-rtdb.firebaseio.com"
     });
     console.log("Firebase Admin Initialized Successfully");
 } catch (error) {
