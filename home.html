@@ -1,11 +1,12 @@
 
+
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Zingoo - Home Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700&family=Syne:wght=700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -181,19 +182,17 @@
     <!-- RIGHT: Filter, Status, Notifications, Diamonds -->
     <div class="flex items-center gap-3">
         
-        <!-- Filter Replace Search -->
-        <select id="gender-filter" class="bg-gray-100 border-none rounded-full text-xs px-2 py-1.5 focus:ring-1 focus:ring-red-500 cursor-pointer font-bold text-gray-700 outline-none shadow-sm">
-            <option value="all">👥 All</option>
-            <option value="male">👨 Male</option>
-            <option value="female">👩 Female</option>
-        </select>
+        <!-- Custom 3D Category/Gender Selector Trigger (Image 3 design) -->
+        <div id="gender-filter-trigger" class="bg-gray-100 border border-gray-200 rounded-full text-xs px-3 py-1.5 cursor-pointer font-bold text-gray-700 shadow-sm flex items-center gap-1 hover:bg-gray-200 transition">
+            <span id="current-gender-label">👥 All</span>
+            <span class="material-symbols-outlined text-[14px]">expand_more</span>
+        </div>
 
-        <!-- Active/Inactive Status Toggle Switch -->
-        <div class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors" id="status-toggle-btn" onclick="toggleManualStatus()">
-            <span id="status-text" class="text-[10px] font-bold text-green-600">Active</span>
-            <div class="w-8 h-4 bg-green-500 rounded-full relative transition-colors duration-300" id="status-toggle-bg">
-                <div class="w-3 h-3 bg-white rounded-full absolute top-[2px] right-[2px] transition-all duration-300 shadow-sm" id="status-toggle-circle"></div>
-            </div>
+        <!-- Custom 3D Status Selector Trigger (Image 4 design) -->
+        <div id="status-filter-trigger" class="flex items-center gap-1.5 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition shadow-sm">
+            <span id="current-status-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+            <span id="status-text-label" class="text-[10px] font-bold text-green-600">Active</span>
+            <span class="material-symbols-outlined text-[13px] text-gray-500">expand_more</span>
         </div>
 
         <!-- Notification Bell -->
@@ -202,12 +201,15 @@
             <div id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full hidden items-center justify-center border border-white z-10">0</div>
         </div>
 
-        <!-- Buy Diamonds -->
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2 py-1 rounded-full cursor-pointer hover:bg-purple-200 transition-colors shrink-0">
-            <span class="material-symbols-outlined text-purple-600 text-[16px]">diamond</span>
-            <span id="diamond-balance-display" class="text-xs font-bold text-purple-800">0</span>
-            <span class="material-symbols-outlined text-red-500 text-[14px]">add_circle</span>
+        <!-- Buy Diamonds Widget (Balance numeric value hidden in main header per user request) -->
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0">
+            <span class="material-symbols-outlined text-purple-600 text-[18px]">diamond</span>
+            <span class="text-xs font-bold text-purple-800">Buy</span>
+            <span class="material-symbols-outlined text-purple-600 text-[13px]">add_circle</span>
         </div>
+        
+        <!-- Hidden numerical container so JS update scripts do not break -->
+        <span id="diamond-balance-display" class="hidden">0</span>
 
         <!-- 3-Line Menu Trigger -->
         <div class="cursor-pointer shrink-0" onclick="document.getElementById('menu-overlay').style.display='flex'; document.body.style.overflow='hidden';">
@@ -249,15 +251,7 @@
     <!-- LIVE NOW SECTION -->
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center gap-3">
-                <h2 class="text-lg font-bold text-gray-900">Active Users</h2>
-                <!-- Dynamic Status Filter Dropdown (Firebase-Friendly and instant) -->
-                <select id="active-users-status-filter" class="bg-gray-100 border-none rounded-full text-[10px] px-2.5 py-1 focus:ring-1 focus:ring-red-500 cursor-pointer font-bold text-gray-700 outline-none shadow-sm">
-                    <option value="all">🌐 All Status</option>
-                    <option value="active">🟢 Active</option>
-                    <option value="inactive">🔴 Inactive</option>
-                </select>
-            </div>
+            <h2 class="text-lg font-bold text-gray-900">Active Users</h2>
             <span id="see-all-trigger" class="text-xs font-bold text-red-500 cursor-pointer hover:underline">View All</span>
         </div>
         
@@ -584,7 +578,7 @@
                         <span class="material-symbols-outlined">diamond</span>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm text-gray-900">0</h4>
+                        <h4 class="font-bold text-sm text-gray-905">Buy</h4>
                         <p class="text-[10px] text-gray-500">Diamonds</p>
                     </div>
                 </div>
@@ -608,36 +602,6 @@
         <button id="btn-logout" class="w-full mt-2 mb-10 py-3.5 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors shadow-sm">
             <span class="material-symbols-outlined">logout</span> Logout
         </button>
-    </div>
-</div>
-
-<!-- ================= ALL GENDER SELECT MODAL (NEW) ================= -->
-<div id="all-gender-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[11500] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-[32px] p-6 max-w-sm w-full text-center relative shadow-2xl border border-red-100 transform transition-all scale-95 duration-200">
-        <button onclick="closeAllGenderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-            <span class="material-symbols-outlined text-xl">close</span>
-        </button>
-        <h3 class="text-xl font-bold text-gray-900 mb-4">Choose Category</h3>
-        
-        <!-- Big "All" Button -->
-        <button onclick="selectGenderFromModal('all')" class="w-full py-4 mb-5 bg-gradient-to-r from-red-500 to-pink-500 text-white font-extrabold rounded-2xl text-sm shadow-md hover:opacity-95 transition transform active:scale-95 flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined">group</span> View Both (Male & Female)
-        </button>
-        
-        <!-- 1:1 Side by Side Cards -->
-        <div class="grid grid-cols-2 gap-4">
-            <!-- Female Card -->
-            <div onclick="selectGenderFromModal('female')" class="aspect-square bg-pink-50 hover:bg-pink-100 border border-pink-200 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer transition transform active:scale-95 shadow-sm">
-                <img src="https://i.ibb.co/7t7KDcGF/1000323751-removebg-preview.png" alt="Female Sticker" class="w-16 h-16 md:w-20 md:h-20 object-contain mb-2 drop-shadow-md">
-                <span class="text-xs font-bold text-pink-700">👩 Female</span>
-            </div>
-            
-            <!-- Male Card -->
-            <div onclick="selectGenderFromModal('male')" class="aspect-square bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer transition transform active:scale-95 shadow-sm">
-                <img src="https://i.ibb.co/LVQxpmy/1000323753-removebg-preview.png" alt="Male Sticker" class="w-16 h-16 md:w-20 md:h-20 object-contain mb-2 drop-shadow-md">
-                <span class="text-xs font-bold text-blue-700">👨 Male</span>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -842,6 +806,98 @@
     </div>
 </div>
 
+<!-- ================= CHOOSE CATEGORY 3D MODAL (Image 3 style) ================= -->
+<div id="gender-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white rounded-[32px] p-6 max-w-sm w-full relative shadow-2xl border border-pink-100 transform transition-all scale-95 duration-300" id="gender-modal-card">
+        <!-- Close Button -->
+        <button onclick="closeGenderModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors">
+            <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+        
+        <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6">Choose Category</h3>
+        
+        <div class="flex flex-col gap-4">
+            <!-- Option Both -->
+            <button onclick="selectGenderFilter('all')" class="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-[0_4px_15px_rgba(239,68,68,0.3)] flex items-center justify-center gap-2 transition transform active:scale-98">
+                <span class="material-symbols-outlined">group</span> View Both (Male & Female)
+            </button>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Option Female -->
+                <button onclick="selectGenderFilter('female')" class="border-2 border-pink-200 bg-pink-50/50 hover:bg-pink-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
+                    <img src="https://i.ibb.co/84xpBDH1/file-00000000ca047208b27d596686e3776f.png" class="w-14 h-14 object-cover rounded-full border border-pink-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=female'">
+                    <span class="text-pink-600 font-extrabold text-sm flex items-center gap-1">👩 Female</span>
+                </button>
+                
+                <!-- Option Male -->
+                <button onclick="selectGenderFilter('male')" class="border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
+                    <img src="https://i.ibb.co/KjrXqrKQ/file-0000000081f07208a28d0e94964e6d55.png" class="w-14 h-14 object-cover rounded-full border border-blue-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=male'">
+                    <span class="text-blue-600 font-extrabold text-sm flex items-center gap-1">👨 Male</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FILTER STATUS MODAL (Image 4 Style) ================= -->
+<div id="status-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white rounded-[32px] p-6 max-w-sm w-full relative shadow-2xl border border-gray-100 transform transition-all scale-95 duration-300" id="status-modal-card">
+        <!-- Close Button -->
+        <button onclick="closeStatusModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors">
+            <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+        
+        <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6 font-display-lg">Filter Status</h3>
+        
+        <div class="flex flex-col gap-3">
+            <!-- Option All -->
+            <div onclick="selectStatusFilter('all')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-blue-500 text-[24px]">language</span>
+                    <span class="font-bold text-gray-800 text-sm">All Status</span>
+                </div>
+                <span id="status-all-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
+            </div>
+
+            <!-- Option Active -->
+            <div onclick="selectStatusFilter('online')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]"></span>
+                    <span class="font-bold text-gray-800 text-sm">Active</span>
+                </div>
+                <span id="status-active-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
+            </div>
+
+            <!-- Option Inactive -->
+            <div onclick="selectStatusFilter('offline')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 bg-red-500 rounded-full shadow-[0_0_8px_#ef4444]"></span>
+                    <span class="font-bold text-gray-800 text-sm">Inactive</span>
+                </div>
+                <span id="status-inactive-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PREMIUM VIDEO UNLOCK PAYWALL MODAL ================= -->
+<div id="video-paywall-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[11500] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center relative shadow-2xl border border-purple-100 transform transition-all scale-95">
+        <button onclick="closeVideoPaywall()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-600 shadow-[0_4px_15px_rgba(147,51,234,0.1)]">
+            <span class="material-symbols-outlined text-[36px]">lock</span>
+        </div>
+        <h3 class="text-lg font-extrabold text-gray-900 mb-2 font-display-lg">Premium Video Locked</h3>
+        <p class="text-sm text-gray-600 mb-6">ThisVertical Reel is locked by the uploader. Unlocking requires <strong class="text-purple-600 font-extrabold">💎 <span id="paywall-cost-display">100</span></strong> diamonds.</p>
+        <div class="flex gap-3">
+            <button onclick="closeVideoPaywall()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">Cancel</button>
+            <button id="paywall-unlock-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Unlock & Watch</button>
+        </div>
+    </div>
+</div>
+
 <!-- ================= FUNCTIONAL OVERLAYS ================= -->
 
 <!-- Profile Creation Overlay -->
@@ -997,16 +1053,10 @@
 
 <!-- ALL USERS GRID -->
 <div id="see-all-overlay" class="fixed inset-0 bg-white z-[8000] flex-col hidden overflow-hidden">
-    <!-- Header with Dynamic Search Bar (Requested) -->
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
-        <div class="flex items-center gap-3 w-[70%]">
+        <div class="flex items-center gap-3">
             <button id="btn-close-see-all" class="text-gray-700"><span class="material-symbols-outlined">arrow_back</span></button>
-            <h3 class="text-gray-900 font-bold text-lg whitespace-nowrap">All Creators</h3>
-        </div>
-        <!-- Modern Search Box with absolute alignment -->
-        <div class="relative w-[50%] max-w-[200px]">
-            <span class="material-symbols-outlined absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-[16px]">search</span>
-            <input type="text" id="creator-search-input" placeholder="Search by name or ID..." class="w-full bg-gray-50 border border-gray-200 rounded-full pl-7 pr-3 py-1 text-[11px] text-gray-900 focus:outline-none focus:ring-1 focus:ring-red-500 font-medium">
+            <h3 class="text-gray-900 font-bold text-lg">All Creators</h3>
         </div>
     </div>
     <div id="see-all-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-5 items-start pb-24 bg-gray-50 no-scrollbar"></div>
@@ -1036,37 +1086,47 @@
 <!-- VIDEO FEED (Reels & Longs) -->
 <div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
     <!-- Floating Header over Video -->
-    <div class="absolute top-0 left-0 w-full z-50 bg-gradient-to-b from-black/60 to-transparent px-4 pt-10 pb-6 flex justify-between items-start pointer-events-auto border-none">
-        <!-- Left Side -->
-        <div class="flex items-center gap-3">
-            <button class="text-white drop-shadow-lg" onclick="closeAllMainTabs()"><span class="material-symbols-outlined text-[28px]">arrow_back_ios</span></button>
-            <div class="flex flex-col items-center cursor-pointer">
-                <span class="material-symbols-outlined text-white text-[28px] drop-shadow-lg">tv</span>
-                <span class="text-white text-[10px] font-bold mt-[-4px] drop-shadow-md">LIVE</span>
+    <div class="absolute top-0 left-0 w-full z-[9010] bg-gradient-to-b from-black/80 to-transparent px-4 pt-10 pb-6 flex flex-col gap-3 pointer-events-auto border-none">
+        <div class="flex justify-between items-start">
+            <!-- Left Side -->
+            <div class="flex items-center gap-3">
+                <button class="text-white drop-shadow-lg" onclick="closeAllMainTabs()"><span class="material-symbols-outlined text-[28px]">arrow_back_ios</span></button>
+                <div class="flex flex-col items-center cursor-pointer">
+                    <span class="material-symbols-outlined text-white text-[28px] drop-shadow-lg">tv</span>
+                    <span class="text-white text-[10px] font-bold mt-[-4px] drop-shadow-md">LIVE</span>
+                </div>
             </div>
+            
+            <!-- Center Tabs -->
+            <div class="flex gap-6 mt-1 relative">
+                <div class="relative">
+                    <button id="tab-longs-btn" class="text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors" onclick="switchVideoTab('longs')">Following</button>
+                    <div id="tab-longs-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full hidden"></div>
+                </div>
+                <div class="relative">
+                    <button id="tab-shorts-btn" class="text-white font-bold text-[17px] drop-shadow-md" onclick="switchVideoTab('shorts')">For You</button>
+                    <div id="tab-shorts-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full"></div>
+                </div>
+            </div>
+            
+            <!-- Right Side -->
+            <button class="text-white drop-shadow-lg mt-1"><span class="material-symbols-outlined text-[30px]">search</span></button>
         </div>
-        
-        <!-- Center Tabs -->
-        <div class="flex gap-6 mt-1 relative">
-            <div class="relative">
-                <button id="tab-longs-btn" class="text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors" onclick="switchVideoTab('longs')">Following</button>
-                <div id="tab-longs-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full hidden"></div>
-            </div>
-            <div class="relative">
-                <button id="tab-shorts-btn" class="text-white font-bold text-[17px] drop-shadow-md" onclick="switchVideoTab('shorts')">For You</button>
-                <div id="tab-shorts-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full"></div>
-            </div>
+
+        <!-- Horizontal Category/Feed Filter Bar (Shorts vs Longs decision) -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar py-2 shrink-0">
+            <button onclick="filterVideoFeed('all')" id="vf-btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm flex-shrink-0 transition active:scale-95">All Feed</button>
+            <button onclick="filterVideoFeed('premium')" id="vf-btn-premium" class="px-4 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">💎 Premium (Paid)</button>
+            <button onclick="filterVideoFeed('yt-shorts')" id="vf-btn-shorts" class="px-4 py-1.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">🎬 YT Shorts</button>
+            <button onclick="filterVideoFeed('yt-longs')" id="vf-btn-longs" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">📺 YT Longs</button>
         </div>
-        
-        <!-- Right Side -->
-        <button class="text-white drop-shadow-lg mt-1"><span class="material-symbols-outlined text-[30px]">search</span></button>
     </div>
     
     <!-- Shorts container with snap-scroll -->
-    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth"></div>
+    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth pt-[140px]"></div>
     
     <!-- Longs container -->
-    <div class="w-full h-full overflow-y-auto pt-24 pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
+    <div class="w-full h-full overflow-y-auto pt-[160px] pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
         <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
     </div>
 </div>
@@ -1127,27 +1187,12 @@
             </select>
             
             <select id="upload-category" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
-                <option value="" disabled selected>Select Category Feed</option>
+                <option value="" disabled selected>Select Category Feed *</option>
                 <option value="For You Feed">For You Feed</option>
                 <option value="Following Feed">Following Feed</option>
                 <option value="Trending Feed">Trending Feed</option>
-                <option value="Nearby Feed">Nearby Feed</option>
-                <option value="New Creators Feed">New Creators Feed</option>
-                <option value="Viral Videos Feed">Viral Videos Feed</option>
-                <option value="Verified Creators Feed">Verified Creators Feed</option>
-                <option value="Premium Creators Feed">Premium Creators Feed</option>
-                <option value="Regional Content Feed">Regional Content Feed</option>
-                <option value="Language-Based Feed">Language-Based Feed</option>
-                <option value="Mood-Based Feed">Mood-Based Feed</option>
-                <option value="AI Personalized Feed">AI Personalized Feed</option>
-                <option value="Category Feed">Category Feed</option>
-                <option value="Gaming Feed">Gaming Feed</option>
-                <option value="Meme Feed">Meme Feed</option>
-                <option value="Music Feed">Music Feed</option>
-                <option value="Education Feed">Education Feed</option>
                 <option value="Comedy Feed">Comedy Feed</option>
                 <option value="Fashion Feed">Fashion Feed</option>
-                <option value="Fitness Feed">Fitness Feed</option>
             </select>
 
             <div class="flex gap-2 mb-3">
@@ -1155,6 +1200,12 @@
                 <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold" onclick="toggleUploadSource('link')">YouTube Link</button>
             </div>
             
+            <!-- Price selector for premium uploads (Cloudinary upload requires minimum 100 diamonds) -->
+            <div id="cloudinary-price-container" class="mb-3">
+                <label class="block text-xs font-bold text-gray-600 mb-1">Set Access Price (Minimum 💎 100)</label>
+                <input type="number" id="upload-price" value="100" min="100" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-purple-700 focus:ring-1 focus:ring-red-500 focus:outline-none">
+            </div>
+
             <div id="source-file-container" class="mb-3 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('video-file-input').click()">
                 <span class="text-sm text-gray-600 font-medium">Select Video File</span>
                 <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="document.getElementById('video-file-name').innerText = this.files[0].name">
@@ -1213,7 +1264,7 @@
   import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-  // Realtime Database Configuration details [Image Reference]
+  // Sahi Zingoo Project Realtime Database Credentials
   const firebaseConfig = {
     apiKey: "AIzaSyD9dd-bAdi-bXicIUp4THO0VGExzPn3FsI",
     authDomain: "zingoo-ae309.firebaseapp.com",
@@ -1252,8 +1303,7 @@
   
   let avatarUploaded = (localStorage.getItem("zingoo_avatar") && localStorage.getItem("zingoo_avatar") !== "undefined" && !localStorage.getItem("zingoo_avatar").includes("dicebear.com")) ? true : false;
 
-  // CLOUDINARY CONFIGURATION (USING ACCOUNT: dxggcj4jv) [Image Reference]
-  const CLOUD_NAME = "dxggcj4jv"; 
+  const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
 
   // --- IMGBB IMAGE UPLOAD HANDLER ---
@@ -1273,27 +1323,6 @@
           return null;
       } catch(e) {
           console.error("ImgBB upload error:", e);
-          return null;
-      }
-  }
-
-  // --- CLOUDINARY VIDEO/FILE DIRECT UPLOAD HANDLER ---
-  async function uploadVideoToCloudinary(file) {
-      try {
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('upload_preset', UPLOAD_PRESET);
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
-              method: 'POST',
-              body: formData
-          });
-          const data = await res.json();
-          if (data && data.secure_url) {
-              return data.secure_url;
-          }
-          return null;
-      } catch (e) {
-          console.error("Cloudinary upload failed:", e);
           return null;
       }
   }
@@ -1327,7 +1356,7 @@
       Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
               getToken(messaging, { 
-                  vapidKey: 'BGE_r2xNXdW19xvJB3C9odkfMFqEhWYVsj3P-OEDK2qrvFOHqJU9tdpKJi9N1R3KDxHrURI8cB6NPcUi6DjSFrU' 
+                  vapidKey: 'BFxFkI6t1FFL9XL-jmk_bAlkd2iXSmxmCKj30oXXRSr_qPDvJes4Ac9fcd7QVY44u_egFzBHe70hXqA6WHbcXB4' 
               })
               .then((currentToken) => {
                   if (currentToken) {
@@ -1395,7 +1424,7 @@
       }
   });
 
-  // --- Auto Reels Scroll Observer ---
+  // --- Auto Reels Scroll Observer with Volume Controls ---
   let reelsObserver = null;
   window.initReelsObserver = function() {
       if (reelsObserver) reelsObserver.disconnect();
@@ -1409,11 +1438,17 @@
               const videoEl = entry.target.querySelector('.html5-video');
               const iframeEl = entry.target.querySelector('.yt-iframe');
               if (entry.isIntersecting) {
-                  if (videoEl) videoEl.play().catch(e => console.log('Autoplay issue:', e));
-                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*');
+                  if (videoEl) {
+                      videoEl.play().catch(e => console.log('Autoplay issue:', e));
+                  }
+                  if (iframeEl && iframeEl.contentWindow) {
+                      iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'playVideo', args: []}), '*');
+                  }
               } else {
                   if (videoEl) videoEl.pause();
-                  if (iframeEl && iframeEl.contentWindow) iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'pauseVideo', args: []}), '*');
+                  if (iframeEl && iframeEl.contentWindow) {
+                      iframeEl.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'pauseVideo', args: []}), '*');
+                  }
               }
           });
       }, options);
@@ -1566,22 +1601,22 @@
   }
 
   // --- STATUS (ONLINE / OFFLINE) & VISIBILITY TRACKING ---
+  let currentStatusFilter = 'all';
+
   function updateUserStatus(status) {
       if(!currentUser) return;
       set(ref(db, `users/${currentUser}/status`), status);
-      const ind_bg = document.getElementById('status-toggle-bg');
-      const ind_circle = document.getElementById('status-toggle-circle');
-      const txt = document.getElementById('status-text');
+      const ind_bg = document.getElementById('current-status-dot');
+      const txt = document.getElementById('status-text-label');
+      
       if(status === 'online') {
-          if(ind_bg) ind_bg.className = "w-8 h-4 bg-green-500 rounded-full relative transition-colors duration-300";
-          if(ind_circle) ind_circle.className = "w-3 h-3 bg-white rounded-full absolute top-[2px] right-[2px] transition-all duration-300 shadow-sm";
+          if(ind_bg) ind_bg.className = "w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]";
           if(txt) {
               txt.innerText = "Active";
               txt.className = "text-[10px] font-bold text-green-600";
           }
       } else {
-          if(ind_bg) ind_bg.className = "w-8 h-4 bg-gray-300 rounded-full relative transition-colors duration-300";
-          if(ind_circle) ind_circle.className = "w-3 h-3 bg-white rounded-full absolute top-[2px] left-[2px] transition-all duration-300 shadow-sm";
+          if(ind_bg) ind_bg.className = "w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_#ef4444]";
           if(txt) {
               txt.innerText = "Inactive";
               txt.className = "text-[10px] font-bold text-gray-500";
@@ -1589,10 +1624,64 @@
       }
   }
 
-  window.toggleManualStatus = function() {
-      const txt = document.getElementById('status-text').innerText;
-      if(txt === "Active") { updateUserStatus('offline'); } else { updateUserStatus('online'); }
+  // CUSTOM CHOOSE STATUS MODAL FUNCTIONS
+  window.openStatusModal = function() {
+      document.getElementById('status-modal').classList.remove('hidden');
+      document.getElementById('status-modal').classList.add('flex');
+      setTimeout(() => {
+          document.getElementById('status-modal-card').classList.remove('scale-95');
+          document.getElementById('status-modal-card').classList.add('scale-100');
+      }, 10);
+      updateStatusRadioUI();
   };
+
+  window.closeStatusModal = function() {
+      document.getElementById('status-modal-card').classList.remove('scale-100');
+      document.getElementById('status-modal-card').classList.add('scale-95');
+      setTimeout(() => {
+          document.getElementById('status-modal').classList.add('hidden');
+          document.getElementById('status-modal').classList.remove('flex');
+      }, 150);
+  };
+
+  function updateStatusRadioUI() {
+      const allR = document.getElementById('status-all-radio').querySelector('span');
+      const activeR = document.getElementById('status-active-radio').querySelector('span');
+      const inactiveR = document.getElementById('status-inactive-radio').querySelector('span');
+      
+      allR.classList.add('hidden');
+      activeR.classList.add('hidden');
+      inactiveR.classList.add('hidden');
+
+      if(currentStatusFilter === 'all') allR.classList.remove('hidden');
+      if(currentStatusFilter === 'online') activeR.classList.remove('hidden');
+      if(currentStatusFilter === 'offline') inactiveR.classList.remove('hidden');
+  }
+
+  window.selectStatusFilter = function(filter) {
+      currentStatusFilter = filter;
+      closeStatusModal();
+      
+      const textLabel = document.getElementById('status-text-label');
+      const dot = document.getElementById('current-status-dot');
+      
+      if(filter === 'all') {
+          textLabel.innerText = "All Status";
+          textLabel.className = "text-[10px] font-bold text-blue-600";
+          dot.className = "w-2.5 h-2.5 bg-blue-500 rounded-full";
+      } else if (filter === 'online') {
+          textLabel.innerText = "Active";
+          textLabel.className = "text-[10px] font-bold text-green-600";
+          dot.className = "w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]";
+      } else {
+          textLabel.innerText = "Inactive";
+          textLabel.className = "text-[10px] font-bold text-red-600";
+          dot.className = "w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_#ef4444]";
+      }
+      renderUsers();
+  };
+
+  document.getElementById('status-filter-trigger').addEventListener('click', openStatusModal);
 
   document.addEventListener('visibilitychange', () => {
       if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
@@ -1688,28 +1777,12 @@
       if(isHidden) {
           renderNotificationDropdownList();
           dropdown.classList.remove('hidden');
+          // Instantly delete notifications from Firebase database once user sees them
+          if(currentUser) {
+              remove(ref(db, `notifications/${currentUser}`));
+          }
       } else {
           dropdown.classList.add('hidden');
-      }
-  };
-
-  // Click on Notification and Automatically Delete it from Firebase (Requested)
-  window.handleNotificationClick = function(notifKey, fromUser, avatarUrl, type) {
-      if (currentUser && notifKey) {
-          // Instantly delete that specific notification manually on click so it disappears
-          remove(ref(db, `notifications/${currentUser}/${notifKey}`)).then(() => {
-              document.getElementById('notification-dropdown').classList.add('hidden');
-              // Navigate or open action based on type
-              if (type === 'chat') {
-                  openChatWith(fromUser, avatarUrl);
-              } else if (type === 'video') {
-                  initiateCall(fromUser, true, avatarUrl);
-              } else if (type === 'audio') {
-                  initiateCall(fromUser, false, avatarUrl);
-              } else if (type === 'follow') {
-                  showCustomAlert(`${fromUser} is now following you!`);
-              }
-          });
       }
   };
 
@@ -1723,51 +1796,40 @@
   document.getElementById('btn-close-see-all').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'none'; });
 
   let allUsersData = {};
-  
-  // Custom Intercept to open premium layout modal when "All" is selected (Requested)
-  document.getElementById('gender-filter').addEventListener('change', function(e) { 
-      if(this.value === 'all') {
-          openAllGenderModal();
-      } else {
-          renderUsers(); 
-      }
-  });
+  let currentGenderFilter = 'all';
 
-  window.openAllGenderModal = function() {
-      const modal = document.getElementById('all-gender-modal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+  // CUSTOM GENDER CHOOSE CATEGORY MODAL LOGIC (Image 3 design)
+  window.openGenderModal = function() {
+      document.getElementById('gender-modal').classList.remove('hidden');
+      document.getElementById('gender-modal').classList.add('flex');
       setTimeout(() => {
-          modal.querySelector('div').classList.remove('scale-95');
-          modal.querySelector('div').classList.add('scale-100');
-      }, 20);
+          document.getElementById('gender-modal-card').classList.remove('scale-95');
+          document.getElementById('gender-modal-card').classList.add('scale-100');
+      }, 10);
   };
 
-  window.closeAllGenderModal = function() {
-      const modal = document.getElementById('all-gender-modal');
-      modal.querySelector('div').classList.remove('scale-100');
-      modal.querySelector('div').classList.add('scale-95');
+  window.closeGenderModal = function() {
+      document.getElementById('gender-modal-card').classList.remove('scale-100');
+      document.getElementById('gender-modal-card').classList.add('scale-95');
       setTimeout(() => {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
+          document.getElementById('gender-modal').classList.add('hidden');
+          document.getElementById('gender-modal').classList.remove('flex');
       }, 150);
   };
 
-  window.selectGenderFromModal = function(gender) {
-      document.getElementById('gender-filter').value = gender;
-      closeAllGenderModal();
+  window.selectGenderFilter = function(gender) {
+      currentGenderFilter = gender;
+      closeGenderModal();
+      
+      const label = document.getElementById('current-gender-label');
+      if(gender === 'all') label.innerText = "👥 All";
+      if(gender === 'female') label.innerText = "👩 Female";
+      if(gender === 'male') label.innerText = "👨 Male";
+      
       renderUsers();
   };
 
-  // In-Memory Live Filter for active/inactive status changes (Requested)
-  document.getElementById('active-users-status-filter').addEventListener('change', () => {
-      renderUsers();
-  });
-
-  // Dynamic input listener to search by name/ID on Creator Studio View (Requested)
-  document.getElementById('creator-search-input').addEventListener('input', () => {
-      renderUsers();
-  });
+  document.getElementById('gender-filter-trigger').addEventListener('click', openGenderModal);
 
   onValue(ref(db, 'users'), (snapshot) => {
       if(snapshot.val()) {
@@ -1776,15 +1838,11 @@
       }
   });
 
-  // Smooth flicker-free update list logic (Firebase loading optimized)
+  // Smooth flicker-free update list logic
   function renderUsers() {
       const usersListContainer = document.getElementById("real-users-list");
       const seeAllGridContainer = document.getElementById("see-all-grid");
       if (!usersListContainer || !seeAllGridContainer) return;
-
-      const currentFilter = document.getElementById("gender-filter").value;
-      const statusFilter = document.getElementById("active-users-status-filter").value;
-      const searchQuery = document.getElementById("creator-search-input").value.trim().toLowerCase();
 
       let usersArray = Object.values(allUsersData).filter(user => {
           if (user.name === currentUser) return false;
@@ -1792,16 +1850,12 @@
           return avatar && !avatar.includes("dicebear.com") && !avatar.includes("avataaars");
       });
 
-      // Filter by Gender
-      if (currentFilter !== 'all') {
-          usersArray = usersArray.filter(u => u.gender === currentFilter);
+      if (currentGenderFilter !== 'all') {
+          usersArray = usersArray.filter(u => u.gender === currentGenderFilter);
       }
 
-      // Filter by Status (Requested - In-Memory Live Sync)
-      if (statusFilter === 'active') {
-          usersArray = usersArray.filter(u => u.status === 'online');
-      } else if (statusFilter === 'inactive') {
-          usersArray = usersArray.filter(u => u.status !== 'online');
+      if (currentStatusFilter !== 'all') {
+          usersArray = usersArray.filter(u => u.status === currentStatusFilter);
       }
 
       usersArray.sort((a, b) => {
@@ -1812,9 +1866,9 @@
 
       // 1. ACTIVE USERS BAR
       if (usersArray.length === 0) {
-          usersListContainer.innerHTML = '<p class="text-gray-400 text-sm py-4">No creators matches this status.</p>';
+          usersListContainer.innerHTML = '<p class="text-gray-400 text-sm">No active creators found.</p>';
       } else {
-          if (usersListContainer.innerHTML.includes("Loading amazing") || usersListContainer.innerHTML.includes("No active creators") || usersListContainer.innerHTML.includes("No creators matches")) {
+          if (usersListContainer.innerHTML.includes("Loading amazing") || usersListContainer.innerHTML.includes("No active creators")) {
               usersListContainer.innerHTML = '';
           }
 
@@ -1876,22 +1930,20 @@
           });
       }
 
-      // 2. SEE ALL CREATORS GRID (Dynamic Name & ID Live Filter Optimized)
-      let seeAllUsersArray = [...usersArray];
-      if (searchQuery) {
-          seeAllUsersArray = seeAllUsersArray.filter(u => {
-              const nameMatch = u.name && u.name.toLowerCase().includes(searchQuery);
-              const idMatch = u.id && u.id.toString().includes(searchQuery);
-              return nameMatch || idMatch;
-          });
-      }
-
-      seeAllGridContainer.innerHTML = '';
-      if (seeAllUsersArray.length === 0) {
-          seeAllGridContainer.innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No creators found match your search.</p>';
+      // 2. SEE ALL CREATORS GRID
+      if (usersArray.length === 0) {
+          seeAllGridContainer.innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No creators found.</p>';
       } else {
-          seeAllUsersArray.forEach(user => {
+          if (seeAllGridContainer.innerHTML.includes("No creators found")) {
+              seeAllGridContainer.innerHTML = '';
+          }
+
+          const seeAllCardIds = new Set();
+
+          usersArray.forEach(user => {
               const gridCardId = `see-all-card-${user.name}`;
+              seeAllCardIds.add(gridCardId);
+
               const isOnline = user.status === 'online';
               const dotColor = isOnline ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : 'bg-gray-400';
               const isGolden = user.golden === true;
@@ -1904,26 +1956,45 @@
                   ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">star</span> VIP</div>` 
                   : '';
 
-              seeAllGridContainer.insertAdjacentHTML('beforeend', `
-                  <div id="${gridCardId}" class="relative w-full h-[230px] rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] ${cardBorderShadow} border animate-fade-up">
-                      ${goldenBadge}
-                      <div class="relative h-[65%] w-full">
-                          <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
-                          <div class="grid-status-dot absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white"></div>
-                      </div>
-                      <div class="h-[35%] w-full p-2.5 flex flex-col justify-between shrink-0 bg-opacity-90">
-                          <span class="${nameColor} font-bold text-sm truncate flex flex-col gap-0.5">
-                              <span class="truncate flex items-center gap-1">${user.name} ${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : ''}</span>
-                              <span class="text-[9px] text-gray-400 font-medium">ID: ${user.id || '000000'}</span>
-                          </span>
-                          <div class="flex gap-1.5 mt-auto">
-                              <button class="flex-1 bg-gray-50 py-1.5 rounded-xl text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center transform active:scale-95" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
-                              <button class="flex-1 bg-red-50 py-1.5 rounded-xl text-red-500 shadow-sm border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
-                              <button class="flex-1 bg-gradient-to-r from-red-500 to-pink-500 py-1.5 rounded-xl text-white shadow-md hover:opacity-90 transition-opacity flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
+              let gridCardEl = document.getElementById(gridCardId);
+              if (!gridCardEl) {
+                  const tempGrid = document.createElement('div');
+                  tempGrid.innerHTML = `
+                      <div id="${gridCardId}" class="relative w-full h-[230px] rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] ${cardBorderShadow} border">
+                          ${goldenBadge}
+                          <div class="relative h-[65%] w-full">
+                              <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
+                              <div class="grid-status-dot absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white"></div>
+                          </div>
+                          <div class="h-[35%] w-full p-2.5 flex flex-col justify-between shrink-0 bg-opacity-90">
+                              <span class="${nameColor} font-bold text-sm truncate flex items-center gap-1">
+                                  ${user.name} <span class="grid-verified-badge">${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : ''}</span>
+                              </span>
+                              <div class="flex gap-1.5 mt-auto">
+                                  <button class="flex-1 bg-gray-50 py-1.5 rounded-xl text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center transform active:scale-95" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
+                                  <button class="flex-1 bg-red-50 py-1.5 rounded-xl text-red-500 shadow-sm border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
+                                  <button class="flex-1 bg-gradient-to-r from-red-500 to-pink-500 py-1.5 rounded-xl text-white shadow-md hover:opacity-90 transition-opacity flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
+                              </div>
                           </div>
                       </div>
-                  </div>
-              `);
+                  `;
+                  gridCardEl = tempGrid.firstElementChild;
+                  seeAllGridContainer.appendChild(gridCardEl);
+              } else {
+                  const gridDot = gridCardEl.querySelector('.grid-status-dot');
+                  if (gridDot) gridDot.className = `grid-status-dot absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white`;
+                  
+                  const gridVerified = gridCardEl.querySelector('.grid-verified-badge');
+                  if (gridVerified) gridVerified.innerHTML = isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : '';
+              }
+
+              seeAllGridContainer.appendChild(gridCardEl);
+          });
+
+          Array.from(seeAllGridContainer.children).forEach(child => {
+              if (child.id && child.id.startsWith("see-all-card-") && !seeAllCardIds.has(child.id)) {
+                  child.remove();
+              }
           });
       }
   }
@@ -2079,7 +2150,6 @@
       listenForIncomingCalls(); 
       initPresence();
       listenForNotifications();
-      listenToVideos();
   }
 
   // File Upload handling with direct ImgBB support
@@ -2153,13 +2223,13 @@
       const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
       
       set(ref(db, 'users/' + name), {
-          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
+          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 250, status: 'online', golden: false, timestamp: serverTimestamp(),
           services: { video: true, audio: true, chat: true }
       }).then(() => {
           localStorage.setItem("zingoo_user", name);
           localStorage.setItem("zingoo_id", newId);
           localStorage.setItem("zingoo_avatar", finalAvatar);
-          localStorage.setItem("zingoo_diamonds", "0");
+          localStorage.setItem("zingoo_diamonds", "250");
           
           currentUser = name; currentId = newId; currentAvatar = finalAvatar;
           
@@ -2170,7 +2240,6 @@
           initPresence();
           listenForNotifications();
           setupFCMToken();
-          listenToVideos();
       }).catch(err => {
           alert("Error creating profile in database. Please try again.");
           console.error(err);
@@ -2347,7 +2416,6 @@
           
           deductDiamondsForCall(4);
 
-          // Get receiver status to set correct initial message tick status
           get(ref(db, `users/${currentChatPartnerName}/status`)).then((statusSnap) => {
               const partnerStatus = statusSnap.val() || 'offline';
               const initialStatus = partnerStatus === 'online' ? 'delivered' : 'sent';
@@ -2369,157 +2437,330 @@
       }
   }
 
-  // --- REDESIGNED CREATOR STUDIO & CLOUDINARY HANDLERS (Requested) ---
-  window.openUploadOverlay = function() {
-      document.getElementById('upload-video-overlay').style.display = 'flex';
-      loadCreatorStudioVideos();
-  };
-  
-  window.closeUploadOverlay = function() {
-      document.getElementById('upload-video-overlay').style.display = 'none';
-      document.getElementById('manage-profile-overlay').style.display = 'flex';
-  };
-  
-  window.openVideoUploadForm = function() {
-      document.getElementById('upload-form-sub-overlay').style.display = 'flex';
-  };
-  
-  window.closeVideoUploadForm = function() {
-      document.getElementById('upload-form-sub-overlay').style.display = 'none';
-  };
-  
+  // --- Dynamic Video Feed Parsing & Filter Implementation ---
+  let activeVideoFilter = 'all';
+  let rawVideosList = [];
+
   window.toggleUploadSource = function(src) {
+      const fileBtn = document.getElementById('src-btn-upload');
+      const linkBtn = document.getElementById('src-btn-link');
       const fileContainer = document.getElementById('source-file-container');
       const linkContainer = document.getElementById('source-link-container');
-      const btnUpload = document.getElementById('src-btn-upload');
-      const btnLink = document.getElementById('src-btn-link');
+      const priceContainer = document.getElementById('cloudinary-price-container');
       
-      if (src === 'upload') {
+      if(src === 'upload') {
+          fileBtn.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
+          linkBtn.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
           fileContainer.classList.remove('hidden');
           linkContainer.classList.add('hidden');
-          btnUpload.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
-          btnLink.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
+          priceContainer.classList.remove('hidden');
       } else {
+          fileBtn.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
+          linkBtn.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
           fileContainer.classList.add('hidden');
           linkContainer.classList.remove('hidden');
-          btnUpload.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
-          btnLink.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
+          priceContainer.classList.add('hidden'); // Free for YouTube link
       }
   };
 
-  // Cloudinary Reel Upload Submit (Requested)
+  // Robust YouTube ID extractor (Supports watch, short links, youtu.be)
+  function getYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+          return match[2];
+      } else {
+          const shortsReg = /\/shorts\/([a-zA-Z0-9_-]{11})/;
+          const shortsMatch = url.match(shortsReg);
+          return shortsMatch ? shortsMatch[1] : null;
+      }
+  }
+
+  // Submit Video Upload
   window.submitVideoUpload = async function() {
       const title = document.getElementById('upload-title').value.trim();
-      const type = document.getElementById('upload-type').value; 
+      const type = document.getElementById('upload-type').value;
       const category = document.getElementById('upload-category').value;
-      const ytLink = document.getElementById('upload-yt-link').value.trim();
-      const videoFile = document.getElementById('video-file-input').files[0];
-      const thumbFile = document.getElementById('thumb-file-input').files[0];
+      const price = parseInt(document.getElementById('upload-price').value || 100);
       
-      if (!title) { alert("Please enter a video title."); return; }
-      if (!category) { alert("Please select a category."); return; }
-      
-      let videoUrl = "";
-      let thumbUrl = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500"; 
-      
-      // Show uploading spinner
+      const fileInput = document.getElementById('video-file-input');
+      const linkInput = document.getElementById('upload-yt-link').value.trim();
+      const thumbInput = document.getElementById('thumb-file-input');
+
+      if(!title || !category) { alert("Please fill in title and category"); return; }
+
       const spinner = document.getElementById('upload-spinner');
       spinner.classList.remove('hidden');
       spinner.classList.add('flex');
-      
+
       try {
-          // 1. Upload thumbnail
-          if (thumbFile) {
-              const tUrl = await uploadToImgBB(thumbFile);
-              if (tUrl) thumbUrl = tUrl;
-          }
-          
-          // 2. Upload Video to Cloudinary
-          const isLink = document.getElementById('source-file-container').classList.contains('hidden');
-          if (isLink) {
-              if (!ytLink) { throw new Error("Please enter a valid YouTube link."); }
-              videoUrl = ytLink;
+          let videoUrl = "";
+          let thumbnailUrl = "";
+          let isYt = false;
+          let uploadPrice = 0;
+
+          // If File upload
+          if(!document.getElementById('source-file-container').classList.contains('hidden')) {
+              if(!fileInput.files[0]) { alert("Please select a video file!"); spinner.classList.add('hidden'); return; }
+              if(price < 100) { alert("Minimum price for premium file is 100 diamonds."); spinner.classList.add('hidden'); return; }
+              uploadPrice = price;
+
+              // Upload Video to Cloudinary
+              const formData = new FormData();
+              formData.append('file', fileInput.files[0]);
+              formData.append('upload_preset', UPLOAD_PRESET);
+              const videoRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
+                  method: 'POST',
+                  body: formData
+              });
+              const videoData = await videoRes.json();
+              if(videoData.secure_url) videoUrl = videoData.secure_url;
           } else {
-              if (!videoFile) { throw new Error("Please select a video file to upload."); }
-              // Upload actual file securely to Cloudinary (using Account: dxggcj4jv) [Image Reference]
-              const cUrl = await uploadVideoToCloudinary(videoFile);
-              if (!cUrl) { throw new Error("Cloudinary Video upload failed. Try again."); }
-              videoUrl = cUrl;
+              // YouTube link
+              if(!linkInput) { alert("Please enter YouTube URL!"); spinner.classList.add('hidden'); return; }
+              const ytId = getYouTubeId(linkInput);
+              if(!ytId) { alert("Invalid YouTube URL!"); spinner.classList.add('hidden'); return; }
+              videoUrl = `https://www.youtube.com/embed/${ytId}`;
+              isYt = true;
+              uploadPrice = 0; // Always Free
           }
-          
-          // 3. Push data to Firebase
-          const newVideoRef = push(ref(db, 'videos'));
-          await set(newVideoRef, {
+
+          if(!videoUrl) { throw new Error("Video upload failed."); }
+
+          // Thumbnail upload
+          if(thumbInput.files[0]) {
+              thumbnailUrl = await uploadToImgBB(thumbInput.files[0]);
+          } else if(isYt) {
+              const ytId = getYouTubeId(linkInput);
+              thumbnailUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+          } else {
+              thumbnailUrl = "https://i.ibb.co/NdgYcgqd/file-0000000071047208aff42164a8f71ba7.png";
+          }
+
+          // Push to Firebase Realtime Database
+          const videoRef = push(ref(db, 'videos'));
+          await set(videoRef, {
               title: title,
-              type: type, 
+              type: type, // 'short' (Reel) or 'long' (Video)
               category: category,
               videoUrl: videoUrl,
-              thumbnail: thumbUrl,
-              creator: currentUser,
-              creatorAvatar: currentAvatar,
-              views: 0,
-              likes: 0,
-              diamondsEarned: 0,
+              thumbnailUrl: thumbnailUrl,
+              price: uploadPrice,
+              isYt: isYt,
+              owner: currentUser,
               timestamp: serverTimestamp()
           });
-          
-          alert("Reel/Video published successfully on Zingoo Network!");
+
+          alert("Video published successfully!");
           closeVideoUploadForm();
-          loadCreatorStudioVideos();
-      } catch (err) {
-          alert("Upload failed: " + err.message);
-          console.error(err);
+          closeUploadOverlay();
+      } catch(e) {
+          console.error(e);
+          alert("Error uploading video. Please try again.");
       } finally {
           spinner.classList.add('hidden');
-          spinner.classList.remove('flex');
       }
   };
 
-  window.loadCreatorStudioVideos = function() {
-      if(!currentUser) return;
-      const grid = document.getElementById('creator-studio-video-grid');
-      grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Loading your videos...</p>';
-      
-      get(ref(db, 'videos')).then((snapshot) => {
-          if (snapshot.exists()) {
-              const videos = snapshot.val();
-              let myVideosHTML = '';
-              Object.entries(videos).forEach(([key, vid]) => {
-                  if (vid.creator === currentUser) {
-                      myVideosHTML += `
-                          <div class="aspect-[9/16] rounded-xl overflow-hidden relative shadow-sm border border-gray-100 bg-black cursor-pointer" onclick="playCreatorStudioVideo('${vid.videoUrl}')">
-                              <img src="${vid.thumbnail}" class="w-full h-full object-cover">
-                              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-2">
-                                  <span class="text-[10px] font-bold text-white truncate">${vid.title}</span>
-                                  <span class="text-[8px] text-gray-300 flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-purple-400">diamond</span> ${vid.diamondsEarned || 0}</span>
-                              </div>
-                          </div>
-                      `;
-                  }
+  // Switch tabs & Fetch videos from DB
+  window.switchVideoTab = function(tab) {
+      const longsBtn = document.getElementById('tab-longs-btn');
+      const shortsBtn = document.getElementById('tab-shorts-btn');
+      const longsInd = document.getElementById('tab-longs-indicator');
+      const shortsInd = document.getElementById('tab-shorts-indicator');
+      const shortsContainer = document.getElementById('shorts-feed-container');
+      const longsWrap = document.getElementById('longs-feed-wrap');
+
+      if(tab === 'shorts') {
+          shortsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
+          longsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
+          shortsInd.classList.remove('hidden');
+          longsInd.classList.add('hidden');
+          shortsContainer.classList.remove('hidden');
+          longsWrap.classList.add('hidden');
+      } else {
+          longsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
+          shortsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
+          longsInd.classList.remove('hidden');
+          shortsInd.classList.add('hidden');
+          longsWrap.classList.remove('hidden');
+          shortsContainer.classList.add('hidden');
+      }
+
+      onValue(ref(db, 'videos'), (snap) => {
+          rawVideosList = [];
+          if(snap.exists()) {
+              Object.entries(snap.val()).forEach(([key, val]) => {
+                  rawVideosList.push({ key: key, ...val });
               });
-              grid.innerHTML = myVideosHTML || '<p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos uploaded yet.</p>';
-          } else {
-              grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos uploaded yet.</p>';
           }
-      }).catch(err => {
-          console.error(err);
-          grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Error loading uploads.</p>';
+          filterVideoFeed(activeVideoFilter);
       });
   };
 
-  window.playCreatorStudioVideo = function(url) {
-      document.getElementById('video-player-overlay').style.display = 'flex';
-      const container = document.getElementById('video-player-container');
-      if (url.includes('youtube.com') || url.includes('youtu.be')) {
-          let embedUrl = url;
-          if (url.includes('v=')) {
-              embedUrl = 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0];
-          } else if (url.includes('youtu.be/')) {
-              embedUrl = 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1].split('?')[0];
-          }
-          container.innerHTML = `<iframe src="${embedUrl}?autoplay=1" class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  // Filter video list based on custom categorisation scrollbar
+  window.filterVideoFeed = function(filter) {
+      activeVideoFilter = filter;
+      
+      const buttons = ['vf-btn-all', 'vf-btn-premium', 'vf-btn-shorts', 'vf-btn-longs'];
+      buttons.forEach(id => {
+          document.getElementById(id).className = "px-4 py-1.5 rounded-full text-xs font-bold bg-white/20 text-white shadow-sm flex-shrink-0 transition active:scale-95 border border-white/10";
+      });
+
+      if(filter === 'all') document.getElementById('vf-btn-all').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm flex-shrink-0 transition active:scale-95";
+      if(filter === 'premium') document.getElementById('vf-btn-premium').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
+      if(filter === 'yt-shorts') document.getElementById('vf-btn-shorts').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
+      if(filter === 'yt-longs') document.getElementById('vf-btn-longs').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
+
+      let filtered = [...rawVideosList];
+      if(filter === 'premium') filtered = filtered.filter(v => v.price > 0);
+      if(filter === 'yt-shorts') filtered = filtered.filter(v => v.isYt && v.type === 'short');
+      if(filter === 'yt-longs') filtered = filtered.filter(v => v.isYt && v.type === 'long');
+
+      const shortsContainer = document.getElementById('shorts-feed-container');
+      const longsContainer = document.getElementById('longs-feed-container');
+      
+      shortsContainer.innerHTML = '';
+      longsContainer.innerHTML = '';
+
+      const shorts = filtered.filter(v => v.type === 'short');
+      const longs = filtered.filter(v => v.type === 'long');
+
+      // Populate Shorts Feed
+      if(shorts.length === 0) {
+          shortsContainer.innerHTML = `<div class="text-center text-gray-400 py-32 text-sm">No vertical reels found in this filter</div>`;
       } else {
-          container.innerHTML = `<video src="${url}" class="w-full h-full object-contain" controls autoplay></video>`;
+          shorts.forEach(video => {
+              const isLocked = video.price > 0 && video.owner !== currentUser && !localStorage.getItem('unlocked_' + video.key);
+              let mediaHTML = "";
+
+              if (isLocked) {
+                  mediaHTML = `
+                      <div class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-10">
+                          <span class="material-symbols-outlined text-[64px] text-purple-500 mb-3 animate-bounce">lock</span>
+                          <h4 class="text-white text-lg font-bold">Premium Reel Locked</h4>
+                          <p class="text-gray-400 text-xs mt-1 mb-4">Pay 💎 ${video.price} to unlock this creator's exclusive video.</p>
+                          <button onclick="requestVideoUnlock('${video.key}', ${video.price}, '${video.owner}')" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg active:scale-95 transition-transform">Unlock Video</button>
+                      </div>
+                  `;
+              } else if (video.isYt) {
+                  const ytId = getYouTubeId(video.videoUrl);
+                  mediaHTML = `<iframe class="yt-iframe w-full h-full pointer-events-auto" src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+              } else {
+                  mediaHTML = `<video class="html5-video w-full h-full object-cover" src="${video.videoUrl}" loop muted playsinline></video>`;
+              }
+
+              shortsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="w-full h-[100dvh] snap-start relative flex-shrink-0 bg-black">
+                      ${mediaHTML}
+                      
+                      <!-- Video Details Overlay -->
+                      <div class="absolute bottom-[100px] left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-end pointer-events-auto">
+                          <div class="text-white">
+                              <h4 class="font-extrabold text-sm flex items-center gap-1">@${video.owner} <span class="material-symbols-outlined text-[14px] text-yellow-400">verified</span></h4>
+                              <p class="text-xs mt-1 opacity-90">${video.title}</p>
+                              ${video.price > 0 ? `<span class="mt-2 inline-flex items-center gap-1 bg-purple-600/30 text-purple-400 border border-purple-500/50 px-2 py-0.5 rounded text-[10px] font-bold">💎 ${video.price} Premium</span>` : '<span class="mt-2 inline-flex items-center gap-1 bg-green-600/30 text-green-400 border border-green-500/50 px-2 py-0.5 rounded text-[10px] font-bold">🎬 Free YT</span>'}
+                          </div>
+                      </div>
+
+                      <!-- Mute/Unmute Volume Controller -->
+                      ${!isLocked && !video.isYt ? `
+                      <button class="absolute bottom-28 right-4 z-50 w-11 h-11 rounded-full bg-black/40 backdrop-blur border border-white/20 text-white flex items-center justify-center transition active:scale-90" onclick="toggleReelVolume(event, this)">
+                          <span class="material-symbols-outlined text-[22px]">volume_off</span>
+                      </button>
+                      ` : ''}
+                  </div>
+              `);
+          });
+          initReelsObserver();
+      }
+
+      // Populate Longs Feed
+      if(longs.length === 0) {
+          longsContainer.innerHTML = `<div class="text-center text-gray-400 py-32 text-sm">No long videos found in this filter</div>`;
+      } else {
+          longs.forEach(video => {
+              longsContainer.insertAdjacentHTML('beforeend', `
+                  <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-gray-800 cursor-pointer transition active:scale-98" onclick="playLongVideo('${video.videoUrl}')">
+                      <div class="aspect-video relative">
+                          <img src="${video.thumbnailUrl}" class="w-full h-full object-cover">
+                          <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                              <span class="material-symbols-outlined text-white text-[48px]">play_circle</span>
+                          </div>
+                      </div>
+                      <div class="p-3 text-white">
+                          <h4 class="font-bold text-sm truncate">${video.title}</h4>
+                          <p class="text-[10px] text-gray-400 mt-1">Uploaded by @${video.owner}</p>
+                      </div>
+                  </div>
+              `);
+          });
+      }
+  };
+
+  // Paid video unlock logic
+  window.requestVideoUnlock = function(key, cost, owner) {
+      document.getElementById('paywall-cost-display').innerText = cost;
+      document.getElementById('video-paywall-modal').classList.remove('hidden');
+      document.getElementById('video-paywall-modal').classList.add('flex');
+      
+      document.getElementById('paywall-unlock-btn').onclick = async () => {
+          let viewerDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+          if(viewerDiamonds < cost) {
+              showCustomAlert(`Insufficient diamonds. You need 💎 ${cost} to unlock this exclusive creator reel.`);
+              return;
+          }
+
+          document.getElementById('video-paywall-modal').classList.add('hidden');
+          
+          // Deduct from viewer
+          viewerDiamonds -= cost;
+          localStorage.setItem('zingoo_diamonds', viewerDiamonds);
+          await update(ref(db, `users/${currentUser}`), { diamonds: viewerDiamonds });
+
+          // Add to owner
+          const uploaderSnap = await get(ref(db, `users/${owner}`));
+          if(uploaderSnap.exists()) {
+              let uploaderDiamonds = uploaderSnap.val().diamonds || 0;
+              uploaderDiamonds += cost;
+              await update(ref(db, `users/${owner}`), { diamonds: uploaderDiamonds });
+          }
+
+          // Save unlock state locally and in viewer's profile
+          localStorage.setItem('unlocked_' + key, 'true');
+          await set(ref(db, `users/${currentUser}/unlocked_videos/${key}`), true);
+
+          alert("Video unlocked successfully!");
+          filterVideoFeed(activeVideoFilter);
+      };
+  };
+
+  window.closeVideoPaywall = function() {
+      document.getElementById('video-paywall-modal').classList.add('hidden');
+  };
+
+  window.toggleReelVolume = function(e, btn) {
+      e.stopPropagation();
+      const parent = btn.closest('.snap-start');
+      if(!parent) return;
+      const video = parent.querySelector('.html5-video');
+      if(video) {
+          video.muted = !video.muted;
+          btn.innerHTML = video.muted ? '<span class="material-symbols-outlined text-[22px]">volume_off</span>' : '<span class="material-symbols-outlined text-[22px]">volume_up</span>';
+      }
+  };
+
+  window.playLongVideo = function(url) {
+      const overlay = document.getElementById('video-player-overlay');
+      const container = document.getElementById('video-player-container');
+      overlay.style.display = 'flex';
+      
+      if(url.includes('youtube.com') || url.includes('youtu.be')) {
+          const ytId = getYouTubeId(url);
+          container.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+      } else {
+          container.innerHTML = `<video src="${url}" class="w-full h-auto max-h-full" controls autoplay></video>`;
       }
   };
 
@@ -2528,345 +2769,69 @@
       document.getElementById('video-player-container').innerHTML = '';
   };
 
-  // --- REELS INTERFACES & REAL-TIME INTERACTION ---
-  function listenToVideos() {
-      onValue(ref(db, 'videos'), (snapshot) => {
-          const homeReelsList = document.getElementById('home-reels-list');
-          const gridContainer = document.getElementById('trending-reels-grid-container');
-          
-          if (snapshot.exists()) {
-              const videos = snapshot.val();
-              let reelsHTML = '';
-              let gridHTML = '';
-              
-              Object.entries(videos).reverse().forEach(([key, vid]) => {
-                  if (vid.type === 'short' || !vid.type) {
-                      reelsHTML += `
-                          <div class="w-28 h-40 rounded-xl overflow-hidden relative shrink-0 shadow-sm cursor-pointer border border-gray-100 bg-black" onclick="openVideoFeed('shorts')">
-                              <img src="${vid.thumbnail}" class="w-full h-full object-cover">
-                              <div class="absolute bottom-1 left-2 right-2 text-white text-[10px] font-bold truncate drop-shadow-md">
-                                  ${vid.title}
-                              </div>
-                          </div>
-                      `;
-                      
-                      gridHTML += `
-                          <div class="aspect-[9/16] bg-black rounded-2xl overflow-hidden relative shadow-md cursor-pointer border border-gray-200" onclick="document.getElementById('trending-reels-grid-overlay').style.display='none'; openVideoFeed('shorts');">
-                              <img src="${vid.thumbnail}" class="w-full h-full object-cover">
-                              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-3">
-                                  <h4 class="text-white text-xs font-bold truncate">${vid.title}</h4>
-                                  <p class="text-[9px] text-gray-300 mt-1 truncate">By ${vid.creator}</p>
-                              </div>
-                          </div>
-                      `;
-                  }
-              });
-              
-              if (homeReelsList) homeReelsList.innerHTML = reelsHTML || '<p class="text-gray-400 text-xs py-4">No reels yet</p>';
-              if (gridContainer) gridContainer.innerHTML = gridHTML || '<p class="col-span-2 text-center text-gray-400 py-10">No reels found</p>';
-          } else {
-              if (homeReelsList) homeReelsList.innerHTML = '<p class="text-gray-400 text-xs py-4">No reels yet</p>';
-              if (gridContainer) gridContainer.innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No reels found</p>';
-          }
-      });
-  }
-
-  window.switchVideoTab = function(tab) {
-      const shortsBtn = document.getElementById('tab-shorts-btn');
-      const longsBtn = document.getElementById('tab-longs-btn');
-      const shortsIndicator = document.getElementById('tab-shorts-indicator');
-      const longsIndicator = document.getElementById('tab-longs-indicator');
-      const shortsFeed = document.getElementById('shorts-feed-container');
-      const longsFeedWrap = document.getElementById('longs-feed-wrap');
-      
-      if (tab === 'shorts') {
-          shortsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          longsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          shortsIndicator.classList.remove('hidden');
-          longsIndicator.classList.add('hidden');
-          shortsFeed.classList.remove('hidden');
-          longsFeedWrap.classList.add('hidden');
-          loadShortsFeed();
-      } else {
-          longsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          shortsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          longsIndicator.classList.remove('hidden');
-          shortsIndicator.classList.add('hidden');
-          longsFeedWrap.classList.remove('hidden');
-          shortsFeed.classList.add('hidden');
-          loadLongsFeed();
-      }
-  };
-
-  window.loadShortsFeed = function() {
-      const container = document.getElementById('shorts-feed-container');
-      container.innerHTML = '<p class="text-white text-center py-20">Loading amazing reels...</p>';
-      
-      get(ref(db, 'videos')).then((snapshot) => {
-          if (snapshot.exists()) {
-              const videos = snapshot.val();
-              let feedHTML = '';
-              Object.entries(videos).reverse().forEach(([key, vid]) => {
-                  if (vid.type === 'short' || !vid.type) {
-                      let mediaHTML = '';
-                      if (vid.videoUrl.includes('youtube.com') || vid.videoUrl.includes('youtu.be')) {
-                          let embedUrl = vid.videoUrl;
-                          if (vid.videoUrl.includes('v=')) {
-                              embedUrl = 'https://www.youtube.com/embed/' + vid.videoUrl.split('v=')[1].split('&')[0];
-                          } else if (vid.videoUrl.includes('youtu.be/')) {
-                              embedUrl = 'https://www.youtube.com/embed/' + vid.videoUrl.split('youtu.be/')[1].split('?')[0];
-                          }
-                          mediaHTML = `<iframe src="${embedUrl}?enablejsapi=1&mute=1&playlist=${embedUrl.split('/').pop()}&loop=1" class="yt-iframe w-full h-full border-none pointer-events-auto" allow="autoplay; encrypted-media"></iframe>`;
-                      } else {
-                          mediaHTML = `<video src="${vid.videoUrl}" class="html5-video w-full h-full object-cover" loop muted playsinline autoplay></video>`;
-                      }
-                      
-                      feedHTML += `
-                          <div class="snap-start w-full h-[100dvh] relative flex items-center justify-center bg-black">
-                              <div class="absolute inset-0 z-0">
-                                  ${mediaHTML}
-                              </div>
-                              
-                              <!-- Right sidebar icons -->
-                              <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-20">
-                                  <!-- Profile -->
-                                  <div class="relative flex flex-col items-center cursor-pointer" onclick="openChatWith('${vid.creator}', '${vid.creatorAvatar}')">
-                                      <img src="${vid.creatorAvatar}" class="w-11 h-11 rounded-full border-2 border-white object-cover shadow-md">
-                                      <div class="absolute -bottom-2 bg-red-500 rounded-full w-4 h-4 flex items-center justify-center text-white border border-white text-[10px] font-bold">+</div>
-                                  </div>
-                                  <!-- Like -->
-                                  <div class="flex flex-col items-center cursor-pointer text-white" onclick="likeVideo('${key}')">
-                                      <span class="material-symbols-outlined text-[30px] drop-shadow-md">favorite</span>
-                                      <span class="text-[11px] font-bold drop-shadow-md">${vid.likes || 0}</span>
-                                  </div>
-                                  <!-- Gift icon -->
-                                  <div class="flex flex-col items-center cursor-pointer text-white" onclick="openReelsGiftSheet('${key}', '${vid.creator}')">
-                                      <span class="material-symbols-outlined text-[30px] text-yellow-400 drop-shadow-md">redeem</span>
-                                      <span class="text-[10px] font-bold drop-shadow-md">Gift</span>
-                                  </div>
-                                  <!-- Share -->
-                                  <div class="flex flex-col items-center cursor-pointer text-white">
-                                      <span class="material-symbols-outlined text-[30px] drop-shadow-md">share</span>
-                                      <span class="text-[11px] font-bold drop-shadow-md">Share</span>
-                                  </div>
-                              </div>
-                              
-                              <!-- Bottom Info -->
-                              <div class="absolute bottom-6 left-4 right-16 text-white z-20 pointer-events-auto">
-                                  <h3 class="font-bold text-sm flex items-center gap-1">@${vid.creator}</h3>
-                                  <p class="text-xs text-white/90 mt-1 leading-snug drop-shadow-md">${vid.title}</p>
-                                  <p class="text-[10px] text-red-400 font-bold mt-2 flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">local_activity</span> ${vid.category}</p>
-                              </div>
-                          </div>
-                      `;
-                  }
-              });
-              
-              container.innerHTML = feedHTML || '<p class="text-white text-center py-20">No reels found.</p>';
-              initReelsObserver();
-          } else {
-              container.innerHTML = '<p class="text-white text-center py-20">No reels found.</p>';
-          }
-      }).catch(err => {
-          console.error(err);
-          container.innerHTML = '<p class="text-white text-center py-20">Error loading reels.</p>';
-      });
-  };
-
-  window.likeVideo = function(videoKey) {
-      if(!currentUser) return;
-      const refLikes = ref(db, `videos/${videoKey}/likes`);
-      get(refLikes).then((snap) => {
-          const currentLikes = snap.val() || 0;
-          set(refLikes, currentLikes + 1);
-      });
-  };
-
-  window.openTrendingReelsGrid = function() {
-      document.getElementById('trending-reels-grid-overlay').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-  };
-
-  window.openReelsGiftSheet = function(videoKey, creatorName) {
-      if (creatorName === currentUser) {
-          showCustomAlert("You cannot send gifts to yourself!");
-          return;
-      }
-      document.getElementById('reels-gift-sheet').classList.remove('hidden');
-      document.getElementById('reels-gift-sheet').classList.add('flex');
-      
-      const bal = localStorage.getItem('zingoo_diamonds') || '0';
-      document.getElementById('reels-gift-my-bal').innerText = bal;
-      
-      const container = document.getElementById('reels-gifts-container');
-      const gifts = [
-          { name: "Rose", cost: 5, icon: "🌹" },
-          { name: "Heart", cost: 10, icon: "❤️" },
-          { name: "Crown", cost: 50, icon: "👑" },
-          { name: "Car", cost: 200, icon: "🚗" },
-          { name: "Rocket", cost: 500, icon: "🚀" },
-          { name: "Castle", cost: 1000, icon: "🏰" },
-          { name: "Ring", cost: 100, icon: "💍" },
-          { name: "Chocolate", cost: 15, icon: "🍫" }
-      ];
-      
+  // --- Dynamic Trending Reels ---
+  onValue(ref(db, 'videos'), (snapshot) => {
+      const container = document.getElementById('home-reels-list');
       container.innerHTML = '';
-      gifts.forEach(gift => {
-          container.insertAdjacentHTML('beforeend', `
-              <div class="bg-gray-50 hover:bg-gray-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer border border-gray-100 transition shadow-sm text-center transform active:scale-95" onclick="sendReelGift('${videoKey}', '${creatorName}', '${gift.name}', ${gift.cost})">
-                  <span class="text-3xl mb-1">${gift.icon}</span>
-                  <span class="text-[10px] font-bold text-gray-900 truncate w-full">${gift.name}</span>
-                  <span class="text-[9px] font-bold text-purple-600 flex items-center gap-0.5 justify-center mt-0.5"><span class="material-symbols-outlined text-[10px]">diamond</span> ${gift.cost}</span>
-              </div>
-          `);
-      });
-  };
-
-  window.closeReelsGiftSheet = function() {
-      document.getElementById('reels-gift-sheet').classList.add('hidden');
-      document.getElementById('reels-gift-sheet').classList.remove('flex');
-  };
-
-  window.sendReelGift = function(videoKey, creatorName, giftName, cost) {
-      let bal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if (bal < cost) {
-          showCustomAlert("Insufficient diamonds to send this gift!");
-          return;
-      }
-      
-      deductDiamondsForCall(cost);
-      closeReelsGiftSheet();
-      
-      get(ref(db, `users/${creatorName}/diamonds`)).then((snap) => {
-          const currentCreatorDiamonds = snap.val() || 0;
-          update(ref(db, `users/${creatorName}`), { diamonds: currentCreatorDiamonds + cost });
-          
-          const videoEarnRef = ref(db, `videos/${videoKey}/diamondsEarned`);
-          get(videoEarnRef).then((eSnap) => {
-              const currentEarned = eSnap.val() || 0;
-              set(videoEarnRef, currentEarned + cost);
+      if(snapshot.exists()) {
+          Object.entries(snapshot.val()).slice(0, 8).forEach(([key, val]) => {
+              container.insertAdjacentHTML('beforeend', `
+                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm transform hover:scale-105 transition-transform" onclick="openVideoFeed('shorts')">
+                      <img src="${val.thumbnailUrl}" class="w-full h-full object-cover">
+                      <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-1.5">
+                          <p class="text-white text-[9px] truncate font-bold">${val.title}</p>
+                      </div>
+                  </div>
+              `);
           });
-          
-          sendNotification(creatorName, 'follow', `sent you a ${giftName} (💎 ${cost}) on your video!`);
-          showCustomAlert(`Successfully sent ${giftName} to ${creatorName}!`);
-      });
-  };
+      } else {
+          container.innerHTML = '<p class="text-gray-400 text-xs">No reels uploaded yet.</p>';
+      }
+  });
 
-  window.loadLongsFeed = function() {
-      const container = document.getElementById('longs-feed-container');
-      container.innerHTML = '<p class="text-white text-center py-20">Loading following feed...</p>';
+  // Creator studio uploads list
+  window.openUploadOverlay = function() {
+      document.getElementById('upload-video-overlay').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
       
-      get(ref(db, 'videos')).then((snapshot) => {
-          if (snapshot.exists()) {
-              const videos = snapshot.val();
-              let feedHTML = '';
-              Object.entries(videos).reverse().forEach(([key, vid]) => {
-                  if (vid.type === 'long') {
-                      let mediaHTML = '';
-                      if (vid.videoUrl.includes('youtube.com') || vid.videoUrl.includes('youtu.be')) {
-                          let embedUrl = vid.videoUrl;
-                          if (vid.videoUrl.includes('v=')) {
-                              embedUrl = 'https://www.youtube.com/embed/' + vid.videoUrl.split('v=')[1].split('&')[0];
-                          } else if (vid.videoUrl.includes('youtu.be/')) {
-                              embedUrl = 'https://www.youtube.com/embed/' + vid.videoUrl.split('youtu.be/')[1].split('?')[0];
-                          }
-                          mediaHTML = `<iframe src="${embedUrl}" class="w-full h-full border-none" allowfullscreen></iframe>`;
-                      } else {
-                          mediaHTML = `<video src="${vid.videoUrl}" class="w-full h-full object-contain" controls></video>`;
-                      }
-                      
-                      feedHTML += `
-                          <div class="bg-gray-950/80 rounded-2xl border border-gray-800 p-4 shadow-lg">
-                              <div class="flex items-center gap-3 mb-3">
-                                  <img src="${vid.creatorAvatar}" class="w-10 h-10 rounded-full border border-gray-700 object-cover">
-                                  <div>
-                                      <h4 class="text-white text-sm font-bold">@${vid.creator}</h4>
-                                      <p class="text-[9px] text-gray-400">${vid.category}</p>
-                                  </div>
+      // Load user videos
+      const grid = document.getElementById('creator-studio-video-grid');
+      grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Loading your studio...</p>';
+      
+      get(ref(db, 'videos')).then(snap => {
+          grid.innerHTML = '';
+          let count = 0;
+          if(snap.exists()) {
+              Object.entries(snap.val()).forEach(([key, val]) => {
+                  if(val.owner === currentUser) {
+                      count++;
+                      grid.insertAdjacentHTML('beforeend', `
+                          <div class="relative aspect-[3/4] bg-black rounded-lg overflow-hidden border border-gray-200">
+                              <img src="${val.thumbnailUrl}" class="w-full h-full object-cover">
+                              <div class="absolute bottom-0 w-full p-1 bg-black/60">
+                                  <p class="text-white text-[9px] truncate">${val.title}</p>
                               </div>
-                              <div class="w-full aspect-video rounded-xl overflow-hidden bg-black mb-3">
-                                  ${mediaHTML}
-                              </div>
-                              <h3 class="text-white text-sm font-semibold truncate px-1">${vid.title}</h3>
                           </div>
-                      `;
+                      `);
                   }
               });
-              
-              container.innerHTML = feedHTML || '<p class="text-white text-center py-20">No videos in following feed.</p>';
-          } else {
-              container.innerHTML = '<p class="text-white text-center py-20">No videos in following feed.</p>';
           }
-      }).catch(err => {
-          console.error(err);
-          container.innerHTML = '<p class="text-white text-center py-20">Error loading feed.</p>';
-      });
-  };
-
-  // --- DIAMOND STORE PACKAGES BUY HANDLER ---
-  window.buyDiamondPack = function(rupees, diamonds) {
-      if(!currentUser) { showCustomAlert("Please login first to recharge."); return; }
-      if (confirm(`Do you want to buy ${diamonds} Diamonds for ₹${rupees}?`)) {
-          let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-          currentBal += diamonds;
-          localStorage.setItem('zingoo_diamonds', currentBal);
-          update(ref(db, `users/${currentUser}`), { diamonds: currentBal }).then(() => {
-              updateDiamondDisplay();
-              alert(`Successfully recharged ${diamonds} Diamonds!`);
-              document.getElementById('diamond-store-overlay').style.display = 'none';
-          });
-      }
-  };
-
-  window.requestGoldenProfile = function() {
-      if(!currentUser) return;
-      if(confirm("Request a Golden VIP verified profile? (Requires approval)")) {
-          set(ref(db, `users/${currentUser}/golden`), true).then(() => {
-              alert("Your profile has been upgraded to Golden VIP!");
-              location.reload();
-          });
-      }
-  };
-
-  window.openLeaderboard = function() {
-      document.getElementById('manage-profile-overlay').style.display = 'none';
-      document.getElementById('leaderboard-overlay').style.display = 'flex';
-      const list = document.getElementById('leaderboard-list');
-      list.innerHTML = '<p class="text-gray-500 text-xs text-center py-10">Loading leaderboards...</p>';
-      
-      get(ref(db, 'users')).then((snap) => {
-          if(snap.exists()) {
-              const users = Object.values(snap.val());
-              users.sort((a,b) => (b.diamonds || 0) - (a.diamonds || 0));
-              
-              let html = '';
-              users.forEach((u, idx) => {
-                  let rankIcon = `<span class="font-extrabold text-gray-500 text-sm">#${idx + 1}</span>`;
-                  if (idx === 0) rankIcon = '👑';
-                  if (idx === 1) rankIcon = '🥈';
-                  if (idx === 2) rankIcon = '🥉';
-                  
-                  html += `
-                      <div class="bg-white p-3.5 rounded-2xl flex items-center justify-between border border-gray-100 shadow-sm animate-fade-up">
-                          <div class="flex items-center gap-3">
-                              <div class="text-xl w-6 flex justify-center">${rankIcon}</div>
-                              <img src="${u.avatar}" class="w-10 h-10 rounded-full border border-gray-200 object-cover">
-                              <div>
-                                  <h4 class="font-bold text-xs text-gray-900">${u.name}</h4>
-                                  <p class="text-[9px] text-gray-500">ID: ${u.id || 'N/A'}</p>
-                              </div>
-                          </div>
-                          <div class="text-right">
-                              <span class="text-xs font-bold text-purple-600 flex items-center gap-0.5 justify-end"><span class="material-symbols-outlined text-[12px]">diamond</span> ${(u.diamonds || 0).toLocaleString()}</span>
-                          </div>
-                      </div>
-                  `;
-              });
-              list.innerHTML = html;
-          } else {
-              list.innerHTML = '<p class="text-gray-500 text-xs text-center py-10">No users found</p>';
+          if(count === 0) {
+              grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos uploaded yet. Create your first video!</p>';
           }
       });
+  };
+
+  window.closeUploadOverlay = function() {
+      document.getElementById('upload-video-overlay').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+  };
+
+  window.openVideoUploadForm = function() {
+      document.getElementById('upload-form-sub-overlay').classList.remove('hidden');
+  };
+  window.closeVideoUploadForm = function() {
+      document.getElementById('upload-form-sub-overlay').classList.add('hidden');
   };
 
 </script>
