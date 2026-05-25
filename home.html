@@ -637,7 +637,7 @@
     </div>
 </div>
 
-<!-- ================= DIAMOND STORE OVERLAY ================= -->
+<!-- ================= DIAMOND STORE OVERLAY (1 INR = 2 Diamonds Integrated) ================= -->
 <div id="diamond-store-overlay" class="fixed inset-0 bg-[#f0f0f0] z-[9500] hidden flex-col items-center overflow-y-auto no-scrollbar pb-32">
     <div class="w-full max-w-[414px] bg-white min-h-screen px-4 py-4 shadow-xl">
         <!-- Header -->
@@ -671,60 +671,60 @@
         </div>
 
         <div class="grid grid-cols-3 gap-2.5 mb-6">
-            <!-- Pack 1 (Min 50 Rs = 150 D) -->
+            <!-- Pack 1 (50 Rs = 100 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    150 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    100 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">🔮</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(50, 150)">₹ 50.00</button>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(50, 100)">₹ 50.00</button>
             </div>
 
-            <!-- Pack 2 (Popular) (100 Rs = 300 D) -->
+            <!-- Pack 2 (Popular) (100 Rs = 200 D) -->
             <div class="bg-[#fff9f9] border-[1.5px] border-dia-red rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="absolute -top-[1px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">🔥 Popular</div>
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    300 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    200 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">💰</div>
-                <button class="bg-dia-red border-none text-white py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(100, 300)">₹ 100.00</button>
+                <button class="bg-dia-red border-none text-white py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(100, 200)">₹ 100.00</button>
             </div>
 
-            <!-- Pack 3 (200 Rs = 600 D) -->
+            <!-- Pack 3 (200 Rs = 400 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    600 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    400 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">📦</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(200, 600)">₹ 200.00</button>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(200, 400)">₹ 200.00</button>
             </div>
 
-            <!-- Pack 4 (500 Rs = 1500 D) -->
+            <!-- Pack 4 (500 Rs = 1000 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    1500 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    1000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">🛍️</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(500, 1500)">₹ 500.00</button>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(500, 1000)">₹ 500.00</button>
             </div>
 
-            <!-- Pack 5 (1000 Rs = 3000 D) -->
+            <!-- Pack 5 (1000 Rs = 2000 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    3000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    2000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">🧰</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(1000, 3000)">₹ 1000.00</button>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(1000, 2000)">₹ 1000.00</button>
             </div>
 
-            <!-- Pack 6 (Best Value) (2000 Rs = 6000 D) -->
+            <!-- Pack 6 (Best Value) (2000 Rs = 4000 D) -->
             <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
                 <div class="absolute -top-[10px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">👑 Best Value</div>
                 <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    6000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+                    4000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
                 </div>
                 <div class="text-[30px] my-2 drop-shadow-sm">🪙</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold" onclick="buyDiamondPack(2000, 6000)">₹ 2000.00</button>
+                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(2000, 4000)">₹ 2000.00</button>
             </div>
         </div>
 
@@ -757,56 +757,7 @@
     </div>
 </div>
 
-<!-- ================= CUSTOM ALERT MODAL ================= -->
-<div id="custom-alert-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center relative shadow-2xl border border-red-100 transform transition-all scale-95">
-        <button onclick="closeCustomAlert()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
-            <span class="material-symbols-outlined text-[36px]">error</span>
-        </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Insufficient Diamonds</h3>
-        <p id="custom-alert-text" class="text-sm text-gray-600 mb-6">Insufficient Diamonds for this action. Please recharge.</p>
-        <div class="flex gap-3">
-            <button onclick="closeCustomAlert()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">Cancel</button>
-            <button onclick="goToDiamondStore()" class="flex-1 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Recharge</button>
-        </div>
-    </div>
-</div>
-
-<!-- ================= REELS ADMIN PREMIUM GIFT SELECTOR OVERLAY ================= -->
-<div id="reels-gift-sheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-[30px] z-[10500] hidden flex-col shadow-2xl border-t border-gray-100 max-h-[70vh]">
-    <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-[30px]">
-        <h3 class="font-bold text-gray-900 flex items-center gap-1.5"><span class="material-symbols-outlined text-red-500">redeem</span> Send Gift</h3>
-        <button onclick="closeReelsGiftSheet()" class="text-gray-400 hover:text-gray-600"><span class="material-symbols-outlined">close</span></button>
-    </div>
-    <div class="p-4 overflow-y-auto no-scrollbar grid grid-cols-4 gap-4" id="reels-gifts-container">
-        <!-- Loaded from Firebase /gifts node -->
-    </div>
-    <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between pb-8">
-        <div class="flex items-center gap-1">
-            <span class="material-symbols-outlined text-purple-600 text-sm">diamond</span>
-            <span class="text-xs font-bold text-purple-800" id="reels-gift-my-bal">0</span>
-        </div>
-        <button onclick="closeReelsGiftSheet(); document.getElementById('buy-diamonds-trigger').click();" class="text-xs font-bold text-red-500 hover:underline">Recharge Now</button>
-    </div>
-</div>
-
-<!-- ================= TRENDING REELS 2x2 GRID OVERLAY ================= -->
-<div id="trending-reels-grid-overlay" class="fixed inset-0 bg-white z-[9000] flex-col hidden overflow-hidden transition-all duration-300">
-    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <button onclick="document.getElementById('trending-reels-grid-overlay').style.display='none'; document.body.style.overflow='auto';" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
-            <h3 class="text-gray-900 font-bold text-lg">Trending Reels</h3>
-        </div>
-    </div>
-    <div id="trending-reels-grid-container" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar">
-        <!-- Populated via JS -->
-    </div>
-</div>
-
-<!-- ================= CHOOSE CATEGORY 3D MODAL (Image 3 style) ================= -->
+<!-- ================= CUSTOM GENDER SELECTOR MODAL (Image 3) ================= -->
 <div id="gender-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4 transition-all duration-300">
     <div class="bg-white rounded-[32px] p-6 max-w-sm w-full relative shadow-2xl border border-pink-100 transform transition-all scale-95 duration-300" id="gender-modal-card">
         <!-- Close Button -->
@@ -814,7 +765,7 @@
             <span class="material-symbols-outlined text-[24px]">close</span>
         </button>
         
-        <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6">Choose Category</h3>
+        <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6 font-display-lg">Choose Category</h3>
         
         <div class="flex flex-col gap-4">
             <!-- Option Both -->
@@ -890,7 +841,7 @@
             <span class="material-symbols-outlined text-[36px]">lock</span>
         </div>
         <h3 class="text-lg font-extrabold text-gray-900 mb-2 font-display-lg">Premium Video Locked</h3>
-        <p class="text-sm text-gray-600 mb-6">ThisVertical Reel is locked by the uploader. Unlocking requires <strong class="text-purple-600 font-extrabold">💎 <span id="paywall-cost-display">100</span></strong> diamonds.</p>
+        <p class="text-sm text-gray-600 mb-6">This Vertical Reel is locked by the uploader. Unlocking requires <strong class="text-purple-600 font-extrabold">💎 <span id="paywall-cost-display">100</span></strong> diamonds.</p>
         <div class="flex gap-3">
             <button onclick="closeVideoPaywall()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">Cancel</button>
             <button id="paywall-unlock-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Unlock & Watch</button>
@@ -1264,7 +1215,7 @@
   import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-  // Sahi Zingoo Project Realtime Database Credentials
+  // Zingoo Project Realtime Database Credentials
   const firebaseConfig = {
     apiKey: "AIzaSyD9dd-bAdi-bXicIUp4THO0VGExzPn3FsI",
     authDomain: "zingoo-ae309.firebaseapp.com",
@@ -1606,7 +1557,7 @@
   function updateUserStatus(status) {
       if(!currentUser) return;
       set(ref(db, `users/${currentUser}/status`), status);
-      const ind_bg = document.getElementById('current-status-dot');
+      const ind_bg = document.getElementById('status-dot');
       const txt = document.getElementById('status-text-label');
       
       if(status === 'online') {
@@ -2463,7 +2414,7 @@
       }
   };
 
-  // Robust YouTube ID extractor (Supports watch, short links, youtu.be)
+  // Robust YouTube ID extractor
   function getYouTubeId(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -2506,7 +2457,6 @@
               if(price < 100) { alert("Minimum price for premium file is 100 diamonds."); spinner.classList.add('hidden'); return; }
               uploadPrice = price;
 
-              // Upload Video to Cloudinary
               const formData = new FormData();
               formData.append('file', fileInput.files[0]);
               formData.append('upload_preset', UPLOAD_PRESET);
@@ -2523,7 +2473,7 @@
               if(!ytId) { alert("Invalid YouTube URL!"); spinner.classList.add('hidden'); return; }
               videoUrl = `https://www.youtube.com/embed/${ytId}`;
               isYt = true;
-              uploadPrice = 0; // Always Free
+              uploadPrice = 0; // Free
           }
 
           if(!videoUrl) { throw new Error("Video upload failed."); }
@@ -2727,7 +2677,7 @@
               await update(ref(db, `users/${owner}`), { diamonds: uploaderDiamonds });
           }
 
-          // Save unlock state locally and in viewer's profile
+          // Save unlock state locally
           localStorage.setItem('unlocked_' + key, 'true');
           await set(ref(db, `users/${currentUser}/unlocked_videos/${key}`), true);
 
@@ -2832,6 +2782,13 @@
   };
   window.closeVideoUploadForm = function() {
       document.getElementById('upload-form-sub-overlay').classList.add('hidden');
+  };
+
+  // --- External Diamond Store Purchase Redirection ---
+  window.buyDiamondPack = function(amount, diamonds) {
+      if(!currentUser) { alert("Please login first!"); return; }
+      const payUrl = `https://inhimanshukumar4560-byte.github.io/Iccha/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
+      window.location.href = payUrl;
   };
 
 </script>
