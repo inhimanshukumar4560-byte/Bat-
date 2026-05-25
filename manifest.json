@@ -1,0 +1,20 @@
+{
+  "name": "Zingoo Live",
+  "short_name": "Zingoo",
+  "start_url": "/home.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF2E5D",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=FF2E5D",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=FF2E5D",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
