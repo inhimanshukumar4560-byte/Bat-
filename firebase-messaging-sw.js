@@ -1,14 +1,15 @@
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
+// Naye Zingoo Project ke credentials se initialize kiya gaya hai
 firebase.initializeApp({
-    apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
-    authDomain: "benchtopinnovations12.firebaseapp.com",
-    databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
-    projectId: "benchtopinnovations12",
-    storageBucket: "benchtopinnovations12.firebasestorage.app",
-    messagingSenderId: "113274194106",
-    appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
+    apiKey: "AIzaSyD9dd-bAdi-bXicIUp4THO0VGExzPn3FsI",
+    authDomain: "zingoo-ae309.firebaseapp.com",
+    databaseURL: "https://zingoo-ae309-default-rtdb.firebaseio.com",
+    projectId: "zingoo-ae309",
+    storageBucket: "zingoo-ae309.firebasestorage.app",
+    messagingSenderId: "276852537232",
+    appId: "1:276852537232:web:6b345eb808a5afa1b4e515"
 });
 
 const messaging = firebase.messaging();
