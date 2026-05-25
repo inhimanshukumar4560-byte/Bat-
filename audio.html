@@ -201,7 +201,7 @@
         .fab-create:hover { transform: scale(1.1); }
 
         /* ==========================================
-           AUDIO ROOM UI (NEW CHINGARI STYLE WITH IMAGE BG)
+           AUDIO ROOM UI
            ========================================== */
         #live-room-screen {
             width: 100%;
@@ -285,7 +285,7 @@
             position: relative;
             margin-bottom: 5px;
             border: 2px solid transparent;
-            overflow: visible; /* CRITICAL: Allows custom frames to break out */
+            overflow: visible; 
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
         }
@@ -321,7 +321,7 @@
         }
         .chat-container::-webkit-scrollbar { display: none; }
         
-        /* Message Bubbles - Made fully transparent with clear text shadows */
+        /* Message Bubbles */
         .sys-message {
             background: transparent; color: #ffffff; font-size: 13px; line-height: 1.4; padding: 10px 15px; border-radius: 10px; align-self: flex-start; max-width: 90%; font-family: -apple-system, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
@@ -393,7 +393,7 @@
         .gift-circle { background: #26a69a; }
         .flame-circle { background: #392b58; }
 
-        /* Fullscreen transparent overlay for chat input to capture clicks */
+        /* Fullscreen transparent overlay for chat input */
         .chat-input-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; display: none; z-index: 40;
         }
@@ -566,7 +566,7 @@
         </div>
 
         <!-- ==========================================
-             NEW CHINGARI STYLE LIVE ROOM SCREEN
+             LIVE ROOM SCREEN
              ========================================== -->
         <div id="live-room-screen">
             <div class="big-bg-logo">
@@ -637,7 +637,7 @@
                 </div>
             </div>
 
-            <!-- Enhanced Chat Overlay (FullScreen to capture outside clicks) -->
+            <!-- Enhanced Chat Overlay -->
             <div class="chat-input-overlay" id="chat-panel-overlay">
                 <div class="chat-input-box-wrapper">
                     <div class="chat-input-box">
@@ -688,7 +688,7 @@
         <div class="modal-content">
             <div class="modal-header"><h3>Room Actions</h3><button class="close-btn">&times;</button></div>
             <div class="action-grid">
-                <!-- New Manage Users Button for Host -->
+                <!-- Manage Users Button for Host -->
                 <div class="action-item" id="menu-manage-users-btn" style="display:none;">
                     <div class="action-icon-circle" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-users-cog"></i></div>
                     <p>Manage Seated Users</p>
@@ -806,6 +806,7 @@
         </div>
     </div>
 
+    <!-- Firebase SDK Setup (Modular Web SDK Version 10.8.0 linked securely to Zingoo project database) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -817,14 +818,16 @@
             app = window.zingooApp;
             db = getDatabase(app);
         } else {
+            // Updated configuration from home dashboard - Zingoo Project
             const firebaseConfig = {
-                apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
-                authDomain: "benchtopinnovations12.firebaseapp.com",
-                databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
-                projectId: "benchtopinnovations12",
-                storageBucket: "benchtopinnovations12.firebasestorage.app",
-                messagingSenderId: "113274194106",
-                appId: "1:113274194106:web:c2548c12c1ea20c5b69a83",
+              apiKey: "AIzaSyD9dd-bAdi-bXicIUp4THO0VGExzPn3FsI",
+              authDomain: "zingoo-ae309.firebaseapp.com",
+              databaseURL: "https://zingoo-ae309-default-rtdb.firebaseio.com",
+              projectId: "zingoo-ae309",
+              storageBucket: "zingoo-ae309.firebasestorage.app",
+              messagingSenderId: "276852537232",
+              appId: "1:276852537232:web:6b345eb808a5afa1b4e515",
+              measurementId: "G-FBW3DT6WMV"
             };
             app = initializeApp(firebaseConfig);
             db = getDatabase(app);
@@ -834,7 +837,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             // --- CRITICAL FIX: UNLOCK AUDIO ON MOBILE ---
-            // Browsers block audio until the user interacts with the screen. This solves the "Voice nhi aa rha h" problem.
             document.body.addEventListener('click', () => {
                 document.querySelectorAll('audio').forEach(audioEl => {
                     if(audioEl.paused && audioEl.srcObject) {
@@ -1552,7 +1554,6 @@
                 openModal('profile-popup');
             };
 
-            // Enhanced Pop Distribution for Fire/Hearts
             function createFloatingIcon(iconClass, color) {
                 const container = document.getElementById('live-room-screen');
                 const icon = document.createElement('i');
@@ -2155,7 +2156,6 @@
                 document.getElementById('mainBottomUI').style.display = 'none';
             });
 
-            // If user clicks anywhere strictly OUTSIDE the input area inside the chat overlay, close it
             document.getElementById('chat-panel-overlay').addEventListener('click', (e) => {
                 if (e.target.closest('.chat-input-box-wrapper')) return; 
                 document.getElementById('chat-panel-overlay').classList.remove('active');
