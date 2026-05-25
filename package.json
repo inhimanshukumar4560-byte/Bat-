@@ -1,7 +1,7 @@
 {
-  "name": "zingoo-token-server",
+  "name": "zingoo-api-server",
   "version": "1.0.0",
-  "description": "LiveKit Token Server for Zingoo",
+  "description": "Zingoo Backend for LiveKit Tokens and Firebase Push Notifications",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -9,6 +9,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
     "livekit-server-sdk": "^2.2.0"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Zingoo",
+  "license": "ISC"
 }
