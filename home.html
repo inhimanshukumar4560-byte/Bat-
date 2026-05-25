@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
 <head>
@@ -114,7 +113,7 @@
               pointer-events: none;
           }
           
-          /* Toggle Switch Animated Style (Fixed for perfect function) */
+          /* Toggle Switch Animated Style */
           .toggle-checkbox:checked + .toggle-label {
               background-color: #10B981;
           }
@@ -152,10 +151,12 @@
             <option value="female">👩 Female</option>
         </select>
 
-        <!-- Active/Inactive Status Toggle -->
-        <div class="flex items-center gap-1 cursor-pointer bg-gray-50 px-2 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors" id="status-toggle-btn" onclick="toggleManualStatus()">
-            <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors"></div>
-            <span id="status-text" class="text-[10px] font-bold text-green-600 hidden md:block">Active</span>
+        <!-- Active/Inactive Status Toggle Switch -->
+        <div class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors" id="status-toggle-btn" onclick="toggleManualStatus()">
+            <span id="status-text" class="text-[10px] font-bold text-green-600">Active</span>
+            <div class="w-8 h-4 bg-green-500 rounded-full relative transition-colors duration-300" id="status-toggle-bg">
+                <div class="w-3 h-3 bg-white rounded-full absolute top-[2px] right-[2px] transition-all duration-300 shadow-sm" id="status-toggle-circle"></div>
+            </div>
         </div>
 
         <!-- Notification Bell -->
@@ -225,7 +226,7 @@
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
             <h2 class="text-lg font-bold text-gray-900">Trending Reels</h2>
-            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openVideoFeed('shorts');">View All</span>
+            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openTrendingReelsGrid();">View All</span>
         </div>
         
         <!-- Real Shorts injected dynamically here -->
@@ -392,7 +393,7 @@
         <button class="flex-1 bg-white border border-gray-200 text-dia-red font-bold py-2.5 rounded-full text-sm shadow-sm flex items-center justify-center gap-1.5 hover:bg-gray-50 transition" id="btn-edit-profile">
             <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profile
         </button>
-        <button class="flex-[1.5] bg-dia-red text-white font-bold py-2.5 rounded-full text-sm shadow-md flex items-center justify-center gap-1.5 hover:opacity-90 transition" onclick="alert('This is your own profile! You can follow others from the Home Feed.')">
+        <button class="flex-[1.5] bg-dia-red text-white font-bold py-2.5 rounded-full text-sm shadow-md flex items-center justify-center gap-1.5 hover:opacity-90 transition" id="profile-follow-btn-main">
             <span class="material-symbols-outlined text-[20px]">person_add</span> Follow
         </button>
         <button class="w-12 h-12 bg-white border border-gray-200 text-dia-red rounded-full flex items-center justify-center shadow-sm shrink-0 hover:bg-gray-50 transition">
@@ -495,8 +496,8 @@
                 <span class="text-[8px] text-gray-500 block leading-tight mt-0.5">Your digital<br>card</span>
             </div>
             
-            <!-- Video Upload Highlighted Box perfectly redesigned -->
-            <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-xl p-3 shadow-[0_5px_15px_rgba(255,0,76,0.3)] border-none flex flex-col items-center justify-center cursor-pointer transform hover:scale-105 transition-transform animate-[pulse_2s_ease-in-out_infinite]" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('upload-video-overlay').style.display='flex';">
+            <!-- Video Upload Highlighted Box perfectly redesigned to lead to creator studio -->
+            <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-xl p-3 shadow-[0_5px_15px_rgba(255,0,76,0.3)] border-none flex flex-col items-center justify-center cursor-pointer transform hover:scale-105 transition-transform animate-[pulse_2s_ease-in-out_infinite]" onclick="document.getElementById('manage-profile-overlay').style.display='none'; openUploadOverlay();">
                 <span class="material-symbols-outlined text-white text-[32px] mb-1 drop-shadow-md">video_call</span>
                 <span class="text-[11px] font-bold text-white block leading-tight drop-shadow-sm">Upload</span>
                 <span class="text-[9px] text-white/90 block leading-tight mt-0.5 font-medium">Be a Creator</span>
@@ -716,6 +717,55 @@
                 By proceeding, you agree to our <a href="#" class="text-dia-red font-semibold no-underline">Terms of Service</a> and <a href="#" class="text-dia-red font-semibold no-underline">Privacy Policy</a>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ================= CUSTOM RE-DESIGNED NOTIFICATION ALERT MODAL ================= -->
+<div id="custom-alert-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center relative shadow-2xl border border-red-100 transform transition-all scale-95">
+        <button onclick="closeCustomAlert()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+            <span class="material-symbols-outlined text-[36px]">error</span>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Insufficient Diamonds</h3>
+        <p id="custom-alert-text" class="text-sm text-gray-600 mb-6">Insufficient Diamonds for this action. Please recharge.</p>
+        <div class="flex gap-3">
+            <button onclick="closeCustomAlert()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">Cancel</button>
+            <button onclick="goToDiamondStore()" class="flex-1 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Recharge</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= REELS ADMIN PREMIUM GIFT SELECTOR OVERLAY ================= -->
+<div id="reels-gift-sheet" class="fixed inset-x-0 bottom-0 bg-white rounded-t-[30px] z-[10500] hidden flex-col shadow-2xl border-t border-gray-100 max-h-[70vh]">
+    <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-[30px]">
+        <h3 class="font-bold text-gray-900 flex items-center gap-1.5"><span class="material-symbols-outlined text-red-500">redeem</span> Send Gift</h3>
+        <button onclick="closeReelsGiftSheet()" class="text-gray-400 hover:text-gray-600"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="p-4 overflow-y-auto no-scrollbar grid grid-cols-4 gap-4" id="reels-gifts-container">
+        <!-- Dynmically loaded from Firebase /gifts node -->
+    </div>
+    <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between pb-8">
+        <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-purple-600 text-sm">diamond</span>
+            <span class="text-xs font-bold text-purple-800" id="reels-gift-my-bal">0</span>
+        </div>
+        <button onclick="closeReelsGiftSheet(); document.getElementById('buy-diamonds-trigger').click();" class="text-xs font-bold text-red-500 hover:underline">Recharge Now</button>
+    </div>
+</div>
+
+<!-- ================= TRENDING REELS 2x2 GRID OVERLAY ================= -->
+<div id="trending-reels-grid-overlay" class="fixed inset-0 bg-white z-[9000] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button onclick="document.getElementById('trending-reels-grid-overlay').style.display='none'; document.body.style.overflow='auto';" class="text-gray-700 hover:text-black"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">Trending Reels</h3>
+        </div>
+    </div>
+    <div id="trending-reels-grid-container" class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4 pb-24 bg-gray-50 no-scrollbar">
+        <!-- Populated via JS -->
     </div>
 </div>
 
@@ -951,64 +1001,101 @@
     <div id="video-player-container" class="w-full h-full flex items-center justify-center bg-black"></div>
 </div>
 
-<!-- UPLOAD VIDEO -->
-<div id="upload-video-overlay" class="fixed inset-0 bg-black/80 backdrop-blur z-[10000] flex-col items-center justify-center hidden">
-    <div id="upload-spinner" class="absolute inset-0 bg-black/80 z-[10000] flex-col items-center justify-center hidden text-white">
-        Loading...
+<!-- ================= REDESIGNED CREATOR STUDIO & UPLOAD VIDEO ================= -->
+<div id="upload-video-overlay" class="fixed inset-0 bg-white z-[10000] flex flex-col hidden overflow-hidden">
+    
+    <!-- Header of Creator Studio -->
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center gap-3">
+            <button onclick="closeUploadOverlay();" class="text-gray-700 hover:text-black flex items-center"><span class="material-symbols-outlined text-[28px]">arrow_back</span></button>
+            <h3 class="text-gray-950 font-extrabold text-lg">Creator Studio</h3>
+        </div>
+        <button onclick="openVideoUploadForm();" class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-md flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">add</span> Create Video
+        </button>
     </div>
-    <div class="bg-white p-6 rounded-2xl w-[90%] max-w-md relative overflow-y-auto max-h-[90vh] no-scrollbar">
-        <button class="absolute top-4 right-4 text-gray-500" onclick="document.getElementById('upload-video-overlay').style.display='none';"><span class="material-symbols-outlined">close</span></button>
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Upload Video</h2>
-        <input type="text" id="upload-title" placeholder="Video Title" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3">
-        
-        <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium">
-            <option value="short">Reel (9:16)</option>
-            <option value="long">Video (16:9)</option>
-        </select>
-        
-        <!-- Extensive Category Selection as requested -->
-        <select id="upload-category" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium appearance-none">
-            <option value="" disabled selected>Select Category Feed</option>
-            <option value="For You Feed">For You Feed</option>
-            <option value="Following Feed">Following Feed</option>
-            <option value="Trending Feed">Trending Feed</option>
-            <option value="Nearby Feed">Nearby Feed</option>
-            <option value="New Creators Feed">New Creators Feed</option>
-            <option value="Viral Videos Feed">Viral Videos Feed</option>
-            <option value="Verified Creators Feed">Verified Creators Feed</option>
-            <option value="Premium Creators Feed">Premium Creators Feed</option>
-            <option value="Regional Content Feed">Regional Content Feed</option>
-            <option value="Language-Based Feed">Language-Based Feed</option>
-            <option value="Mood-Based Feed">Mood-Based Feed</option>
-            <option value="AI Personalized Feed">AI Personalized Feed</option>
-            <option value="Category Feed">Category Feed</option>
-            <option value="Gaming Feed">Gaming Feed</option>
-            <option value="Meme Feed">Meme Feed</option>
-            <option value="Music Feed">Music Feed</option>
-            <option value="Education Feed">Education Feed</option>
-            <option value="Comedy Feed">Comedy Feed</option>
-            <option value="Fashion Feed">Fashion Feed</option>
-            <option value="Fitness Feed">Fitness Feed</option>
-        </select>
 
-        <div class="flex gap-2 mb-3">
-            <button id="src-btn-upload" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm" onclick="toggleUploadSource('upload')">File</button>
-            <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm" onclick="toggleUploadSource('link')">YouTube Link</button>
+    <!-- Redesigned Grid of Creator Studio -->
+    <div class="flex-1 overflow-y-auto p-4 bg-gray-50 no-scrollbar pb-24">
+        <div class="mb-4">
+            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider px-1">My Uploads & Reels</h4>
         </div>
-        <div id="source-file-container" class="mb-3 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer" onclick="document.getElementById('video-file-input').click()">
-            Select Video File
-            <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="document.getElementById('video-file-name').innerText = this.files[0].name">
-            <p id="video-file-name" class="text-xs text-green-600 mt-1"></p>
+        <!-- 3x3 9:16 Responsive Grid -->
+        <div id="creator-studio-video-grid" class="grid grid-cols-3 gap-3">
+            <!-- Dynamically populated via JS with user's own videos -->
+            <p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos found. Upload your first amazing video!</p>
         </div>
-        <div id="source-link-container" class="mb-3 hidden">
-            <input type="url" id="upload-yt-link" placeholder="YouTube URL" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+    </div>
+
+    <!-- Spinner Loading inside Overlay -->
+    <div id="upload-spinner" class="absolute inset-0 bg-black/80 z-[11000] flex-col items-center justify-center hidden text-white">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mb-4"></div>
+        <span class="text-sm font-semibold">Publishing video to Zingoo network...</span>
+    </div>
+
+    <!-- Overlay Form inside overlay for uploading details -->
+    <div id="upload-form-sub-overlay" class="absolute inset-0 bg-white z-[10500] flex flex-col hidden overflow-hidden">
+        <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0">
+            <div class="flex items-center gap-3">
+                <button onclick="closeVideoUploadForm();" class="text-gray-700"><span class="material-symbols-outlined">arrow_back</span></button>
+                <h3 class="text-gray-900 font-bold text-lg">New Video</h3>
+            </div>
         </div>
-        <div class="mb-4 border border-gray-200 rounded-xl p-3 cursor-pointer text-center" onclick="document.getElementById('thumb-file-input').click()">
-            Upload Thumbnail (Image)
-            <input type="file" id="thumb-file-input" accept="image/*" class="hidden" onchange="document.getElementById('thumb-file-name').innerText = this.files[0].name; document.getElementById('thumb-file-name').style.display='block';">
-            <p id="thumb-file-name" class="text-xs text-green-600 mt-1 hidden"></p>
+        <div class="flex-grow overflow-y-auto p-6 no-scrollbar pb-32">
+            <input type="text" id="upload-title" placeholder="Video Title" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
+            
+            <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
+                <option value="short">Reel (9:16)</option>
+                <option value="long">Video (16:9)</option>
+            </select>
+            
+            <select id="upload-category" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
+                <option value="" disabled selected>Select Category Feed</option>
+                <option value="For You Feed">For You Feed</option>
+                <option value="Following Feed">Following Feed</option>
+                <option value="Trending Feed">Trending Feed</option>
+                <option value="Nearby Feed">Nearby Feed</option>
+                <option value="New Creators Feed">New Creators Feed</option>
+                <option value="Viral Videos Feed">Viral Videos Feed</option>
+                <option value="Verified Creators Feed">Verified Creators Feed</option>
+                <option value="Premium Creators Feed">Premium Creators Feed</option>
+                <option value="Regional Content Feed">Regional Content Feed</option>
+                <option value="Language-Based Feed">Language-Based Feed</option>
+                <option value="Mood-Based Feed">Mood-Based Feed</option>
+                <option value="AI Personalized Feed">AI Personalized Feed</option>
+                <option value="Category Feed">Category Feed</option>
+                <option value="Gaming Feed">Gaming Feed</option>
+                <option value="Meme Feed">Meme Feed</option>
+                <option value="Music Feed">Music Feed</option>
+                <option value="Education Feed">Education Feed</option>
+                <option value="Comedy Feed">Comedy Feed</option>
+                <option value="Fashion Feed">Fashion Feed</option>
+                <option value="Fitness Feed">Fitness Feed</option>
+            </select>
+
+            <div class="flex gap-2 mb-3">
+                <button id="src-btn-upload" class="flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold" onclick="toggleUploadSource('upload')">File</button>
+                <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold" onclick="toggleUploadSource('link')">YouTube Link</button>
+            </div>
+            
+            <div id="source-file-container" class="mb-3 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('video-file-input').click()">
+                <span class="text-sm text-gray-600 font-medium">Select Video File</span>
+                <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="document.getElementById('video-file-name').innerText = this.files[0].name">
+                <p id="video-file-name" class="text-xs text-green-600 mt-1"></p>
+            </div>
+            
+            <div id="source-link-container" class="mb-3 hidden">
+                <input type="url" id="upload-yt-link" placeholder="YouTube URL" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
+            </div>
+            
+            <div class="mb-4 border border-gray-200 rounded-xl p-3 cursor-pointer text-center hover:bg-gray-50" onclick="document.getElementById('thumb-file-input').click()">
+                <span class="text-sm text-gray-600 font-medium">Upload Thumbnail (Image)</span>
+                <input type="file" id="thumb-file-input" accept="image/*" class="hidden" onchange="document.getElementById('thumb-file-name').innerText = this.files[0].name; document.getElementById('thumb-file-name').style.display='block';">
+                <p id="thumb-file-name" class="text-xs text-green-600 mt-1 hidden"></p>
+            </div>
+            
+            <button class="w-full btn-red-gradient text-white font-bold py-3.5 rounded-full text-sm shadow-md" onclick="submitVideoUpload()">Publish</button>
         </div>
-        <button class="w-full bg-red-500 text-white font-bold py-3 rounded-xl" onclick="submitVideoUpload()">Publish</button>
     </div>
 </div>
 
@@ -1070,6 +1157,29 @@
 
   const CLOUD_NAME = "dotjw6tep"; 
   const UPLOAD_PRESET = "Zingoo"; 
+
+  // --- CUSTOM ALERT OVERLAY METHOD (Replaces default alerts) ---
+  window.showCustomAlert = function(msg) {
+      document.getElementById('custom-alert-text').innerText = msg;
+      const modal = document.getElementById('custom-alert-modal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+          modal.querySelector('div').classList.remove('scale-95');
+          modal.querySelector('div').classList.add('scale-100');
+      }, 10);
+  }
+
+  window.closeCustomAlert = function() {
+      const modal = document.getElementById('custom-alert-modal');
+      modal.querySelector('div').classList.remove('scale-100');
+      modal.querySelector('div').classList.add('scale-95');
+      setTimeout(() => { modal.style.display = 'none'; }, 100);
+  }
+
+  window.goToDiamondStore = function() {
+      closeCustomAlert();
+      document.getElementById('buy-diamonds-trigger').click();
+  }
 
   // --- Auto Redirect for Diamond Buy URL Param ---
   window.addEventListener('load', () => {
@@ -1138,8 +1248,8 @@
 
   // --- REAL-TIME FOLLOW SYSTEM ---
   window.toggleFollow = async function(targetUser) {
-      if(!currentUser) { alert("Please login first to follow."); return; }
-      if(currentUser === targetUser) { alert("You cannot follow yourself!"); return; }
+      if(!currentUser) { showCustomAlert("Please login first to follow."); return; }
+      if(currentUser === targetUser) { showCustomAlert("You cannot follow yourself!"); return; }
       
       const followRef = ref(db, `followers/${targetUser}/${currentUser}`);
       const followingRef = ref(db, `following/${currentUser}/${targetUser}`);
@@ -1156,6 +1266,9 @@
               await set(followingRef, serverTimestamp());
               sendNotification(targetUser, 'follow', 'started following you!');
           }
+          // Refresh Profile Stats locally
+          listenToFollowStats();
+          renderUsers();
       } catch(e) {
           console.error(e);
       }
@@ -1231,7 +1344,7 @@
       callInterval = setInterval(() => {
           let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
           if(currentDiamonds < costPerMin) {
-              alert("Insufficient diamonds. Call ended automatically.");
+              showCustomAlert("Insufficient diamonds. Call ended automatically.");
               stopWebRTC();
           } else {
               deductDiamondsForCall(costPerMin);
@@ -1254,16 +1367,19 @@
   function updateUserStatus(status) {
       if(!currentUser) return;
       set(ref(db, `users/${currentUser}/status`), status);
-      const ind = document.getElementById('status-indicator');
+      const ind_bg = document.getElementById('status-toggle-bg');
+      const ind_circle = document.getElementById('status-toggle-circle');
       const txt = document.getElementById('status-text');
       if(status === 'online') {
-          ind.className = "w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e] transition-colors";
+          ind_bg.className = "w-8 h-4 bg-green-500 rounded-full relative transition-colors duration-300";
+          ind_circle.className = "w-3 h-3 bg-white rounded-full absolute top-[2px] right-[2px] transition-all duration-300 shadow-sm";
           txt.innerText = "Active";
-          txt.className = "text-[10px] font-bold text-green-600 hidden md:block";
+          txt.className = "text-[10px] font-bold text-green-600";
       } else {
-          ind.className = "w-2.5 h-2.5 rounded-full bg-gray-400 transition-colors";
+          ind_bg.className = "w-8 h-4 bg-gray-300 rounded-full relative transition-colors duration-300";
+          ind_circle.className = "w-3 h-3 bg-white rounded-full absolute top-[2px] left-[2px] transition-all duration-300 shadow-sm";
           txt.innerText = "Inactive";
-          txt.className = "text-[10px] font-bold text-gray-500 hidden md:block";
+          txt.className = "text-[10px] font-bold text-gray-500";
       }
   }
 
@@ -1367,33 +1483,32 @@
 
   // --- Diamond Purchase Triggers ---
   document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
-      if(!currentUser) { alert("Create profile first!"); return; }
+      if(!currentUser) { showCustomAlert("Create profile first!"); return; }
       document.getElementById('diamond-store-overlay').style.display = 'flex';
   });
 
   window.buyDiamondPack = function(amount, diamonds) {
-      if(!currentUser) { alert("Create profile first!"); return; }
+      if(!currentUser) { showCustomAlert("Create profile first!"); return; }
       const icchaPaymentDomain = "https://shubhzone.shop"; 
       window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
   };
   
   // Gift Diamonds
   window.giftDiamonds = function(authorName, videoId) {
-      if(!currentUser) { alert("Please create a profile first!"); return; }
-      if(currentUser === authorName) { alert("You cannot gift yourself!"); return; }
+      if(!currentUser) { showCustomAlert("Please create a profile first!"); return; }
+      if(currentUser === authorName) { showCustomAlert("You cannot gift yourself!"); return; }
       
       let amount = prompt(`How many diamonds do you want to gift to ${authorName}?`, "1");
       if(amount === null) return;
       amount = parseInt(amount);
       
       if(isNaN(amount) || amount <= 0) {
-          alert("Enter a valid amount."); return;
+          showCustomAlert("Enter a valid amount."); return;
       }
       
       let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
       if(currentBal < amount) {
-          alert("Insufficient diamonds. Please buy more from the store!");
-          document.getElementById('diamond-store-overlay').style.display = 'flex';
+          showCustomAlert("Insufficient diamonds. Please buy more from the store!");
           return;
       }
       
@@ -1436,18 +1551,18 @@
 
   // --- Golden Profile Request ---
   window.requestGoldenProfile = function() {
-      if(!currentUser) { alert("Please create profile first!"); return; }
+      if(!currentUser) { showCustomAlert("Please create profile first!"); return; }
       
       get(ref(db, `admin_requests/golden_profiles/${currentUser}`)).then((snapshot) => {
           if (snapshot.exists()) {
-              alert("You have already requested a Golden Profile. Please wait for admin approval.");
+              showCustomAlert("You have already requested a Golden Profile. Please wait for admin approval.");
           } else {
               set(ref(db, `admin_requests/golden_profiles/${currentUser}`), {
                   user: currentUser,
                   timestamp: serverTimestamp(),
                   status: 'pending'
               }).then(() => {
-                  alert("Request for Golden Profile sent successfully! Admin will review it.");
+                  showCustomAlert("Request for Golden Profile sent successfully! Admin will review it.");
               });
           }
       });
@@ -1514,18 +1629,36 @@
       document.getElementById('video-player-container').innerHTML = ''; 
   };
 
+  // --- Creator Studio Opening Overlays ---
+  window.openUploadOverlay = function() {
+      document.getElementById('upload-video-overlay').style.display = 'flex';
+      renderCreatorStudioGrid();
+  }
+
+  window.closeUploadOverlay = function() {
+      document.getElementById('upload-video-overlay').style.display = 'none';
+  }
+
+  window.openVideoUploadForm = function() {
+      document.getElementById('upload-form-sub-overlay').style.display = 'flex';
+  }
+
+  window.closeVideoUploadForm = function() {
+      document.getElementById('upload-form-sub-overlay').style.display = 'none';
+  }
+
   // --- Upload UI Toggles ---
   window.toggleUploadSource = function(type) {
       const btnUpload = document.getElementById('src-btn-upload');
       const btnLink = document.getElementById('src-btn-link');
       if(type === 'upload') {
-          btnUpload.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm";
-          btnLink.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm";
+          btnUpload.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
+          btnLink.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
           document.getElementById('source-file-container').style.display = 'block';
           document.getElementById('source-link-container').style.display = 'none';
       } else {
-          btnLink.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm";
-          btnUpload.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm";
+          btnLink.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
+          btnUpload.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
           document.getElementById('source-file-container').style.display = 'none';
           document.getElementById('source-link-container').style.display = 'block';
       }
@@ -1585,13 +1718,13 @@
       const category = document.getElementById('upload-category').value || 'For You Feed';
       const isUpload = document.getElementById('source-file-container').style.display !== 'none';
       
-      if(!title) { alert('Please enter title'); return; }
+      if(!title) { showCustomAlert('Please enter title'); return; }
       document.getElementById('upload-spinner').style.display = 'flex';
 
       let mediaUrl = "";
       if (isUpload) {
           const videoFile = document.getElementById('video-file-input').files[0];
-          if(!videoFile) { alert('Select video!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
+          if(!videoFile) { showCustomAlert('Select video!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
           mediaUrl = await uploadToCloudinary(videoFile, "video");
           if(!mediaUrl) mediaUrl = URL.createObjectURL(videoFile); 
       } else {
@@ -1606,13 +1739,192 @@
       }
 
       push(ref(db, 'videos'), {
-          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, category: category, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0
+          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, category: category, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0, likes: 0
       }).then(() => {
           document.getElementById('upload-spinner').style.display = 'none';
-          document.getElementById('upload-video-overlay').style.display='none';
-          alert('Uploaded!');
+          document.getElementById('upload-form-sub-overlay').style.display='none';
+          renderCreatorStudioGrid();
+          showCustomAlert('Published Successfully!');
       });
   };
+
+  // --- Real-time Reels Likes Engine ---
+  window.likeVideo = function(vidId, btnEl) {
+      if(!currentUser) { showCustomAlert("Login to like!"); return; }
+      const likeRef = ref(db, `videos/${vidId}/likes`);
+      get(likeRef).then(snap => {
+          let likes = snap.val() || 0;
+          likes += 1;
+          set(likeRef, likes);
+      });
+  }
+
+  // --- Reels Admin Premium Gift Sheet Manager ---
+  window.openReelsGiftSheet = function(authorName, vidId) {
+      if(!currentUser) { showCustomAlert("Please login first."); return; }
+      if(currentUser === authorName) { showCustomAlert("You cannot gift yourself!"); return; }
+      
+      const bal = localStorage.getItem('zingoo_diamonds') || '0';
+      document.getElementById('reels-gift-my-bal').innerText = parseInt(bal).toLocaleString();
+
+      const container = document.getElementById('reels-gifts-container');
+      container.innerHTML = '<p class="col-span-4 text-center text-xs text-gray-400 py-4">Loading Admin Gifts...</p>';
+      
+      document.getElementById('reels-gift-sheet').style.display = 'flex';
+
+      get(ref(db, 'gifts')).then(snapshot => {
+          container.innerHTML = '';
+          const data = snapshot.val();
+          if(data && Object.keys(data).length > 0) {
+              Object.entries(data).forEach(([key, gift]) => {
+                  container.insertAdjacentHTML('beforeend', `
+                      <div class="bg-gray-50 border border-gray-100 rounded-2xl p-2.5 text-center flex flex-col items-center justify-between cursor-pointer hover:border-red-500 transition-colors" onclick="sendReelsGift('${gift.name}', ${gift.cost}, '${gift.imageUrl}', '${authorName}', '${vidId}')">
+                          <img src="${gift.imageUrl}" class="w-10 h-10 object-contain mb-1">
+                          <h4 class="text-[10px] font-bold text-gray-900 truncate w-full">${gift.name}</h4>
+                          <p class="text-[9px] text-purple-600 font-extrabold flex items-center gap-0.5 mt-1 justify-center">
+                              <span class="material-symbols-outlined text-[10px]">diamond</span> ${gift.cost}
+                          </p>
+                      </div>
+                  `);
+              });
+          } else {
+              container.innerHTML = '<p class="col-span-4 text-center text-xs text-gray-400 py-4">No gifts found.</p>';
+          }
+      });
+  }
+
+  window.closeReelsGiftSheet = function() {
+      document.getElementById('reels-gift-sheet').style.display = 'none';
+  }
+
+  window.sendReelsGift = function(name, cost, url, author, vidId) {
+      let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+      if(currentBal < cost) {
+          closeReelsGiftSheet();
+          showCustomAlert(`Insufficient Diamonds! Required: ${cost} Diamonds.`);
+          return;
+      }
+      
+      let newBal = currentBal - cost;
+      set(ref(db, `users/${currentUser}/diamonds`), newBal);
+
+      get(ref(db, `users/${author}/diamonds`)).then((snap) => {
+          let authorBal = snap.val() || 0;
+          set(ref(db, `users/${author}/diamonds`), authorBal + cost);
+      });
+
+      if(vidId) {
+          get(ref(db, `videos/${vidId}/diamondsEarned`)).then((snap) => {
+              let vidEarned = snap.val() || 0;
+              set(ref(db, `videos/${vidId}/diamondsEarned`), vidEarned + cost);
+          });
+      }
+
+      closeReelsGiftSheet();
+      showCustomAlert(`Successfully gifted ${name} to ${author}! 🎁`);
+      sendNotification(author, 'gift', `gifted you ${name}! 🎁`);
+  }
+
+  // --- Creator Studio Grid Populations ---
+  function renderCreatorStudioGrid() {
+      const grid = document.getElementById('creator-studio-video-grid');
+      grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Fetching studio database...</p>';
+      
+      get(ref(db, 'videos')).then(snap => {
+          grid.innerHTML = '';
+          const data = snap.val();
+          let count = 0;
+          if(data) {
+              Object.entries(data).reverse().forEach(([key, vid]) => {
+                  if(vid.author === currentUser) {
+                      count++;
+                      grid.insertAdjacentHTML('beforeend', `
+                          <div class="relative aspect-[9/16] rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-black flex flex-col justify-between">
+                              <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-90 z-0">
+                              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 z-10"></div>
+                              
+                              <!-- Delete icon overlay -->
+                              <button onclick="event.stopPropagation(); deleteStudioVideo('${key}');" class="absolute top-2 right-2 z-20 w-7 h-7 bg-red-500/80 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-red-600">
+                                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                              </button>
+                              
+                              <!-- Title / Stats -->
+                              <div class="absolute bottom-2 inset-x-2 z-20 flex flex-col gap-1">
+                                  <h4 class="text-white font-bold text-[10px] truncate">${vid.title}</h4>
+                                  <div class="flex justify-between items-center text-white/95 text-[9px] font-black">
+                                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-red-500">favorite</span> ${vid.likes || 0}</span>
+                                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-purple-400">diamond</span> ${vid.diamondsEarned || 0}</span>
+                                  </div>
+                              </div>
+                          </div>
+                      `);
+                  }
+              });
+          }
+          if(count === 0) {
+              grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos found. Click Create Video above!</p>';
+          }
+      });
+  }
+
+  window.deleteStudioVideo = function(key) {
+      if(confirm("Confirm deletion of this video? This cannot be undone.")) {
+          remove(ref(db, `videos/${key}`)).then(() => {
+              renderCreatorStudioGrid();
+          });
+      }
+  }
+
+  // --- Open Trending Reels Full Grid ---
+  window.openTrendingReelsGrid = function() {
+      const overlay = document.getElementById('trending-reels-grid-overlay');
+      const container = document.getElementById('trending-reels-grid-container');
+      overlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      container.innerHTML = '<p class="col-span-2 text-center text-xs text-gray-400 py-10">Loading Reels...</p>';
+      
+      get(ref(db, 'videos')).then(snap => {
+          container.innerHTML = '';
+          const data = snap.val();
+          let count = 0;
+          if(data) {
+              Object.entries(data).reverse().forEach(([key, vid]) => {
+                  if(vid.type === 'short') {
+                      count++;
+                      container.insertAdjacentHTML('beforeend', `
+                          <div class="relative aspect-[9/16] rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-black cursor-pointer transform hover:scale-[1.02] transition-transform" onclick="playTrendingReelFromGrid('${key}')">
+                              <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover">
+                              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
+                              <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[38px] drop-shadow-md z-20">play_circle</span>
+                              
+                              <div class="absolute bottom-3 inset-x-3 z-20 flex flex-col gap-1">
+                                  <h4 class="text-white font-bold text-xs truncate">${vid.title}</h4>
+                                  <p class="text-white/80 text-[9px] font-semibold truncate flex items-center gap-1">@${vid.author}</p>
+                              </div>
+                          </div>
+                      `);
+                  }
+              });
+          }
+          if(count === 0) {
+              container.innerHTML = '<p class="col-span-2 text-center text-xs text-gray-400 py-10">No trending reels available.</p>';
+          }
+      });
+  }
+
+  window.playTrendingReelFromGrid = function(key) {
+      document.getElementById('trending-reels-grid-overlay').style.display = 'none';
+      openVideoFeed('shorts');
+      
+      setTimeout(() => {
+          const reelsContainer = document.getElementById('shorts-feed-container');
+          const element = document.getElementById(`reel-item-${key}`);
+          if(element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+          }
+      }, 500);
+  }
   
   // Real-time Videos (Populates Home Feed, Shorts & Earnings Overlay)
   onValue(ref(db, 'videos'), (snapshot) => {
@@ -1655,15 +1967,14 @@
                         ? `<iframe class="absolute inset-0 z-0 w-full h-full pointer-events-auto yt-iframe scale-105" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1&controls=0" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
                         : `<video class="absolute inset-0 z-0 w-full h-full object-cover pointer-events-auto html5-video cursor-pointer" src="${vid.mediaUrl}" loop playsinline onclick="this.paused ? this.play() : this.pause()"></video>`;
 
-                  const likeCount = (Math.random() * 200 + 10).toFixed(1) + 'K';
+                  const likeCount = vid.likes || 0;
                   const commentCount = (Math.random() * 10 + 1).toFixed(1) + 'K';
-                  const shareCount = (Math.random() * 5 + 1).toFixed(1) + 'K';
                   const safeCategory = (vid.category || 'For You Feed').replace(' Feed', '');
                   const tagCategory = safeCategory.replace(/\s+/g, '');
 
                   // REELS: SIDEBAR SHARE BUTTON COMPLETELY REMOVED FROM BELOW RENDER
                   shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden group">
+                  <div id="reel-item-${vidId}" class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden group">
                       <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-xl z-0 pointer-events-none">
                       ${embeddedMedia}
                       
@@ -1671,7 +1982,7 @@
                       <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10"></div>
                       <div class="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none z-10"></div>
                       
-                      <!-- Side Actions Column (Share icon removed perfectly) -->
+                      <!-- Side Actions Column (Share and Comment buttons removed perfectly) -->
                       <div class="absolute bottom-8 right-3 z-20 flex flex-col items-center gap-4 pointer-events-auto pb-2">
                           <!-- Profile -->
                           <div class="relative w-[46px] h-[46px] mb-2 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
@@ -1680,18 +1991,13 @@
                                   <span class="text-white text-[14px] font-bold leading-none mb-[1px]">+</span>
                               </div>
                           </div>
-                          <!-- Like -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
+                          <!-- Like with Firebase Engine -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="likeVideo('${vidId}', this)">
                               <span class="material-symbols-outlined text-[#ff004c] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">favorite</span>
                               <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${likeCount}</span>
                           </div>
-                          <!-- Comment -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform">
-                              <span class="material-symbols-outlined text-white text-[32px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
-                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${commentCount}</span>
-                          </div>
-                          <!-- Gift -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="giftDiamonds('${vid.author}', '${vidId}')">
+                          <!-- Gift from Admin Vault Overlay -->
+                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="openReelsGiftSheet('${vid.author}', '${vidId}')">
                               <span class="material-symbols-outlined text-[#ff3b6b] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">redeem</span>
                               <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">Send Gift</span>
                           </div>
@@ -1725,7 +2031,7 @@
                   </div>`);
                   
                   homeReelsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm" onclick="openVideoFeed('shorts');">
+                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm animate-fade-up" onclick="openVideoFeed('shorts');">
                       <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
                       <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[30px]">play_arrow</span>
                       <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -1794,7 +2100,7 @@
 
       // STRICT VALIDATION: Block account creation if they didn't upload a profile image
       if (!avatarUploaded) {
-          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars. / कृपया अपना प्रोफाइल फोटो अपलोड करें! अकाउंट बनाने के लिए फोटो जरूरी है।");
+          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars. / कृपया अपना प्रोफाइल फोटो अपलोड करें! अकाउंट बनाने के लिए फोटो जरूरी hai.");
           return;
       }
 
@@ -1831,6 +2137,17 @@
           document.getElementById("profile-header-id").innerText = "ID: " + (currentId || "00000000");
           document.getElementById("profile-header-avatar").src = currentAvatar;
           document.getElementById('manage-profile-overlay').style.display = 'flex';
+          
+          // Sync followers statistics locally on open
+          listenToFollowStats();
+
+          // Bind local event listener to profile follow button
+          const followBtn = document.getElementById('profile-follow-btn-main');
+          if (followBtn) {
+              followBtn.onclick = () => {
+                  toggleFollow(currentUser);
+              }
+          }
           
           resetNavHighlights();
           document.getElementById('nav-profile').classList.add('nav-item-active', 'text-dia-red');
@@ -1902,10 +2219,10 @@
       if(msg && currentActiveChatId) {
           const snap = await get(ref(db, `users/${currentChatPartnerName}/services/chat`));
           const partnerChatActive = snap.exists() ? snap.val() : true;
-          if(!partnerChatActive) { alert(`${currentChatPartnerName} has disabled incoming chats.`); return; }
+          if(!partnerChatActive) { showCustomAlert(`${currentChatPartnerName} has disabled incoming chats.`); return; }
 
           let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-          if(currentDiamonds < 4) { alert("Insufficient Diamonds for Chat (💎 4/msg). Please recharge."); return; }
+          if(currentDiamonds < 4) { showCustomAlert("Insufficient Diamonds for Chat (💎 4/msg). Please recharge."); return; }
           
           deductDiamondsForCall(4);
 
@@ -1971,7 +2288,7 @@
               : '';
 
           const userHtml = `
-          <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn" data-name="${user.name}" data-avatar="${user.avatar}">
+          <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn animate-fade-up" data-name="${user.name}" data-avatar="${user.avatar}">
               <img src="${user.avatar}" class="w-full h-full object-cover">
               <div class="absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
               <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -2040,10 +2357,10 @@
       const costPerMin = isVideo ? 10 : 5;
       const snap = await get(ref(db, `users/${targetUser}/services/${serviceType}`));
       const partnerActive = snap.exists() ? snap.val() : true;
-      if(!partnerActive) { alert(`${targetUser} has disabled incoming ${serviceType} calls.`); return; }
+      if(!partnerActive) { showCustomAlert(`${targetUser} has disabled incoming ${serviceType} calls.`); return; }
 
       let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if(currentDiamonds < costPerMin) { alert(`Insufficient Diamonds for ${serviceType} call (💎 ${costPerMin}/min). Please recharge.`); return; }
+      if(currentDiamonds < costPerMin) { showCustomAlert(`Insufficient Diamonds for ${serviceType} call (💎 ${costPerMin}/min). Please recharge.`); return; }
 
       if(allUsersData[targetUser] && allUsersData[targetUser].status !== 'online') {
           if(!confirm(`${targetUser} is currently inactive/away. Do you still want to call?`)) { return; }
@@ -2079,7 +2396,7 @@
           sendNotification(targetUser, isVideo ? 'video' : 'audio', `is calling you`);
       } catch(e) { 
           console.error("Call Init Error:", e);
-          alert("Microphone/Camera permission denied or not available.");
+          showCustomAlert("Microphone/Camera permission denied or not available.");
           stopWebRTC(); 
       }
   };
@@ -2105,7 +2422,7 @@
           onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
       } catch(e) { 
           console.error("Call Accept Error:", e);
-          alert("Microphone/Camera permission denied or not available.");
+          showCustomAlert("Microphone/Camera permission denied or not available.");
           stopWebRTC(); 
       }
   });
