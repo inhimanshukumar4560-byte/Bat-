@@ -6,7 +6,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Zingoo - Home Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700&family=Syne:wght=700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -198,7 +198,7 @@
         </div>
 
         <!-- Notification Bell -->
-        <div class="relative cursor-pointer" id="notification-trigger" onclick="document.getElementById('notification-dropdown').classList.toggle('hidden')">
+        <div class="relative cursor-pointer" id="notification-trigger" onclick="toggleNotificationDropdown()">
             <span class="material-symbols-outlined text-gray-700 text-[26px]">notifications</span>
             <div id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full hidden items-center justify-center border border-white z-10">0</div>
         </div>
@@ -221,7 +221,7 @@
 <div id="notification-dropdown" class="fixed top-[65px] right-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col z-[9999] max-h-96 overflow-y-auto no-scrollbar">
     <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur z-10">
         <span class="font-bold text-gray-900">Notifications</span>
-        <span class="text-[10px] text-red-500 cursor-pointer font-semibold" onclick="markAllNotificationsRead()">Mark all read</span>
+        <span class="text-[10px] text-red-500 cursor-pointer font-semibold" onclick="markAllNotificationsRead()">Clear All</span>
     </div>
     <div id="notification-list" class="flex flex-col">
         <div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>
@@ -1168,6 +1168,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
@@ -1182,7 +1183,13 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Robust initialization of local session state to bypass 'undefined' or 'null' values.
+  let messaging;
+  try {
+      messaging = getMessaging(app);
+  } catch (e) {
+      console.warn("FCM Messaging initialization bypassed/blocked:", e);
+  }
+
   let currentUser = localStorage.getItem("zingoo_user");
   if (currentUser === "undefined" || currentUser === "null") {
       currentUser = null;
@@ -1198,7 +1205,6 @@
       localStorage.removeItem("zingoo_id");
   }
   
-  // Custom uploaded state tracker
   let avatarUploaded = (localStorage.getItem("zingoo_avatar") && localStorage.getItem("zingoo_avatar") !== "undefined" && !localStorage.getItem("zingoo_avatar").includes("dicebear.com")) ? true : false;
 
   const CLOUD_NAME = "dotjw6tep"; 
@@ -1246,6 +1252,72 @@
   window.goToDiamondStore = function() {
       closeCustomAlert();
       document.getElementById('buy-diamonds-trigger').click();
+  }
+
+  // --- FCM TOKEN REGISTRATION ---
+  function setupFCMToken() {
+      if (!currentUser || !messaging) return;
+      Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+              getToken(messaging, { 
+                  vapidKey: 'BGE_r2xNXdW19xvJB3C9odkfMFqEhWYVsj3P-OEDK2qrvFOHqJU9tdpKJi9N1R3KDxHrURI8cB6NPcUi6DjSFrU' 
+              })
+              .then((currentToken) => {
+                  if (currentToken) {
+                      set(ref(db, `users/${currentUser}/fcmToken`), currentToken);
+                  } else {
+                      console.log('No FCM Token received.');
+                  }
+              }).catch((err) => {
+                  console.error('An error occurred while retrieving token:', err);
+              });
+          }
+      });
+  }
+
+  // Register Service Worker securely for background push listening
+  if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+          navigator.serviceWorker.register('firebase-messaging-sw.js')
+          .then((registration) => {
+              console.log('Service Worker registered scope:', registration.scope);
+              setupFCMToken();
+          }).catch((err) => {
+              console.error('Service Worker registration failed:', err);
+          });
+      });
+  }
+
+  // Foreground FCM message handler
+  if (messaging) {
+      onMessage(messaging, (payload) => {
+          console.log('Message received in foreground: ', payload);
+          if (payload.notification) {
+              showCustomAlert(`${payload.notification.title}\n${payload.notification.body}`);
+          }
+      });
+  }
+
+  // --- CHAT AUTO DELETE ENGINE (3 Days) ---
+  function cleanOldMessages(chatId) {
+      if (!chatId) return;
+      const chatRef = ref(db, `chats/${chatId}`);
+      get(chatRef).then((snapshot) => {
+          if(snapshot.exists()) {
+              const messages = snapshot.val();
+              const now = Date.now();
+              const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+              let updates = {};
+              Object.entries(messages).forEach(([msgKey, msg]) => {
+                  if(msg.timestamp && (now - msg.timestamp > threeDaysInMs)) {
+                      updates[`chats/${chatId}/${msgKey}`] = null;
+                  }
+              });
+              if(Object.keys(updates).length > 0) {
+                  update(ref(db), updates);
+              }
+          }
+      }).catch(err => console.error("Cleanup error:", err));
   }
 
   // --- Auto Redirect for Diamond Buy URL Param ---
@@ -1333,7 +1405,6 @@
               await set(followingRef, serverTimestamp());
               sendNotification(targetUser, 'follow', 'started following you!');
           }
-          // Refresh Profile Stats locally
           listenToFollowStats();
           renderUsers();
       } catch(e) {
@@ -1371,15 +1442,12 @@
       onValue(ref(db, `users/${currentUser}`), (snapshot) => {
           const data = snapshot.val();
           if(data) {
-              // ID sync
               if(data.id) { currentId = data.id; localStorage.setItem('zingoo_id', currentId); }
 
-              // Diamonds sync
               const diamonds = data.diamonds || 0;
               localStorage.setItem('zingoo_diamonds', diamonds);
               updateDiamondDisplay();
 
-              // Services Toggles sync
               const svcs = data.services || { video: true, audio: true, chat: true };
               const vToggle = document.getElementById('toggle-video-call');
               const aToggle = document.getElementById('toggle-audio-call');
@@ -1489,884 +1557,83 @@
       });
   };
 
+  let localNotifications = [];
   function listenForNotifications() {
       if(!currentUser) return;
       onValue(ref(db, `notifications/${currentUser}`), (snap) => {
-          const list = document.getElementById('notification-list');
           const badge = document.getElementById('notification-badge');
-          list.innerHTML = '';
-          let unreadCount = 0;
           const data = snap.val();
           
           if(data) {
-              const notifs = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
-              notifs.forEach(([key, n]) => {
+              localNotifications = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp);
+              let unreadCount = 0;
+              localNotifications.forEach(([key, n]) => {
                   if(!n.read) unreadCount++;
-                  let icon = 'notifications';
-                  let iconColor = 'text-gray-500';
-                  
-                  if(n.type === 'chat') { icon = 'chat'; iconColor = 'text-blue-500'; }
-                  if(n.type === 'video') { icon = 'videocam'; iconColor = 'text-red-500'; }
-                  if(n.type === 'audio') { icon = 'call'; iconColor = 'text-green-500'; }
-                  if(n.type === 'follow') { icon = 'person_add'; iconColor = 'text-purple-500'; }
-                  
-                  list.insertAdjacentHTML('beforeend', `
-                      <div class="p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors" onclick="handleNotificationClick('${key}', '${n.from}', '${n.avatar}', '${n.type}')">
-                          <div class="relative w-10 h-10 shrink-0">
-                              <img src="${n.avatar}" class="w-full h-full rounded-full object-cover border border-gray-200">
-                              <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] shadow-sm flex items-center justify-center">
-                                  <span class="material-symbols-outlined text-[10px] ${iconColor}">${icon}</span>
-                              </div>
-                          </div>
-                          <div class="flex-1">
-                              <p class="text-xs text-gray-800 leading-tight"><span class="font-bold text-gray-900">${n.from}</span> ${n.message}</p>
-                          </div>
-                          ${!n.read ? '<div class="w-2.5 h-2.5 bg-red-500 rounded-full shrink-0"></div>' : ''}
-                      </div>
-                  `);
               });
+              if(unreadCount > 0) {
+                  badge.style.display = 'flex'; 
+                  badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
+              } else { badge.style.display = 'none'; }
           } else {
-              list.innerHTML = `<div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>`;
+              localNotifications = [];
+              badge.style.display = 'none';
           }
-          
-          if(unreadCount > 0) {
-              badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
-          } else { badge.style.display = 'none'; }
+          if(!document.getElementById('notification-dropdown').classList.contains('hidden')) {
+              renderNotificationDropdownList();
+          }
       });
   }
 
-  window.handleNotificationClick = function(notifId, fromUser, avatar, type) {
-      update(ref(db, `notifications/${currentUser}/${notifId}`), { read: true });
-      document.getElementById('notification-dropdown').classList.add('hidden');
-      if(type === 'chat') { openChatWith(fromUser, avatar); }
+  window.renderNotificationDropdownList = function() {
+      const list = document.getElementById('notification-list');
+      list.innerHTML = '';
+      if(localNotifications.length > 0) {
+          localNotifications.forEach(([key, n]) => {
+              let icon = 'notifications';
+              let iconColor = 'text-gray-500';
+              if(n.type === 'chat') { icon = 'chat'; iconColor = 'text-blue-500'; }
+              if(n.type === 'video') { icon = 'videocam'; iconColor = 'text-red-500'; }
+              if(n.type === 'audio') { icon = 'call'; iconColor = 'text-green-500'; }
+              if(n.type === 'follow') { icon = 'person_add'; iconColor = 'text-purple-500'; }
+              
+              list.insertAdjacentHTML('beforeend', `
+                  <div class="p-3 border-b border-gray-50 hover:bg-gray-50 flex items-center gap-3 cursor-pointer transition-colors" onclick="handleNotificationClick('${key}', '${n.from}', '${n.avatar}', '${n.type}')">
+                      <div class="relative w-10 h-10 shrink-0">
+                          <img src="${n.avatar}" class="w-full h-full rounded-full object-cover border border-gray-200">
+                          <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] shadow-sm flex items-center justify-center">
+                              <span class="material-symbols-outlined text-[10px] ${iconColor}">${icon}</span>
+                          </div>
+                      </div>
+                      <div class="flex-1">
+                          <p class="text-xs text-gray-800 leading-tight"><span class="font-bold text-gray-900">${n.from}</span> ${n.message}</p>
+                      </div>
+                  </div>
+              `);
+          });
+      } else {
+          list.innerHTML = `<div class="p-4 text-center text-gray-400 text-xs">No new notifications</div>`;
+      }
+  };
+
+  window.toggleNotificationDropdown = function() {
+      const dropdown = document.getElementById('notification-dropdown');
+      const isHidden = dropdown.classList.contains('hidden');
+      if(isHidden) {
+          renderNotificationDropdownList();
+          dropdown.classList.remove('hidden');
+          // Instantly delete notifications from Firebase database once user sees them
+          if(currentUser) {
+              remove(ref(db, `notifications/${currentUser}`));
+          }
+      } else {
+          dropdown.classList.add('hidden');
+      }
   };
 
   window.markAllNotificationsRead = function() {
       if(!currentUser) return;
-      get(ref(db, `notifications/${currentUser}`)).then((snap) => {
-          if(snap.exists()) {
-              let updates = {};
-              Object.keys(snap.val()).forEach(key => { updates[`${key}/read`] = true; });
-              update(ref(db, `notifications/${currentUser}`), updates);
-          }
-      });
+      remove(ref(db, `notifications/${currentUser}`));
   };
-
-  // --- Diamond Purchase Triggers ---
-  document.getElementById('buy-diamonds-trigger').addEventListener('click', () => {
-      if(!currentUser) { showCustomAlert("Create profile first!"); return; }
-      document.getElementById('diamond-store-overlay').style.display = 'flex';
-  });
-
-  window.buyDiamondPack = function(amount, diamonds) {
-      if(!currentUser) { showCustomAlert("Create profile first!"); return; }
-      const icchaPaymentDomain = "https://shubhzone.shop"; 
-      window.location.href = `${icchaPaymentDomain}/zingoo-pay.html?from=zingoo&username=${encodeURIComponent(currentUser)}&amount=${amount}&diamonds=${diamonds}`;
-  };
-  
-  // Gift Diamonds
-  window.giftDiamonds = function(authorName, videoId) {
-      if(!currentUser) { showCustomAlert("Please create a profile first!"); return; }
-      if(currentUser === authorName) { showCustomAlert("You cannot gift yourself!"); return; }
-      
-      let amount = prompt(`How many diamonds do you want to gift to ${authorName}?`, "1");
-      if(amount === null) return;
-      amount = parseInt(amount);
-      
-      if(isNaN(amount) || amount <= 0) {
-          showCustomAlert("Enter a valid amount."); return;
-      }
-      
-      let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if(currentBal < amount) {
-          showCustomAlert("Insufficient diamonds. Please buy more from the store!");
-          return;
-      }
-      
-      let newBal = currentBal - amount;
-      set(ref(db, `users/${currentUser}/diamonds`), newBal);
-
-      get(ref(db, `users/${authorName}/diamonds`)).then((snap) => {
-          let authorBal = snap.val() || 0;
-          set(ref(db, `users/${authorName}/diamonds`), authorBal + amount);
-      });
-
-      if(videoId) {
-          get(ref(db, `videos/${videoId}/diamondsEarned`)).then((snap) => {
-              let vidEarned = snap.val() || 0;
-              set(ref(db, `videos/${videoId}/diamondsEarned`), vidEarned + amount);
-          });
-      }
-
-      alert(`Successfully gifted ${amount} diamond(s) to ${authorName}! 💎`);
-      sendNotification(authorName, 'gift', `gifted you ${amount} diamond(s)! 💎`);
-  };
-
-  // Profile Overlay Actions
-  window.openVideoEarnings = function() {
-      document.getElementById('manage-profile-overlay').style.display = 'none';
-      document.getElementById('video-earnings-overlay').style.display = 'flex';
-  };
-
-  window.deleteVideo = async function(videoId) {
-      if(confirm("Are you sure you want to delete this video?")) {
-          try {
-              await remove(ref(db, 'videos/' + videoId));
-              alert("Video deleted successfully.");
-          } catch(e) {
-              console.error(e);
-              alert("Error deleting video.");
-          }
-      }
-  };
-
-  // --- Golden Profile Request ---
-  window.requestGoldenProfile = function() {
-      if(!currentUser) { showCustomAlert("Please create profile first!"); return; }
-      
-      get(ref(db, `admin_requests/golden_profiles/${currentUser}`)).then((snapshot) => {
-          if (snapshot.exists()) {
-              showCustomAlert("You have already requested a Golden Profile. Please wait for admin approval.");
-          } else {
-              set(ref(db, `admin_requests/golden_profiles/${currentUser}`), {
-                  user: currentUser,
-                  timestamp: serverTimestamp(),
-                  status: 'pending'
-              }).then(() => {
-                  showCustomAlert("Request for Golden Profile sent successfully! Admin will review it.");
-              });
-          }
-      });
-  };
-
-  // --- Leaderboard Overlay Implementation ---
-  window.openLeaderboard = function() {
-      document.getElementById('manage-profile-overlay').style.display = 'none';
-      document.getElementById('leaderboard-overlay').style.display = 'flex';
-      renderLeaderboard();
-  };
-
-  function renderLeaderboard() {
-      const list = document.getElementById('leaderboard-list');
-      list.innerHTML = '<p class="text-center text-gray-500 mt-10">Loading ranking...</p>';
-      
-      let usersArray = Object.values(allUsersData);
-      
-      if(!usersArray.find(u => u.name === currentUser)) {
-         let myD = parseInt(localStorage.getItem('zingoo_diamonds')||'0');
-         usersArray.push({name: currentUser, avatar: currentAvatar, diamonds: myD});
-      }
-
-      usersArray.sort((a, b) => (b.diamonds || 0) - (a.diamonds || 0));
-      
-      list.innerHTML = '';
-      usersArray.forEach((user, index) => {
-          let isKing = index === 0;
-          let rankStyle = isKing ? 'bg-gradient-to-r from-yellow-100 to-yellow-300 border-yellow-400 shadow-[0_5px_15px_rgba(250,204,21,0.4)] transform scale-[1.02]' : 'bg-white border-gray-100';
-          let rankBadge = isKing ? '<span class="text-3xl absolute -top-3 -right-3 rotate-12 drop-shadow-md">👑</span>' : `<span class="font-bold text-gray-400 text-lg">#${index+1}</span>`;
-          
-          list.insertAdjacentHTML('beforeend', `
-              <div class="p-4 rounded-2xl border ${rankStyle} flex items-center gap-4 relative transition-all">
-                  ${rankBadge}
-                  <img src="${user.avatar}" class="w-14 h-14 rounded-full border-2 ${isKing ? 'border-yellow-500' : 'border-gray-200'} object-cover shadow-sm">
-                  <div class="flex-1">
-                      <h4 class="font-bold text-gray-900 text-lg flex items-center gap-1">${user.name} ${isKing ? '<span class="text-yellow-700 text-[10px] bg-yellow-300 border border-yellow-400 px-2 py-0.5 rounded-full ml-1 shadow-sm font-black tracking-wider">KING</span>' : ''}</h4>
-                      <p class="text-purple-600 font-bold text-sm flex items-center gap-1 mt-0.5"><span class="material-symbols-outlined text-[16px]">diamond</span> ${(user.diamonds || 0).toLocaleString()}</p>
-                  </div>
-              </div>
-          `);
-      });
-  }
-
-  // --- Video Player ---
-  window.playVideo = function(url, type, isYouTube) {
-      const overlay = document.getElementById('video-player-overlay');
-      const container = document.getElementById('video-player-container');
-      overlay.style.display = 'flex';
-      if(isYouTube) {
-          let embedUrl = url;
-          if (url.includes('watch?v=')) embedUrl = url.replace('watch?v=', 'embed/');
-          else if (url.includes('youtu.be/')) embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
-          container.innerHTML = `<iframe class="w-full ${type === 'short' ? 'h-[85vh] aspect-[9/16]' : 'aspect-video'}" src="${embedUrl}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
-      } else {
-          container.innerHTML = `<video class="w-full ${type === 'short' ? 'h-[85vh] object-contain' : 'aspect-video'}" controls autoplay playsinline><source src="${url}" type="video/mp4"></video>`;
-      }
-  };
-
-  window.closeVideoPlayer = function() {
-      document.getElementById('video-player-overlay').style.display = 'none';
-      document.getElementById('video-player-container').innerHTML = ''; 
-  };
-
-  // --- Creator Studio Overlay Actions ---
-  window.openUploadOverlay = function() {
-      document.getElementById('upload-video-overlay').style.display = 'flex';
-      renderCreatorStudioGrid();
-  }
-
-  window.closeUploadOverlay = function() {
-      document.getElementById('upload-video-overlay').style.display = 'none';
-  }
-
-  window.openVideoUploadForm = function() {
-      document.getElementById('upload-form-sub-overlay').style.display = 'flex';
-  }
-
-  window.closeVideoUploadForm = function() {
-      document.getElementById('upload-form-sub-overlay').style.display = 'none';
-  }
-
-  // --- Upload UI Toggles ---
-  window.toggleUploadSource = function(type) {
-      const btnUpload = document.getElementById('src-btn-upload');
-      const btnLink = document.getElementById('src-btn-link');
-      if(type === 'upload') {
-          btnUpload.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
-          btnLink.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
-          document.getElementById('source-file-container').style.display = 'block';
-          document.getElementById('source-link-container').style.display = 'none';
-      } else {
-          btnLink.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
-          btnUpload.className = "flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold";
-          document.getElementById('source-file-container').style.display = 'none';
-          document.getElementById('source-link-container').style.display = 'block';
-      }
-  };
-
-  window.switchVideoTab = function(tab) {
-      resetNavHighlights();
-      document.getElementById('nav-reels').classList.add('nav-item-active', 'text-dia-red');
-      document.getElementById('nav-reels').classList.remove('text-gray-400');
-      
-      const shortsBtn = document.getElementById('tab-shorts-btn');
-      const longsBtn = document.getElementById('tab-longs-btn');
-      const shortsIndicator = document.getElementById('tab-shorts-indicator');
-      const longsIndicator = document.getElementById('tab-longs-indicator');
-      
-      if(tab === 'shorts') {
-          shortsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          longsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          if(shortsIndicator) shortsIndicator.style.display = 'block';
-          if(longsIndicator) longsIndicator.style.display = 'none';
-          document.getElementById('shorts-feed-container').style.display = 'block';
-          document.getElementById('longs-feed-wrap').style.display = 'none';
-      } else {
-          longsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          shortsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          if(shortsIndicator) shortsIndicator.style.display = 'none';
-          if(longsIndicator) longsIndicator.style.display = 'block';
-          document.getElementById('shorts-feed-container').style.display = 'none';
-          document.getElementById('longs-feed-wrap').style.display = 'block';
-      }
-  };
-
-  // Upload Logic (Cloudinary strictly for Video)
-  async function uploadToCloudinary(file, resourceType="video") {
-      try {
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('upload_preset', UPLOAD_PRESET); 
-          formData.append('cloud_name', CLOUD_NAME);
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, { method: 'POST', body: formData });
-          const data = await res.json();
-          return data.secure_url || null;
-      } catch (err) { return null; }
-  }
-
-  function readFileAsBase64(file) {
-      return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(file);
-      });
-  }
-
-  window.submitVideoUpload = async function() {
-      const title = document.getElementById('upload-title').value;
-      const type = document.getElementById('upload-type').value;
-      const category = document.getElementById('upload-category').value || 'For You Feed';
-      const isUpload = document.getElementById('source-file-container').style.display !== 'none';
-      
-      if(!title) { showCustomAlert('Please enter title'); return; }
-      document.getElementById('upload-spinner').style.display = 'flex';
-
-      let mediaUrl = "";
-      if (isUpload) {
-          const videoFile = document.getElementById('video-file-input').files[0];
-          if(!videoFile) { showCustomAlert('Select video!'); document.getElementById('upload-spinner').style.display = 'none'; return; }
-          mediaUrl = await uploadToCloudinary(videoFile, "video");
-          if(!mediaUrl) mediaUrl = URL.createObjectURL(videoFile); 
-      } else {
-          mediaUrl = document.getElementById('upload-yt-link').value;
-      }
-
-      // Upload Thumbnail using ImgBB API
-      const thumbFile = document.getElementById('thumb-file-input').files[0];
-      let thumbUrl = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop"; 
-      if (thumbFile) {
-          thumbUrl = await uploadToImgBB(thumbFile);
-          if(!thumbUrl) thumbUrl = await readFileAsBase64(thumbFile);
-      }
-
-      push(ref(db, 'videos'), {
-          title: title, mediaUrl: mediaUrl, thumbUrl: thumbUrl, type: type, category: category, isYouTube: !isUpload, author: currentUser || "Guest", authorAvatar: currentAvatar, timestamp: serverTimestamp(), diamondsEarned: 0, likes: 0
-      }).then(() => {
-          document.getElementById('upload-spinner').style.display = 'none';
-          document.getElementById('upload-form-sub-overlay').style.display='none';
-          renderCreatorStudioGrid();
-          showCustomAlert('Published Successfully!');
-      });
-  };
-
-  // --- Real-time Reels Likes Engine ---
-  window.likeVideo = function(vidId, btnEl) {
-      if(!currentUser) { showCustomAlert("Login to like!"); return; }
-      const likeRef = ref(db, `videos/${vidId}/likes`);
-      get(likeRef).then(snap => {
-          let likes = snap.val() || 0;
-          likes += 1;
-          set(likeRef, likes);
-      });
-  }
-
-  // --- Reels Admin Premium Gift Sheet Manager ---
-  window.openReelsGiftSheet = function(authorName, vidId) {
-      if(!currentUser) { showCustomAlert("Please login first."); return; }
-      if(currentUser === authorName) { showCustomAlert("You cannot gift yourself!"); return; }
-      
-      const bal = localStorage.getItem('zingoo_diamonds') || '0';
-      document.getElementById('reels-gift-my-bal').innerText = parseInt(bal).toLocaleString();
-
-      const container = document.getElementById('reels-gifts-container');
-      container.innerHTML = '<p class="col-span-4 text-center text-xs text-gray-400 py-4">Loading Admin Gifts...</p>';
-      
-      document.getElementById('reels-gift-sheet').style.display = 'flex';
-
-      get(ref(db, 'gifts')).then(snapshot => {
-          container.innerHTML = '';
-          const data = snapshot.val();
-          if(data && Object.keys(data).length > 0) {
-              Object.entries(data).forEach(([key, gift]) => {
-                  container.insertAdjacentHTML('beforeend', `
-                      <div class="bg-gray-50 border border-gray-100 rounded-2xl p-2.5 text-center flex flex-col items-center justify-between cursor-pointer hover:border-red-500 transition-colors" onclick="sendReelsGift('${gift.name}', ${gift.cost}, '${gift.imageUrl}', '${authorName}', '${vidId}')">
-                          <img src="${gift.imageUrl}" class="w-10 h-10 object-contain mb-1">
-                          <h4 class="text-[10px] font-bold text-gray-900 truncate w-full">${gift.name}</h4>
-                          <p class="text-[9px] text-purple-600 font-extrabold flex items-center gap-0.5 mt-1 justify-center">
-                              <span class="material-symbols-outlined text-[10px]">diamond</span> ${gift.cost}
-                          </p>
-                      </div>
-                  `);
-              });
-          } else {
-              container.innerHTML = '<p class="col-span-4 text-center text-xs text-gray-400 py-4">No gifts found.</p>';
-          }
-      });
-  }
-
-  window.closeReelsGiftSheet = function() {
-      document.getElementById('reels-gift-sheet').style.display = 'none';
-  }
-
-  window.sendReelsGift = function(name, cost, url, author, vidId) {
-      let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if(currentBal < cost) {
-          closeReelsGiftSheet();
-          showCustomAlert(`Insufficient Diamonds! Required: ${cost} Diamonds.`);
-          return;
-      }
-      
-      let newBal = currentBal - cost;
-      set(ref(db, `users/${currentUser}/diamonds`), newBal);
-
-      get(ref(db, `users/${author}/diamonds`)).then((snap) => {
-          let authorBal = snap.val() || 0;
-          set(ref(db, `users/${author}/diamonds`), authorBal + cost);
-      });
-
-      if(vidId) {
-          get(ref(db, `videos/${vidId}/diamondsEarned`)).then((snap) => {
-              let vidEarned = snap.val() || 0;
-              set(ref(db, `videos/${vidId}/diamondsEarned`), vidEarned + cost);
-          });
-      }
-
-      closeReelsGiftSheet();
-      showCustomAlert(`Successfully gifted ${name} to ${author}! 🎁`);
-      sendNotification(author, 'gift', `gifted you ${name}! 🎁`);
-  }
-
-  // --- Creator Studio Grid Populations ---
-  function renderCreatorStudioGrid() {
-      const grid = document.getElementById('creator-studio-video-grid');
-      grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Fetching studio database...</p>';
-      
-      get(ref(db, 'videos')).then(snap => {
-          grid.innerHTML = '';
-          const data = snap.val();
-          let count = 0;
-          if(data) {
-              Object.entries(data).reverse().forEach(([key, vid]) => {
-                  if(vid.author === currentUser) {
-                      count++;
-                      grid.insertAdjacentHTML('beforeend', `
-                          <div class="relative aspect-[9/16] rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-black flex flex-col justify-between">
-                              <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-90 z-0">
-                              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 z-10"></div>
-                              
-                              <button onclick="event.stopPropagation(); deleteStudioVideo('${key}');" class="absolute top-2 right-2 z-20 w-7 h-7 bg-red-500/80 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-red-600">
-                                  <span class="material-symbols-outlined text-[16px]">delete</span>
-                              </button>
-                              
-                              <div class="absolute bottom-2 inset-x-2 z-20 flex flex-col gap-1">
-                                  <h4 class="text-white font-bold text-[10px] truncate">${vid.title}</h4>
-                                  <div class="flex justify-between items-center text-white/95 text-[9px] font-black">
-                                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-red-500">favorite</span> ${vid.likes || 0}</span>
-                                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-purple-400">diamond</span> ${vid.diamondsEarned || 0}</span>
-                                  </div>
-                              </div>
-                          </div>
-                      `);
-                  }
-              });
-          }
-          if(count === 0) {
-              grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos found. Click Create Video above!</p>';
-          }
-      });
-  }
-
-  window.deleteStudioVideo = function(key) {
-      if(confirm("Confirm deletion of this video? This cannot be undone.")) {
-          remove(ref(db, `videos/${key}`)).then(() => {
-              renderCreatorStudioGrid();
-          });
-      }
-  }
-
-  // --- Open Trending Reels Full Grid ---
-  window.openTrendingReelsGrid = function() {
-      const overlay = document.getElementById('trending-reels-grid-overlay');
-      const container = document.getElementById('trending-reels-grid-container');
-      overlay.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-      
-      container.innerHTML = '<p class="col-span-2 text-center text-xs text-gray-400 py-10">Loading Reels...</p>';
-      
-      get(ref(db, 'videos')).then(snap => {
-          container.innerHTML = '';
-          const data = snap.val();
-          let count = 0;
-          if(data) {
-              Object.entries(data).reverse().forEach(([key, vid]) => {
-                  if(vid.type === 'short') {
-                      count++;
-                      container.insertAdjacentHTML('beforeend', `
-                          <div class="relative aspect-[9/16] rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-black cursor-pointer transform hover:scale-[1.02] transition-transform" onclick="playTrendingReelFromGrid('${key}')">
-                              <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover">
-                              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
-                              <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[38px] drop-shadow-md z-20">play_circle</span>
-                              
-                              <div class="absolute bottom-3 inset-x-3 z-20 flex flex-col gap-1">
-                                  <h4 class="text-white font-bold text-xs truncate">${vid.title}</h4>
-                                  <p class="text-white/80 text-[9px] font-semibold truncate flex items-center gap-1">@${vid.author}</p>
-                              </div>
-                          </div>
-                      `);
-                  }
-              });
-          }
-          if(count === 0) {
-              container.innerHTML = '<p class="col-span-2 text-center text-xs text-gray-400 py-10">No trending reels available.</p>';
-          }
-      });
-  }
-
-  window.playTrendingReelFromGrid = function(key) {
-      document.getElementById('trending-reels-grid-overlay').style.display = 'none';
-      openVideoFeed('shorts');
-      
-      setTimeout(() => {
-          const reelsContainer = document.getElementById('shorts-feed-container');
-          const element = document.getElementById(`reel-item-${key}`);
-          if(element) {
-              element.scrollIntoView({ behavior: 'smooth' });
-          }
-      }, 500);
-  }
-  
-  // Real-time Videos population
-  onValue(ref(db, 'videos'), (snapshot) => {
-      const shortsContainer = document.getElementById('shorts-feed-container');
-      const longsContainer = document.getElementById('longs-feed-container');
-      const homeReelsContainer = document.getElementById('home-reels-list');
-      const earningsContainer = document.getElementById('earnings-video-list');
-      
-      shortsContainer.innerHTML = ''; longsContainer.innerHTML = ''; homeReelsContainer.innerHTML = '';
-      if(earningsContainer) earningsContainer.innerHTML = '';
-
-      let totalEarned = 0;
-      const data = snapshot.val();
-      
-      if(data) {
-          const vids = Object.entries(data).reverse();
-          vids.forEach(([vidId, vid]) => {
-              const clickHandler = `playVideo('${vid.mediaUrl}', '${vid.type}', ${vid.isYouTube})`;
-
-              if(vid.author === currentUser && earningsContainer) {
-                  let earned = vid.diamondsEarned || 0;
-                  totalEarned += earned;
-                  earningsContainer.insertAdjacentHTML('beforeend', `
-                      <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
-                          <img src="${vid.thumbUrl}" class="w-16 h-16 rounded-lg object-cover">
-                          <div class="flex-1">
-                              <h4 class="font-bold text-sm text-gray-900 line-clamp-1">${vid.title}</h4>
-                              <p class="text-purple-600 font-bold text-xs flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[14px]">diamond</span> ${earned} Earned</p>
-                          </div>
-                          <button class="bg-red-50 text-red-500 w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-100" onclick="deleteVideo('${vidId}')">
-                              <span class="material-symbols-outlined text-[18px]">delete</span>
-                          </button>
-                      </div>
-                  `);
-              }
-
-              if (vid.type === 'short') {
-                  let embeddedMedia = vid.isYouTube 
-                        ? `<iframe class="absolute inset-0 z-0 w-full h-full pointer-events-auto yt-iframe scale-105" src="${vid.mediaUrl.replace('watch?v=', 'embed/')}?autoplay=0&loop=1&mute=0&enablejsapi=1&controls=0" frameborder="0" allow="autoplay; fullscreen"></iframe>` 
-                        : `<video class="absolute inset-0 z-0 w-full h-full object-cover pointer-events-auto html5-video cursor-pointer" src="${vid.mediaUrl}" loop playsinline onclick="this.paused ? this.play() : this.pause()"></video>`;
-
-                  const likeCount = vid.likes || 0;
-                  const safeCategory = (vid.category || 'For You Feed').replace(' Feed', '');
-                  const tagCategory = safeCategory.replace(/\s+/g, '');
-
-                  shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div id="reel-item-${vidId}" class="relative w-full h-[100dvh] snap-start snap-always flex-shrink-0 bg-black flex items-center justify-center overflow-hidden group">
-                      <img src="${vid.thumbUrl}" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-xl z-0 pointer-events-none">
-                      ${embeddedMedia}
-                      
-                      <!-- Dark Gradient Overlays -->
-                      <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10"></div>
-                      <div class="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none z-10"></div>
-                      
-                      <!-- Side Actions Column -->
-                      <div class="absolute bottom-8 right-3 z-20 flex flex-col items-center gap-4 pointer-events-auto pb-2">
-                          <!-- Profile -->
-                          <div class="relative w-[46px] h-[46px] mb-2 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
-                              <img src="${vid.authorAvatar || currentAvatar}" class="w-full h-full rounded-full border-[1.5px] border-white object-cover shadow-md bg-white">
-                              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-[#ff004c] rounded-full w-[18px] h-[18px] flex items-center justify-center shadow-sm">
-                                  <span class="text-white text-[14px] font-bold leading-none mb-[1px]">+</span>
-                              </div>
-                          </div>
-                          <!-- Like -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="likeVideo('${vidId}', this)">
-                              <span class="material-symbols-outlined text-[#ff004c] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">favorite</span>
-                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">${likeCount}</span>
-                          </div>
-                          <!-- Gift -->
-                          <div class="flex flex-col items-center gap-0.5 cursor-pointer hover:scale-110 transition-transform" onclick="openReelsGiftSheet('${vid.author}', '${vidId}')">
-                              <span class="material-symbols-outlined text-[#ff3b6b] text-[36px] drop-shadow-md" style="font-variation-settings: 'FILL' 1;">redeem</span>
-                              <span class="text-white text-[11px] font-semibold drop-shadow-md tracking-wide">Send Gift</span>
-                          </div>
-                          <!-- Music Record -->
-                          <div class="w-[42px] h-[42px] rounded-full border-[6px] border-gray-900/90 animate-[spin_4s_linear_infinite] overflow-hidden mt-3 relative shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                              <img src="${vid.authorAvatar || currentAvatar}" class="w-full h-full object-cover">
-                              <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/50 text-[16px]">music_note</span>
-                          </div>
-                      </div>
-
-                      <!-- Bottom Left Info -->
-                      <div class="absolute bottom-8 left-3 z-20 flex flex-col gap-2 max-w-[70%] pointer-events-auto pb-2">
-                          <div class="bg-white/20 backdrop-blur-md rounded-full px-2.5 py-1 inline-flex items-center gap-1.5 w-max mb-0.5 shadow-sm">
-                              <span class="text-red-500 text-[10px]">🔥</span>
-                              <span class="text-white text-[11px] font-semibold">#1 Trending in ${safeCategory}</span>
-                          </div>
-                          <div class="flex items-center gap-1.5 cursor-pointer" onclick="openChatWith('${vid.author}', '${vid.authorAvatar || currentAvatar}')">
-                              <h3 class="text-white font-bold text-[17px] drop-shadow-lg tracking-wide">@${vid.author || 'Creator'}</h3>
-                              <span class="material-symbols-outlined text-[#ff004c] text-[15px] bg-white rounded-full leading-none shadow-sm">check_circle</span>
-                          </div>
-                          <p class="text-white/95 text-[13px] drop-shadow-lg leading-[1.3] font-medium mb-1">
-                              ${vid.title} ✨<br><span class="font-bold text-white/90">#${tagCategory} #trending #explore #fyp</span>
-                          </p>
-                          <div class="flex items-center gap-2 mt-0.5 max-w-[200px]">
-                              <span class="material-symbols-outlined text-white text-[16px] animate-pulse drop-shadow-md">music_note</span>
-                              <div class="overflow-hidden w-full relative">
-                                  <p class="text-white text-[12px] font-semibold whitespace-nowrap inline-block animate-[marquee_5s_linear_infinite] drop-shadow-md">Original Sound - ${vid.author || 'Creator'}</p>
-                              </div>
-                          </div>
-                      </div>
-                  </div>`);
-                  
-                  homeReelsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="relative w-28 h-40 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm animate-fade-up" onclick="openVideoFeed('shorts');">
-                      <img src="${vid.thumbUrl}" class="w-full h-full object-cover">
-                      <span class="material-symbols-outlined absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/80 text-[30px]">play_arrow</span>
-                      <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
-                          <p class="text-white text-[10px] font-bold line-clamp-1">${vid.title}</p>
-                      </div>
-                  </div>`);
-              } else {
-                  longsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="w-full cursor-pointer mb-2" onclick="${clickHandler}">
-                      <div class="relative w-full rounded-xl overflow-hidden aspect-video shadow-sm mb-2"><img src="${vid.thumbUrl}" class="w-full h-full object-cover"></div>
-                      <div class="flex gap-2 px-1">
-                          <img src="${vid.authorAvatar || currentAvatar}" class="w-8 h-8 rounded-full border border-gray-200">
-                          <div><h4 class="text-white font-bold text-sm">${vid.title}</h4></div>
-                      </div>
-                  </div>`);
-              }
-          });
-          
-          const totalEl = document.getElementById('total-video-diamonds');
-          if(totalEl) totalEl.innerText = totalEarned.toLocaleString();
-
-          setTimeout(() => { initReelsObserver(); }, 100);
-      }
-  });
-
-  // --- Auth, Signup & Identity ---
-  const authOverlay = document.getElementById("auth-overlay");
-  
-  if (!currentUser) {
-      authOverlay.style.display = "flex";
-      document.body.style.overflow = "hidden";
-  } else {
-      listenToUserData();
-      listenForIncomingCalls(); 
-      initPresence();
-      listenForNotifications();
-  }
-
-  // File Upload handling with direct ImgBB support
-  document.getElementById("profile-image-upload").addEventListener("change", async function(e) {
-      const file = e.target.files[0];
-      if(file) {
-          // Quick local preview
-          const reader = new FileReader();
-          reader.onload = (event) => {
-              document.getElementById("auth-avatar-preview").src = event.target.result;
-          };
-          reader.readAsDataURL(file);
-
-          const btnTextEl = document.getElementById("btn-create-text");
-          const btnEl = document.getElementById("btn-create-profile");
-          btnTextEl.innerText = "Uploading to ImgBB...";
-          btnEl.disabled = true;
-
-          const imgUrl = await uploadToImgBB(file);
-          if(imgUrl) {
-              currentAvatar = imgUrl;
-              localStorage.setItem("zingoo_avatar", imgUrl);
-              avatarUploaded = true;
-              btnTextEl.innerText = "Enter Zingoo";
-              btnEl.disabled = false;
-          } else {
-              alert("Photo upload to ImgBB failed. Please try again.");
-              btnTextEl.innerText = "Enter Zingoo";
-              btnEl.disabled = false;
-          }
-      }
-  });
-
-  // Sign up and Enter Zingoo
-  document.getElementById("btn-create-profile").addEventListener("click", () => {
-      const rawName = document.getElementById("auth-name").value.trim();
-      const name = rawName.replace(/[.#$\[\]]/g, ""); 
-      
-      const age = document.getElementById("auth-age").value.trim();
-      const ageNum = parseInt(age, 10);
-      
-      const phone = document.getElementById("auth-phone").value.trim();
-      const gender = document.getElementById("auth-gender").value;
-      const state = document.getElementById("auth-state").value;
-      
-      // Strict field validations to block empty/undefined references in database
-      if (!name || name === "undefined" || name === "null" || name.length < 2) {
-          alert("Please enter a valid nickname (minimum 2 characters, no special characters).");
-          return;
-      }
-      if (!avatarUploaded) {
-          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars.");
-          return;
-      }
-      if (isNaN(ageNum) || ageNum < 18) {
-          alert("Age must be 18+ to join Zingoo.");
-          return;
-      }
-      if (!phone) {
-          alert("Please enter a valid phone number.");
-          return;
-      }
-      if (!gender) {
-          alert("Please select your gender.");
-          return;
-      }
-      if (!state) {
-          alert("Please select your state.");
-          return;
-      }
-
-      const finalAvatar = currentAvatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
-      const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
-      
-      set(ref(db, 'users/' + name), {
-          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
-          services: { video: true, audio: true, chat: true }
-      }).then(() => {
-          localStorage.setItem("zingoo_user", name);
-          localStorage.setItem("zingoo_id", newId);
-          localStorage.setItem("zingoo_avatar", finalAvatar);
-          localStorage.setItem("zingoo_diamonds", "0");
-          
-          currentUser = name; currentId = newId; currentAvatar = finalAvatar;
-          
-          listenToUserData(); 
-          authOverlay.style.display = "none";
-          document.body.style.overflow = "auto";
-          listenForIncomingCalls();
-          initPresence();
-          listenForNotifications();
-      }).catch(err => {
-          alert("Error creating profile in database. Please try again.");
-          console.error(err);
-      });
-  });
-
-  // Profile View Logic
-  document.getElementById("header-profile-btn").addEventListener("click", () => {
-      if(currentUser) {
-          document.getElementById("profile-header-name-text").innerText = currentUser;
-          document.getElementById("profile-header-id").innerText = "ID: " + (currentId || "00000000");
-          document.getElementById("profile-header-avatar").src = currentAvatar;
-          document.getElementById('manage-profile-overlay').style.display = 'flex';
-          
-          listenToFollowStats();
-
-          const followBtn = document.getElementById('profile-follow-btn-main');
-          if (followBtn) {
-              followBtn.onclick = () => {
-                  toggleFollow(currentUser);
-              }
-          }
-          
-          resetNavHighlights();
-          document.getElementById('nav-profile').classList.add('nav-item-active', 'text-dia-red');
-          document.getElementById('nav-profile').classList.remove('text-gray-400');
-      }
-  });
-
-  document.getElementById("btn-logout").addEventListener("click", () => {
-      if(confirm("Log out?")) {
-          if(currentUser) set(ref(db, `users/${currentUser}/status`), 'offline');
-          localStorage.clear(); location.reload();
-      }
-  });
-
-  document.getElementById("btn-edit-profile").addEventListener("click", () => {
-      document.getElementById('manage-profile-overlay').style.display = 'none';
-      
-      // Prepopulate edit fields cleanly with loaded values
-      document.getElementById("auth-name").value = currentUser || "";
-      document.getElementById("auth-avatar-preview").src = currentAvatar;
-      
-      get(ref(db, `users/${currentUser}`)).then((snapshot) => {
-          if (snapshot.exists()) {
-              const data = snapshot.val();
-              document.getElementById("auth-age").value = data.age || "";
-              document.getElementById("auth-phone").value = data.phone || "";
-              document.getElementById("auth-gender").value = data.gender || "";
-              document.getElementById("auth-state").value = data.state || "";
-          }
-      });
-      
-      authOverlay.style.display = "flex";
-  });
-
-  // --- WhatsApp Style Chats ---
-  let currentActiveChatId = null; let currentChatPartnerName = null;
-
-  onValue(ref(db, 'recent_chats/' + currentUser), (snapshot) => {
-      const container = document.getElementById('recent-chats-container');
-      container.innerHTML = '';
-      const data = snapshot.val();
-      if(data) {
-          Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([partner, details]) => {
-              container.insertAdjacentHTML('beforeend', `
-              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors" onclick="openChatWith('${partner}', '${details.avatar}')">
-                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
-                  <div class="flex-1 min-w-0"><h4 class="text-gray-900 font-bold text-[15px] truncate">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
-              </div>`);
-          });
-      }
-  });
-
-  window.openChatWith = function(name, avatar) {
-      document.getElementById('see-all-overlay').style.display = 'none'; 
-      document.getElementById('chat-list-overlay').style.display = 'none'; 
-      document.body.style.overflow = 'auto';
-      currentChatPartnerName = name; currentActiveChatId = [currentUser, name].sort().join('_'); 
-      document.getElementById("chat-header-name").innerText = name;
-      document.getElementById("chat-header-img").src = avatar;
-      
-      // Hide the bottom navigation bar to make the chat footer completely free
-      document.getElementById('bottom-nav').style.display = 'none';
-      document.getElementById("chat-overlay").style.display = "flex";
-      
-      const chatMessages = document.getElementById("chat-messages");
-      onValue(ref(db, 'chats/' + currentActiveChatId), (snapshot) => {
-          chatMessages.innerHTML = '';
-          const msgs = snapshot.val();
-          if(msgs) {
-              Object.values(msgs).forEach(msgData => {
-                  const isSelf = msgData.user === currentUser;
-                  const timeString = msgData.timestamp ? new Date(msgData.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-                  if (isSelf) {
-                      chatMessages.innerHTML += `
-                          <div class="wa-bubble-sent">
-                              <span class="text-[14px] leading-relaxed">${msgData.text}</span>
-                              <span class="wa-timestamp flex justify-end items-center gap-0.5">${timeString} <span class="material-symbols-outlined text-[12px] text-blue-500 font-bold">done_all</span></span>
-                          </div>
-                      `;
-                  } else {
-                      chatMessages.innerHTML += `
-                          <div class="wa-bubble-received">
-                              <span class="text-[14px] leading-relaxed">${msgData.text}</span>
-                              <span class="wa-timestamp">${timeString}</span>
-                          </div>
-                      `;
-                  }
-              });
-              chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
-      });
-  };
-
-  document.getElementById("btn-close-chat").addEventListener("click", () => { 
-      document.getElementById("chat-overlay").style.display = "none"; 
-      // Restore bottom navigation bar when exiting chat
-      document.getElementById('bottom-nav').style.display = 'flex';
-  });
-  
-  document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
-  
-  async function sendMessage() {
-      const msg = document.getElementById("chat-input").value.trim();
-      if(msg && currentActiveChatId) {
-          const snap = await get(ref(db, `users/${currentChatPartnerName}/services/chat`));
-          const partnerChatActive = snap.exists() ? snap.val() : true;
-          if(!partnerChatActive) { showCustomAlert(`${currentChatPartnerName} has disabled incoming chats.`); return; }
-
-          let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-          if(currentDiamonds < 4) { showCustomAlert("Insufficient Diamonds for Chat (💎 4/msg). Please recharge."); return; }
-          
-          deductDiamondsForCall(4);
-
-          push(ref(db, 'chats/' + currentActiveChatId), { user: currentUser, text: msg, timestamp: serverTimestamp() });
-          set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), { avatar: document.getElementById("chat-header-img").src, lastMessage: "You: " + msg, timestamp: serverTimestamp() });
-          set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), { avatar: currentAvatar, lastMessage: msg, timestamp: serverTimestamp() });
-          document.getElementById("chat-input").value = "";
-          
-          sendNotification(currentChatPartnerName, 'chat', 'sent you a message');
-      }
-  }
 
   // --- Home Users List, Filter & Grid ---
   document.getElementById('see-all-trigger').addEventListener('click', () => { document.getElementById('see-all-overlay').style.display = 'flex'; });
@@ -2383,85 +1650,163 @@
       }
   });
 
+  // Smooth flicker-free update list logic
   function renderUsers() {
       const usersListContainer = document.getElementById("real-users-list");
       const seeAllGridContainer = document.getElementById("see-all-grid");
-      const currentFilter = document.getElementById("gender-filter").value;
-      
-      usersListContainer.innerHTML = ''; seeAllGridContainer.innerHTML = '';
+      if (!usersListContainer || !seeAllGridContainer) return;
 
-      let usersArray = Object.values(allUsersData).filter(user => user.name !== currentUser);
-      
-      // Filter out raw dicebear templates to keep feed real and authenticated
-      usersArray = usersArray.filter(user => {
+      const currentFilter = document.getElementById("gender-filter").value;
+
+      let usersArray = Object.values(allUsersData).filter(user => {
+          if (user.name === currentUser) return false;
           const avatar = user.avatar || "";
           return avatar && !avatar.includes("dicebear.com") && !avatar.includes("avataaars");
       });
-      
+
+      if (currentFilter !== 'all') {
+          usersArray = usersArray.filter(u => u.gender === currentFilter);
+      }
+
       usersArray.sort((a, b) => {
           let aStatus = a.status === 'online' ? 1 : 0;
           let bStatus = b.status === 'online' ? 1 : 0;
           return bStatus - aStatus;
       });
-      
-      usersArray.forEach(user => {
-          if(currentFilter !== 'all' && user.gender !== currentFilter) return;
 
-          const isOnline = user.status === 'online';
-          const dotColor = isOnline ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : 'bg-gray-400';
-          
-          const isGolden = user.golden === true;
-          const cardBorderShadow = isGolden 
-              ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400 shadow-[0_5px_20px_rgba(250,204,21,0.3)]' 
-              : 'bg-white border-gray-100 shadow-[0_5px_15px_rgba(0,0,0,0.08)]';
-          
-          const nameColor = isGolden ? 'text-yellow-700' : 'text-gray-900';
-          const goldenBadge = isGolden 
-              ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">star</span> VIP</div>` 
-              : '';
+      // 1. ACTIVE USERS BAR
+      if (usersArray.length === 0) {
+          usersListContainer.innerHTML = '<p class="text-gray-400 text-sm">No active creators found.</p>';
+      } else {
+          if (usersListContainer.innerHTML.includes("Loading amazing") || usersListContainer.innerHTML.includes("No active creators")) {
+              usersListContainer.innerHTML = '';
+          }
 
-          const userHtml = `
-          <div class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn animate-fade-up" data-name="${user.name}" data-avatar="${user.avatar}">
-              <img src="${user.avatar}" class="w-full h-full object-cover">
-              <div class="absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
-              <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
-                  <h4 class="text-white text-xs font-bold truncate flex items-center gap-1">${user.name} ${isGolden ? '<span class="material-symbols-outlined text-[12px] text-yellow-400">verified</span>' : ''}</h4>
-              </div>
-          </div>`;
-          usersListContainer.insertAdjacentHTML('beforeend', userHtml);
+          const activeUserIds = new Set();
 
-          seeAllGridContainer.insertAdjacentHTML('beforeend', `
-          <div class="relative w-full h-[230px] rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] ${cardBorderShadow} border">
-              ${goldenBadge}
-              <div class="relative h-[65%] w-full">
-                  <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
-                  <div class="absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white"></div>
-              </div>
-              <div class="h-[35%] w-full p-2.5 flex flex-col justify-between shrink-0 bg-opacity-90">
-                  <span class="${nameColor} font-bold text-sm truncate flex items-center gap-1">${user.name} ${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : ''}</span>
-                  <div class="flex gap-1.5 mt-auto">
-                      <button class="flex-1 bg-gray-50 py-1.5 rounded-xl text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center transform active:scale-95" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
-                      <button class="flex-1 bg-red-50 py-1.5 rounded-xl text-red-500 shadow-sm border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
-                      <button class="flex-1 bg-gradient-to-r from-red-500 to-pink-500 py-1.5 rounded-xl text-white shadow-md hover:opacity-90 transition-opacity flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
-                  </div>
-              </div>
-          </div>`);
-      });
-      
-      document.querySelectorAll('.model-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-              const name = e.currentTarget.getAttribute('data-name');
-              const avatar = e.currentTarget.getAttribute('data-avatar');
-              document.getElementById('quick-profile-name').innerHTML = `${name} <div class="w-2.5 h-2.5 rounded-full inline-block ${allUsersData[name]?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} ml-1"></div>`;
-              document.getElementById('quick-profile-img').src = avatar;
-              
-              document.getElementById('quick-btn-follow').onclick = () => { toggleFollow(name); };
-              document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
-              document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
-              document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
-              document.getElementById('quick-profile-overlay').style.display = 'flex';
+          usersArray.forEach(user => {
+              const cardId = `active-user-card-${user.name}`;
+              activeUserIds.add(cardId);
+
+              const isOnline = user.status === 'online';
+              const dotColor = isOnline ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : 'bg-gray-400';
+              const isGolden = user.golden === true;
+
+              let cardEl = document.getElementById(cardId);
+              if (!cardEl) {
+                  const temp = document.createElement('div');
+                  temp.innerHTML = `
+                      <div id="${cardId}" class="relative w-32 h-44 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer shadow-sm model-btn animate-fade-up" data-name="${user.name}" data-avatar="${user.avatar}">
+                          <img src="${user.avatar}" class="w-full h-full object-cover">
+                          <div class="status-dot absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm"></div>
+                          <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
+                              <h4 class="text-white text-xs font-bold truncate flex items-center gap-1">
+                                  <span class="user-name-span">${user.name}</span> 
+                                  <span class="verified-badge-span">${isGolden ? '<span class="material-symbols-outlined text-[12px] text-yellow-400">verified</span>' : ''}</span>
+                              </h4>
+                          </div>
+                      </div>
+                  `;
+                  cardEl = temp.firstElementChild;
+                  usersListContainer.appendChild(cardEl);
+                  
+                  cardEl.addEventListener('click', (e) => {
+                      const name = user.name;
+                      const avatar = user.avatar;
+                      document.getElementById('quick-profile-name').innerHTML = `${name} <div class="w-2.5 h-2.5 rounded-full inline-block ${allUsersData[name]?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} ml-1"></div>`;
+                      document.getElementById('quick-profile-img').src = avatar;
+                      
+                      document.getElementById('quick-btn-follow').onclick = () => { toggleFollow(name); };
+                      document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
+                      document.getElementById('quick-btn-audio').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, false, avatar); };
+                      document.getElementById('quick-btn-video').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; initiateCall(name, true, avatar); };
+                      document.getElementById('quick-profile-overlay').style.display = 'flex';
+                  });
+              } else {
+                  const dot = cardEl.querySelector('.status-dot');
+                  if (dot) dot.className = `status-dot absolute top-2 right-2 w-3 h-3 rounded-full ${dotColor} border border-white shadow-sm`;
+                  
+                  const verifiedSpan = cardEl.querySelector('.verified-badge-span');
+                  if (verifiedSpan) verifiedSpan.innerHTML = isGolden ? '<span class="material-symbols-outlined text-[12px] text-yellow-400">verified</span>' : '';
+              }
+
+              usersListContainer.appendChild(cardEl);
           });
-      });
+
+          Array.from(usersListContainer.children).forEach(child => {
+              if (child.id && child.id.startsWith("active-user-card-") && !activeUserIds.has(child.id)) {
+                  child.remove();
+              }
+          });
+      }
+
+      // 2. SEE ALL CREATORS GRID
+      if (usersArray.length === 0) {
+          seeAllGridContainer.innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No creators found.</p>';
+      } else {
+          if (seeAllGridContainer.innerHTML.includes("No creators found")) {
+              seeAllGridContainer.innerHTML = '';
+          }
+
+          const seeAllCardIds = new Set();
+
+          usersArray.forEach(user => {
+              const gridCardId = `see-all-card-${user.name}`;
+              seeAllCardIds.add(gridCardId);
+
+              const isOnline = user.status === 'online';
+              const dotColor = isOnline ? 'bg-green-500 shadow-[0_0_5px_#22c55e]' : 'bg-gray-400';
+              const isGolden = user.golden === true;
+              const cardBorderShadow = isGolden 
+                  ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400 shadow-[0_5px_20px_rgba(250,204,21,0.3)]' 
+                  : 'bg-white border-gray-100 shadow-[0_5px_15px_rgba(0,0,0,0.08)]';
+              
+              const nameColor = isGolden ? 'text-yellow-700' : 'text-gray-900';
+              const goldenBadge = isGolden 
+                  ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">star</span> VIP</div>` 
+                  : '';
+
+              let gridCardEl = document.getElementById(gridCardId);
+              if (!gridCardEl) {
+                  const tempGrid = document.createElement('div');
+                  tempGrid.innerHTML = `
+                      <div id="${gridCardId}" class="relative w-full h-[230px] rounded-[20px] overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] ${cardBorderShadow} border">
+                          ${goldenBadge}
+                          <div class="relative h-[65%] w-full">
+                              <img src="${user.avatar}" class="absolute inset-0 w-full h-full object-cover">
+                              <div class="grid-status-dot absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white"></div>
+                          </div>
+                          <div class="h-[35%] w-full p-2.5 flex flex-col justify-between shrink-0 bg-opacity-90">
+                              <span class="${nameColor} font-bold text-sm truncate flex items-center gap-1">
+                                  ${user.name} <span class="grid-verified-badge">${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : ''}</span>
+                              </span>
+                              <div class="flex gap-1.5 mt-auto">
+                                  <button class="flex-1 bg-gray-50 py-1.5 rounded-xl text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-200 transition-colors flex items-center justify-center transform active:scale-95" onclick="openChatWith('${user.name}', '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">chat</span></button>
+                                  <button class="flex-1 bg-red-50 py-1.5 rounded-xl text-red-500 shadow-sm border border-red-100 hover:bg-red-100 transition-colors flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', false, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">call</span></button>
+                                  <button class="flex-1 bg-gradient-to-r from-red-500 to-pink-500 py-1.5 rounded-xl text-white shadow-md hover:opacity-90 transition-opacity flex items-center justify-center transform active:scale-95" onclick="initiateCall('${user.name}', true, '${user.avatar}')"><span class="material-symbols-outlined text-[16px]">videocam</span></button>
+                              </div>
+                          </div>
+                      </div>
+                  `;
+                  gridCardEl = tempGrid.firstElementChild;
+                  seeAllGridContainer.appendChild(gridCardEl);
+              } else {
+                  const gridDot = gridCardEl.querySelector('.grid-status-dot');
+                  if (gridDot) gridDot.className = `grid-status-dot absolute top-2 right-2 w-3.5 h-3.5 rounded-full ${dotColor} border-2 border-white`;
+                  
+                  const gridVerified = gridCardEl.querySelector('.grid-verified-badge');
+                  if (gridVerified) gridVerified.innerHTML = isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-500">verified</span>' : '';
+              }
+
+              seeAllGridContainer.appendChild(gridCardEl);
+          });
+
+          Array.from(seeAllGridContainer.children).forEach(child => {
+              if (child.id && child.id.startsWith("see-all-card-") && !seeAllCardIds.has(child.id)) {
+                  child.remove();
+              }
+          });
+      }
   }
 
   // --- WEBRTC Calls ---
@@ -2603,6 +1948,306 @@
       });
   };
   window.leaveActiveAudioRoom = function() { document.getElementById('audio-room-active-overlay').style.display = 'none'; currentRoomId = null; };
+
+  // --- Auth, Signup & Identity ---
+  const authOverlay = document.getElementById("auth-overlay");
+  
+  if (!currentUser) {
+      authOverlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+  } else {
+      listenToUserData();
+      listenForIncomingCalls(); 
+      initPresence();
+      listenForNotifications();
+  }
+
+  // File Upload handling with direct ImgBB support
+  document.getElementById("profile-image-upload").addEventListener("change", async function(e) {
+      const file = e.target.files[0];
+      if(file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+              document.getElementById("auth-avatar-preview").src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+
+          const btnTextEl = document.getElementById("btn-create-text");
+          const btnEl = document.getElementById("btn-create-profile");
+          btnTextEl.innerText = "Uploading to ImgBB...";
+          btnEl.disabled = true;
+
+          const imgUrl = await uploadToImgBB(file);
+          if(imgUrl) {
+              currentAvatar = imgUrl;
+              localStorage.setItem("zingoo_avatar", imgUrl);
+              avatarUploaded = true;
+              btnTextEl.innerText = "Enter Zingoo";
+              btnEl.disabled = false;
+          } else {
+              alert("Photo upload to ImgBB failed. Please try again.");
+              btnTextEl.innerText = "Enter Zingoo";
+              btnEl.disabled = false;
+          }
+      }
+  });
+
+  // Sign up and Enter Zingoo
+  document.getElementById("btn-create-profile").addEventListener("click", () => {
+      const rawName = document.getElementById("auth-name").value.trim();
+      const name = rawName.replace(/[.#$\[\]]/g, ""); 
+      
+      const age = document.getElementById("auth-age").value.trim();
+      const ageNum = parseInt(age, 10);
+      
+      const phone = document.getElementById("auth-phone").value.trim();
+      const gender = document.getElementById("auth-gender").value;
+      const state = document.getElementById("auth-state").value;
+      
+      if (!name || name === "undefined" || name === "null" || name.length < 2) {
+          alert("Please enter a valid nickname (minimum 2 characters, no special characters).");
+          return;
+      }
+      if (!avatarUploaded) {
+          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars.");
+          return;
+      }
+      if (isNaN(ageNum) || ageNum < 18) {
+          alert("Age must be 18+ to join Zingoo.");
+          return;
+      }
+      if (!phone) {
+          alert("Please enter a valid phone number.");
+          return;
+      }
+      if (!gender) {
+          alert("Please select your gender.");
+          return;
+      }
+      if (!state) {
+          alert("Please select your state.");
+          return;
+      }
+
+      const finalAvatar = currentAvatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
+      const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
+      
+      set(ref(db, 'users/' + name), {
+          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
+          services: { video: true, audio: true, chat: true }
+      }).then(() => {
+          localStorage.setItem("zingoo_user", name);
+          localStorage.setItem("zingoo_id", newId);
+          localStorage.setItem("zingoo_avatar", finalAvatar);
+          localStorage.setItem("zingoo_diamonds", "0");
+          
+          currentUser = name; currentId = newId; currentAvatar = finalAvatar;
+          
+          listenToUserData(); 
+          authOverlay.style.display = "none";
+          document.body.style.overflow = "auto";
+          listenForIncomingCalls();
+          initPresence();
+          listenForNotifications();
+          setupFCMToken();
+      }).catch(err => {
+          alert("Error creating profile in database. Please try again.");
+          console.error(err);
+      });
+  });
+
+  // Profile View Logic
+  document.getElementById("header-profile-btn").addEventListener("click", () => {
+      if(currentUser) {
+          document.getElementById("profile-header-name-text").innerText = currentUser;
+          document.getElementById("profile-header-id").innerText = "ID: " + (currentId || "00000000");
+          document.getElementById("profile-header-avatar").src = currentAvatar;
+          document.getElementById('manage-profile-overlay').style.display = 'flex';
+          
+          listenToFollowStats();
+
+          const followBtn = document.getElementById('profile-follow-btn-main');
+          if (followBtn) {
+              followBtn.onclick = () => {
+                  toggleFollow(currentUser);
+              }
+          }
+          
+          resetNavHighlights();
+          document.getElementById('nav-profile').classList.add('nav-item-active', 'text-dia-red');
+          document.getElementById('nav-profile').classList.remove('text-gray-400');
+      }
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", () => {
+      if(confirm("Log out?")) {
+          if(currentUser) set(ref(db, `users/${currentUser}/status`), 'offline');
+          localStorage.clear(); location.reload();
+      }
+  });
+
+  document.getElementById("btn-edit-profile").addEventListener("click", () => {
+      document.getElementById('manage-profile-overlay').style.display = 'none';
+      
+      document.getElementById("auth-name").value = currentUser || "";
+      document.getElementById("auth-avatar-preview").src = currentAvatar;
+      
+      get(ref(db, `users/${currentUser}`)).then((snapshot) => {
+          if (snapshot.exists()) {
+              const data = snapshot.val();
+              document.getElementById("auth-age").value = data.age || "";
+              document.getElementById("auth-phone").value = data.phone || "";
+              document.getElementById("auth-gender").value = data.gender || "";
+              document.getElementById("auth-state").value = data.state || "";
+          }
+      });
+      
+      authOverlay.style.display = "flex";
+  });
+
+  // --- WhatsApp Style Chats with Message State/Auto Delete Sync ---
+  let currentActiveChatId = null; let currentChatPartnerName = null;
+
+  onValue(ref(db, 'recent_chats/' + currentUser), (snapshot) => {
+      const container = document.getElementById('recent-chats-container');
+      container.innerHTML = '';
+      const data = snapshot.val();
+      if(data) {
+          Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([partner, details]) => {
+              container.insertAdjacentHTML('beforeend', `
+              <div class="flex items-center gap-3 p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors" onclick="openChatWith('${partner}', '${details.avatar}')">
+                  <img src="${details.avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
+                  <div class="flex-1 min-w-0"><h4 class="text-gray-900 font-bold text-[15px] truncate">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
+              </div>`);
+              
+              // Delivery state background updates
+              const chatId = [currentUser, partner].sort().join('_');
+              
+              // Perform a cleanup of messages older than 3 days
+              cleanOldMessages(chatId);
+
+              get(ref(db, `chats/${chatId}`)).then((chatSnap) => {
+                  if (chatSnap.exists()) {
+                      const msgs = chatSnap.val();
+                      let deliveryUpdates = {};
+                      Object.entries(msgs).forEach(([msgKey, msgData]) => {
+                          if (msgData.user !== currentUser && msgData.status === "sent") {
+                              deliveryUpdates[`chats/${chatId}/${msgKey}/status`] = "delivered";
+                          }
+                      });
+                      if (Object.keys(deliveryUpdates).length > 0) {
+                          update(ref(db), deliveryUpdates);
+                      }
+                  }
+              });
+          });
+      }
+  });
+
+  window.openChatWith = function(name, avatar) {
+      document.getElementById('see-all-overlay').style.display = 'none'; 
+      document.getElementById('chat-list-overlay').style.display = 'none'; 
+      document.body.style.overflow = 'auto';
+      currentChatPartnerName = name; currentActiveChatId = [currentUser, name].sort().join('_'); 
+      document.getElementById("chat-header-name").innerText = name;
+      document.getElementById("chat-header-img").src = avatar;
+      
+      document.getElementById('bottom-nav').style.display = 'none';
+      document.getElementById("chat-overlay").style.display = "flex";
+      
+      // Perform initial chat cleanups
+      cleanOldMessages(currentActiveChatId);
+
+      const chatMessages = document.getElementById("chat-messages");
+      onValue(ref(db, 'chats/' + currentActiveChatId), (snapshot) => {
+          chatMessages.innerHTML = '';
+          const msgs = snapshot.val();
+          if(msgs) {
+              let readUpdates = {};
+              Object.entries(msgs).forEach(([msgKey, msgData]) => {
+                  const isSelf = msgData.user === currentUser;
+                  const timeString = msgData.timestamp ? new Date(msgData.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                  
+                  // Mark incoming unread messages as read
+                  if (!isSelf && msgData.status !== "read") {
+                      readUpdates[`chats/${currentActiveChatId}/${msgKey}/status`] = "read";
+                  }
+
+                  if (isSelf) {
+                      let tickHTML = '';
+                      if (msgData.status === "read") {
+                          tickHTML = `<span class="material-symbols-outlined text-[14px] text-blue-500 font-bold">done_all</span>`;
+                      } else if (msgData.status === "delivered") {
+                          tickHTML = `<span class="material-symbols-outlined text-[14px] text-gray-400">done_all</span>`;
+                      } else {
+                          tickHTML = `<span class="material-symbols-outlined text-[14px] text-gray-400">done</span>`;
+                      }
+
+                      chatMessages.innerHTML += `
+                          <div class="wa-bubble-sent">
+                              <span class="text-[14px] leading-relaxed">${msgData.text}</span>
+                              <span class="wa-timestamp flex justify-end items-center gap-0.5">${timeString} ${tickHTML}</span>
+                          </div>
+                      `;
+                  } else {
+                      chatMessages.innerHTML += `
+                          <div class="wa-bubble-received">
+                              <span class="text-[14px] leading-relaxed">${msgData.text}</span>
+                              <span class="wa-timestamp">${timeString}</span>
+                          </div>
+                      `;
+                  }
+              });
+              
+              if (Object.keys(readUpdates).length > 0) {
+                  update(ref(db), readUpdates);
+              }
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+      });
+  };
+
+  document.getElementById("btn-close-chat").addEventListener("click", () => { 
+      document.getElementById("chat-overlay").style.display = "none"; 
+      document.getElementById('bottom-nav').style.display = 'flex';
+  });
+  
+  document.getElementById("btn-send-msg").addEventListener("click", sendMessage);
+  
+  async function sendMessage() {
+      const msg = document.getElementById("chat-input").value.trim();
+      if(msg && currentActiveChatId) {
+          const snap = await get(ref(db, `users/${currentChatPartnerName}/services/chat`));
+          const partnerChatActive = snap.exists() ? snap.val() : true;
+          if(!partnerChatActive) { showCustomAlert(`${currentChatPartnerName} has disabled incoming chats.`); return; }
+
+          let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+          if(currentDiamonds < 4) { showCustomAlert("Insufficient Diamonds for Chat (💎 4/msg). Please recharge."); return; }
+          
+          deductDiamondsForCall(4);
+
+          // Get receiver status to set correct initial message tick status
+          get(ref(db, `users/${currentChatPartnerName}/status`)).then((statusSnap) => {
+              const partnerStatus = statusSnap.val() || 'offline';
+              const initialStatus = partnerStatus === 'online' ? 'delivered' : 'sent';
+              
+              const msgKey = push(ref(db, 'chats/' + currentActiveChatId)).key;
+              set(ref(db, `chats/${currentActiveChatId}/${msgKey}`), { 
+                  user: currentUser, 
+                  text: msg, 
+                  timestamp: serverTimestamp(),
+                  status: initialStatus 
+              }).then(() => {
+                  set(ref(db, `recent_chats/${currentUser}/${currentChatPartnerName}`), { avatar: document.getElementById("chat-header-img").src, lastMessage: "You: " + msg, timestamp: serverTimestamp() });
+                  set(ref(db, `recent_chats/${currentChatPartnerName}/${currentUser}`), { avatar: currentAvatar, lastMessage: msg, timestamp: serverTimestamp() });
+              });
+          });
+          
+          document.getElementById("chat-input").value = "";
+          sendNotification(currentChatPartnerName, 'chat', 'sent you a message');
+      }
+  }
+
 </script>
 </body>
 </html>
