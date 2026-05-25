@@ -1167,23 +1167,20 @@
 <!-- Firebase SDK & Functional Scripts Setup -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, serverTimestamp, set, onChildAdded, remove, get, onDisconnect, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyD9dd-bAdi-bXicIUp4THO0VGExzPn3FsI",
-    authDomain: "zingoo-ae309.firebaseapp.com",
-    databaseURL: "https://zingoo-ae309-default-rtdb.firebaseio.com",
-    projectId: "zingoo-ae309",
-    storageBucket: "zingoo-ae309.firebasestorage.app",
-    messagingSenderId: "276852537232",
-    appId: "1:276852537232:web:6b345eb808a5afa1b4e515",
-    measurementId: "G-FBW3DT6WMV"
+    apiKey: "AIzaSyCYujgtEDDfvnJePhDKiKm9DkftoGAq9t8",
+    authDomain: "benchtopinnovations12.firebaseapp.com",
+    databaseURL: "https://benchtopinnovations12-default-rtdb.firebaseio.com",
+    projectId: "benchtopinnovations12",
+    storageBucket: "benchtopinnovations12.firebasestorage.app",
+    messagingSenderId: "113274194106",
+    appId: "1:113274194106:web:c2548c12c1ea20c5b69a83"
   };
 
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
   const db = getDatabase(app);
 
   let messaging;
@@ -1646,15 +1643,10 @@
   
   document.getElementById('gender-filter').addEventListener('change', () => { renderUsers(); });
 
-  // OPTIMIZATION: Only fetch latest 150 users to prevent extreme load times
-  const usersQuery = query(ref(db, 'users'), limitToLast(150));
-  onValue(usersQuery, (snapshot) => {
+  onValue(ref(db, 'users'), (snapshot) => {
       if(snapshot.val()) {
           allUsersData = snapshot.val();
           renderUsers();
-      } else {
-          document.getElementById("real-users-list").innerHTML = '<p class="text-gray-400 text-sm">No active creators found.</p>';
-          document.getElementById("see-all-grid").innerHTML = '<p class="col-span-2 text-center text-gray-400 py-10">No creators found.</p>';
       }
   });
 
@@ -2002,14 +1994,8 @@
 
   // Sign up and Enter Zingoo
   document.getElementById("btn-create-profile").addEventListener("click", () => {
-      const btnTextEl = document.getElementById("btn-create-text");
-      const btnEl = document.getElementById("btn-create-profile");
-      btnTextEl.innerText = "Please wait...";
-      btnEl.disabled = true;
-
       const rawName = document.getElementById("auth-name").value.trim();
-      // FIX: Replace special chars including backslash and slash to prevent Firebase Path errors
-      const name = rawName.replace(/[.#$\[\]\/]/g, ""); 
+      const name = rawName.replace(/[.#$\[\]]/g, ""); 
       
       const age = document.getElementById("auth-age").value.trim();
       const ageNum = parseInt(age, 10);
@@ -2020,76 +2006,54 @@
       
       if (!name || name === "undefined" || name === "null" || name.length < 2) {
           alert("Please enter a valid nickname (minimum 2 characters, no special characters).");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
       if (!avatarUploaded) {
           alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars.");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
       if (isNaN(ageNum) || ageNum < 18) {
           alert("Age must be 18+ to join Zingoo.");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
       if (!phone) {
           alert("Please enter a valid phone number.");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
       if (!gender) {
           alert("Please select your gender.");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
       if (!state) {
           alert("Please select your state.");
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
           return;
       }
 
       const finalAvatar = currentAvatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=7ea229f30d98aebf6b1302b6d3576f9a&backgroundColor=f8f9fa";
       const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
       
-      try {
-          set(ref(db, 'users/' + name), {
-              name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
-              services: { video: true, audio: true, chat: true }
-          }).then(() => {
-              localStorage.setItem("zingoo_user", name);
-              localStorage.setItem("zingoo_id", newId);
-              localStorage.setItem("zingoo_avatar", finalAvatar);
-              localStorage.setItem("zingoo_diamonds", "0");
-              
-              currentUser = name; currentId = newId; currentAvatar = finalAvatar;
-              
-              listenToUserData(); 
-              authOverlay.style.display = "none";
-              document.body.style.overflow = "auto";
-              listenForIncomingCalls();
-              initPresence();
-              listenForNotifications();
-              setupFCMToken();
-              btnTextEl.innerText = "Enter Zingoo";
-              btnEl.disabled = false;
-          }).catch(err => {
-              alert("Error creating profile in database. Please try again. " + err.message);
-              btnTextEl.innerText = "Enter Zingoo";
-              btnEl.disabled = false;
-              console.error(err);
-          });
-      } catch (err) {
-          alert("Critical error: " + err.message);
-          btnTextEl.innerText = "Enter Zingoo";
-          btnEl.disabled = false;
-      }
+      set(ref(db, 'users/' + name), {
+          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 0, status: 'online', golden: false, timestamp: serverTimestamp(),
+          services: { video: true, audio: true, chat: true }
+      }).then(() => {
+          localStorage.setItem("zingoo_user", name);
+          localStorage.setItem("zingoo_id", newId);
+          localStorage.setItem("zingoo_avatar", finalAvatar);
+          localStorage.setItem("zingoo_diamonds", "0");
+          
+          currentUser = name; currentId = newId; currentAvatar = finalAvatar;
+          
+          listenToUserData(); 
+          authOverlay.style.display = "none";
+          document.body.style.overflow = "auto";
+          listenForIncomingCalls();
+          initPresence();
+          listenForNotifications();
+          setupFCMToken();
+      }).catch(err => {
+          alert("Error creating profile in database. Please try again.");
+          console.error(err);
+      });
   });
 
   // Profile View Logic
