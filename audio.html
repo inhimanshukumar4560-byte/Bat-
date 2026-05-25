@@ -8,7 +8,7 @@
     <title>Audio Live Room - Zingoo</title>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* ==========================================
            GLOBAL VARIABLES & RESET
@@ -505,6 +505,20 @@
 
         <div id="global-toast" class="toast-notification">Notification text here</div>
 
+        <!-- Beautiful Custom Notification / Confirm Dialog Popup -->
+        <div id="custom-alert-modal" class="modal-overlay" style="z-index: 100000; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);">
+            <div class="modal-content" style="max-width: 380px; width: 90%; border-radius: 24px; padding: 25px; text-align: center; background: #ffffff; border: 1px solid #ffe4e8; box-shadow: 0 15px 40px rgba(255, 0, 76, 0.15); position: relative; border-bottom: none; margin-bottom: auto; margin-top: auto;">
+                <button id="custom-alert-close-btn" class="close-btn" style="position: absolute; top: 15px; right: 15px; background: #f5f5f5; border: none; font-size: 16px; cursor: pointer; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center;">&times;</button>
+                <div id="custom-alert-icon" style="font-size: 40px; margin-bottom: 15px; color: var(--hot-pink);">⚠️</div>
+                <h3 id="custom-alert-title" style="font-size: 18px; font-weight: 800; color: #111; margin-bottom: 10px;">Notification</h3>
+                <p id="custom-alert-message" style="font-size: 14px; color: #555; margin-bottom: 22px; line-height: 1.5;"></p>
+                <div style="display: flex; gap: 10px; justify-content: center;" id="custom-alert-actions">
+                    <button id="custom-alert-cancel-btn" class="join-btn-outline" style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ccc; color: #555; font-size: 14px; font-weight: 700; cursor: pointer; background: transparent;">Cancel</button>
+                    <button id="custom-alert-confirm-btn" style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: var(--gradient-main); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: var(--glow-red);">Confirm</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ID LOGIN OVERLAY -->
         <div id="id-login-screen">
             <div class="logo-container">
@@ -892,6 +906,55 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
+            // Custom non-blocking Alert function
+            function showCustomAlert({ title, message, icon = '⚠️', showCancel = false, confirmText = 'OK', cancelText = 'Cancel', isDiamondAlert = false, onConfirm = null, onCancel = null }) {
+                const modal = document.getElementById('custom-alert-modal');
+                const iconEl = document.getElementById('custom-alert-icon');
+                const titleEl = document.getElementById('custom-alert-title');
+                const messageEl = document.getElementById('custom-alert-message');
+                const confirmBtn = document.getElementById('custom-alert-confirm-btn');
+                const cancelBtn = document.getElementById('custom-alert-cancel-btn');
+                const closeBtn = document.getElementById('custom-alert-close-btn');
+
+                iconEl.innerHTML = isDiamondAlert ? '💎' : icon;
+                titleEl.innerText = title;
+                messageEl.innerText = message;
+                
+                confirmBtn.innerText = confirmText;
+                cancelBtn.innerText = cancelText;
+
+                if (showCancel || isDiamondAlert) {
+                    cancelBtn.style.display = 'block';
+                } else {
+                    cancelBtn.style.display = 'none';
+                }
+
+                modal.style.display = 'flex';
+
+                // Clone buttons to clear previous event listeners cleanly
+                const newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+                const newCancelBtn = cancelBtn.cloneNode(true);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+                const newCloseBtn = closeBtn.cloneNode(true);
+                closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+
+                newConfirmBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    if (onConfirm) onConfirm();
+                });
+
+                const closeAction = () => {
+                    modal.style.display = 'none';
+                    if (onCancel) onCancel();
+                };
+
+                newCancelBtn.addEventListener('click', closeAction);
+                newCloseBtn.addEventListener('click', closeAction);
+            }
+
             // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
@@ -1142,46 +1205,60 @@
 
                 let currentBal = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
                 if(currentBal >= cost) {
-                    if(confirm(`Buy and equip '${name}' for ${cost} diamonds?`)) {
-                        let newBal = currentBal - cost;
-                        set(ref(db, `users/${currentUser}/diamonds`), newBal);
-                        
-                        get(ref(db, 'users')).then(snap => {
-                            let uKey = null;
-                            const users = snap.val();
-                            for(let k in users) { if(users[k].name === currentUser) uKey = k; }
-                            if(uKey) {
-                                let updateData = {};
-                                if(category === 'chairs') updateData.equippedChair = url;
-                                if(category === 'frames') updateData.equippedFrame = url;
-                                if(category === 'profile_icons') updateData.equippedIcon = url;
-                                if(category === 'entry_stickers') updateData.equippedSticker = url;
-                                update(ref(db, `users/${uKey}`), updateData);
+                    showCustomAlert({
+                        title: "Confirm Purchase",
+                        message: `Buy and equip '${name}' for ${cost} diamonds?`,
+                        icon: "🛍️",
+                        showCancel: true,
+                        confirmText: "Buy Now",
+                        onConfirm: () => {
+                            let newBal = currentBal - cost;
+                            set(ref(db, `users/${currentUser}/diamonds`), newBal);
+                            
+                            get(ref(db, 'users')).then(snap => {
+                                let uKey = null;
+                                const users = snap.val();
+                                for(let k in users) { if(users[k].name === currentUser) uKey = k; }
+                                if(uKey) {
+                                    let updateData = {};
+                                    if(category === 'chairs') updateData.equippedChair = url;
+                                    if(category === 'frames') updateData.equippedFrame = url;
+                                    if(category === 'profile_icons') updateData.equippedIcon = url;
+                                    if(category === 'entry_stickers') updateData.equippedSticker = url;
+                                    update(ref(db, `users/${uKey}`), updateData);
+                                }
+                            });
+
+                            if(category === 'chairs') myEquippedChair = url;
+                            if(category === 'frames') myEquippedFrame = url;
+                            if(category === 'profile_icons') myEquippedIcon = url;
+                            if(category === 'entry_stickers') myEquippedSticker = url;
+                            
+                            if(mySeatIndex !== -1 && currentActiveRoomId) {
+                                if(category === 'chairs') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), url);
+                                if(category === 'frames') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), url);
+                                if(category === 'profile_icons') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/iconUrl`), url);
                             }
-                        });
 
-                        if(category === 'chairs') myEquippedChair = url;
-                        if(category === 'frames') myEquippedFrame = url;
-                        if(category === 'profile_icons') myEquippedIcon = url;
-                        if(category === 'entry_stickers') myEquippedSticker = url;
-                        
-                        if(mySeatIndex !== -1 && currentActiveRoomId) {
-                            if(category === 'chairs') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/chairUrl`), url);
-                            if(category === 'frames') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/frameUrl`), url);
-                            if(category === 'profile_icons') set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${mySeatIndex}/iconUrl`), url);
+                            if(category === 'backgrounds' && currentActiveRoomId) {
+                                set(ref(db, `audio_rooms/${currentActiveRoomId}/backgroundUrl`), url);
+                            }
+
+                            showToast(`Successfully equipped ${name}!`);
+                            closeModal();
                         }
-
-                        if(category === 'backgrounds' && currentActiveRoomId) {
-                            set(ref(db, `audio_rooms/${currentActiveRoomId}/backgroundUrl`), url);
-                        }
-
-                        showToast(`Successfully equipped ${name}!`);
-                        closeModal();
-                    }
+                    });
                 } else {
-                    if(confirm(`Not enough diamonds. Cost is ${cost}. Go to store?`)) {
-                        window.redirectToDiamondStore(cost, cost * 5);
-                    }
+                    showCustomAlert({
+                        title: "Insufficient Diamonds",
+                        message: `Not enough diamonds to buy '${name}'. Cost: 💎 ${cost}. Please recharge.`,
+                        isDiamondAlert: true,
+                        confirmText: "Recharge Now",
+                        cancelText: "Close",
+                        onConfirm: () => {
+                            window.redirectToDiamondStore(cost, cost * 5);
+                        }
+                    });
                 }
             };
 
@@ -1215,9 +1292,16 @@
                     showToast(`Successfully sent ${gift.name}!`);
                     closeModal();
                 } else {
-                    if(confirm(`Not enough diamonds. Cost is ${gift.cost}. Go to store to buy more?`)) {
-                        window.redirectToDiamondStore(gift.cost, gift.cost * 5);
-                    }
+                    showCustomAlert({
+                        title: "Insufficient Diamonds",
+                        message: `Not enough diamonds to send '${gift.name}'. Cost: 💎 ${gift.cost}. Please recharge.`,
+                        isDiamondAlert: true,
+                        confirmText: "Recharge Now",
+                        cancelText: "Close",
+                        onConfirm: () => {
+                            window.redirectToDiamondStore(gift.cost, gift.cost * 5);
+                        }
+                    });
                 }
             };
 
@@ -1780,19 +1864,34 @@
                     if (fee > 0) {
                         let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
                         if (currentDiamonds >= fee) {
-                            if (confirm(`This room costs ${fee} diamonds. Your balance: ${currentDiamonds}. Join?`)) {
-                                const newBal = currentDiamonds - fee;
-                                set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
-                                    localStorage.setItem("zingoo_diamonds", newBal);
-                                    document.getElementById('lobby-diamond-balance').innerText = newBal;
-                                    document.getElementById('rv_myDiamonds').innerText = newBal;
-                                    showToast(`Paid ${fee} diamonds. Welcome!`);
-                                    proceed();
-                                });
-                            }
+                            showCustomAlert({
+                                title: "Confirm Entrance Fee",
+                                message: `This room costs ${fee} diamonds. Your balance is 💎 ${currentDiamonds}. Do you wish to join?`,
+                                icon: "💎",
+                                showCancel: true,
+                                confirmText: "Join Room",
+                                onConfirm: () => {
+                                    const newBal = currentDiamonds - fee;
+                                    set(ref(db, `users/${currentUser}/diamonds`), newBal).then(() => {
+                                        localStorage.setItem("zingoo_diamonds", newBal);
+                                        document.getElementById('lobby-diamond-balance').innerText = newBal;
+                                        document.getElementById('rv_myDiamonds').innerText = newBal;
+                                        showToast(`Paid ${fee} diamonds. Welcome!`);
+                                        proceed();
+                                    });
+                                }
+                            });
                         } else {
-                            alert(`You need ${fee} diamonds to enter, but you only have ${currentDiamonds}. Please buy more.`);
-                            window.redirectToDiamondStore(fee, fee * 5);
+                            showCustomAlert({
+                                title: "Insufficient Diamonds",
+                                message: `Entering this room costs 💎 ${fee}. You only have 💎 ${currentDiamonds}. Please recharge.`,
+                                isDiamondAlert: true,
+                                confirmText: "Recharge Now",
+                                cancelText: "Close",
+                                onConfirm: () => {
+                                    window.redirectToDiamondStore(fee, fee * 5);
+                                }
+                            });
                         }
                     } else {
                         proceed();
@@ -2061,10 +2160,19 @@
 
             window.hostKickUser = function(seatIndex, username) {
                 if(currentActiveRoomId && currentRoomHost === currentUser) {
-                    remove(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${seatIndex}`));
-                    set(ref(db, `audio_rooms/${currentActiveRoomId}/banned/${username}`), true);
-                    showToast(`${username} has been kicked and banned from the room.`);
-                    closeModal();
+                    showCustomAlert({
+                        title: "Kick & Ban User",
+                        message: `Are you sure you want to kick and ban ${username} from this room?`,
+                        icon: "🚫",
+                        showCancel: true,
+                        confirmText: "Kick/Ban",
+                        onConfirm: () => {
+                            remove(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${seatIndex}`));
+                            set(ref(db, `audio_rooms/${currentActiveRoomId}/banned/${username}`), true);
+                            showToast(`${username} has been kicked and banned from the room.`);
+                            closeModal();
+                        }
+                    });
                 }
             };
 
