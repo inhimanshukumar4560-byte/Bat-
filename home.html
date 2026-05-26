@@ -6,7 +6,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Zingoo - Home Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700;800;900&family=Syne:wght=700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -192,20 +192,23 @@
         <span class="text-black font-black text-xl tracking-wide hidden sm:block">ZINGOO</span>
     </div>
 
-    <!-- RIGHT: Filter, Status, Notifications, Diamonds -->
-    <div class="flex items-center gap-3">
+    <!-- RIGHT: Filter, Status Toggle, Notifications, Diamonds -->
+    <div class="flex items-center gap-2">
         
-        <!-- Custom 3D Category/Gender Selector Trigger (Image 3 design) -->
-        <div id="gender-filter-trigger" class="bg-gray-100 border border-gray-200 rounded-full text-xs px-3 py-1.5 cursor-pointer font-bold text-gray-700 shadow-sm flex items-center gap-1 hover:bg-gray-200 transition">
+        <!-- Custom 3D Category/Gender Selector Trigger -->
+        <div id="gender-filter-trigger" class="bg-gray-100 border border-gray-200 rounded-full text-xs px-2 py-1.5 cursor-pointer font-bold text-gray-700 shadow-sm flex items-center gap-1 hover:bg-gray-200 transition">
             <span id="current-gender-label">👥 All</span>
             <span class="material-symbols-outlined text-[14px]">expand_more</span>
         </div>
 
-        <!-- Custom 3D Status Selector Trigger (Image 4 design) -->
-        <div id="status-filter-trigger" class="flex items-center gap-1.5 cursor-pointer bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-100 transition shadow-sm">
-            <span id="current-status-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-            <span id="status-text-label" class="text-[10px] font-bold text-green-600">Active</span>
-            <span class="material-symbols-outlined text-[13px] text-gray-500">expand_more</span>
+        <!-- Manual Active/Inactive Status Toggle Switch -->
+        <div class="flex items-center gap-1 bg-gray-50 px-2 py-1.5 rounded-full border border-gray-200 shadow-sm shrink-0">
+            <span class="text-[9px] font-black text-gray-600 mr-1 uppercase">My Active:</span>
+            <label class="flex items-center cursor-pointer relative">
+                <input type="checkbox" id="user-manual-status-toggle" class="sr-only toggle-checkbox" checked onchange="toggleMyManualStatus(this.checked)">
+                <div class="toggle-label block bg-gray-300 w-8 h-4 rounded-full shadow-inner transition-colors duration-300"></div>
+                <div class="dot absolute left-0.5 top-0.5 bg-white w-3 h-3 rounded-full shadow transition-transform duration-300 ease-in-out"></div>
+            </label>
         </div>
 
         <!-- Notification Bell -->
@@ -215,10 +218,9 @@
         </div>
 
         <!-- Buy Diamonds Widget -->
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0" onclick="openDiamondStore()">
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0" onclick="openDiamondStore()">
             <span class="material-symbols-outlined text-purple-600 text-[18px]">diamond</span>
             <span class="text-xs font-bold text-purple-800">Buy</span>
-            <span class="material-symbols-outlined text-purple-600 text-[13px]">add_circle</span>
         </div>
         
         <!-- Hidden numerical container so JS update scripts do not break -->
@@ -245,10 +247,9 @@
 <!-- TOP TABS -->
 <div class="sticky top-[60px] z-40 bg-white w-full border-b border-gray-100 flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 text-sm font-semibold text-gray-500">
     <div class="pb-3 border-b-2 border-red-500 text-red-500 whitespace-nowrap cursor-pointer">For You</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('longs');">Live</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('shorts');">Reels (Shuffle)</div>
     <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openAudioRoomLobby()">Rooms</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="openVideoFeed('shorts');">Reels</div>
-    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer">Following</div>
+    <div class="pb-3 hover:text-gray-900 whitespace-nowrap cursor-pointer" onclick="document.getElementById('chat-list-overlay').style.display='flex';">Chats</div>
 </div>
 
 <!-- ================= MAIN CONTENT ================= -->
@@ -264,7 +265,16 @@
     <!-- LIVE NOW SECTION -->
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
-            <h2 class="text-lg font-bold text-gray-900">Active Users</h2>
+            <div class="flex items-center gap-2">
+                <h2 class="text-lg font-bold text-gray-900">Active Creators</h2>
+                
+                <!-- Relocated Custom 3D Status Selector Trigger -->
+                <div id="status-filter-trigger" class="flex items-center gap-1.5 cursor-pointer bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200 hover:bg-gray-100 transition shadow-sm">
+                    <span id="current-status-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+                    <span id="status-text-label" class="text-[10px] font-bold text-green-600">Active</span>
+                    <span class="material-symbols-outlined text-[13px] text-gray-500">expand_more</span>
+                </div>
+            </div>
             <span id="see-all-trigger" class="text-xs font-bold text-red-500 cursor-pointer hover:underline">View All</span>
         </div>
         
@@ -277,7 +287,7 @@
     <section class="w-full animate-fade-up">
         <div class="flex justify-between items-center mb-3">
             <h2 class="text-lg font-bold text-gray-900">Trending Reels</h2>
-            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openTrendingReelsGrid();">View All</span>
+            <span class="text-xs font-bold text-red-500 cursor-pointer hover:underline" onclick="openVideoFeed('shorts');">View All</span>
         </div>
         
         <div id="home-reels-list" class="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
@@ -288,7 +298,7 @@
 </main>
 
 <!-- ================= BOTTOM NAVIGATION BAR ================= -->
-<nav class="fixed bottom-0 w-full z-[9999] bg-white pb-5 pt-3 px-6 flex justify-between items-center border-t border-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
+<nav class="fixed bottom-0 w-full z-[9999] bg-white pb-5 pt-3 px-6 flex justify-between items-center border-t border-t-gray-200 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]" id="bottom-nav">
     
     <div id="nav-home" class="flex flex-col items-center gap-1 cursor-pointer nav-item-active text-dia-red w-12" onclick="closeAllMainTabs()">
         <span class="material-symbols-outlined text-[28px] font-light">home</span>
@@ -308,9 +318,10 @@
         </button>
     </div>
 
-    <div id="nav-reels" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="openVideoFeed('shorts');">
-        <span class="material-symbols-outlined text-[28px] font-light">play_circle</span>
-        <span class="text-[10px] font-semibold">Reels</span>
+    <!-- WhatsApp Chat Icon in place of reels -->
+    <div id="nav-chats" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="document.getElementById('chat-list-overlay').style.display='flex';">
+        <span class="material-symbols-outlined text-[28px] font-light">chat</span>
+        <span class="text-[10px] font-semibold">Chats</span>
     </div>
 
     <div id="nav-profile" class="flex flex-col items-center gap-1 cursor-pointer text-gray-400 nav-item-hover w-12" onclick="document.getElementById('header-profile-btn').click()">
@@ -407,7 +418,6 @@
                     <h2 class="font-bold text-2xl flex items-center gap-1.5" id="profile-header-name">
                         <span id="profile-header-name-text">User</span>
                         <span class="material-symbols-outlined text-dia-red bg-white rounded-full text-[14px] leading-none">check_circle</span>
-                        <span class="text-red-500 text-[16px]">❤️</span>
                     </h2>
                     <p class="text-sm text-white/80 flex items-center gap-1 mt-0.5">
                         <span id="profile-header-id">ID: 00000000</span>
@@ -448,9 +458,6 @@
         </button>
         <button class="flex-[1.5] bg-dia-red text-white font-bold py-2.5 rounded-full text-sm shadow-md flex items-center justify-center gap-1.5 hover:opacity-90 transition" id="profile-follow-btn-main">
             <span class="material-symbols-outlined text-[20px]">person_add</span> Follow
-        </button>
-        <button class="w-12 h-12 bg-white border border-gray-200 text-dia-red rounded-full flex items-center justify-center shadow-sm shrink-0 hover:bg-gray-50 transition">
-            <span class="material-symbols-outlined text-[20px] ml-1">send</span>
         </button>
     </div>
 
@@ -557,67 +564,34 @@
             </div>
         </div>
 
-        <!-- Product Center -->
-        <div class="flex justify-between items-center mb-2 px-1">
-            <h3 class="font-bold text-gray-900">Product Center</h3>
-            <span class="text-red-500 text-xs font-semibold cursor-pointer">View All ></span>
-        </div>
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">sports_esports</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">Games</h4>
-                        <p class="text-[10px] text-gray-500">Play & Win</p>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-gray-400">chevron_right</span>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50">
-                <div class="flex items-center gap-3">
-                    <div class="bg-red-50 text-red-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold font-display-lg">
-                        CA
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">CA</h4>
-                        <p class="text-[10px] text-gray-500">Challenges Arena</p>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-gray-400">chevron_right</span>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="openDiamondStore()">
-                <div class="flex items-center gap-3">
-                    <div class="bg-purple-50 text-purple-500 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">diamond</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-905">Buy</h4>
-                        <p class="text-[10px] text-gray-500">Diamonds</p>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-gray-400">add</span>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="document.getElementById('manage-profile-overlay').style.display='none'; document.getElementById('see-all-trigger').click();">
-                <div class="flex items-center gap-3">
-                    <div class="bg-gray-50 text-gray-600 w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="material-symbols-outlined">group</span>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-900">Users</h4>
-                        <p class="text-[10px] text-gray-500">Explore</p>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-gray-400">more_horiz</span>
-            </div>
-        </div>
-        
         <button id="btn-logout" class="w-full mt-2 mb-10 py-3.5 rounded-xl bg-red-50 text-red-500 font-bold flex items-center justify-center gap-2 hover:bg-red-100 transition-colors shadow-sm">
             <span class="material-symbols-outlined">logout</span> Logout
         </button>
+    </div>
+</div>
+
+<!-- ================= CREATOR DETAILED PROFILE OVERLAY (Following Grid View) ================= -->
+<div id="creator-profile-overlay" class="fixed inset-0 bg-[#f8f9fa] z-[9500] flex-col hidden overflow-y-auto no-scrollbar pb-32">
+    <div class="profile-header-bg w-full pt-12 pb-8 px-5 text-white shadow-md relative rounded-b-[2rem]">
+        <div class="flex justify-between items-center mb-6 relative z-10">
+            <button class="text-white hover:text-gray-200" onclick="document.getElementById('creator-profile-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
+            <span class="font-black tracking-wider text-lg">CREATOR PROFILE</span>
+            <span class="material-symbols-outlined cursor-pointer hover:text-gray-200" onclick="document.getElementById('creator-profile-overlay').style.display='none'; closeAllMainTabs()">home</span>
+        </div>
+        <div class="flex gap-4 relative z-10">
+            <img id="creator-prof-avatar" src="" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md">
+            <div class="flex flex-col justify-center">
+                <h2 class="font-bold text-2xl flex items-center gap-1.5" id="creator-prof-name">Creator Name</h2>
+                <p class="text-xs text-white/90 mt-1" id="creator-prof-bio">Bio detail goes here...</p>
+                <p class="text-[11px] text-yellow-300 font-bold mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">diamond</span> Balance: <span id="creator-prof-diamonds">0</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="px-4 py-4">
+        <h3 class="font-bold text-gray-900 text-sm mb-3">Uploaded Videos</h3>
+        <div id="creator-prof-videos-grid" class="grid grid-cols-3 gap-2">
+            <!-- Dynamic Grid elements uploaded by followed user -->
+        </div>
     </div>
 </div>
 
@@ -634,26 +608,7 @@
     </div>
 </div>
 
-<!-- ================= VIDEO EARNINGS OVERLAY ================= -->
-<div id="video-earnings-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
-    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <button class="text-gray-700 hover:text-black" onclick="document.getElementById('video-earnings-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
-            <h3 class="text-gray-900 font-bold text-lg">Video Earnings</h3>
-        </div>
-    </div>
-    <div class="p-4 bg-gray-50 border-b border-gray-200 text-center">
-        <p class="text-sm text-gray-500">Total Diamonds Earned from Videos</p>
-        <h2 class="text-3xl font-black text-purple-600 flex items-center justify-center gap-2 mt-1">
-            <span class="material-symbols-outlined text-[28px]">diamond</span> <span id="total-video-diamonds">0</span>
-        </h2>
-    </div>
-    <div id="earnings-video-list" class="flex-1 overflow-y-auto p-4 no-scrollbar bg-gray-50 flex flex-col gap-3 pb-24">
-        <!-- Video list will be injected here by JS -->
-    </div>
-</div>
-
-<!-- ================= DIAMOND STORE OVERLAY (Bottom Nav Hidden Completely) ================= -->
+<!-- ================= DIAMOND STORE OVERLAY ================= -->
 <div id="diamond-store-overlay" class="fixed inset-0 bg-[#070816] z-[12000] hidden flex-col items-center overflow-y-auto no-scrollbar pb-12">
     <div class="w-full max-w-[414px] bg-[#07081a] min-h-screen px-4 py-4 text-white shadow-xl">
         <!-- Header -->
@@ -672,21 +627,6 @@
             <div class="inline-block bg-yellow-400 text-black text-xs font-black px-4 py-1 rounded-full mt-2 uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.5)]">
                 1 ₹ = 2 Diamond
             </div>
-        </div>
-
-        <!-- Mega Offer Banner -->
-        <div class="bg-gradient-to-r from-purple-900 via-indigo-950 to-blue-900 border border-purple-500/40 rounded-[20px] p-4 text-white flex justify-between items-center mb-6 shadow-[0_0_20px_rgba(147,51,234,0.3)] relative overflow-hidden">
-            <div class="z-10 relative">
-                <div class="bg-yellow-500 text-black text-[9px] font-black px-2 py-0.5 rounded-md inline-block uppercase mb-1">Limited Time</div>
-                <div class="text-[20px] font-extrabold text-white tracking-tight uppercase leading-none">Mega Offer</div>
-                <div class="text-[10px] text-purple-200 mt-1 uppercase font-semibold">Extra Diamonds on every Top-Up!</div>
-                <div class="text-[11px] text-yellow-400 mt-2 font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">schedule</span> Offer ends in: <span class="font-mono">23:59:59</span>
-                </div>
-            </div>
-            <div class="text-[64px] z-0 opacity-80 select-none">📦</div>
-            <!-- Hidden elements to ensure no update diamond scripts break -->
-            <span id="diamond-store-balance-2" class="hidden">0</span>
         </div>
 
         <!-- Packages Grid -->
@@ -727,119 +667,26 @@
                     200 Diamond
                 </button>
             </div>
-
-            <!-- Pack 4 (₹105 = 420 D) -->
-            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
-                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">10% Extra</div>
-                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
-                    💎 210
-                </div>
-                <div class="text-[28px] my-1 select-none">💼</div>
-                <div class="text-xs text-gray-400 font-bold line-through">₹105</div>
-                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(105, 420)">
-                    420 Diamond
-                </button>
-            </div>
-
-            <!-- Pack 5 (₹250 = 1040 D) -->
-            <div class="bg-[#1e1430] border-2 border-yellow-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-xl">
-                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">Best Value</div>
-                <div class="text-xs font-bold text-yellow-300 flex items-center justify-center gap-1 mt-1">
-                    💎 520
-                </div>
-                <div class="text-[28px] my-1 select-none">👑</div>
-                <div class="text-xs text-gray-400 font-bold line-through">₹250</div>
-                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(250, 1040)">
-                    1,040 Diamond
-                </button>
-            </div>
-
-            <!-- Pack 6 (₹500 = 2120 D) -->
-            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
-                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">25% Extra</div>
-                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
-                    💎 1060
-                </div>
-                <div class="text-[28px] my-1 select-none">📦</div>
-                <div class="text-xs text-gray-400 font-bold line-through">₹500</div>
-                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(500, 2120)">
-                    2,120 Diamond
-                </button>
-            </div>
         </div>
-
-        <!-- Weekly Pass -->
-        <div class="bg-gradient-to-r from-yellow-600 to-yellow-500 border border-yellow-400 rounded-2xl p-4 flex justify-between items-center mb-6 shadow-lg relative cursor-pointer active:scale-98 transition" onclick="buyDiamondPack(159, 2940)">
-            <div class="flex items-center gap-3">
-                <div class="bg-black/30 w-12 h-12 rounded-full flex items-center justify-center text-2xl">🏆</div>
-                <div>
-                    <h4 class="font-black text-black uppercase tracking-wide text-sm">Weekly Diamond Pass</h4>
-                    <p class="text-black/80 text-[10px] font-bold">Get 420 Diamond every day for 7 days</p>
-                </div>
-            </div>
-            <div class="bg-black text-yellow-400 font-black px-4 py-2 rounded-xl text-xs uppercase shadow-md">
-                ₹ 159
-            </div>
-        </div>
-
-        <!-- Trust Badges -->
-        <div class="grid grid-cols-2 gap-3 mb-6 bg-blue-950/40 p-3 rounded-2xl border border-blue-900/40">
-            <div class="flex items-center gap-2">
-                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">🛡️</div>
-                <div class="text-[10px] leading-tight font-medium text-gray-300">
-                    <strong class="text-white block">100% Secure</strong> Transactions guaranteed
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">⚡</div>
-                <div class="text-[10px] leading-tight font-medium text-gray-300">
-                    <strong class="text-white block">Instant Top-Up</strong> Diamonds added immediately
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">💎</div>
-                <div class="text-[10px] leading-tight font-medium text-gray-300">
-                    <strong class="text-white block">Best Prices</strong> Unmatched offer rates
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">🎧</div>
-                <div class="text-[10px] leading-tight font-medium text-gray-300">
-                    <strong class="text-white block">24/7 Support</strong> Ready to assist you
-                </div>
-            </div>
-        </div>
-
-        <p class="text-[10px] text-gray-500 text-center font-medium">Your payment is secured by trusted partners</p>
     </div>
 </div>
 
-<!-- ================= CUSTOM GENDER SELECTOR MODAL (Image 3) ================= -->
+<!-- ================= CUSTOM GENDER SELECTOR MODAL ================= -->
 <div id="gender-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4 transition-all duration-300">
     <div class="bg-white rounded-[32px] p-6 max-w-sm w-full relative shadow-2xl border border-pink-100 transform transition-all scale-95 duration-300" id="gender-modal-card">
-        <!-- Close Button -->
         <button onclick="closeGenderModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors">
             <span class="material-symbols-outlined text-[24px]">close</span>
         </button>
-        
         <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6 font-display-lg">Choose Category</h3>
-        
         <div class="flex flex-col gap-4">
-            <!-- Option Both -->
-            <button onclick="selectGenderFilter('all')" class="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl shadow-[0_4px_15px_rgba(239,68,68,0.3)] flex items-center justify-center gap-2 transition transform active:scale-98">
-                <span class="material-symbols-outlined">group</span> View Both (Male & Female)
+            <button onclick="selectGenderFilter('all')" class="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition transform active:scale-98">
+                <span class="material-symbols-outlined">group</span> View Both
             </button>
-            
             <div class="grid grid-cols-2 gap-4">
-                <!-- Option Female -->
                 <button onclick="selectGenderFilter('female')" class="border-2 border-pink-200 bg-pink-50/50 hover:bg-pink-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
-                    <img src="https://i.ibb.co/7t7KDcGF/1000323751-removebg-preview.png" class="w-14 h-14 object-cover rounded-full border border-pink-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=female'">
                     <span class="text-pink-600 font-extrabold text-sm flex items-center gap-1">👩 Female</span>
                 </button>
-                
-                <!-- Option Male -->
                 <button onclick="selectGenderFilter('male')" class="border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
-                    <img src="https://i.ibb.co/LVQxpmy/1000323753-removebg-preview.png" class="w-14 h-14 object-cover rounded-full border border-blue-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=male'">
                     <span class="text-blue-600 font-extrabold text-sm flex items-center gap-1">👨 Male</span>
                 </button>
             </div>
@@ -847,18 +694,14 @@
     </div>
 </div>
 
-<!-- ================= FILTER STATUS MODAL (Image 4 Style) ================= -->
+<!-- ================= FILTER STATUS MODAL ================= -->
 <div id="status-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[11000] hidden items-center justify-center p-4 transition-all duration-300">
     <div class="bg-white rounded-[32px] p-6 max-w-sm w-full relative shadow-2xl border border-gray-100 transform transition-all scale-95 duration-300" id="status-modal-card">
-        <!-- Close Button -->
         <button onclick="closeStatusModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors">
             <span class="material-symbols-outlined text-[24px]">close</span>
         </button>
-        
         <h3 class="text-center text-[20px] font-extrabold text-gray-900 mb-6 font-display-lg">Filter Status</h3>
-        
         <div class="flex flex-col gap-3">
-            <!-- Option All -->
             <div onclick="selectStatusFilter('all')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-blue-500 text-[24px]">language</span>
@@ -866,20 +709,16 @@
                 </div>
                 <span id="status-all-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
             </div>
-
-            <!-- Option Active -->
             <div onclick="selectStatusFilter('online')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
                 <div class="flex items-center gap-3">
-                    <span class="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]"></span>
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
                     <span class="font-bold text-gray-800 text-sm">Active</span>
                 </div>
                 <span id="status-active-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
             </div>
-
-            <!-- Option Inactive -->
             <div onclick="selectStatusFilter('offline')" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer border border-gray-100 transition active:scale-98">
                 <div class="flex items-center gap-3">
-                    <span class="w-3 h-3 bg-red-500 rounded-full shadow-[0_0_8px_#ef4444]"></span>
+                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
                     <span class="font-bold text-gray-800 text-sm">Inactive</span>
                 </div>
                 <span id="status-inactive-radio" class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 hidden"></span></span>
@@ -898,7 +737,7 @@
             <span class="material-symbols-outlined text-[36px]">lock</span>
         </div>
         <h3 class="text-lg font-extrabold text-gray-900 mb-2 font-display-lg">Premium Video Locked</h3>
-        <p class="text-sm text-gray-600 mb-6">This Vertical Reel is locked by the uploader. Unlocking requires <strong class="text-purple-600 font-extrabold">💎 <span id="paywall-cost-display">100</span></strong> diamonds.</p>
+        <p class="text-sm text-gray-600 mb-6">This Reel is locked. Unlock requires <strong class="text-purple-600 font-extrabold">💎 <span id="paywall-cost-display">100</span></strong> diamonds.</p>
         <div class="flex gap-3">
             <button onclick="closeVideoPaywall()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">Cancel</button>
             <button id="paywall-unlock-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Unlock & Watch</button>
@@ -937,7 +776,6 @@
                 <input type="number" id="auth-phone" placeholder="Phone Number" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium">
             </div>
             
-            <!-- Gender Selection Field -->
             <div class="relative w-full">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">wc</span>
                 <select id="auth-gender" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
@@ -947,46 +785,27 @@
                 </select>
             </div>
 
-            <!-- Complete Indian States Dropdown -->
             <div class="relative w-full">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">map</span>
                 <select id="auth-state" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
                     <option value="" disabled selected class="text-gray-400">Select State *</option>
                     <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
                     <option value="Bihar">Bihar</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Goa">Goa</option>
+                    <option value="Delhi">Delhi</option>
                     <option value="Gujarat">Gujarat</option>
                     <option value="Haryana">Haryana</option>
-                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Kerala">Kerala</option>
                     <option value="Madhya Pradesh">Madhya Pradesh</option>
                     <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
                     <option value="Punjab">Punjab</option>
                     <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
                     <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
                     <option value="West Bengal">West Bengal</option>
                 </select>
             </div>
 
-            <!-- Bio & Call Timings Field -->
             <div class="relative w-full mb-6">
                 <span class="material-symbols-outlined absolute left-4 top-3 text-gray-400">info</span>
-                <textarea id="auth-bio" placeholder="About Me / Best Call Timing (e.g., Free daily after 8 PM) ..." class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium text-sm h-20 resize-none"></textarea>
+                <textarea id="auth-bio" placeholder="About Me / Best Call Timing..." class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium text-sm h-20 resize-none"></textarea>
             </div>
         </div>
         <button id="btn-create-profile" class="w-full mt-4 py-4 rounded-full btn-red-gradient text-white font-bold tracking-wider shadow-lg">
@@ -1000,13 +819,13 @@
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
         <div class="flex items-center gap-3">
             <button class="text-gray-700 hover:text-black" onclick="document.getElementById('chat-list-overlay').style.display='none';"><span class="material-symbols-outlined">arrow_back</span></button>
-            <h3 class="text-gray-900 font-bold text-lg">Messages</h3>
+            <h3 class="text-gray-900 font-bold text-lg">Messages (WhatsApp Style)</h3>
         </div>
     </div>
     <div id="recent-chats-container" class="flex-1 overflow-y-auto p-2 no-scrollbar bg-gray-50"></div>
 </div>
 
-<!-- FOLLOWING LIST OVERLAY -->
+<!-- FOLLOWING LIST OVERLAY (With Diamonds and Profile Redirection) -->
 <div id="following-list-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
         <div class="flex items-center gap-3">
@@ -1053,7 +872,6 @@
         </button>
         <div class="absolute bottom-0 w-full p-6 flex flex-col gap-4 z-20">
             <h2 id="quick-profile-name" class="text-white font-bold text-2xl flex items-center gap-2">Name</h2>
-            <!-- Bio & Call Timings displayed here -->
             <p id="quick-profile-bio" class="text-white/80 text-xs italic leading-tight mt-[-8px] border-l-2 border-red-500 pl-2">Available after 7 PM</p>
             <div class="flex justify-between items-center gap-3 mt-2">
                 <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
@@ -1102,66 +920,38 @@
     <div id="audio-room-seats-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-3 md:grid-cols-4 gap-4 pb-24 no-scrollbar"></div>
 </div>
 
-<!-- VIDEO FEED (Reels & Longs) -->
+<!-- VIDEO FEED (Reels Only with YT-Shorts styled elements) -->
 <div id="video-feed-overlay" class="fixed inset-0 bg-black z-[9000] flex-col hidden overflow-hidden">
     <!-- Floating Header over Video -->
     <div class="absolute top-0 left-0 w-full z-[9010] bg-gradient-to-b from-black/80 to-transparent px-4 pt-10 pb-6 flex flex-col gap-3 pointer-events-auto border-none">
         <div class="flex justify-between items-start">
-            <!-- Left Side -->
             <div class="flex items-center gap-3">
                 <button class="text-white drop-shadow-lg" onclick="closeAllMainTabs()"><span class="material-symbols-outlined text-[28px]">arrow_back_ios</span></button>
-                <div class="flex flex-col items-center cursor-pointer">
-                    <span class="material-symbols-outlined text-white text-[28px] drop-shadow-lg">tv</span>
-                    <span class="text-white text-[10px] font-bold mt-[-4px] drop-shadow-md">LIVE</span>
+                <div class="flex flex-col items-center">
+                    <span class="material-symbols-outlined text-white text-[28px] drop-shadow-lg">play_circle</span>
+                    <span class="text-white text-[10px] font-bold mt-[-4px] drop-shadow-md">REELS</span>
                 </div>
             </div>
             
-            <!-- Center Tabs -->
-            <div class="flex gap-6 mt-1 relative">
-                <div class="relative">
-                    <button id="tab-longs-btn" class="text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors" onclick="switchVideoTab('longs')">Following</button>
-                    <div id="tab-longs-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full hidden"></div>
-                </div>
-                <div class="relative">
-                    <button id="tab-shorts-btn" class="text-white font-bold text-[17px] drop-shadow-md" onclick="switchVideoTab('shorts')">For You</button>
-                    <div id="tab-shorts-indicator" class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-[3px] bg-white rounded-full"></div>
-                </div>
+            <!-- Category/Feed Filter Buttons (All, Free, Paid) -->
+            <div class="flex gap-2 shrink-0">
+                <button onclick="filterVideoFeed('all')" id="vf-btn-all" class="px-3 py-1 bg-white text-black rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95">All Reels</button>
+                <button onclick="filterVideoFeed('free')" id="vf-btn-free" class="px-3 py-1 bg-white/20 text-white rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95">Free Reels</button>
+                <button onclick="filterVideoFeed('premium')" id="vf-btn-premium" class="px-3 py-1 bg-purple-600 text-white rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95 flex items-center gap-1">💎 Paid Reels</button>
             </div>
             
-            <!-- Right Side -->
-            <button class="text-white drop-shadow-lg mt-1"><span class="material-symbols-outlined text-[30px]">search</span></button>
-        </div>
-
-        <!-- Horizontal Category/Feed Filter Bar -->
-        <div class="flex gap-2 overflow-x-auto no-scrollbar py-2 shrink-0">
-            <button onclick="filterVideoFeed('all')" id="vf-btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm flex-shrink-0 transition active:scale-95">All Feed</button>
-            <button onclick="filterVideoFeed('premium')" id="vf-btn-premium" class="px-4 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">💎 Premium (Paid)</button>
-            <button onclick="filterVideoFeed('yt-shorts')" id="vf-btn-shorts" class="px-4 py-1.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">🎬 YT Shorts</button>
-            <button onclick="filterVideoFeed('yt-longs')" id="vf-btn-longs" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">📺 YT Longs</button>
+            <!-- Shuffle/Refresh Feed Button -->
+            <button class="text-white drop-shadow-lg hover:scale-110 transition-transform" onclick="refreshAndShuffleReels()"><span class="material-symbols-outlined text-[30px]">refresh</span></button>
         </div>
     </div>
     
     <!-- Shorts container with snap-scroll -->
     <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth pt-0"></div>
-    
-    <!-- Longs container -->
-    <div class="w-full h-full overflow-y-auto pt-[160px] pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
-        <div id="longs-feed-container" class="p-4 flex flex-col gap-4"></div>
-    </div>
-</div>
-
-<!-- VIDEO PLAYER -->
-<div id="video-player-overlay" class="fixed inset-0 bg-black z-[10000] flex-col hidden overflow-hidden">
-    <div class="p-4 absolute top-0 w-full z-50">
-        <button class="text-white bg-black/50 rounded-full p-2" onclick="closeVideoPlayer()"><span class="material-symbols-outlined">arrow_back</span></button>
-    </div>
-    <div id="video-player-container" class="w-full h-full flex items-center justify-center bg-black"></div>
 </div>
 
 <!-- ================= CREATOR STUDIO & UPLOAD VIDEO ================= -->
 <div id="upload-video-overlay" class="fixed inset-0 bg-white z-[10000] flex flex-col hidden overflow-hidden">
     
-    <!-- Header of Creator Studio -->
     <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div class="flex items-center gap-3">
             <button onclick="closeUploadOverlay();" class="text-gray-700 hover:text-black flex items-center"><span class="material-symbols-outlined text-[28px]">arrow_back</span></button>
@@ -1172,12 +962,10 @@
         </button>
     </div>
 
-    <!-- Redesigned Grid of Creator Studio -->
     <div class="flex-1 overflow-y-auto p-4 bg-gray-50 no-scrollbar pb-24">
         <div class="mb-4">
             <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider px-1">My Uploads & Reels</h4>
         </div>
-        <!-- 3x3 Grid -->
         <div id="creator-studio-video-grid" class="grid grid-cols-3 gap-3">
             <p class="col-span-3 text-center text-xs text-gray-400 py-10">No videos found. Upload your first amazing video!</p>
         </div>
@@ -1194,24 +982,17 @@
         <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0">
             <div class="flex items-center gap-3">
                 <button onclick="closeVideoUploadForm();" class="text-gray-700"><span class="material-symbols-outlined">arrow_back</span></button>
-                <h3 class="text-gray-900 font-bold text-lg">New Video</h3>
+                <h3 class="text-gray-900 font-bold text-lg">New Reel</h3>
             </div>
         </div>
         <div class="flex-grow overflow-y-auto p-6 no-scrollbar pb-32">
             <input type="text" id="upload-title" placeholder="Video Title" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
-            
-            <select id="upload-type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
-                <option value="short">Reel (9:16)</option>
-                <option value="long">Video (16:9)</option>
-            </select>
             
             <select id="upload-category" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 text-gray-700 font-medium text-sm focus:ring-1 focus:ring-red-500 focus:outline-none">
                 <option value="" disabled selected>Select Category Feed *</option>
                 <option value="For You Feed">For You Feed</option>
                 <option value="Following Feed">Following Feed</option>
                 <option value="Trending Feed">Trending Feed</option>
-                <option value="Comedy Feed">Comedy Feed</option>
-                <option value="Fashion Feed">Fashion Feed</option>
             </select>
 
             <div class="flex gap-2 mb-3">
@@ -1219,10 +1000,9 @@
                 <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold" onclick="toggleUploadSource('link')">YouTube Link</button>
             </div>
             
-            <!-- Price selector for premium uploads -->
             <div id="cloudinary-price-container" class="mb-3">
-                <label class="block text-xs font-bold text-gray-600 mb-1">Set Access Price (Minimum 💎 100)</label>
-                <input type="number" id="upload-price" value="100" min="100" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-purple-700 focus:ring-1 focus:ring-red-500 focus:outline-none">
+                <label class="block text-xs font-bold text-gray-600 mb-1">Set Access Price (Set 0 for Free / Minimum 💎 100 for Paid)</label>
+                <input type="number" id="upload-price" value="0" min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-purple-700 focus:ring-1 focus:ring-red-500 focus:outline-none">
             </div>
 
             <div id="source-file-container" class="mb-3 border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('video-file-input').click()">
@@ -1493,7 +1273,7 @@
 
   // --- Tab Navigation Handlers ---
   window.resetNavHighlights = function() {
-      const navs = ['nav-home', 'nav-rooms', 'nav-reels', 'nav-profile'];
+      const navs = ['nav-home', 'nav-rooms', 'nav-chats', 'nav-profile'];
       navs.forEach(id => {
           const el = document.getElementById(id);
           if(el) {
@@ -1507,7 +1287,6 @@
       document.getElementById('manage-profile-overlay').style.display = 'none';
       document.getElementById('video-feed-overlay').style.display = 'none';
       document.getElementById('diamond-store-overlay').style.display = 'none';
-      document.getElementById('video-earnings-overlay').style.display = 'none';
       document.getElementById('leaderboard-overlay').style.display = 'none';
       document.getElementById('bottom-nav').style.display = 'flex'; 
       
@@ -1544,6 +1323,9 @@
           }
           listenToFollowStats();
           renderUsers();
+          if (document.getElementById('video-feed-overlay').style.display === 'flex') {
+              filterVideoFeed(activeVideoFilter);
+          }
       } catch(e) {
           console.error(e);
       }
@@ -1568,7 +1350,7 @@
       return num;
   }
 
-  // --- FOLLOWING LIST VIEW ---
+  // --- FOLLOWING LIST VIEW (With Diamonds & Profile Redirection) ---
   window.openFollowingList = function() {
       if(!currentUser) return;
       document.getElementById('manage-profile-overlay').style.display = 'none';
@@ -1587,26 +1369,92 @@
                   return;
               }
               followingKeys.forEach((followedUser) => {
-                  const avatar = (allUsersData[followedUser] ? allUsersData[followedUser].avatar : null) || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + followedUser;
-                  container.insertAdjacentHTML('beforeend', `
-                      <div class="flex items-center justify-between p-3 border-b border-gray-100 bg-white rounded-xl mb-2 shadow-sm">
-                          <div class="flex items-center gap-3 cursor-pointer animate-fade-up" onclick="openChatWith('${followedUser}', '${avatar}'); document.getElementById('following-list-overlay').style.display='none';">
-                              <img src="${avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
-                              <div class="min-w-0">
-                                  <h4 class="text-gray-900 font-bold text-[15px] truncate">${followedUser}</h4>
-                                  <p class="text-[10px] text-green-500">Tap to chat</p>
+                  get(ref(db, `users/${followedUser}`)).then((userSnap) => {
+                      if (userSnap.exists()) {
+                          const userData = userSnap.val();
+                          const avatar = userData.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + followedUser;
+                          const diamonds = userData.diamonds || 0;
+                          
+                          container.insertAdjacentHTML('beforeend', `
+                              <div class="flex items-center justify-between p-3 border-b border-gray-100 bg-white rounded-xl mb-2 shadow-sm">
+                                  <div class="flex items-center gap-3 cursor-pointer animate-fade-up" onclick="openCreatorProfile('${followedUser}')">
+                                      <img src="${avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
+                                      <div class="min-w-0">
+                                          <h4 class="text-gray-900 font-bold text-[15px] truncate">${followedUser}</h4>
+                                          <p class="text-[10px] text-purple-600 font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">diamond</span> Balance: ${diamonds}</p>
+                                      </div>
+                                  </div>
+                                  <div class="flex gap-2">
+                                      <button onclick="openChatWith('${followedUser}', '${avatar}'); document.getElementById('following-list-overlay').style.display='none';" class="text-xs font-bold text-blue-500 bg-blue-50 px-2.5 py-1.5 rounded-full hover:bg-blue-100 transition-colors">Chat</button>
+                                      <button onclick="toggleFollow('${followedUser}'); setTimeout(openFollowingList, 300);" class="text-xs font-bold text-red-500 bg-red-50 px-2.5 py-1.5 rounded-full hover:bg-red-100 transition-colors">Unfollow</button>
+                                  </div>
                               </div>
-                          </div>
-                          <button onclick="toggleFollow('${followedUser}'); setTimeout(openFollowingList, 300);" class="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-full border border-red-100 hover:bg-red-100 transition-colors">
-                              Unfollow
-                          </button>
-                      </div>
-                  `);
+                          `);
+                      }
+                  });
               });
           } else {
               container.innerHTML = '<p class="text-center text-gray-400 py-10 text-sm">You are not following anyone yet.</p>';
           }
       });
+  };
+
+  // --- OPEN CREATOR DETAILED PROFILE (With Grid of Uploaded Video/Reels) ---
+  window.openCreatorProfile = function(creatorName) {
+      document.getElementById('following-list-overlay').style.display = 'none';
+      document.getElementById('quick-profile-overlay').style.display = 'none';
+      
+      const overlay = document.getElementById('creator-profile-overlay');
+      overlay.style.display = 'flex';
+      
+      get(ref(db, `users/${creatorName}`)).then((snap) => {
+          if (snap.exists()) {
+              const data = snap.val();
+              document.getElementById('creator-prof-name').innerText = creatorName;
+              document.getElementById('creator-prof-avatar').src = data.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + creatorName;
+              document.getElementById('creator-prof-bio').innerText = data.bio || "Hi! Let's connect on Zingoo! 🎙️";
+              document.getElementById('creator-prof-diamonds').innerText = data.diamonds || 0;
+              
+              // Load Creator's Reels Uploaded Grid
+              const grid = document.getElementById('creator-prof-videos-grid');
+              grid.innerHTML = '<p class="col-span-3 text-center text-[10px] text-gray-400 py-6">Loading videos...</p>';
+              
+              get(ref(db, 'videos')).then((vidSnap) => {
+                  grid.innerHTML = '';
+                  let count = 0;
+                  if (vidSnap.exists()) {
+                      Object.entries(vidSnap.val()).forEach(([key, val]) => {
+                          if (val.owner === creatorName) {
+                              count++;
+                              grid.insertAdjacentHTML('beforeend', `
+                                  <div class="relative aspect-[3/4] bg-black rounded-lg overflow-hidden border border-gray-200 cursor-pointer" onclick="playCreatorProfileVideo('${key}')">
+                                      <img src="${val.thumbnailUrl}" class="w-full h-full object-cover">
+                                      <div class="absolute bottom-0 w-full p-1 bg-black/60">
+                                          <p class="text-white text-[8px] truncate">${val.title}</p>
+                                      </div>
+                                  </div>
+                              `);
+                          }
+                      });
+                  }
+                  if (count === 0) {
+                      grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-6">No uploads found.</p>';
+                  }
+              });
+          }
+      });
+  };
+
+  window.playCreatorProfileVideo = function(videoKey) {
+      document.getElementById('creator-profile-overlay').style.display = 'none';
+      openVideoFeed('shorts');
+      setTimeout(() => {
+          const container = document.getElementById('shorts-feed-container');
+          const targetEl = document.getElementById(`reel-card-${videoKey}`);
+          if (targetEl) {
+              targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+      }, 500);
   };
 
   // --- GOLDEN PROFILE VIP REQUESTS SCRIPT ---
@@ -1619,7 +1467,7 @@
           timestamp: Date.now(),
           status: 'pending'
       }).then(() => {
-          alert("Golden Profile Request submitted successfully! Approval status will be verified by the system administrator.");
+          alert("Golden Profile Request submitted successfully!");
       }).catch(err => {
           alert("Failed to submit request.");
       });
@@ -1642,9 +1490,14 @@
               localStorage.setItem('zingoo_diamonds', diamonds);
               updateDiamondDisplay();
 
-              // Handle Golden Profile Verified status visual feedback
+              // Manual Active status check sync
+              const activeToggle = document.getElementById('user-manual-status-toggle');
+              if (activeToggle) {
+                  activeToggle.checked = data.status === 'online';
+              }
+
               if (data.golden === true) {
-                  document.getElementById('profile-header-name-text').innerHTML = `${currentUser} <span class="text-yellow-400 align-middle inline-block ml-1" title="Golden VIP Profile"><span class="material-symbols-outlined text-[20px] text-yellow-400">crown</span></span>`;
+                  document.getElementById('profile-header-name-text').innerHTML = `${currentUser} <span class="text-yellow-400 align-middle inline-block ml-1"><span class="material-symbols-outlined text-[20px] text-yellow-400">crown</span></span>`;
                   const goldenBtn = document.querySelector('[onclick="requestGoldenProfile()"]');
                   if (goldenBtn) {
                       goldenBtn.innerHTML = `<span class="material-symbols-outlined text-[14px] text-yellow-400">workspace_premium</span> Golden VIP Active`;
@@ -1655,7 +1508,6 @@
                   document.getElementById('profile-header-name-text').innerText = currentUser;
               }
 
-              // Display Bio Information
               if (data.bio) {
                   document.getElementById('profile-header-bio').innerText = data.bio;
               } else {
@@ -1679,11 +1531,9 @@
       const displayEl = document.getElementById('diamond-balance-display');
       const profileDisplayEl = document.getElementById('profile-diamonds-display');
       const storeDisplayEl = document.getElementById('diamond-store-balance');
-      const storeDisplayEl2 = document.getElementById('diamond-store-balance-2');
       if(displayEl) displayEl.innerText = parseInt(balance).toLocaleString();
       if(profileDisplayEl) profileDisplayEl.innerText = parseInt(balance).toLocaleString();
       if(storeDisplayEl) storeDisplayEl.innerText = parseInt(balance).toLocaleString();
-      if(storeDisplayEl2) storeDisplayEl2.innerText = parseInt(balance).toLocaleString();
   }
 
   // --- Real-time Billing (Deducted from Caller, Transferred to Receiver) ---
@@ -1705,16 +1555,13 @@
   }
   function deductAndTransferDiamonds(amount, partner) {
       let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
-      if (currentDiamonds < amount) amount = currentDiamonds; // safe cap
+      if (currentDiamonds < amount) amount = currentDiamonds; 
       currentDiamonds -= amount;
       if(currentDiamonds < 0) currentDiamonds = 0;
       localStorage.setItem('zingoo_diamonds', currentDiamonds);
       
       if(currentUser) {
-          // Update caller's diamonds
           update(ref(db, `users/${currentUser}`), { diamonds: currentDiamonds });
-          
-          // Add diamonds to receiver account
           get(ref(db, `users/${partner}/diamonds`)).then((snap) => {
               let partnerDiamonds = snap.val() || 0;
               update(ref(db, `users/${partner}`), { diamonds: partnerDiamonds + amount });
@@ -1726,28 +1573,16 @@
   // --- STATUS (ONLINE / OFFLINE) & VISIBILITY TRACKING ---
   let currentStatusFilter = 'all';
 
+  window.toggleMyManualStatus = function(isChecked) {
+      const status = isChecked ? 'online' : 'offline';
+      updateUserStatus(status);
+  };
+
   function updateUserStatus(status) {
       if(!currentUser) return;
       set(ref(db, `users/${currentUser}/status`), status);
-      const ind_bg = document.getElementById('status-dot');
-      const txt = document.getElementById('status-text-label');
-      
-      if(status === 'online') {
-          if(ind_bg) ind_bg.className = "w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]";
-          if(txt) {
-              txt.innerText = "Active";
-              txt.className = "text-[10px] font-bold text-green-600";
-          }
-      } else {
-          if(ind_bg) ind_bg.className = "w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_8px_#ef4444]";
-          if(txt) {
-              txt.innerText = "Inactive";
-              txt.className = "text-[10px] font-bold text-gray-500";
-          }
-      }
   }
 
-  // CUSTOM CHOOSE STATUS MODAL FUNCTIONS
   window.openStatusModal = function() {
       document.getElementById('status-modal').classList.remove('hidden');
       document.getElementById('status-modal').classList.add('flex');
@@ -1807,8 +1642,12 @@
   document.getElementById('status-filter-trigger').addEventListener('click', openStatusModal);
 
   document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
-      else { updateUserStatus('offline'); }
+      const activeToggle = document.getElementById('user-manual-status-toggle');
+      const isCurrentlyActive = activeToggle ? activeToggle.checked : true;
+      if (isCurrentlyActive) {
+          if(document.visibilityState === 'visible') { updateUserStatus('online'); } 
+          else { updateUserStatus('offline'); }
+      }
   });
 
   function initPresence() {
@@ -2187,7 +2026,7 @@
           sendNotification(targetUser, isVideo ? 'video' : 'audio', `is calling you`);
       } catch(e) { 
           console.error("Call Init Error:", e);
-          showCustomAlert("Microphone/Camera permission denied or not available.");
+          showCustomAlert("Microphone/Camera permission denied.");
           stopWebRTC(); 
       }
   };
@@ -2213,7 +2052,7 @@
           onChildAdded(ref(db, `${currentCallPath}/candidates/caller`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
       } catch(e) { 
           console.error("Call Accept Error:", e);
-          showCustomAlert("Microphone/Camera permission denied or not available.");
+          showCustomAlert("Microphone/Camera permission denied.");
           stopWebRTC(); 
       }
   });
@@ -2298,7 +2137,7 @@
               btnTextEl.innerText = "Enter Zingoo";
               btnEl.disabled = false;
           } else {
-              alert("Photo upload to ImgBB failed. Please try again.");
+              alert("Photo upload to ImgBB failed.");
               btnTextEl.innerText = "Enter Zingoo";
               btnEl.disabled = false;
           }
@@ -2319,11 +2158,11 @@
       const bio = document.getElementById("auth-bio").value.trim();
       
       if (!name || name === "undefined" || name === "null" || name.length < 2) {
-          alert("Please enter a valid nickname (minimum 2 characters, no special characters).");
+          alert("Please enter a valid nickname.");
           return;
       }
       if (!avatarUploaded) {
-          alert("Please upload a custom profile picture first! Accounts cannot be created with default placeholder avatars.");
+          alert("Please upload a custom profile picture first!");
           return;
       }
       if (isNaN(ageNum) || ageNum < 18) {
@@ -2365,7 +2204,7 @@
           listenForNotifications();
           setupFCMToken();
       }).catch(err => {
-          alert("Error creating profile in database. Please try again.");
+          alert("Error creating profile. Please try again.");
           console.error(err);
       });
   });
@@ -2402,10 +2241,8 @@
 
   document.getElementById("btn-edit-profile").addEventListener("click", () => {
       document.getElementById('manage-profile-overlay').style.display = 'none';
-      
       document.getElementById("auth-name").value = currentUser || "";
       document.getElementById("auth-avatar-preview").src = currentAvatar;
-      
       get(ref(db, `users/${currentUser}`)).then((snapshot) => {
           if (snapshot.exists()) {
               const data = snapshot.val();
@@ -2416,7 +2253,6 @@
               document.getElementById("auth-bio").value = data.bio || "";
           }
       });
-      
       authOverlay.style.display = "flex";
   });
 
@@ -2557,7 +2393,7 @@
       }
   }
 
-  // --- Dynamic Video Feed Parsing & Filter Implementation ---
+  // --- Dynamic Video Feed Parsing & YT Shorts Layout Integration ---
   let activeVideoFilter = 'all';
   let rawVideosList = [];
 
@@ -2579,7 +2415,7 @@
           linkBtn.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
           fileContainer.classList.add('hidden');
           linkContainer.classList.remove('hidden');
-          priceContainer.classList.add('hidden'); 
+          priceContainer.classList.remove('hidden'); 
       }
   };
 
@@ -2596,12 +2432,10 @@
       }
   }
 
-  // Submit Video Upload
   window.submitVideoUpload = async function() {
       const title = document.getElementById('upload-title').value.trim();
-      const type = document.getElementById('upload-type').value;
       const category = document.getElementById('upload-category').value;
-      const price = parseInt(document.getElementById('upload-price').value || 100);
+      const price = parseInt(document.getElementById('upload-price').value || 0);
       
       const fileInput = document.getElementById('video-file-input');
       const linkInput = document.getElementById('upload-yt-link').value.trim();
@@ -2617,14 +2451,10 @@
           let videoUrl = "";
           let thumbnailUrl = "";
           let isYt = false;
-          let uploadPrice = 0;
+          let uploadPrice = price;
 
-          // If File upload
           if(!document.getElementById('source-file-container').classList.contains('hidden')) {
               if(!fileInput.files[0]) { alert("Please select a video file!"); spinner.classList.add('hidden'); return; }
-              if(price < 100) { alert("Minimum price for premium file is 100 diamonds."); spinner.classList.add('hidden'); return; }
-              uploadPrice = price;
-
               const formData = new FormData();
               formData.append('file', fileInput.files[0]);
               formData.append('upload_preset', UPLOAD_PRESET);
@@ -2635,7 +2465,6 @@
               const videoData = await videoRes.json();
               if(videoData.secure_url) videoUrl = videoData.secure_url;
           } else {
-              // YouTube link
               if(!linkInput) { alert("Please enter YouTube URL!"); spinner.classList.add('hidden'); return; }
               const ytId = getYouTubeId(linkInput);
               if(!ytId) { alert("Invalid YouTube URL!"); spinner.classList.add('hidden'); return; }
@@ -2646,7 +2475,6 @@
 
           if(!videoUrl) { throw new Error("Video upload failed."); }
 
-          // Thumbnail upload
           if(thumbInput.files[0]) {
               thumbnailUrl = await uploadToImgBB(thumbInput.files[0]);
           } else if(isYt) {
@@ -2659,7 +2487,7 @@
           const videoRef = push(ref(db, 'videos'));
           await set(videoRef, {
               title: title,
-              type: type, 
+              type: 'short', // Always force short vertical reel
               category: category,
               videoUrl: videoUrl,
               thumbnailUrl: thumbnailUrl,
@@ -2680,31 +2508,7 @@
       }
   };
 
-  // Switch tabs & Fetch videos from DB
   window.switchVideoTab = function(tab) {
-      const longsBtn = document.getElementById('tab-longs-btn');
-      const shortsBtn = document.getElementById('tab-shorts-btn');
-      const longsInd = document.getElementById('tab-longs-indicator');
-      const shortsInd = document.getElementById('tab-shorts-indicator');
-      const shortsContainer = document.getElementById('shorts-feed-container');
-      const longsWrap = document.getElementById('longs-feed-wrap');
-
-      if(tab === 'shorts') {
-          shortsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          longsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          shortsInd.classList.remove('hidden');
-          longsInd.classList.add('hidden');
-          shortsContainer.classList.remove('hidden');
-          longsWrap.classList.add('hidden');
-      } else {
-          longsBtn.className = "text-white font-bold text-[17px] drop-shadow-md";
-          shortsBtn.className = "text-white/70 font-semibold text-[17px] drop-shadow-md hover:text-white transition-colors";
-          longsInd.classList.remove('hidden');
-          shortsInd.classList.add('hidden');
-          longsWrap.classList.remove('hidden');
-          shortsContainer.classList.add('hidden');
-      }
-
       onValue(ref(db, 'videos'), (snap) => {
           rawVideosList = [];
           if(snap.exists()) {
@@ -2712,39 +2516,89 @@
                   rawVideosList.push({ key: key, ...val });
               });
           }
+          // Reels Shuffling by Default when opening
+          shuffleArray(rawVideosList);
           filterVideoFeed(activeVideoFilter);
       });
   };
 
-  // Filter video list based on custom categorisation scrollbar
+  function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+      }
+  }
+
+  window.refreshAndShuffleReels = function() {
+      shuffleArray(rawVideosList);
+      filterVideoFeed(activeVideoFilter);
+      alert("Reels shuffled and refreshed!");
+  };
+
+  // Click handler to Play/Pause vertical video
+  window.togglePlayPauseReel = function(el) {
+      const video = el.querySelector('.html5-video');
+      if(video) {
+          if(video.paused) {
+              video.play().catch(e => console.log('Autoplay error:', e));
+          } else {
+              video.pause();
+          }
+      }
+  };
+
+  // Like video function
+  window.likeVideo = function(videoKey, btn) {
+      const countEl = btn.querySelector('.like-count');
+      let currentVal = parseInt(countEl.innerText);
+      if (btn.classList.contains('liked')) {
+          btn.classList.remove('liked');
+          btn.querySelector('span').style.color = '#ffffff';
+          countEl.innerText = currentVal - 1;
+      } else {
+          btn.classList.add('liked');
+          btn.querySelector('span').style.color = '#ef4444';
+          countEl.innerText = currentVal + 1;
+      }
+  };
+
+  // Gift creator 10 diamonds
+  window.giftDiamonds = async function(creatorName, amount) {
+      if (!currentUser) { showCustomAlert("Please login first."); return; }
+      if (currentUser === creatorName) { showCustomAlert("You cannot gift yourself."); return; }
+      
+      let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+      if(currentDiamonds < amount) {
+          showCustomAlert("Insufficient diamonds. Please purchase more.");
+          return;
+      }
+      
+      deductAndTransferDiamonds(amount, creatorName);
+      sendNotification(creatorName, 'support', `gifted you 💎 ${amount} diamonds!`);
+      alert(`Successfully gifted 💎 ${amount} diamonds to @${creatorName}!`);
+  };
+
   window.filterVideoFeed = function(filter) {
       activeVideoFilter = filter;
       
-      const buttons = ['vf-btn-all', 'vf-btn-premium', 'vf-btn-shorts', 'vf-btn-longs'];
+      const buttons = ['vf-btn-all', 'vf-btn-free', 'vf-btn-premium'];
       buttons.forEach(id => {
-          document.getElementById(id).className = "px-4 py-1.5 rounded-full text-xs font-bold bg-white/20 text-white shadow-sm flex-shrink-0 transition active:scale-95 border border-white/10";
+          document.getElementById(id).className = "px-3 py-1 bg-white/20 text-white rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95 border border-white/10";
       });
 
-      if(filter === 'all') document.getElementById('vf-btn-all').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm flex-shrink-0 transition active:scale-95";
-      if(filter === 'premium') document.getElementById('vf-btn-premium').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
-      if(filter === 'yt-shorts') document.getElementById('vf-btn-shorts').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
-      if(filter === 'yt-longs') document.getElementById('vf-btn-longs').className = "px-4 py-1.5 rounded-full text-xs font-bold bg-blue-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1";
+      if(filter === 'all') document.getElementById('vf-btn-all').className = "px-3 py-1 bg-white text-black rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95";
+      if(filter === 'free') document.getElementById('vf-btn-free').className = "px-3 py-1 bg-white text-black rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95";
+      if(filter === 'premium') document.getElementById('vf-btn-premium').className = "px-3 py-1 bg-purple-600 text-white rounded-full text-[11px] font-extrabold shadow-sm transition active:scale-95 flex items-center gap-1";
 
       let filtered = [...rawVideosList];
       if(filter === 'premium') filtered = filtered.filter(v => v.price > 0);
-      if(filter === 'yt-shorts') filtered = filtered.filter(v => v.isYt && v.type === 'short');
-      if(filter === 'yt-longs') filtered = filtered.filter(v => v.isYt && v.type === 'long');
+      if(filter === 'free') filtered = filtered.filter(v => !v.price || v.price === 0);
 
       const shortsContainer = document.getElementById('shorts-feed-container');
-      const longsContainer = document.getElementById('longs-feed-container');
-      
       shortsContainer.innerHTML = '';
-      longsContainer.innerHTML = '';
 
-      const shorts = filtered.filter(v => v.type === 'short');
-      const longs = filtered.filter(v => v.type === 'long');
+      const shorts = filtered.filter(v => v.type === 'short' || !v.type);
 
-      // Populate Shorts Feed
       if(shorts.length === 0) {
           shortsContainer.innerHTML = `<div class="text-center text-gray-400 py-32 text-sm">No vertical reels found in this filter</div>`;
       } else {
@@ -2752,38 +2606,85 @@
               const isLocked = video.price > 0 && video.owner !== currentUser && !localStorage.getItem('unlocked_' + video.key);
               let mediaHTML = "";
 
-              if (isLocked) {
-                  mediaHTML = `
-                      <div class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-10">
-                          <span class="material-symbols-outlined text-[64px] text-purple-500 mb-3 animate-bounce">lock</span>
-                          <h4 class="text-white text-lg font-bold">Premium Reel Locked</h4>
-                          <p class="text-gray-400 text-xs mt-1 mb-4">Pay 💎 ${video.price} to unlock this creator's exclusive video.</p>
-                          <button onclick="requestVideoUnlock('${video.key}', ${video.price}, '${video.owner}')" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg active:scale-95 transition-transform">Unlock Video</button>
-                      </div>
-                  `;
-              } else if (video.isYt) {
+              if (video.isYt) {
                   const ytId = getYouTubeId(video.videoUrl);
                   mediaHTML = `<iframe class="yt-iframe w-full h-full pointer-events-auto" src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
               } else {
                   mediaHTML = `<video class="html5-video w-full h-full object-cover" src="${video.videoUrl}" loop muted playsinline></video>`;
               }
 
+              // Neat YT-Style bottom lock visual if paid
+              const lockOverlayHTML = isLocked ? `
+                  <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-6 text-center z-40 backdrop-blur-sm">
+                      <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 max-w-[280px]">
+                          <span class="material-symbols-outlined text-[48px] text-yellow-400 mb-2">lock</span>
+                          <h4 class="text-white text-md font-bold">Premium Reel</h4>
+                          <p class="text-white/80 text-[11px] mt-1 mb-4">Pay 💎 ${video.price} to unlock this exclusive video.</p>
+                          <button onclick="requestVideoUnlock('${video.key}', ${video.price}, '${video.owner}')" class="w-full py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-black rounded-full shadow-lg transition-transform active:scale-95">Unlock Video</button>
+                      </div>
+                  </div>
+              ` : '';
+
+              get(ref(db, `following/${currentUser}/${video.owner}`)).then((folSnap) => {
+                  const isFollowing = folSnap.exists();
+                  const follBtnSymbol = isFollowing ? '✓' : '+';
+                  const follBtnClass = isFollowing ? 'bg-green-500' : 'bg-pink-500';
+                  
+                  const targetCard = document.getElementById(`reel-card-${video.key}`);
+                  if (targetCard) {
+                      const followBtnEl = targetCard.querySelector('.reel-follow-btn');
+                      if (followBtnEl) {
+                          followBtnEl.innerText = follBtnSymbol;
+                          followBtnEl.className = `reel-follow-btn absolute -bottom-1 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white text-[12px] shadow ${follBtnClass}`;
+                      }
+                  }
+              });
+
+              // Fetch Creator profile photo for YT Shorts toolbar
+              const ownerAvatar = (allUsersData[video.owner] ? allUsersData[video.owner].avatar : null) || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + video.owner;
+
               shortsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="w-full h-[100dvh] snap-start relative flex-shrink-0 bg-black">
+                  <div id="reel-card-${video.key}" class="w-full h-[100dvh] snap-start relative flex-shrink-0 bg-black flex items-center justify-center" onclick="togglePlayPauseReel(this)">
                       ${mediaHTML}
+                      ${lockOverlayHTML}
                       
-                      <!-- Video Details Overlay -->
-                      <div class="absolute bottom-[100px] left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-end pointer-events-auto">
-                          <div class="text-white">
-                              <h4 class="font-extrabold text-sm flex items-center gap-1">@${video.owner} <span class="material-symbols-outlined text-[14px] text-yellow-400">verified</span></h4>
-                              <p class="text-xs mt-1 opacity-90">${video.title}</p>
-                              ${video.price > 0 ? `<span class="mt-2 inline-flex items-center gap-1 bg-purple-600/30 text-purple-400 border border-purple-500/50 px-2 py-0.5 rounded text-[10px] font-bold">💎 ${video.price} Premium</span>` : '<span class="mt-2 inline-flex items-center gap-1 bg-green-600/30 text-green-400 border border-green-500/50 px-2 py-0.5 rounded text-[10px] font-bold">🎬 Free YT</span>'}
+                      <!-- YouTube Shorts Style Right Actions Sidebar -->
+                      <div class="absolute right-4 bottom-28 flex flex-col items-center gap-5 z-50">
+                          <!-- Profile/Avatar + Follow Toggle button -->
+                          <div class="relative flex flex-col items-center mb-1">
+                              <img src="${ownerAvatar}" class="w-12 h-12 rounded-full border-2 border-pink-500 object-cover cursor-pointer" onclick="event.stopPropagation(); openCreatorProfile('${video.owner}')">
+                              <button onclick="event.stopPropagation(); toggleFollow('${video.owner}')" class="reel-follow-btn absolute -bottom-1 bg-pink-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white text-[12px] shadow">+</button>
                           </div>
+                          
+                          <!-- Like (Heart) Button -->
+                          <button onclick="event.stopPropagation(); likeVideo('${video.key}', this)" class="flex flex-col items-center text-white transition transform active:scale-90">
+                              <span class="material-symbols-outlined text-[32px] drop-shadow-md">favorite</span>
+                              <span class="like-count text-[11px] font-bold mt-0.5 drop-shadow-md">452</span>
+                          </button>
+
+                          <!-- Support Creator (Gift 10 Diamonds) Button -->
+                          <button onclick="event.stopPropagation(); giftDiamonds('${video.owner}', 10)" class="flex flex-col items-center text-white bg-purple-600/80 p-2 rounded-full border border-purple-400 shadow transform active:scale-95 transition-transform">
+                              <span class="material-symbols-outlined text-[20px]">diamond</span>
+                              <span class="text-[9px] font-bold mt-0.5 whitespace-nowrap">Gift 10</span>
+                          </button>
+
+                          <!-- Share Button -->
+                          <button class="flex flex-col items-center text-white" onclick="event.stopPropagation(); alert('Share Link Copied!')">
+                              <span class="material-symbols-outlined text-[30px] drop-shadow-md">share</span>
+                              <span class="text-[11px] font-bold mt-0.5 drop-shadow-md">Share</span>
+                          </button>
+                      </div>
+
+                      <!-- Video Details Overlay Bottom Left -->
+                      <div class="absolute bottom-[100px] left-0 w-[75%] p-4 bg-gradient-to-t from-black/80 to-transparent flex flex-col pointer-events-auto z-40">
+                          <h4 class="text-white font-extrabold text-sm flex items-center gap-1">@${video.owner} <span class="material-symbols-outlined text-[14px] text-yellow-400">verified</span></h4>
+                          <p class="text-white text-xs mt-1 opacity-90">${video.title}</p>
+                          ${video.price > 0 ? `<span class="mt-2 w-max inline-flex items-center gap-1 bg-purple-600/50 text-white border border-purple-500 px-2 py-0.5 rounded text-[10px] font-bold">💎 ${video.price} Premium</span>` : '<span class="mt-2 w-max inline-flex items-center gap-1 bg-green-600/50 text-green-300 border border-green-500 px-2 py-0.5 rounded text-[10px] font-bold">🎬 Free YT Reel</span>'}
                       </div>
 
                       <!-- Mute/Unmute Volume Controller -->
                       ${!isLocked && !video.isYt ? `
-                      <button class="absolute bottom-28 right-4 z-50 w-11 h-11 rounded-full bg-black/40 backdrop-blur border border-white/20 text-white flex items-center justify-center transition active:scale-90" onclick="toggleReelVolume(event, this)">
+                      <button class="absolute bottom-28 left-4 z-50 w-11 h-11 rounded-full bg-black/40 backdrop-blur border border-white/20 text-white flex items-center justify-center transition active:scale-90" onclick="toggleReelVolume(event, this)">
                           <span class="material-symbols-outlined text-[22px]">volume_off</span>
                       </button>
                       ` : ''}
@@ -2791,28 +2692,6 @@
               `);
           });
           initReelsObserver();
-      }
-
-      // Populate Longs Feed
-      if(longs.length === 0) {
-          longsContainer.innerHTML = `<div class="text-center text-gray-400 py-32 text-sm">No long videos found in this filter</div>`;
-      } else {
-          longs.forEach(video => {
-              longsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-gray-800 cursor-pointer transition active:scale-98 animate-fade-up" onclick="playLongVideo('${video.videoUrl}')">
-                      <div class="aspect-video relative">
-                          <img src="${video.thumbnailUrl}" class="w-full h-full object-cover">
-                          <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                              <span class="material-symbols-outlined text-white text-[48px]">play_circle</span>
-                          </div>
-                      </div>
-                      <div class="p-3 text-white">
-                          <h4 class="font-bold text-sm truncate">${video.title}</h4>
-                          <p class="text-[10px] text-gray-400 mt-1">Uploaded by @${video.owner}</p>
-                      </div>
-                  </div>
-              `);
-          });
       }
   };
 
@@ -2825,18 +2704,16 @@
       document.getElementById('paywall-unlock-btn').onclick = async () => {
           let viewerDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
           if(viewerDiamonds < cost) {
-              showCustomAlert(`Insufficient diamonds. You need 💎 ${cost} to unlock this exclusive creator reel.`);
+              showCustomAlert(`Insufficient diamonds. You need 💎 ${cost} to unlock.`);
               return;
           }
 
           document.getElementById('video-paywall-modal').classList.add('hidden');
           
-          // Deduct from viewer
           viewerDiamonds -= cost;
           localStorage.setItem('zingoo_diamonds', viewerDiamonds);
           await update(ref(db, `users/${currentUser}`), { diamonds: viewerDiamonds });
 
-          // Add to owner
           const uploaderSnap = await get(ref(db, `users/${owner}`));
           if(uploaderSnap.exists()) {
               let uploaderDiamonds = uploaderSnap.val().diamonds || 0;
@@ -2844,7 +2721,6 @@
               await update(ref(db, `users/${owner}`), { diamonds: uploaderDiamonds });
           }
 
-          // Save unlock state locally
           localStorage.setItem('unlocked_' + key, 'true');
           await set(ref(db, `users/${currentUser}/unlocked_videos/${key}`), true);
 
@@ -2866,24 +2742,6 @@
           video.muted = !video.muted;
           btn.innerHTML = video.muted ? '<span class="material-symbols-outlined text-[22px]">volume_off</span>' : '<span class="material-symbols-outlined text-[22px]">volume_up</span>';
       }
-  };
-
-  window.playLongVideo = function(url) {
-      const overlay = document.getElementById('video-player-overlay');
-      const container = document.getElementById('video-player-container');
-      overlay.style.display = 'flex';
-      
-      if(url.includes('youtube.com') || url.includes('youtu.be')) {
-          const ytId = getYouTubeId(url);
-          container.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
-      } else {
-          container.innerHTML = `<video src="${url}" class="w-full h-auto max-h-full" controls autoplay></video>`;
-      }
-  };
-
-  window.closeVideoPlayer = function() {
-      document.getElementById('video-player-overlay').style.display = 'none';
-      document.getElementById('video-player-container').innerHTML = '';
   };
 
   // --- Dynamic Trending Reels ---
@@ -2911,7 +2769,6 @@
       document.getElementById('upload-video-overlay').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       
-      // Load user videos
       const grid = document.getElementById('creator-studio-video-grid');
       grid.innerHTML = '<p class="col-span-3 text-center text-xs text-gray-400 py-10">Loading your studio...</p>';
       
