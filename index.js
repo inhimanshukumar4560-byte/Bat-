@@ -26,6 +26,12 @@ try {
 }
 
 // ============================================================
+// ONESIGNAL CONFIGURATION
+// ============================================================
+const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
+const ONESIGNAL_REST_KEY = process.env.ONESIGNAL_REST_KEY;
+
+// ============================================================
 // 1. LIVEKIT TOKEN GENERATION (Common for Video & Audio)
 // ============================================================
 app.get('/get-token', async (req, res) => {
@@ -70,33 +76,26 @@ app.post('/notify-live', async (req, res) => {
     const { hostName, hostAvatar, roomTitle } = req.body;
 
     try {
-        const db = admin.database();
-        const snapshot = await db.ref('users').once('value');
-        const users = snapshot.val();
-        
-        const tokens = [];
-        for (let key in users) {
-            if (users[key].fcmToken && users[key].name !== hostName) {
-                tokens.push(users[key].fcmToken);
-            }
-        }
-
-        if (tokens.length === 0) return res.json({ message: "No tokens found" });
-
-        const message = {
-            notification: {
-                title: `${hostName} is LIVE! 🔴`,
-                body: `Vibe with me: ${roomTitle || 'Live Stream'}`,
+        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
             },
-            data: {
-                type: "live_video",
-                screen: "live.html"
-            },
-            tokens: tokens
-        };
+            body: JSON.stringify({
+                app_id: ONESIGNAL_APP_ID,
+                included_segments: ["Subscribed Users"],
+                headings: { en: `${hostName} is LIVE! 🔴` },
+                contents: { en: `Vibe with me: ${roomTitle || 'Live Stream'}` },
+                data: {
+                    type: "live_video",
+                    screen: "live.html"
+                }
+            })
+        });
 
-        const response = await admin.messaging().sendEachForMulticast(message);
-        res.json({ success: true, sent: response.successCount });
+        const resData = await response.json();
+        res.json({ success: true, response: resData });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -109,33 +108,26 @@ app.post('/notify-audio', async (req, res) => {
     const { hostName, roomName } = req.body;
 
     try {
-        const db = admin.database();
-        const snapshot = await db.ref('users').once('value');
-        const users = snapshot.val();
-        
-        const tokens = [];
-        for (let key in users) {
-            if (users[key].fcmToken && users[key].name !== hostName) {
-                tokens.push(users[key].fcmToken);
-            }
-        }
-
-        if (tokens.length === 0) return res.json({ message: "No tokens found" });
-
-        const message = {
-            notification: {
-                title: `Audio Party Started! 🎙️`,
-                body: `${hostName} invited you to join: ${roomName}`,
+        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
             },
-            data: {
-                type: "audio_room",
-                screen: "audio.html"
-            },
-            tokens: tokens
-        };
+            body: JSON.stringify({
+                app_id: ONESIGNAL_APP_ID,
+                included_segments: ["Subscribed Users"],
+                headings: { en: `Audio Party Started! 🎙️` },
+                contents: { en: `${hostName} invited you to join: ${roomName}` },
+                data: {
+                    type: "audio_room",
+                    screen: "audio.html"
+                }
+            })
+        });
 
-        const response = await admin.messaging().sendEachForMulticast(message);
-        res.json({ success: true, sent: response.successCount });
+        const resData = await response.json();
+        res.json({ success: true, response: resData });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -148,34 +140,31 @@ app.post('/notify-chat', async (req, res) => {
     const { senderName, receiverName, messageText } = req.body;
 
     try {
-        const db = admin.database();
-        const snapshot = await db.ref('users').once('value');
-        const users = snapshot.val();
+        const truncatedMsg = messageText.length > 50 ? messageText.substring(0, 47) + "..." : messageText;
 
-        let targetToken = null;
-        for (let key in users) {
-            if (users[key].name === receiverName) {
-                targetToken = users[key].fcmToken;
-                break;
-            }
-        }
-
-        if (!targetToken) return res.json({ message: "Receiver token not found" });
-
-        const message = {
-            notification: {
-                title: `New Message from ${senderName} 💬`,
-                body: messageText.length > 50 ? messageText.substring(0, 47) + "..." : messageText,
+        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
             },
-            data: {
-                type: "chat_msg",
-                sender: senderName
-            },
-            token: targetToken
-        };
+            body: JSON.stringify({
+                app_id: ONESIGNAL_APP_ID,
+                include_aliases: {
+                    external_id: [receiverName]
+                },
+                target_channel: "push",
+                headings: { en: `New Message from ${senderName} 💬` },
+                contents: { en: truncatedMsg },
+                data: {
+                    type: "chat_msg",
+                    sender: senderName
+                }
+            })
+        });
 
-        await admin.messaging().send(message);
-        res.json({ success: true });
+        const resData = await response.json();
+        res.json({ success: true, response: resData });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
