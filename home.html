@@ -202,7 +202,7 @@
         </div>
 
         <!-- Buy Diamonds Widget (Balance numeric value hidden in main header per user request) -->
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0">
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0" onclick="document.getElementById('diamond-store-overlay').style.display='flex'">
             <span class="material-symbols-outlined text-purple-600 text-[18px]">diamond</span>
             <span class="text-xs font-bold text-purple-800">Buy</span>
             <span class="material-symbols-outlined text-purple-600 text-[13px]">add_circle</span>
@@ -638,122 +638,163 @@
 </div>
 
 <!-- ================= DIAMOND STORE OVERLAY (1 INR = 2 Diamonds Integrated) ================= -->
-<div id="diamond-store-overlay" class="fixed inset-0 bg-[#f0f0f0] z-[9500] hidden flex-col items-center overflow-y-auto no-scrollbar pb-32">
-    <div class="w-full max-w-[414px] bg-white min-h-screen px-4 py-4 shadow-xl">
+<div id="diamond-store-overlay" class="fixed inset-0 bg-[#070816] z-[9500] hidden flex-col items-center overflow-y-auto no-scrollbar pb-32">
+    <div class="w-full max-w-[414px] bg-[#07081a] min-h-screen px-4 py-4 text-white shadow-xl">
         <!-- Header -->
         <div class="flex items-center justify-between mb-5 pt-2">
-            <a href="javascript:void(0)" class="text-2xl text-gray-900 font-bold no-underline" onclick="document.getElementById('diamond-store-overlay').style.display='none'">&#8592;</a>
-            <div class="text-[20px] font-semibold text-gray-900">Diamonds</div>
-            <div class="bg-[#fff0f0] px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold text-dia-red text-sm">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
+            <button class="text-2xl text-white font-bold bg-transparent border-none outline-none cursor-pointer" onclick="document.getElementById('diamond-store-overlay').style.display='none'">&#8592;</button>
+            <div class="text-[18px] font-black uppercase tracking-wider text-white">Diamond Store</div>
+            <div class="bg-[#1a1c38] border border-blue-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold text-white text-sm">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#00d2ff"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
                 <span id="diamond-store-balance">0</span>
-                <span class="bg-dia-red text-white rounded-full w-4 h-4 flex items-center justify-center text-[12px] ml-1">+</span>
             </div>
         </div>
 
-        <!-- Hero Banner -->
-        <div class="ds-gradient-red rounded-[16px] p-5 text-white flex justify-between items-center mb-6 shadow-[0_8px_15px_rgba(218,28,34,0.2)] relative overflow-hidden">
+        <!-- Title Banner -->
+        <div class="text-center my-6">
+            <h2 class="text-[28px] font-black tracking-wide text-white font-display-lg uppercase leading-none drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Diamond Top-Up</h2>
+            <div class="inline-block bg-yellow-400 text-black text-xs font-black px-4 py-1 rounded-full mt-2 uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.5)]">
+                1 ₹ = 2 Diamond
+            </div>
+        </div>
+
+        <!-- Mega Offer Banner -->
+        <div class="bg-gradient-to-r from-purple-900 via-indigo-950 to-blue-900 border border-purple-500/40 rounded-[20px] p-4 text-white flex justify-between items-center mb-6 shadow-[0_0_20px_rgba(147,51,234,0.3)] relative overflow-hidden">
             <div class="z-10 relative">
-                <div class="text-[13px] opacity-90 mb-1">Your Diamonds</div>
-                <div class="text-[36px] font-bold flex items-center gap-2 mb-2">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
-                    <span id="diamond-store-balance-2">0</span>
+                <div class="bg-yellow-500 text-black text-[9px] font-black px-2 py-0.5 rounded-md inline-block uppercase mb-1">Limited Time</div>
+                <div class="text-[20px] font-extrabold text-white tracking-tight uppercase leading-none">Mega Offer</div>
+                <div class="text-[10px] text-purple-200 mt-1 uppercase font-semibold">Extra Diamonds on every Top-Up!</div>
+                <div class="text-[11px] text-yellow-400 mt-2 font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">schedule</span> Offer ends in: <span class="font-mono">23:59:59</span>
                 </div>
-                <div class="text-[11px] opacity-80 max-w-[180px] leading-snug">Diamonds can be used to unlock premium features and exciting rewards.</div>
             </div>
-            <div class="text-[80px] absolute right-[-10px] top-1/2 transform -translate-y-1/2 z-0 drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]">💎</div>
+            <div class="text-[64px] z-0 opacity-80 select-none">📦</div>
+            <!-- Hidden elements to ensure no update diamond scripts break -->
+            <span id="diamond-store-balance-2" class="hidden">0</span>
         </div>
 
-        <!-- Packages Section -->
-        <div class="flex justify-between items-center mb-4">
-            <div class="text-[16px] font-semibold text-gray-900">Choose a Pack</div>
-            <a href="javascript:void(0)" class="text-[12px] text-dia-red font-semibold no-underline flex items-center gap-1">★ Best Value</a>
+        <!-- Packages Grid -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <!-- Pack 1 (₹5 = 20 D) -->
+            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
+                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
+                    💎 10
+                </div>
+                <div class="text-[28px] my-1 select-none">💎</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹5</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(5, 20)">
+                    20 Diamond
+                </button>
+            </div>
+
+            <!-- Pack 2 (Popular) (₹25 = 100 D) -->
+            <div class="bg-[#1a1336] border-2 border-red-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-lg">
+                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">Popular</div>
+                <div class="text-xs font-bold text-purple-300 flex items-center justify-center gap-1 mt-1">
+                    💎 50
+                </div>
+                <div class="text-[28px] my-1 select-none">💎💎</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹25</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(25, 100)">
+                    100 Diamond
+                </button>
+            </div>
+
+            <!-- Pack 3 (₹50 = 200 D) -->
+            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
+                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
+                    💎 100
+                </div>
+                <div class="text-[28px] my-1 select-none">💰</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹50</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(50, 200)">
+                    200 Diamond
+                </button>
+            </div>
+
+            <!-- Pack 4 (₹105 = 420 D) -->
+            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
+                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">10% Extra</div>
+                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
+                    💎 210
+                </div>
+                <div class="text-[28px] my-1 select-none">💼</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹105</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(105, 420)">
+                    420 Diamond
+                </button>
+            </div>
+
+            <!-- Pack 5 (₹250 = 1040 D) -->
+            <div class="bg-[#1e1430] border-2 border-yellow-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-xl">
+                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">Best Value</div>
+                <div class="text-xs font-bold text-yellow-300 flex items-center justify-center gap-1 mt-1">
+                    💎 520
+                </div>
+                <div class="text-[28px] my-1 select-none">👑</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹250</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(250, 1040)">
+                    1,040 Diamond
+                </button>
+            </div>
+
+            <!-- Pack 6 (₹500 = 2120 D) -->
+            <div class="bg-[#121432] border border-blue-500/20 hover:border-blue-500/50 rounded-2xl p-2.5 text-center relative flex flex-col items-center justify-between min-h-[140px] transition duration-200 active:scale-95 shadow-md">
+                <div class="absolute -top-[9px] left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap z-10">25% Extra</div>
+                <div class="text-xs font-bold text-blue-300 flex items-center justify-center gap-1 mt-1">
+                    💎 1060
+                </div>
+                <div class="text-[28px] my-1 select-none">📦</div>
+                <div class="text-xs text-gray-400 font-bold line-through">₹500</div>
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-black font-black py-1 px-1.5 w-full rounded-full text-[9px] uppercase tracking-wider shadow-md transition" onclick="buyDiamondPack(500, 2120)">
+                    2,120 Diamond
+                </button>
+            </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2.5 mb-6">
-            <!-- Pack 1 (50 Rs = 100 D) -->
-            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    100 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
+        <!-- Weekly Pass -->
+        <div class="bg-gradient-to-r from-yellow-600 to-yellow-500 border border-yellow-400 rounded-2xl p-4 flex justify-between items-center mb-6 shadow-lg relative cursor-pointer active:scale-98 transition" onclick="buyDiamondPack(159, 2940)">
+            <div class="flex items-center gap-3">
+                <div class="bg-black/30 w-12 h-12 rounded-full flex items-center justify-center text-2xl">🏆</div>
+                <div>
+                    <h4 class="font-black text-black uppercase tracking-wide text-sm">Weekly Diamond Pass</h4>
+                    <p class="text-black/80 text-[10px] font-bold">Get 420 Diamond every day for 7 days</p>
                 </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">🔮</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(50, 100)">₹ 50.00</button>
             </div>
-
-            <!-- Pack 2 (Popular) (100 Rs = 200 D) -->
-            <div class="bg-[#fff9f9] border-[1.5px] border-dia-red rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="absolute -top-[1px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">🔥 Popular</div>
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    200 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
-                </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">💰</div>
-                <button class="bg-dia-red border-none text-white py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(100, 200)">₹ 100.00</button>
-            </div>
-
-            <!-- Pack 3 (200 Rs = 400 D) -->
-            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    400 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
-                </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">📦</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(200, 400)">₹ 200.00</button>
-            </div>
-
-            <!-- Pack 4 (500 Rs = 1000 D) -->
-            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    1000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
-                </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">🛍️</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(500, 1000)">₹ 500.00</button>
-            </div>
-
-            <!-- Pack 5 (1000 Rs = 2000 D) -->
-            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    2000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
-                </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">🧰</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(1000, 2000)">₹ 1000.00</button>
-            </div>
-
-            <!-- Pack 6 (Best Value) (2000 Rs = 4000 D) -->
-            <div class="bg-white border border-gray-200 rounded-xl p-2 text-center relative flex flex-col items-center justify-between h-[150px] shadow-sm ds-pack-card">
-                <div class="absolute -top-[10px] left-1/2 transform -translate-x-1/2 bg-dia-red text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-b-lg whitespace-nowrap z-10">👑 Best Value</div>
-                <div class="text-[16px] font-bold flex items-center justify-center gap-1 mt-2 text-gray-900">
-                    4000 <svg viewBox="0 0 24 24" width="14" height="14" fill="#9b51e0"><path d="M12 2L2 9l10 13L22 9l-10-7z"/></svg>
-                </div>
-                <div class="text-[30px] my-2 drop-shadow-sm">🪙</div>
-                <button class="bg-transparent border border-gray-200 text-gray-900 py-1.5 w-full rounded-full text-[12px] font-semibold transition active:scale-95" onclick="buyDiamondPack(2000, 4000)">₹ 2000.00</button>
+            <div class="bg-black text-yellow-400 font-black px-4 py-2 rounded-xl text-xs uppercase shadow-md">
+                ₹ 159
             </div>
         </div>
 
         <!-- Trust Badges -->
-        <div class="flex justify-between bg-[#fff5f5] rounded-xl p-3.5 mb-6">
+        <div class="grid grid-cols-2 gap-3 mb-6 bg-blue-950/40 p-3 rounded-2xl border border-blue-900/40">
             <div class="flex items-center gap-2">
-                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">⚡</div>
-                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">Instant Delivery</strong>Diamonds will be<br>added instantly</div>
+                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">🛡️</div>
+                <div class="text-[10px] leading-tight font-medium text-gray-300">
+                    <strong class="text-white block">100% Secure</strong> Transactions guaranteed
+                </div>
             </div>
             <div class="flex items-center gap-2">
-                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">🛡️</div>
-                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">100% Secure</strong>Safe & secure<br>payments</div>
+                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">⚡</div>
+                <div class="text-[10px] leading-tight font-medium text-gray-300">
+                    <strong class="text-white block">Instant Top-Up</strong> Diamonds added immediately
+                </div>
             </div>
             <div class="flex items-center gap-2">
-                <div class="bg-dia-red text-white w-6 h-6 rounded-full flex items-center justify-center text-[12px]">🎧</div>
-                <div class="text-[10px] text-gray-600 leading-[1.2]"><strong class="text-gray-900 block">24/7 Support</strong>We are here to<br>help you</div>
+                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">💎</div>
+                <div class="text-[10px] leading-tight font-medium text-gray-300">
+                    <strong class="text-white block">Best Prices</strong> Unmatched offer rates
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-500/20 text-blue-400 w-8 h-8 rounded-full flex items-center justify-center text-sm">🎧</div>
+                <div class="text-[10px] leading-tight font-medium text-gray-300">
+                    <strong class="text-white block">24/7 Support</strong> Ready to assist you
+                </div>
             </div>
         </div>
 
-        <!-- Secure Footer Terms -->
-        <div class="flex items-center gap-1 text-[11px] text-gray-500 mb-3 justify-center">
-            <span class="text-green-500 text-[14px]">🛡️</span> Secure Payments
-        </div>
-        <div class="flex items-start gap-2.5 px-1.5 pb-5">
-            <div class="w-4 h-4 bg-dia-red rounded flex items-center justify-center text-white text-[10px] shrink-0 mt-0.5">✔</div>
-            <div class="text-[11px] text-gray-500">
-                By proceeding, you agree to our <a href="#" class="text-dia-red font-semibold no-underline">Terms of Service</a> and <a href="#" class="text-dia-red font-semibold no-underline">Privacy Policy</a>
-            </div>
-        </div>
+        <p class="text-[10px] text-gray-500 text-center font-medium">Your payment is secured by trusted partners</p>
     </div>
 </div>
 
@@ -776,13 +817,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <!-- Option Female -->
                 <button onclick="selectGenderFilter('female')" class="border-2 border-pink-200 bg-pink-50/50 hover:bg-pink-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
-                    <img src="https://i.ibb.co/84xpBDH1/file-00000000ca047208b27d596686e3776f.png" class="w-14 h-14 object-cover rounded-full border border-pink-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=female'">
+                    <img src="https://i.ibb.co/7t7KDcGF/1000323751-removebg-preview.png" class="w-14 h-14 object-cover rounded-full border border-pink-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=female'">
                     <span class="text-pink-600 font-extrabold text-sm flex items-center gap-1">👩 Female</span>
                 </button>
                 
                 <!-- Option Male -->
                 <button onclick="selectGenderFilter('male')" class="border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition transform active:scale-95 group">
-                    <img src="https://i.ibb.co/KjrXqrKQ/file-0000000081f07208a28d0e94964e6d55.png" class="w-14 h-14 object-cover rounded-full border border-blue-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=male'">
+                    <img src="https://i.ibb.co/LVQxpmy/1000323753-removebg-preview.png" class="w-14 h-14 object-cover rounded-full border border-blue-300 group-hover:scale-105 transition-transform" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=male'">
                     <span class="text-blue-600 font-extrabold text-sm flex items-center gap-1">👨 Male</span>
                 </button>
             </div>
@@ -1074,7 +1115,7 @@
     </div>
     
     <!-- Shorts container with snap-scroll -->
-    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth pt-[140px]"></div>
+    <div id="shorts-feed-container" class="w-full h-[100dvh] overflow-y-auto snap-y snap-mandatory no-scrollbar bg-black scroll-smooth pt-0"></div>
     
     <!-- Longs container -->
     <div class="w-full h-full overflow-y-auto pt-[160px] pb-32 no-scrollbar bg-black hidden" id="longs-feed-wrap">
