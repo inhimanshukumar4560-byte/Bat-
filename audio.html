@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +20,7 @@
         }
 
         :root {
-            /* Zingoo Theme Colors */
+            /* Zingoo Theme Colors (Combined from both codes) */
             --z-pink: #ff1f5a;
             --z-bg: #ffffff;
             --z-text: #000000;
@@ -181,14 +180,14 @@
 
         .room-list-row { display: flex; align-items: center; gap: 15px; background: #fff; padding: 10px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
         .room-list-row:hover { background: #fdfdfd; }
-        .room-list-img { position: relative; width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-        .room-list-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .room-list-img { position: relative; width: 70px; height: 70px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
+        .room-list-img img { width: 100%; height: 100%; object-fit: cover; }
         .live-badge { position: absolute; top: 4px; left: 4px; background: red; color: white; font-size: 0.55em; font-weight: 800; padding: 2px 5px; border-radius: 4px; z-index: 2; }
         .room-list-info { flex-grow: 1; overflow: hidden; }
         .room-list-info h4 { font-size: 1em; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
         .room-list-info p { font-size: 0.75em; color: #888; margin-top: 2px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .room-row-avatars { display: flex; align-items: center; }
-        .room-row-avatars img { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #fff; margin-left: -6px; }
+        .room-row-avatars img { width: 20px; height: 20px; border-radius: 50% !important; border: 1.5px solid #fff; margin-left: -6px; object-fit: cover; aspect-ratio: 1/1; }
         .room-row-avatars img:first-child { margin-left: 0; }
         .room-row-avatars span { font-size: 0.65em; color: var(--hot-pink); margin-left: 5px; font-weight: bold; background: #ffe4e8; padding: 1px 5px; border-radius: 10px;}
         
@@ -254,14 +253,13 @@
         }
 
         .host-avatar {
-            width: 35px; height: 35px; border-radius: 50% !important; display: flex; justify-content: center; align-items: center; margin-right: 10px; border: 2px solid #ffd700; overflow: hidden;
+            width: 35px; height: 35px; border-radius: 50% !important; display: flex; justify-content: center; align-items: center; margin-right: 10px; border: 2px solid #ffd700; overflow: hidden; aspect-ratio: 1/1;
         }
         .host-avatar img {
-            width: 100%; height: 100%; border-radius: 50% !important; object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover !important; border-radius: 50% !important;
         }
         .host-details { display: flex; flex-direction: column; overflow: hidden; }
         .host-name { color: var(--text-light); font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .host-bio { font-size: 9px; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; }
         .viewers { color: var(--text-dim); font-size: 10px; display: flex; align-items: center; gap: 3px; }
         
         .header-actions { display: flex; gap: 15px; align-items: center; color: var(--text-light); font-size: 20px; }
@@ -292,10 +290,16 @@
             overflow: visible; 
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
+            aspect-ratio: 1/1;
+        }
+        .seat-avatar img {
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            aspect-ratio: 1/1;
         }
 
-        .seat.empty .seat-avatar { background: white; color: #9c27b0; font-size: 20px; border: 2px solid #9c27b0; border-radius: 50%; }
-        .seat.occupied .seat-avatar { color: white; font-size: 24px; border-radius: 50%; }
+        .seat.empty .seat-avatar { background: white; color: #9c27b0; font-size: 20px; border: 2px solid #9c27b0; }
+        .seat.occupied .seat-avatar { color: white; font-size: 24px; }
         .seat-name { color: var(--text-light); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 60px; font-family: -apple-system, sans-serif;}
 
         /* Custom Zingoo Store Overlays for Seats */
@@ -321,44 +325,89 @@
             flex-direction: column;
             gap: 10px;
             z-index: 10;
-            margin: 0 15px 160px 15px; 
-            background: rgba(0, 0, 0, 0.45);
-            border-radius: 15px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 160px; 
         }
         .chat-container::-webkit-scrollbar { display: none; }
         
-        /* Message Bubbles */
+        /* Message Bubbles - Custom Translucent Dark Style for high legibility */
         .sys-message {
             background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff; 
             font-size: 13px; 
             line-height: 1.4; 
-            padding: 10px 15px; 
-            border-radius: 10px; 
+            padding: 8px 12px; 
+            border-radius: 12px; 
             align-self: flex-start; 
             max-width: 90%; 
             font-family: -apple-system, sans-serif; 
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .user-message { display: flex; align-items: flex-start; gap: 8px; max-width: 85%; align-self: flex-start; }
-        .msg-avatar { width: 25px; height: 25px; border-radius: 50%; background: #ccc; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; overflow: hidden; }
-        .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .msg-avatar { width: 25px; height: 25px; border-radius: 50% !important; background: #ccc; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 12px; aspect-ratio: 1/1; overflow: hidden; }
         .msg-content { 
-            background: rgba(0, 0, 0, 0.55); 
+            background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 8px 12px; 
             border-radius: 12px; 
             border-top-left-radius: 0; 
             font-family: -apple-system, sans-serif; 
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
         }
         .msg-name { color: #ffeb3b; font-size: 11px; font-weight: bold; margin-bottom: 3px; }
         .msg-text { color: white; font-size: 13px; }
 
+        /* Dynamic entry pop-up banner (Not shown in regular chat log) */
+        .entry-popup-banner {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ff1f5a;
+            box-shadow: 0 0 20px #ff1f5a, inset 0 0 10px #ff1f5a;
+            border-radius: 20px;
+            padding: 15px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .entry-popup-banner.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .entry-glowing-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 0 10px #ff1f5a, 0 0 20px #ff1f5a;
+            animation: entryGlow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes entryGlow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #ff1f5a, 0 0 15px #ff1f5a; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #ff3b6b, 0 0 30px #ff3b6b; }
+        }
+        .entry-sticker-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            animation: bounceSticker 2s infinite ease-in-out;
+        }
+        @keyframes bounceSticker {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Limited Offers card with cross button */
         .limited-offers {
             position: absolute;
             bottom: 140px;
@@ -377,18 +426,6 @@
         .limited-offers .offer-content { display: flex; align-items: center; gap: 5px; font-size: 16px; font-weight: bold; }
         .limited-offers .offer-price { font-size: 9px; color: #e0e0e0; margin-top: 5px; text-decoration: line-through; }
         .limited-offers button { background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 10px; padding: 4px 10px; font-size: 10px; margin-top: 5px; cursor: pointer; width: 100%;}
-        
-        /* Dismiss Button for Limited Offers */
-        .close-offer-btn {
-            position: absolute;
-            top: 2px;
-            right: 6px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            font-weight: bold;
-            line-height: 1;
-        }
 
         .bottom-ui-wrapper {
             position: absolute;
@@ -466,7 +503,7 @@
         /* Manage Users Modal Styles */
         .manage-user-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #eee; }
         .manage-user-info { display: flex; align-items: center; gap: 12px; }
-        .manage-user-info img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #ddd; object-fit: cover;}
+        .manage-user-info img { width: 45px; height: 45px; border-radius: 50% !important; border: 2px solid #ddd; object-fit: cover; aspect-ratio: 1/1;}
         .manage-user-info span { font-weight: 700; color: #111; font-size: 1.05em; }
         .manage-user-actions button { margin-left: 8px; padding: 6px 14px; border-radius: 15px; border: none; cursor: pointer; font-size: 0.85em; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.15s;}
         .manage-user-actions button:hover { transform: scale(1.05); }
@@ -481,7 +518,7 @@
         .gift-item .price { font-size: 0.7em; color: #d97706; margin-top: 3px; font-weight: bold;}
         
         #profile-popup .profile-content { text-align: center; }
-        #profile-popup img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--hot-pink); margin-bottom: 10px; object-fit: cover;}
+        #profile-popup img { width: 90px; height: 90px; border-radius: 50% !important; border: 3px solid var(--hot-pink); margin-bottom: 10px; object-fit: cover; aspect-ratio: 1/1;}
         #profile-popup h4 { font-size: 1.3em; color: #111; font-weight: 800;}
         #profile-popup .user-id { font-size: 0.85em; color: #666; margin-bottom: 20px; font-weight: 500;}
         #profile-popup .profile-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
@@ -494,7 +531,7 @@
         .custom-input:focus { outline: none; border-color: var(--hot-pink); background: #fff;}
         .invite-user-list { flex-grow: 1; overflow-y: auto; margin-bottom: 15px; }
         .user-card { display: flex; align-items: center; padding: 10px; background: #fff; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
-        .user-card img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; }
+        .user-card img { width: 40px; height: 40px; border-radius: 50% !important; margin-right: 12px; object-fit: cover; aspect-ratio: 1/1; }
         .user-info { flex-grow: 1; }
         .user-info h4 { font-size: 0.9em; color: #111; font-weight: 700;}
         .user-info p { font-size: 0.7em; color: #888; }
@@ -516,16 +553,6 @@
             margin-top: 15px; font-size: 1.2em; font-weight: 900; color: #fff; background: rgba(0,0,0,0.7); padding: 8px 20px; border-radius: 20px; border: 2px solid var(--hot-pink); text-shadow: 0 2px 5px rgba(0,0,0,0.5); font-family: 'Outfit';
         }
 
-        /* Entry Glowing Name Keyframe */
-        @keyframes textGlow {
-            0% {
-                text-shadow: 0 0 5px #ff004c, 0 0 10px #ff004c, 0 0 20px #ff3b6b;
-            }
-            100% {
-                text-shadow: 0 0 10px #25D366, 0 0 20px #25D366, 0 0 40px #25D366;
-            }
-        }
-
         @keyframes grandGiftPop {
             0% { transform: translate(-50%, -50%) scale(0) rotate(-30deg); opacity: 0; }
             15% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); opacity: 1; }
@@ -535,40 +562,6 @@
         }
         @keyframes pulse-gift { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
         @keyframes pulse-green { 0% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.5); } 50% { box-shadow: 0 0 20px rgba(37, 211, 102, 1); } 100% { box-shadow: 0 0 5px rgba(37, 211, 102, 0.5); } }
-
-        /* Dynamic 3D Glowing Reactions CSS */
-        @keyframes floatUpGlowHeart {
-            0% {
-                transform: translateY(0) scale(0.6) rotate(0deg);
-                opacity: 0.9;
-                filter: drop-shadow(0 0 8px #ff004c) drop-shadow(0 0 15px #ff3b6b);
-            }
-            50% {
-                transform: translateY(-120px) scale(1.4) rotate(15deg);
-                opacity: 1;
-                filter: drop-shadow(0 0 15px #ff004c) drop-shadow(0 0 25px #ff3b6b);
-            }
-            100% {
-                transform: translate(var(--random-x), -380px) scale(1.8) rotate(-15deg);
-                opacity: 0;
-            }
-        }
-        @keyframes floatUpGlowFire {
-            0% {
-                transform: translateY(0) scale(0.6) rotate(0deg);
-                opacity: 0.9;
-                filter: drop-shadow(0 0 8px #ff9500) drop-shadow(0 0 15px #ffcc00);
-            }
-            50% {
-                transform: translateY(-120px) scale(1.4) rotate(-10deg);
-                opacity: 1;
-                filter: drop-shadow(0 0 15px #ff9500) drop-shadow(0 0 25px #ffcc00);
-            }
-            100% {
-                transform: translate(var(--random-x), -380px) scale(1.8) rotate(10deg);
-                opacity: 0;
-            }
-        }
 
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
@@ -600,7 +593,7 @@
                 
                 <input type="file" id="login-profile-upload" accept="image/*" style="display:none;">
                 <div style="cursor:pointer; margin-bottom:20px; display:inline-block;" onclick="document.getElementById('login-profile-upload').click()">
-                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--hot-pink); box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <img id="login-avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=zingoo&backgroundColor=f8f9fa" style="width:80px; height:80px; border-radius:50% !important; object-fit:cover; border:2px solid var(--hot-pink); box-shadow:0 4px 10px rgba(0,0,0,0.1); aspect-ratio: 1/1;">
                     <p style="font-size:11px; color:var(--hot-pink); margin-top:8px; font-weight:bold;">Tap to upload picture</p>
                 </div>
 
@@ -663,7 +656,7 @@
                         <div class="host-avatar" id="rv_hostImage">👩</div>
                         <div class="host-details">
                             <span class="host-name" id="live-room-title">Loading Room...</span>
-                            <span class="host-bio" id="live-room-bio">No bio set</span>
+                            <span id="live-room-bio" style="color: rgba(255,255,255,0.7); font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">Chill Vibes Only</span>
                             <span class="viewers">👥 <span id="listener-count-num">0</span></span>
                         </div>
                     </div>
@@ -673,6 +666,13 @@
                     <span class="header-icon" id="header-more-btn">↪</span>
                 </div>
             </header>
+
+            <!-- Interactive Glowing Entry Pop-up Banner -->
+            <div id="entry-popup-banner" class="entry-popup-banner">
+                <span style="color: #ff3b6b; font-weight: 800; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;">Zingoo Entrance</span>
+                <div id="entry-banner-glowing-name" class="entry-glowing-name">Username</div>
+                <img id="entry-banner-sticker" class="entry-sticker-img" src="" style="display:none;">
+            </div>
 
             <div id="youtubePlayerContainer"></div>
 
@@ -684,12 +684,15 @@
                 <!-- JS Chat Rendering -->
             </div>
 
+            <!-- Limited Offers Card with Close Option -->
             <div class="limited-offers" id="limited-offers-card">
-                <span class="close-offer-btn" id="btn-close-offer">&times;</span>
-                <h5>Limited Offers</h5>
-                <div class="offer-content">💎 <span>300</span></div>
-                <div class="offer-price">₹100</div>
-                <button onclick="window.redirectToDiamondStore(100, 300)">Buy Now</button>
+                <button id="close-offers-btn" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 25; font-weight: 900; line-height: 1;">&times;</button>
+                <div onclick="window.redirectToDiamondStore(100, 300)">
+                    <h5>Limited Offers</h5>
+                    <div class="offer-content">💎 <span>300</span></div>
+                    <div class="offer-price">₹100</div>
+                    <button style="pointer-events: none;">Buy Now</button>
+                </div>
             </div>
 
             <div class="bottom-ui-wrapper" id="mainBottomUI">
@@ -732,7 +735,7 @@
 
         <!-- WEBRTC OVERLAYS -->
         <div id="incoming-call-overlay" class="modal-overlay" style="z-index:10000; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.9);">
-            <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <img id="incoming-caller-avatar" src="" style="width:120px; height:120px; border-radius:50% !important; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover; aspect-ratio:1/1;">
             <h2 id="incoming-caller-name" style="color:white; font-size:24px; font-weight:bold; margin-bottom:10px;">Caller Name</h2>
             <p style="color:#ff3b6b; font-size:14px; margin-bottom:30px; animation:pulse-green 1s infinite;">Incoming Call...</p>
             <div style="display:flex; gap:20px;">
@@ -753,7 +756,7 @@
         </div>
 
         <div id="audio-overlay" style="position:absolute; inset:0; background:#111; z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center;">
-            <img id="audio-partner-img" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover;">
+            <img id="audio-partner-img" src="" style="width:120px; height:120px; border-radius:50% !important; border:4px solid var(--hot-pink); margin-bottom:15px; object-fit:cover; aspect-ratio:1/1;">
             <h2 style="color:white; font-size:24px; font-weight:bold;" id="audio-partner-name">Partner</h2>
             <p style="color:#ff3b6b; font-size:14px; margin-bottom:50px;" id="audio-status">Connecting...</p>
             <audio id="remote-audio" autoplay></audio>
@@ -762,9 +765,9 @@
         </div>
 
         <div id="room-audio-container" style="position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none;"></div>
-        
-        <!-- Hidden file selector for local audio playback -->
-        <input type="file" id="local-music-input" accept="audio/*" style="display:none;">
+
+        <!-- Hidden input for playing local music -->
+        <input type="file" id="local-audio-file-input" accept="audio/*" style="display:none;">
 
     </div>
     
@@ -779,21 +782,21 @@
                     <p>Manage Seated Users</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
-                <!-- Edit Details Button for Host -->
+                <!-- Edit Room Details (Host Only) -->
                 <div class="action-item" id="menu-edit-room-btn" style="display:none;">
-                    <div class="action-icon-circle" style="background: #fef08a; color: #ca8a04;"><i class="fas fa-edit"></i></div>
-                    <p>Edit Room Details</p>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-                <!-- Play Local Music Button -->
-                <div class="action-item" id="menu-local-music-btn">
-                    <div class="action-icon-circle" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-music"></i></div>
-                    <p>Play Local Music</p>
+                    <div class="action-icon-circle" style="background: #eef2f3; color: #2c3e50;"><i class="fas fa-edit"></i></div>
+                    <p>Edit Room Info & Bio</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
                 <div class="action-item" id="menu-mic-btn">
                     <div class="action-icon-circle"><i class="fas fa-microphone"></i></div>
                     <p>Toggle Microphone</p>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <!-- Play Local Music Option -->
+                <div class="action-item" id="menu-local-music-btn">
+                    <div class="action-icon-circle" style="background: #ecfdf5; color: #059669;"><i class="fas fa-music"></i></div>
+                    <p>Play Local Music</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
                 <div class="action-item" id="menu-hand-btn">
@@ -803,7 +806,7 @@
                 </div>
                 <div class="action-item" id="menu-youtube-btn">
                     <div class="action-icon-circle" style="background: #ffedd5; color: #ea580c;"><i class="fab fa-youtube"></i></div>
-                    <p>Play Media (YouTube)</p>
+                    <p>Play Media</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
                 <div class="action-item" id="menu-mute-all-btn">
@@ -816,18 +819,12 @@
                     <p>Zingoo Store (Assets)</p>
                     <i class="fas fa-chevron-right arrow"></i>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT ROOM DETAILS MODAL -->
-    <div id="edit-room-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Edit Room Details</h3><button class="close-btn">&times;</button></div>
-            <div class="edit-room-inputs">
-                <input type="text" id="edit-room-topic" class="custom-input" placeholder="Edit Room Name">
-                <input type="text" id="edit-room-bio-input" class="custom-input" placeholder="Edit Room Bio">
-                <button id="save-room-details-btn" class="start-room-btn">Save Changes</button>
+                <!-- Delete Room Button (Host Only) -->
+                <div class="action-item" id="menu-delete-room-btn" style="display:none; background: #fee2e2; border-color: rgba(239, 68, 68, 0.2);">
+                    <div class="action-icon-circle" style="background: #fecaca; color: #dc2626;"><i class="fas fa-trash-alt"></i></div>
+                    <p style="color: #dc2626;">Delete / End Room</p>
+                    <i class="fas fa-chevron-right arrow" style="color: #fca5a5;"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -837,6 +834,20 @@
         <div class="modal-content" style="max-height: 80vh; display:flex; flex-direction:column;">
             <div class="modal-header"><h3>Manage Seated Users</h3><button class="close-btn">&times;</button></div>
             <div id="manage-users-list" style="overflow-y:auto; flex-grow:1;" class="custom-scrollbar"></div>
+        </div>
+    </div>
+
+    <!-- EDIT ROOM DETAILS MODAL (Host Only) -->
+    <div id="edit-room-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Edit Room Details</h3><button class="close-btn">&times;</button></div>
+            <div class="create-room-inputs">
+                <label style="font-size:12px; font-weight:bold; color:#555; margin-bottom:5px; display:block;">Room Topic</label>
+                <input type="text" id="edit-room-topic" class="custom-input" placeholder="Enter Room Topic">
+                <label style="font-size:12px; font-weight:bold; color:#555; margin-bottom:5px; display:block;">Room Bio / Description</label>
+                <input type="text" id="edit-room-bio" class="custom-input" placeholder="Enter Room Bio">
+            </div>
+            <button id="save-room-details-btn" class="start-room-btn">Save Changes</button>
         </div>
     </div>
 
@@ -870,7 +881,7 @@
             <div class="modal-header"><h3>Create Room & Invite</h3><button class="close-btn">&times;</button></div>
             <div class="create-room-inputs">
                 <input type="text" id="new-room-topic" class="custom-input" placeholder="Enter Room Topic (e.g., Chill Vibes)">
-                <input type="text" id="new-room-bio" class="custom-input" placeholder="Enter Room Bio (e.g., Let's talk about music!)">
+                <input type="text" id="new-room-bio" class="custom-input" placeholder="Enter Room Bio / Description">
                 <input type="number" id="new-room-fee" class="custom-input diamond-input" placeholder="Entry Fee (Diamonds) - Leave blank for Free">
                 
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -904,7 +915,7 @@
         <div class="modal-content">
             <div class="modal-header"><h3>User Profile</h3><button class="close-btn">&times;</button></div>
             <div class="profile-content">
-                <img id="popup-profile-img" src="" alt="User Profile" style="border-radius: 50% !important;">
+                <img id="popup-profile-img" src="" alt="User Profile">
                 <h4 id="popup-username"></h4>
                 <p id="popup-userid" class="user-id"></p>
                 <div class="profile-actions" style="margin-top: 10px;">
@@ -919,7 +930,7 @@
     <!-- Firebase SDK Setup (Modular Web SDK Version 10.8.0 linked securely to Zingoo project database) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, update, query, orderByChild, equalTo, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp, set, remove, get, onChildAdded, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         let app;
         let db;
@@ -1004,6 +1015,12 @@
                 setTimeout(() => { globalToast.style.display = 'none'; }, 3000);
             };
 
+            // Close Offers Card Logic
+            document.getElementById('close-offers-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('limited-offers-card').style.display = 'none';
+            });
+
             // AUTO-LOGIN DIRECT ENTRY
             const storedId = localStorage.getItem("zingoo_id");
             if (storedId) {
@@ -1012,12 +1029,6 @@
                 hideSplashScreen();
                 idLoginScreen.style.display = 'flex';
             }
-
-            // Limited Offers dismiss trigger
-            document.getElementById('btn-close-offer').addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('limited-offers-card').style.display = 'none';
-            });
 
             window.triggerGrandGiftAnimation = function(imgUrl, senderName) {
                 const container = document.getElementById('live-room-screen');
@@ -1032,22 +1043,6 @@
                 setTimeout(() => {
                     if(giftDiv.parentNode) { giftDiv.parentNode.removeChild(giftDiv); }
                 }, 3500);
-            };
-
-            // NEW USER GLOWING ENTRY POPUP ANIMATION
-            window.triggerEntryStickerAnimation = function(stickerUrl, username) {
-                const container = document.getElementById('live-room-screen');
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'grand-gift-popup';
-                entryDiv.style.zIndex = '99999';
-                entryDiv.innerHTML = `
-                    <img src="${stickerUrl}" style="width:150px; height:150px; object-fit:contain; filter:drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));">
-                    <p style="margin-top:15px; font-size:1.5em; font-weight:900; color:#fff; text-shadow:0 0 10px #ff004c, 0 0 20px #ff004c, 0 0 30px #ff3b6b; font-family:'Outfit'; border:none; background:transparent; animation:textGlow 1.5s ease-in-out infinite alternate;">
-                        ✨ ${username} Entered! ✨
-                    </p>
-                `;
-                container.appendChild(entryDiv);
-                setTimeout(() => { if(entryDiv.parentNode) { entryDiv.parentNode.removeChild(entryDiv); } }, 3500);
             };
 
             // EXTERNAL GITHUB PAYMENT REDIRECT
@@ -1208,7 +1203,7 @@
             let unsubscribeChat = null;
             let unsubscribeMedia = null;
             let unsubscribeReactions = null;
-            let viewersListenerUnsubscribe = null;
+            let roomDeconstructedListener = null;
 
             let availableGifts = {};
             function fetchAdminGifts() {
@@ -1314,7 +1309,7 @@
                         closeModal();
                     }
                 } else {
-                    if(confirm(`Diamond nahi hai! Buy more diamonds?`)) {
+                    if(confirm(`Dimond nahi hai! Home page me jake dimond buy kro.`)) {
                         window.redirectToDiamondStore(cost, cost * 5);
                     }
                 }
@@ -1350,7 +1345,7 @@
                     showToast(`Successfully sent ${gift.name}!`);
                     closeModal();
                 } else {
-                    if(confirm(`Diamond nahi hai! Buy more diamonds?`)) {
+                    if(confirm(`Dimond nahi hai! Home page me jake dimond buy kro.`)) {
                         window.redirectToDiamondStore(gift.cost, gift.cost * 5);
                     }
                 }
@@ -1368,10 +1363,14 @@
             let iceQueue1v1 = [];
             const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }, { urls: "turn:openrelay.metered.ca:80", username: "openrelayproject", credential: "openrelayproject" }, { urls: "turn:openrelay.metered.ca:443", username: "openrelayproject", credential: "openrelayproject" }, { urls: "turn:openrelay.metered.ca:443?transport=tcp", username: "openrelayproject", credential: "openrelayproject" }] };
 
-            // WEBRTC ROOM AUDIO LOGIC
+            // WEBRTC ROOM AUDIO & MUSIC STREAM MIX LOGIC
             let roomLocalStream = null;
             let roomPeers = {}; 
             let signalUnsubscribe = null;
+            let musicAudioElement = null;
+            let audioContext = null;
+            let mixedLocalStream = null;
+            let isMusicPlaying = false;
 
             const liveRoomScreen = document.getElementById('live-room-screen');
             const modals = document.querySelectorAll('.modal-overlay');
@@ -1576,8 +1575,11 @@
 
             function createRoomPeerConnection(targetUser) {
                 const pc = new RTCPeerConnection(servers);
-                if(roomLocalStream) {
-                    roomLocalStream.getTracks().forEach(track => pc.addTrack(track, roomLocalStream));
+                
+                // Mix background music with voice stream if active
+                const activeLocalStream = mixedLocalStream || roomLocalStream;
+                if(activeLocalStream) {
+                    activeLocalStream.getTracks().forEach(track => pc.addTrack(track, activeLocalStream));
                 }
 
                 pc.onicecandidate = event => {
@@ -1616,7 +1618,59 @@
                 roomPeers[targetUser] = pc;
             }
 
+            // Web Audio Local Storage Music Integration
+            async function playLocalMusicStream(file) {
+                if (!roomLocalStream) {
+                    showToast("Please take a seat first to broadcast music!");
+                    return;
+                }
+                
+                showToast("Setting up background music...");
+                
+                if (musicAudioElement) {
+                    musicAudioElement.pause();
+                }
+
+                musicAudioElement = document.createElement('audio');
+                musicAudioElement.src = URL.createObjectURL(file);
+                musicAudioElement.loop = true;
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const micSource = audioContext.createMediaStreamSource(roomLocalStream);
+                const musicSource = audioContext.createMediaElementSource(musicAudioElement);
+                const destination = audioContext.createMediaStreamDestination();
+                
+                micSource.connect(destination);
+                musicSource.connect(destination);
+                
+                // Keep local playback audible for the host too
+                musicSource.connect(audioContext.destination);
+
+                mixedLocalStream = destination.stream;
+                musicAudioElement.play();
+                showToast("Now streaming music to the room! 🎵");
+
+                // Seamlessly swap RTC tracks
+                Object.values(roomPeers).forEach(pc => {
+                    const senders = pc.getSenders();
+                    const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
+                    if (audioSender && mixedLocalStream.getAudioTracks()[0]) {
+                        audioSender.replaceTrack(mixedLocalStream.getAudioTracks()[0]);
+                    }
+                });
+            }
+
             function stopRoomAudio() {
+                // Terminate music if active
+                if(isMusicPlaying) {
+                    if(musicAudioElement) { musicAudioElement.pause(); musicAudioElement = null; }
+                    if(audioContext) { audioContext.close(); audioContext = null; }
+                    mixedLocalStream = null;
+                    isMusicPlaying = false;
+                    document.getElementById('menu-local-music-btn').querySelector('p').innerText = "Play Local Music";
+                }
+
                 if (roomLocalStream) {
                     roomLocalStream.getTracks().forEach(track => track.stop());
                     roomLocalStream = null;
@@ -1630,6 +1684,45 @@
                     signalUnsubscribe = null;
                 }
             }
+
+            // Bind Local Audio Selection File Reader
+            document.getElementById('local-audio-file-input').addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    playLocalMusicStream(e.target.files[0]);
+                    isMusicPlaying = true;
+                    document.getElementById('menu-local-music-btn').querySelector('p').innerText = "Stop Local Music 🛑";
+                }
+            });
+
+            // Handle Menu Local Music Action Button Trigger
+            document.getElementById('menu-local-music-btn').addEventListener('click', () => {
+                closeModal();
+                if(!mySeatIndex === -1) {
+                    showToast("You must sit down to play local music!");
+                    return;
+                }
+                if (isMusicPlaying) {
+                    if (musicAudioElement) { musicAudioElement.pause(); musicAudioElement = null; }
+                    if (audioContext) { audioContext.close(); audioContext = null; }
+                    isMusicPlaying = false;
+                    mixedLocalStream = null;
+                    document.getElementById('menu-local-music-btn').querySelector('p').innerText = "Play Local Music";
+                    showToast("Music stopped.");
+                    
+                    // Fallback to plain microphone track
+                    if (roomLocalStream) {
+                        Object.values(roomPeers).forEach(pc => {
+                            const senders = pc.getSenders();
+                            const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
+                            if (audioSender && roomLocalStream.getAudioTracks()[0]) {
+                                audioSender.replaceTrack(roomLocalStream.getAudioTracks()[0]);
+                            }
+                        });
+                    }
+                } else {
+                    document.getElementById('local-audio-file-input').click();
+                }
+            });
 
             document.getElementById('btn-search-users').addEventListener('click', () => {
                 const query = document.getElementById('user-search-input').value.trim().toLowerCase();
@@ -1649,7 +1742,7 @@
                                 const isSent = pendingInvites.includes(u.name);
                                 list.innerHTML += `
                                     <div class="user-card">
-                                        <img src="${u.avatar}" style="border-radius: 50% !important;">
+                                        <img src="${u.avatar}">
                                         <div class="user-info">
                                             <h4>${u.name}</h4>
                                             <p>ID: ${u.id}</p>
@@ -1687,125 +1780,47 @@
                 openModal('profile-popup');
             };
 
-            function createFloatingIcon(iconClass, color, type) {
+            // Enhanced 3D Fluid floating reactions
+            function createFloatingIcon(iconClass, color) {
                 const container = document.getElementById('live-room-screen');
                 const icon = document.createElement('i');
                 icon.className = iconClass;
                 icon.style.position = 'absolute';
-                icon.style.bottom = '80px';
+                icon.style.bottom = '100px';
                 icon.style.right = '40px'; 
                 icon.style.color = color;
-                icon.style.fontSize = (Math.random() * 15 + 25) + 'px';
+                icon.style.fontSize = (Math.random() * 15 + 24) + 'px'; 
                 icon.style.zIndex = '50';
                 icon.style.pointerEvents = 'none';
-                
-                const randomX = (Math.random() - 0.5) * 160; 
-                icon.style.setProperty('--random-x', `${randomX}px`);
-                
-                if(type === 'heart') {
-                    icon.style.animation = 'floatUpGlowHeart 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards';
-                } else {
-                    icon.style.animation = 'floatUpGlowFire 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards';
-                }
-                
+                icon.style.textShadow = `0 0 15px ${color}, 0 0 25px ${color}`;
+                icon.style.transition = 'transform 2.5s cubic-bezier(0.075, 0.82, 0.165, 1), opacity 2.5s ease-out';
                 container.appendChild(icon);
+
+                void icon.offsetWidth;
+
+                const randomX = (Math.random() - 0.5) * 160; 
+                const randomY = Math.random() * 280 + 320; 
+                const randomRotate = (Math.random() - 0.5) * 90;
+
+                icon.style.transform = `translate(${randomX}px, -${randomY}px) scale(${Math.random() * 0.4 + 1.4}) rotate(${randomRotate}deg)`;
+                icon.style.opacity = '0';
 
                 setTimeout(() => {
                     if (icon.parentNode) icon.parentNode.removeChild(icon);
-                }, 1800);
+                }, 2600);
             }
 
             document.getElementById('like-btn-footer').addEventListener('click', () => {
-                createFloatingIcon('fas fa-heart', '#ff3b30', 'heart');
+                createFloatingIcon('fas fa-heart', '#ff3b30');
                 if(currentActiveRoomId) {
                     push(ref(db, `audio_rooms/${currentActiveRoomId}/reactions`), { type: 'heart', timestamp: serverTimestamp() });
                 }
             });
 
             document.getElementById('fire-btn-footer').addEventListener('click', () => {
-                createFloatingIcon('fas fa-fire', '#ff9500', 'fire');
+                createFloatingIcon('fas fa-fire', '#ff9500');
                 if(currentActiveRoomId) {
                     push(ref(db, `audio_rooms/${currentActiveRoomId}/reactions`), { type: 'fire', timestamp: serverTimestamp() });
-                }
-            });
-
-            // LOCAL STORAGE MUSIC STREAMING
-            let audioCtx = null;
-            let audioDestination = null;
-            let micNode = null;
-            let musicSourceNode = null;
-
-            window.playLocalMusicStream = function(file) {
-                const url = URL.createObjectURL(file);
-                let musicPlayer = document.getElementById('local-music-player');
-                if(!musicPlayer) {
-                    musicPlayer = document.createElement('audio');
-                    musicPlayer.id = 'local-music-player';
-                    musicPlayer.controls = true;
-                    musicPlayer.style.position = 'absolute';
-                    musicPlayer.style.bottom = '10px';
-                    musicPlayer.style.left = '10px';
-                    musicPlayer.style.zIndex = '9999';
-                    musicPlayer.style.background = '#000';
-                    musicPlayer.style.borderRadius = '10px';
-                    musicPlayer.style.padding = '5px';
-                    
-                    const closeMusicBtn = document.createElement('span');
-                    closeMusicBtn.innerText = ' ✕ ';
-                    closeMusicBtn.style.color = 'red';
-                    closeMusicBtn.style.cursor = 'pointer';
-                    closeMusicBtn.style.marginLeft = '10px';
-                    closeMusicBtn.onclick = () => {
-                        musicPlayer.pause();
-                        musicPlayer.remove();
-                    };
-                    document.body.appendChild(musicPlayer);
-                }
-                musicPlayer.src = url;
-                musicPlayer.play();
-
-                if (roomLocalStream) {
-                    try {
-                        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                        audioDestination = audioCtx.createMediaStreamDestination();
-                        
-                        if (roomLocalStream.getAudioTracks().length > 0) {
-                            micNode = audioCtx.createMediaStreamSource(new MediaStream([roomLocalStream.getAudioTracks()[0]]));
-                            micNode.connect(audioDestination);
-                        }
-                        
-                        musicSourceNode = audioCtx.createMediaElementSource(musicPlayer);
-                        musicSourceNode.connect(audioCtx.destination); 
-                        musicSourceNode.connect(audioDestination); 
-                        
-                        const mixedTrack = audioDestination.stream.getAudioTracks()[0];
-                        Object.values(roomPeers).forEach(pc => {
-                            const senders = pc.getSenders();
-                            const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
-                            if (audioSender) {
-                                audioSender.replaceTrack(mixedTrack);
-                            }
-                        });
-                        showToast("Playing music to room!");
-                    } catch(e) {
-                        console.error(e);
-                        showToast("Music playing locally. Browser constraint detected.");
-                    }
-                }
-            };
-
-            document.getElementById('menu-local-music-btn').addEventListener('click', () => {
-                closeModal();
-                if(mySeatIndex === -1) {
-                    showToast("You must join a seat to stream music to the room!");
-                    return;
-                }
-                document.getElementById('local-music-input').click();
-            });
-
-            document.getElementById('local-music-input').addEventListener('change', (e) => {
-                if(e.target.files[0]) {
-                    window.playLocalMusicStream(e.target.files[0]);
                 }
             });
 
@@ -1824,7 +1839,7 @@
                             if(seatCount > 0) {
                                 joinedHTML = `
                                 <div class="room-row-avatars">
-                                    <img src="${roomData.hostAvatar || 'https://via.placeholder.com/150'}" style="border-radius: 50% !important;">
+                                    <img src="${roomData.hostAvatar || 'https://via.placeholder.com/150'}">
                                     <span>+${seatCount} joined</span>
                                 </div>`;
                             }
@@ -1839,7 +1854,7 @@
                             roomCard.innerHTML = `
                                 <div class="room-list-img">
                                     <span class="live-badge">+ LIVE</span>
-                                    <img src="${roomData.hostAvatar || 'https://via.placeholder.com/150'}" style="border-radius: 50% !important;">
+                                    <img src="${roomData.hostAvatar || 'https://via.placeholder.com/150'}">
                                 </div>
                                 <div class="room-list-info">
                                     <h4>${roomData.name} ${roomData.fee > 0 ? `<i class="fas fa-gem" style="color:#d97706; font-size: 0.8em; margin-left: 5px;"></i>${roomData.fee}` : ''}</h4>
@@ -1877,30 +1892,19 @@
                         currentActiveRoomId = roomId;
                         document.getElementById('live-room-title').innerText = roomTitle;
                         if(hostAvatar) {
-                            document.getElementById('rv_hostImage').innerHTML = `<img src="${hostAvatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50% !important;">`;
+                            document.getElementById('rv_hostImage').innerHTML = `<img src="${hostAvatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50% !important; aspect-ratio:1/1;">`;
                         }
 
                         lobbyScreen.style.display = 'none';
                         liveRoomScreen.style.display = 'flex';
 
-                        // Write to viewers tracking node
-                        const viewerRef = ref(db, `audio_rooms/${roomId}/viewers/${currentUser}`);
-                        set(viewerRef, {
-                            name: currentUser,
-                            avatar: currentAvatar,
-                            equippedSticker: myEquippedSticker || ""
-                        });
-                        onDisconnect(viewerRef).remove();
-
-                        // Entry Listener for Pop-ups instead of standard chats
-                        if(viewersListenerUnsubscribe) viewersListenerUnsubscribe();
-                        viewersListenerUnsubscribe = onChildAdded(ref(db, `audio_rooms/${roomId}/viewers`), (snap) => {
-                            const data = snap.val();
-                            if(data && data.name) {
-                                if(data.equippedSticker) {
-                                    window.triggerEntryStickerAnimation(data.equippedSticker, data.name);
-                                } else {
-                                    window.triggerEntryStickerAnimation("https://api.dicebear.com/7.x/shapes/svg?seed=" + data.name, data.name);
+                        // Check if the current room has been deleted/deconstructed entirely
+                        if(roomDeconstructedListener) roomDeconstructedListener();
+                        roomDeconstructedListener = onValue(ref(db, `audio_rooms/${roomId}`), (roomSnap) => {
+                            if (!roomSnap.exists()) {
+                                if (currentActiveRoomId === roomId) {
+                                    showToast("This room was deleted and ended by the host.");
+                                    leaveCurrentRoom();
                                 }
                             }
                         });
@@ -1914,6 +1918,14 @@
                             }
                         });
 
+                        // Listen to dynamic live changes in title & bio
+                        onValue(ref(db, `audio_rooms/${roomId}/bio`), (snap) => {
+                            document.getElementById('live-room-bio').innerText = snap.val() || "No description set.";
+                        });
+                        onValue(ref(db, `audio_rooms/${roomId}/name`), (snap) => {
+                            document.getElementById('live-room-title').innerText = snap.val() || "Zingoo Room";
+                        });
+
                         if(bgListener) bgListener();
                         bgListener = onValue(ref(db, `audio_rooms/${roomId}/backgroundUrl`), (snap) => {
                             const bgUrl = snap.val();
@@ -1924,9 +1936,11 @@
                         get(ref(db, `audio_rooms/${roomId}/host`)).then(hostSnap => {
                             currentRoomHost = hostSnap.val();
                             
-                            // Adjust Edit and Manage Option Visibility based on Host Status
-                            document.getElementById('menu-manage-users-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
-                            document.getElementById('menu-edit-room-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
+                            // Adjust Manage Users Option & Delete / Edit Option Visibility based on Host Status
+                            const isHost = currentRoomHost === currentUser;
+                            document.getElementById('menu-manage-users-btn').style.display = isHost ? 'flex' : 'none';
+                            document.getElementById('menu-edit-room-btn').style.display = isHost ? 'flex' : 'none';
+                            document.getElementById('menu-delete-room-btn').style.display = isHost ? 'flex' : 'none';
 
                             if (unsubscribeMedia) unsubscribeMedia();
                             unsubscribeMedia = onValue(ref(db, `audio_rooms/${roomId}/media`), (snap) => {
@@ -1949,19 +1963,14 @@
                             });
                         });
 
-                        // Room bio listener
-                        onValue(ref(db, `audio_rooms/${roomId}/bio`), (snap) => {
-                            document.getElementById('live-room-bio').innerText = snap.val() || "No bio set";
-                        });
-
                         // Live Reactions Listener
                         if(unsubscribeReactions) unsubscribeReactions();
                         unsubscribeReactions = onChildAdded(ref(db, `audio_rooms/${roomId}/reactions`), (snap) => {
                             const data = snap.val();
                             remove(ref(db, `audio_rooms/${roomId}/reactions/${snap.key}`)); // Delete instantly
                             if(data) {
-                                if(data.type === 'heart') createFloatingIcon('fas fa-heart', '#ff3b30', 'heart');
-                                if(data.type === 'fire') createFloatingIcon('fas fa-fire', '#ff9500', 'fire');
+                                if(data.type === 'heart') createFloatingIcon('fas fa-heart', '#ff3b30');
+                                if(data.type === 'fire') createFloatingIcon('fas fa-fire', '#ff9500');
                             }
                         });
 
@@ -1980,28 +1989,47 @@
                         unsubscribeChat = onChildAdded(chatRef, (snapshot) => {
                             const msgData = snapshot.val();
                             if(msgData) {
-                                const msgDiv = document.createElement('div');
-                                if(msgData.isSystem) {
-                                    msgDiv.className = 'sys-message';
-                                    msgDiv.innerHTML = `${msgData.user} ${msgData.text}`;
-                                } else {
-                                    msgDiv.className = 'user-message';
-                                    if (msgData.giftUrl) {
-                                        msgDiv.innerHTML = `
-                                            <div class="msg-avatar" style="${msgData.user === currentUser ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
-                                            <div class="msg-content" style="background: linear-gradient(135deg, rgba(255,0,76,0.5), rgba(255,59,107,0.5)); border: 1px solid var(--hot-pink);">
-                                                <div class="msg-name">${msgData.user}</div>
-                                                <div class="msg-text">Sent a gift! <img src="${msgData.giftUrl}" style="width:25px; vertical-align:middle; margin-left:5px;"></div>
-                                            </div>`;
-                                        triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
+                                // If system entrance message (seat-taken / user joining)
+                                if (msgData.isSystem) {
+                                    const banner = document.getElementById('entry-popup-banner');
+                                    const nameEl = document.getElementById('entry-banner-glowing-name');
+                                    const stickerEl = document.getElementById('entry-banner-sticker');
+
+                                    nameEl.innerText = `${msgData.user} Entered!`;
+                                    
+                                    // Condition: Only show entry sticker if purchased/equipped
+                                    if (msgData.stickerUrl) {
+                                        stickerEl.src = msgData.stickerUrl;
+                                        stickerEl.style.display = 'block';
                                     } else {
-                                        msgDiv.innerHTML = `
-                                            <div class="msg-avatar" style="${msgData.user === currentUser ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
-                                            <div class="msg-content">
-                                                <div class="msg-name">${msgData.user}</div>
-                                                <div class="msg-text">${msgData.text}</div>
-                                            </div>`;
+                                        stickerEl.style.display = 'none';
                                     }
+
+                                    banner.classList.add('active');
+                                    setTimeout(() => {
+                                        banner.classList.remove('active');
+                                    }, 4000);
+
+                                    return; // Strictly block appending system message inside normal chat logs
+                                }
+
+                                const msgDiv = document.createElement('div');
+                                msgDiv.className = 'user-message';
+                                if (msgData.giftUrl) {
+                                    msgDiv.innerHTML = `
+                                        <div class="msg-avatar" style="${msgData.user === currentUser ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
+                                        <div class="msg-content" style="background: linear-gradient(135deg, rgba(255,0,76,0.5), rgba(255,59,107,0.5)); border: 1px solid var(--hot-pink);">
+                                            <div class="msg-name">${msgData.user}</div>
+                                            <div class="msg-text">Sent a gift! <img src="${msgData.giftUrl}" style="width:25px; vertical-align:middle; margin-left:5px;"></div>
+                                        </div>`;
+                                    triggerGrandGiftAnimation(msgData.giftUrl, msgData.user);
+                                } else {
+                                    msgDiv.innerHTML = `
+                                        <div class="msg-avatar" style="${msgData.user === currentUser ? 'background:#ff5722' : 'background:#9c27b0'}">🧑</div>
+                                        <div class="msg-content">
+                                            <div class="msg-name">${msgData.user}</div>
+                                            <div class="msg-text">${msgData.text}</div>
+                                        </div>`;
                                 }
                                 chatContainer.appendChild(msgDiv);
                                 setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
@@ -2023,7 +2051,7 @@
                                 });
                             }
                         } else {
-                            alert(`Diamond nahi hai! Buy more diamonds?`);
+                            alert(`Dimond nahi hai! Home page me jake dimond buy kro.`);
                             window.redirectToDiamondStore(fee, fee * 5);
                         }
                     } else {
@@ -2070,10 +2098,10 @@
                         let iconHTML = seatInfo.iconUrl ? `<img src="${seatInfo.iconUrl}" class="custom-profile-icon" alt="Icon">` : '';
 
                         seatDiv.innerHTML = `
-                            <div class="seat-avatar" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')" style="border-radius: 50% !important;">
+                            <div class="seat-avatar" onclick="window.openUserProfile('${seatInfo.user}', '${seatInfo.avatar}')">
                                 ${chairHTML}
                                 ${frameHTML}
-                                <img src="${seatInfo.avatar}" style="width:100%; height:100%; border-radius:50% !important; object-fit:cover; position:relative; z-index:2;" onerror="this.src='https://via.placeholder.com/50'">
+                                <img src="${seatInfo.avatar}" style="width:100%; height:100%; border-radius:50% !important; object-fit:cover; position:relative; z-index:2; aspect-ratio: 1/1;" onerror="this.src='https://via.placeholder.com/50'">
                                 ${iconHTML}
                                 <div class="mic-icon-status ${seatInfo.isMuted ? 'muted' : ''}">
                                     <i class="fas ${seatInfo.isMuted ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
@@ -2086,7 +2114,7 @@
                     } else {
                         seatDiv.className = 'seat empty';
                         seatDiv.innerHTML = `
-                            <div class="seat-avatar" onclick="window.audioRoomAPI.takeSeat(${i})" style="border-radius: 50% !important;">🔒</div>
+                            <div class="seat-avatar" onclick="window.audioRoomAPI.takeSeat(${i})">🔒</div>
                             <span class="seat-name">..</span>
                         `;
                     }
@@ -2114,6 +2142,7 @@
                         push(ref(db, `audio_rooms/${currentActiveRoomId}/chats`), {
                             user: currentUser,
                             text: 'took a seat.',
+                            stickerUrl: myEquippedSticker || null,
                             timestamp: serverTimestamp(),
                             isSystem: true
                         });
@@ -2126,26 +2155,9 @@
                 }
             };
             
-            // ADMIN REMOVES ROOM ON LEAVE AUTHORITY
             function leaveCurrentRoom() {
-                if(currentRoomHost === currentUser) {
-                    if(confirm("You are the host. Leaving this room will end it and remove it for everyone. Do you want to proceed?")) {
-                        remove(ref(db, `audio_rooms/${currentActiveRoomId}`)).then(() => {
-                            executeLocalCleanup();
-                        });
-                        return;
-                    }
-                } else {
-                    executeLocalCleanup();
-                }
-            }
-
-            function executeLocalCleanup() {
                 if (mySeatIndex !== -1) {
                     window.audioRoomAPI.leaveSeat();
-                }
-                if (currentActiveRoomId) {
-                    remove(ref(db, `audio_rooms/${currentActiveRoomId}/viewers/${currentUser}`));
                 }
                 if (roomListener) { roomListener(); roomListener = null; }
                 if (unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
@@ -2153,7 +2165,7 @@
                 if (unsubscribeReactions) { unsubscribeReactions(); unsubscribeReactions = null; }
                 if (bgListener) { bgListener(); bgListener = null; }
                 if (banListenerUnsubscribe) { banListenerUnsubscribe(); banListenerUnsubscribe = null; }
-                if (viewersListenerUnsubscribe) { viewersListenerUnsubscribe(); viewersListenerUnsubscribe = null; }
+                if (roomDeconstructedListener) { roomDeconstructedListener(); roomDeconstructedListener = null; }
                 
                 stopRoomAudio();
                 
@@ -2224,7 +2236,7 @@
             
             document.getElementById('start-new-room-btn').addEventListener('click', () => {
                 const topic = document.getElementById('new-room-topic').value.trim() || `${currentUser}'s Room`;
-                const bio = document.getElementById('new-room-bio').value.trim() || 'Welcome to my room!';
+                const bio = document.getElementById('new-room-bio').value.trim() || 'Chill Vibes Only';
                 const fee = parseInt(document.getElementById('new-room-fee').value) || 0;
                 
                 const newRoomRef = push(ref(db, 'audio_rooms'));
@@ -2255,13 +2267,17 @@
             
             // Adjust UI for Host
             document.getElementById('header-more-btn').addEventListener('click', () => {
-                document.getElementById('menu-manage-users-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
-                document.getElementById('menu-edit-room-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
+                const isHost = currentRoomHost === currentUser;
+                document.getElementById('menu-manage-users-btn').style.display = isHost ? 'flex' : 'none';
+                document.getElementById('menu-edit-room-btn').style.display = isHost ? 'flex' : 'none';
+                document.getElementById('menu-delete-room-btn').style.display = isHost ? 'flex' : 'none';
                 openModal('footer-action-modal');
             });
             document.getElementById('bottom-more-btn').addEventListener('click', () => {
-                document.getElementById('menu-manage-users-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
-                document.getElementById('menu-edit-room-btn').style.display = (currentRoomHost === currentUser) ? 'flex' : 'none';
+                const isHost = currentRoomHost === currentUser;
+                document.getElementById('menu-manage-users-btn').style.display = isHost ? 'flex' : 'none';
+                document.getElementById('menu-edit-room-btn').style.display = isHost ? 'flex' : 'none';
+                document.getElementById('menu-delete-room-btn').style.display = isHost ? 'flex' : 'none';
                 openModal('footer-action-modal');
             });
 
@@ -2285,7 +2301,7 @@
                                 list.innerHTML += `
                                     <div class="manage-user-card">
                                         <div class="manage-user-info">
-                                            <img src="${seatData.avatar}" style="border-radius: 50% !important;">
+                                            <img src="${seatData.avatar}">
                                             <span>${seatData.user}</span>
                                         </div>
                                         <div class="manage-user-actions">
@@ -2304,39 +2320,6 @@
                 });
             });
 
-            // EDIT ROOM DETAILS TRIGGER (HOST ONLY)
-            document.getElementById('menu-edit-room-btn').addEventListener('click', () => {
-                closeModal();
-                if(currentActiveRoomId && currentRoomHost === currentUser) {
-                    get(ref(db, `audio_rooms/${currentActiveRoomId}`)).then(snap => {
-                        const data = snap.val();
-                        if(data) {
-                            document.getElementById('edit-room-topic').value = data.name || '';
-                            document.getElementById('edit-room-bio-input').value = data.bio || '';
-                            openModal('edit-room-modal');
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('save-room-details-btn').addEventListener('click', () => {
-                const topic = document.getElementById('edit-room-topic').value.trim();
-                const bio = document.getElementById('edit-room-bio-input').value.trim();
-                if(!topic) { showToast("Room Topic cannot be empty!"); return; }
-                
-                if(currentActiveRoomId && currentRoomHost === currentUser) {
-                    update(ref(db, `audio_rooms/${currentActiveRoomId}`), {
-                        name: topic,
-                        bio: bio
-                    }).then(() => {
-                        showToast("Room details updated successfully!");
-                        document.getElementById('live-room-title').innerText = topic;
-                        document.getElementById('live-room-bio').innerText = bio || "No bio set";
-                        closeModal();
-                    });
-                }
-            });
-
             window.hostToggleMute = function(seatIndex, muteStatus) {
                 if(currentActiveRoomId && currentRoomHost === currentUser) {
                     set(ref(db, `audio_rooms/${currentActiveRoomId}/seats/${seatIndex}/isMuted`), muteStatus);
@@ -2353,6 +2336,50 @@
                     closeModal();
                 }
             };
+
+            // Room Info Live editing by Host
+            document.getElementById('menu-edit-room-btn').addEventListener('click', () => {
+                closeModal();
+                if (currentActiveRoomId && currentRoomHost === currentUser) {
+                    get(ref(db, `audio_rooms/${currentActiveRoomId}`)).then(snap => {
+                        const roomData = snap.val();
+                        if (roomData) {
+                            document.getElementById('edit-room-topic').value = roomData.name || '';
+                            document.getElementById('edit-room-bio').value = roomData.bio || '';
+                            openModal('edit-room-modal');
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('save-room-details-btn').addEventListener('click', () => {
+                const newTopic = document.getElementById('edit-room-topic').value.trim();
+                const newBio = document.getElementById('edit-room-bio').value.trim();
+                if (newTopic && currentActiveRoomId) {
+                    update(ref(db, `audio_rooms/${currentActiveRoomId}`), {
+                        name: newTopic,
+                        bio: newBio
+                    }).then(() => {
+                        showToast("Room details updated!");
+                        closeModal();
+                    });
+                } else {
+                    showToast("Please enter a valid topic name!");
+                }
+            });
+
+            // Delete / End Room completely (Host Authority)
+            document.getElementById('menu-delete-room-btn').addEventListener('click', () => {
+                closeModal();
+                if (currentActiveRoomId && currentRoomHost === currentUser) {
+                    if (confirm("Are you sure you want to end and delete this room permanently?")) {
+                        remove(ref(db, `audio_rooms/${currentActiveRoomId}`)).then(() => {
+                            showToast("Room deleted successfully.");
+                            leaveCurrentRoom();
+                        });
+                    }
+                }
+            });
 
             document.getElementById('menu-hand-btn').addEventListener('click', () => {
                 showToast("You raised your hand! ✋");
