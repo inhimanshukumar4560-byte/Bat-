@@ -162,6 +162,19 @@
 </head>
 <body class="bg-zingoo-bg text-gray-900 relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
 
+<!-- Custom Alert Modal -->
+<div id="custom-alert-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[15000] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl border border-gray-100 transform transition-all scale-95 duration-200">
+        <span class="material-symbols-outlined text-red-500 text-[48px] mb-3">error</span>
+        <h3 class="text-lg font-extrabold text-gray-900 mb-2">Notification</h3>
+        <p id="custom-alert-text" class="text-sm text-gray-600 mb-6">Alert message goes here...</p>
+        <div class="flex gap-3">
+            <button onclick="closeCustomAlert()" class="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-full text-sm hover:bg-gray-200 transition">OK</button>
+            <button onclick="goToDiamondStore()" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-full text-sm shadow-md hover:opacity-90 transition">Buy Diamonds</button>
+        </div>
+    </div>
+</div>
+
 <!-- Floating AI Assistant -->
 <a href="https://komal-ai-assistant-gf.vercel.app/" class="fixed top-[45%] right-3 z-[8000] w-14 h-14 rounded-full overflow-hidden border-2 border-pink-500 shadow-lg hover:scale-105 transition-transform bg-white flex items-center justify-center cursor-pointer float-bounce" target="_blank" style="text-decoration:none;">
     <img src="https://i.ibb.co/jZMn0XTt/file-00000000da7071fab9612db9b848e392.png" alt="AI Assistant" class="w-full h-full object-cover">
@@ -201,8 +214,8 @@
             <div id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full hidden items-center justify-center border border-white z-10">0</div>
         </div>
 
-        <!-- Buy Diamonds Widget (Balance numeric value hidden in main header per user request) -->
-        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0" onclick="document.getElementById('diamond-store-overlay').style.display='flex'">
+        <!-- Buy Diamonds Widget -->
+        <div id="buy-diamonds-trigger" class="flex items-center gap-1 bg-purple-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-purple-200 transition shadow-sm border border-purple-200 shrink-0" onclick="openDiamondStore()">
             <span class="material-symbols-outlined text-purple-600 text-[18px]">diamond</span>
             <span class="text-xs font-bold text-purple-800">Buy</span>
             <span class="material-symbols-outlined text-purple-600 text-[13px]">add_circle</span>
@@ -400,7 +413,10 @@
                         <span id="profile-header-id">ID: 00000000</span>
                         <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="alert('ID Copied')">content_copy</span>
                     </p>
-                    <p class="text-xs text-white/90 mt-2 leading-tight">Welcome to Zingoo 🎙️<br>Let's connect and vibe together! ✨</p>
+                    <p class="text-xs text-white/90 mt-2 leading-tight">
+                        Welcome to Zingoo 🎙️<br>
+                        <span id="profile-header-bio" class="italic text-yellow-300">Let's connect and vibe together! ✨</span>
+                    </p>
                 </div>
             </div>
 
@@ -413,15 +429,15 @@
         </div>
     </div>
 
-    <!-- Quick Stats Bar -->
+    <!-- Quick Stats Bar (Following Clickable to Open Following List) -->
     <div class="flex justify-between px-6 py-4 bg-white shadow-[0_4px_10px_rgba(0,0,0,0.03)] border-b border-gray-100 rounded-b-xl -mt-2 relative z-20 mx-2">
         <div class="text-center w-1/2 border-r border-gray-100">
             <div class="font-bold text-xl text-gray-900 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-red-500 text-[20px]">group</span> <span id="profile-followers-count">0</span></div>
             <div class="text-[11px] text-gray-500 font-medium mt-0.5">Followers</div>
         </div>
-        <div class="text-center w-1/2">
+        <div class="text-center w-1/2 cursor-pointer hover:bg-gray-50 transition-colors" onclick="openFollowingList()">
             <div class="font-bold text-xl text-gray-900 flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-purple-500 text-[20px]">person_add</span> <span id="profile-following-count">0</span></div>
-            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Following</div>
+            <div class="text-[11px] text-gray-500 font-medium mt-0.5">Following (Tap to view)</div>
         </div>
     </div>
 
@@ -440,7 +456,7 @@
 
     <!-- Diamond Box -->
     <div class="px-4 py-2">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer" onclick="document.getElementById('buy-diamonds-trigger').click()">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center justify-between cursor-pointer" onclick="openDiamondStore()">
             <div class="flex items-center gap-3">
                 <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-purple-600 text-[28px]">diamond</span>
@@ -534,7 +550,7 @@
             </div>
             
             <!-- Video Upload Box -->
-            <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-xl p-3 shadow-[0_5px_15px_rgba(255,0,76,0.3)] border-none flex flex-col items-center justify-center cursor-pointer transform hover:scale-105 transition-transform animate-[pulse_2s_ease-in-out_infinite]" onclick="document.getElementById('manage-profile-overlay').style.display='none'; openUploadOverlay();">
+            <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-xl p-3 shadow-[0_5px_15px_rgba(255,0,76,0.3)] border-none flex flex-col items-center justify-center cursor-pointer transform hover:scale-105 transition-transform" onclick="document.getElementById('manage-profile-overlay').style.display='none'; openUploadOverlay();">
                 <span class="material-symbols-outlined text-white text-[32px] mb-1 drop-shadow-md">video_call</span>
                 <span class="text-[11px] font-bold text-white block leading-tight drop-shadow-sm">Upload</span>
                 <span class="text-[9px] text-white/90 block leading-tight mt-0.5 font-medium">Be a Creator</span>
@@ -572,7 +588,7 @@
                 <span class="material-symbols-outlined text-gray-400">chevron_right</span>
             </div>
             
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="document.getElementById('buy-diamonds-trigger').click()">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="openDiamondStore()">
                 <div class="flex items-center gap-3">
                     <div class="bg-purple-50 text-purple-500 w-10 h-10 rounded-lg flex items-center justify-center">
                         <span class="material-symbols-outlined">diamond</span>
@@ -637,12 +653,12 @@
     </div>
 </div>
 
-<!-- ================= DIAMOND STORE OVERLAY (1 INR = 2 Diamonds Integrated) ================= -->
-<div id="diamond-store-overlay" class="fixed inset-0 bg-[#070816] z-[9500] hidden flex-col items-center overflow-y-auto no-scrollbar pb-32">
+<!-- ================= DIAMOND STORE OVERLAY (Bottom Nav Hidden Completely) ================= -->
+<div id="diamond-store-overlay" class="fixed inset-0 bg-[#070816] z-[12000] hidden flex-col items-center overflow-y-auto no-scrollbar pb-12">
     <div class="w-full max-w-[414px] bg-[#07081a] min-h-screen px-4 py-4 text-white shadow-xl">
         <!-- Header -->
         <div class="flex items-center justify-between mb-5 pt-2">
-            <button class="text-2xl text-white font-bold bg-transparent border-none outline-none cursor-pointer" onclick="document.getElementById('diamond-store-overlay').style.display='none'">&#8592;</button>
+            <button class="text-2xl text-white font-bold bg-transparent border-none outline-none cursor-pointer text-left" onclick="closeDiamondStore()">&#8592;</button>
             <div class="text-[18px] font-black uppercase tracking-wider text-white">Diamond Store</div>
             <div class="bg-[#1a1c38] border border-blue-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold text-white text-sm">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="#00d2ff"><path d="M12 2L2 9l10 13L22 9l-10-7zm0 2.5l6.5 4.5h-13L12 4.5zM4.5 10.5h15L12 20.5l-7.5-10z"/></svg>
@@ -932,7 +948,7 @@
             </div>
 
             <!-- Complete Indian States Dropdown -->
-            <div class="relative w-full mb-6">
+            <div class="relative w-full">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">map</span>
                 <select id="auth-state" class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium appearance-none">
                     <option value="" disabled selected class="text-gray-400">Select State *</option>
@@ -964,15 +980,13 @@
                     <option value="Uttar Pradesh">Uttar Pradesh</option>
                     <option value="Uttarakhand">Uttarakhand</option>
                     <option value="West Bengal">West Bengal</option>
-                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                    <option value="Ladakh">Ladakh</option>
-                    <option value="Lakshadweep">Lakshadweep</option>
-                    <option value="Puducherry">Puducherry</option>
                 </select>
+            </div>
+
+            <!-- Bio & Call Timings Field -->
+            <div class="relative w-full mb-6">
+                <span class="material-symbols-outlined absolute left-4 top-3 text-gray-400">info</span>
+                <textarea id="auth-bio" placeholder="About Me / Best Call Timing (e.g., Free daily after 8 PM) ..." class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-gray-900 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 text-left font-medium text-sm h-20 resize-none"></textarea>
             </div>
         </div>
         <button id="btn-create-profile" class="w-full mt-4 py-4 rounded-full btn-red-gradient text-white font-bold tracking-wider shadow-lg">
@@ -990,6 +1004,17 @@
         </div>
     </div>
     <div id="recent-chats-container" class="flex-1 overflow-y-auto p-2 no-scrollbar bg-gray-50"></div>
+</div>
+
+<!-- FOLLOWING LIST OVERLAY -->
+<div id="following-list-overlay" class="fixed inset-0 bg-white z-[9800] flex-col hidden overflow-hidden transition-all duration-300">
+    <div class="bg-white px-4 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <button class="text-gray-700 hover:text-black" onclick="document.getElementById('following-list-overlay').style.display='none'; document.getElementById('manage-profile-overlay').style.display='flex';"><span class="material-symbols-outlined">arrow_back</span></button>
+            <h3 class="text-gray-900 font-bold text-lg">Following</h3>
+        </div>
+    </div>
+    <div id="following-users-container" class="flex-1 overflow-y-auto p-2 no-scrollbar bg-gray-50 flex flex-col gap-2"></div>
 </div>
 
 <!-- PRIVATE CHAT OVERLAY -->
@@ -1028,6 +1053,8 @@
         </button>
         <div class="absolute bottom-0 w-full p-6 flex flex-col gap-4 z-20">
             <h2 id="quick-profile-name" class="text-white font-bold text-2xl flex items-center gap-2">Name</h2>
+            <!-- Bio & Call Timings displayed here -->
+            <p id="quick-profile-bio" class="text-white/80 text-xs italic leading-tight mt-[-8px] border-l-2 border-red-500 pl-2">Available after 7 PM</p>
             <div class="flex justify-between items-center gap-3 mt-2">
                 <button id="quick-btn-chat" class="flex-1 bg-white/20 backdrop-blur border border-white/30 rounded-xl py-3 flex flex-col items-center justify-center text-white hover:bg-white/30 transition-colors">
                     <span class="material-symbols-outlined mb-1">chat</span><span class="text-[10px] font-bold">Chat</span>
@@ -1105,7 +1132,7 @@
             <button class="text-white drop-shadow-lg mt-1"><span class="material-symbols-outlined text-[30px]">search</span></button>
         </div>
 
-        <!-- Horizontal Category/Feed Filter Bar (Shorts vs Longs decision) -->
+        <!-- Horizontal Category/Feed Filter Bar -->
         <div class="flex gap-2 overflow-x-auto no-scrollbar py-2 shrink-0">
             <button onclick="filterVideoFeed('all')" id="vf-btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm flex-shrink-0 transition active:scale-95">All Feed</button>
             <button onclick="filterVideoFeed('premium')" id="vf-btn-premium" class="px-4 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white shadow-sm flex-shrink-0 transition active:scale-95 flex items-center gap-1">💎 Premium (Paid)</button>
@@ -1131,7 +1158,7 @@
     <div id="video-player-container" class="w-full h-full flex items-center justify-center bg-black"></div>
 </div>
 
-<!-- ================= REDESIGNED CREATOR STUDIO & UPLOAD VIDEO ================= -->
+<!-- ================= CREATOR STUDIO & UPLOAD VIDEO ================= -->
 <div id="upload-video-overlay" class="fixed inset-0 bg-white z-[10000] flex flex-col hidden overflow-hidden">
     
     <!-- Header of Creator Studio -->
@@ -1192,7 +1219,7 @@
                 <button id="src-btn-link" class="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold" onclick="toggleUploadSource('link')">YouTube Link</button>
             </div>
             
-            <!-- Price selector for premium uploads (Cloudinary upload requires minimum 100 diamonds) -->
+            <!-- Price selector for premium uploads -->
             <div id="cloudinary-price-container" class="mb-3">
                 <label class="block text-xs font-bold text-gray-600 mb-1">Set Access Price (Minimum 💎 100)</label>
                 <input type="number" id="upload-price" value="100" min="100" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-purple-700 focus:ring-1 focus:ring-red-500 focus:outline-none">
@@ -1339,8 +1366,24 @@
 
   window.goToDiamondStore = function() {
       closeCustomAlert();
-      document.getElementById('buy-diamonds-trigger').click();
+      openDiamondStore();
   }
+
+  // --- DIAMOND STORE NAV FIX HANDLERS ---
+  window.openDiamondStore = function() {
+      document.getElementById('diamond-store-overlay').style.display = 'flex';
+      document.getElementById('bottom-nav').style.display = 'none'; 
+  };
+
+  window.closeDiamondStore = function() {
+      document.getElementById('diamond-store-overlay').style.display = 'none';
+      if (document.getElementById('manage-profile-overlay').style.display !== 'flex' &&
+          document.getElementById('video-feed-overlay').style.display !== 'flex' &&
+          document.getElementById('chat-overlay').style.display !== 'flex' &&
+          document.getElementById('see-all-overlay').style.display !== 'flex') {
+          document.getElementById('bottom-nav').style.display = 'flex'; 
+      }
+  };
 
   // --- FCM TOKEN REGISTRATION ---
   function setupFCMToken() {
@@ -1412,7 +1455,7 @@
   window.addEventListener('load', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if(urlParams.get('action') === 'buy_diamonds' && currentUser) {
-          document.getElementById('diamond-store-overlay').style.display = 'flex';
+          openDiamondStore();
       }
   });
 
@@ -1525,6 +1568,63 @@
       return num;
   }
 
+  // --- FOLLOWING LIST VIEW ---
+  window.openFollowingList = function() {
+      if(!currentUser) return;
+      document.getElementById('manage-profile-overlay').style.display = 'none';
+      const overlay = document.getElementById('following-list-overlay');
+      overlay.style.display = 'flex';
+      
+      const container = document.getElementById('following-users-container');
+      container.innerHTML = '<p class="text-center text-gray-400 py-10 text-sm">Loading following list...</p>';
+      
+      get(ref(db, `following/${currentUser}`)).then((snap) => {
+          container.innerHTML = '';
+          if(snap.exists()) {
+              const followingKeys = Object.keys(snap.val());
+              if(followingKeys.length === 0) {
+                  container.innerHTML = '<p class="text-center text-gray-400 py-10 text-sm">You are not following anyone yet.</p>';
+                  return;
+              }
+              followingKeys.forEach((followedUser) => {
+                  const avatar = (allUsersData[followedUser] ? allUsersData[followedUser].avatar : null) || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + followedUser;
+                  container.insertAdjacentHTML('beforeend', `
+                      <div class="flex items-center justify-between p-3 border-b border-gray-100 bg-white rounded-xl mb-2 shadow-sm">
+                          <div class="flex items-center gap-3 cursor-pointer animate-fade-up" onclick="openChatWith('${followedUser}', '${avatar}'); document.getElementById('following-list-overlay').style.display='none';">
+                              <img src="${avatar}" class="w-12 h-12 rounded-full border border-gray-200 object-cover shrink-0">
+                              <div class="min-w-0">
+                                  <h4 class="text-gray-900 font-bold text-[15px] truncate">${followedUser}</h4>
+                                  <p class="text-[10px] text-green-500">Tap to chat</p>
+                              </div>
+                          </div>
+                          <button onclick="toggleFollow('${followedUser}'); setTimeout(openFollowingList, 300);" class="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-full border border-red-100 hover:bg-red-100 transition-colors">
+                              Unfollow
+                          </button>
+                      </div>
+                  `);
+              });
+          } else {
+              container.innerHTML = '<p class="text-center text-gray-400 py-10 text-sm">You are not following anyone yet.</p>';
+          }
+      });
+  };
+
+  // --- GOLDEN PROFILE VIP REQUESTS SCRIPT ---
+  window.requestGoldenProfile = function() {
+      if(!currentUser) { showCustomAlert("Please login first!"); return; }
+      const requestRef = ref(db, 'golden_requests/' + currentUser);
+      set(requestRef, {
+          name: currentUser,
+          avatar: currentAvatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + currentUser,
+          timestamp: Date.now(),
+          status: 'pending'
+      }).then(() => {
+          alert("Golden Profile Request submitted successfully! Approval status will be verified by the system administrator.");
+      }).catch(err => {
+          alert("Failed to submit request.");
+      });
+  };
+
   // --- DIAMONDS AND SERVICES ---
   window.updateServiceStatus = function(service, isActive) {
       if(!currentUser) return;
@@ -1541,6 +1641,26 @@
               const diamonds = data.diamonds || 0;
               localStorage.setItem('zingoo_diamonds', diamonds);
               updateDiamondDisplay();
+
+              // Handle Golden Profile Verified status visual feedback
+              if (data.golden === true) {
+                  document.getElementById('profile-header-name-text').innerHTML = `${currentUser} <span class="text-yellow-400 align-middle inline-block ml-1" title="Golden VIP Profile"><span class="material-symbols-outlined text-[20px] text-yellow-400">crown</span></span>`;
+                  const goldenBtn = document.querySelector('[onclick="requestGoldenProfile()"]');
+                  if (goldenBtn) {
+                      goldenBtn.innerHTML = `<span class="material-symbols-outlined text-[14px] text-yellow-400">workspace_premium</span> Golden VIP Active`;
+                      goldenBtn.onclick = null;
+                      goldenBtn.className = "border border-yellow-400 bg-yellow-400/10 text-yellow-400 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1 cursor-default shadow-sm";
+                  }
+              } else {
+                  document.getElementById('profile-header-name-text').innerText = currentUser;
+              }
+
+              // Display Bio Information
+              if (data.bio) {
+                  document.getElementById('profile-header-bio').innerText = data.bio;
+              } else {
+                  document.getElementById('profile-header-bio').innerText = "Let's connect and vibe together! ✨";
+              }
 
               const svcs = data.services || { video: true, audio: true, chat: true };
               const vToggle = document.getElementById('toggle-video-call');
@@ -1566,29 +1686,40 @@
       if(storeDisplayEl2) storeDisplayEl2.innerText = parseInt(balance).toLocaleString();
   }
 
-  // --- Call Billing Logic ---
+  // --- Real-time Billing (Deducted from Caller, Transferred to Receiver) ---
   let callInterval;
-  function startCallBilling(costPerMin) {
-      deductDiamondsForCall(costPerMin); 
+  function startCallBilling(costPerMin, partnerUser) {
+      deductAndTransferDiamonds(costPerMin, partnerUser); 
       callInterval = setInterval(() => {
           let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
           if(currentDiamonds < costPerMin) {
               showCustomAlert("Insufficient diamonds. Call ended automatically.");
               stopWebRTC();
           } else {
-              deductDiamondsForCall(costPerMin);
+              deductAndTransferDiamonds(costPerMin, partnerUser);
           }
       }, 60000); 
   }
   function stopCallBilling() {
       if(callInterval) clearInterval(callInterval);
   }
-  function deductDiamondsForCall(amount) {
+  function deductAndTransferDiamonds(amount, partner) {
       let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
+      if (currentDiamonds < amount) amount = currentDiamonds; // safe cap
       currentDiamonds -= amount;
       if(currentDiamonds < 0) currentDiamonds = 0;
       localStorage.setItem('zingoo_diamonds', currentDiamonds);
-      if(currentUser) update(ref(db, `users/${currentUser}`), { diamonds: currentDiamonds });
+      
+      if(currentUser) {
+          // Update caller's diamonds
+          update(ref(db, `users/${currentUser}`), { diamonds: currentDiamonds });
+          
+          // Add diamonds to receiver account
+          get(ref(db, `users/${partner}/diamonds`)).then((snap) => {
+              let partnerDiamonds = snap.val() || 0;
+              update(ref(db, `users/${partner}`), { diamonds: partnerDiamonds + amount });
+          });
+      }
       updateDiamondDisplay();
   }
 
@@ -1769,7 +1900,6 @@
       if(isHidden) {
           renderNotificationDropdownList();
           dropdown.classList.remove('hidden');
-          // Instantly delete notifications from Firebase database once user sees them
           if(currentUser) {
               remove(ref(db, `notifications/${currentUser}`));
           }
@@ -1790,7 +1920,6 @@
   let allUsersData = {};
   let currentGenderFilter = 'all';
 
-  // CUSTOM GENDER CHOOSE CATEGORY MODAL LOGIC (Image 3 design)
   window.openGenderModal = function() {
       document.getElementById('gender-modal').classList.remove('hidden');
       document.getElementById('gender-modal').classList.add('flex');
@@ -1830,7 +1959,6 @@
       }
   });
 
-  // Smooth flicker-free update list logic
   function renderUsers() {
       const usersListContainer = document.getElementById("real-users-list");
       const seeAllGridContainer = document.getElementById("see-all-grid");
@@ -1884,7 +2012,7 @@
                           <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-2">
                               <h4 class="text-white text-xs font-bold truncate flex items-center gap-1">
                                   <span class="user-name-span">${user.name}</span> 
-                                  <span class="verified-badge-span">${isGolden ? '<span class="material-symbols-outlined text-[12px] text-yellow-400">verified</span>' : ''}</span>
+                                  <span class="verified-badge-span">${isGolden ? '<span class="material-symbols-outlined text-[14px] text-yellow-400">verified</span>' : ''}</span>
                               </h4>
                           </div>
                       </div>
@@ -1895,8 +2023,11 @@
                   cardEl.addEventListener('click', (e) => {
                       const name = user.name;
                       const avatar = user.avatar;
+                      const partnerBio = allUsersData[name]?.bio || "Hi there! Let's connect on Zingoo! 🎙️";
+                      
                       document.getElementById('quick-profile-name').innerHTML = `${name} <div class="w-2.5 h-2.5 rounded-full inline-block ${allUsersData[name]?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} ml-1"></div>`;
                       document.getElementById('quick-profile-img').src = avatar;
+                      document.getElementById('quick-profile-bio').innerText = partnerBio;
                       
                       document.getElementById('quick-btn-follow').onclick = () => { toggleFollow(name); };
                       document.getElementById('quick-btn-chat').onclick = () => { document.getElementById('quick-profile-overlay').style.display='none'; openChatWith(name, avatar); };
@@ -1945,7 +2076,7 @@
               
               const nameColor = isGolden ? 'text-yellow-700' : 'text-gray-900';
               const goldenBadge = isGolden 
-                  ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">star</span> VIP</div>` 
+                  ? `<div class="absolute top-0 left-0 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-br-lg z-10 shadow-sm flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">crown</span> VIP</div>` 
                   : '';
 
               let gridCardEl = document.getElementById(gridCardId);
@@ -2048,7 +2179,7 @@
           onValue(ref(db, `${currentCallPath}/answer`), (snap) => { 
               if(snap.val()) {
                   peerConnection.setRemoteDescription(new RTCSessionDescription(snap.val())); 
-                  startCallBilling(costPerMin); 
+                  startCallBilling(costPerMin, targetUser); 
               }
           });
           onChildAdded(ref(db, `${currentCallPath}/candidates/callee`), (snap) => { if(snap.val()) peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())); });
@@ -2185,6 +2316,7 @@
       const phone = document.getElementById("auth-phone").value.trim();
       const gender = document.getElementById("auth-gender").value;
       const state = document.getElementById("auth-state").value;
+      const bio = document.getElementById("auth-bio").value.trim();
       
       if (!name || name === "undefined" || name === "null" || name.length < 2) {
           alert("Please enter a valid nickname (minimum 2 characters, no special characters).");
@@ -2215,7 +2347,7 @@
       const newId = currentId ? currentId : Math.floor(10000000 + Math.random() * 90000000).toString();
       
       set(ref(db, 'users/' + name), {
-          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, avatar: finalAvatar, diamonds: 250, status: 'online', golden: false, timestamp: serverTimestamp(),
+          name: name, id: newId, age: ageNum, phone: phone, gender: gender, state: state, bio: bio, avatar: finalAvatar, diamonds: 250, status: 'online', golden: false, timestamp: serverTimestamp(),
           services: { video: true, audio: true, chat: true }
       }).then(() => {
           localStorage.setItem("zingoo_user", name);
@@ -2281,13 +2413,14 @@
               document.getElementById("auth-phone").value = data.phone || "";
               document.getElementById("auth-gender").value = data.gender || "";
               document.getElementById("auth-state").value = data.state || "";
+              document.getElementById("auth-bio").value = data.bio || "";
           }
       });
       
       authOverlay.style.display = "flex";
   });
 
-  // --- WhatsApp Style Chats with Message State/Auto Delete Sync ---
+  // --- WhatsApp Style Chats ---
   let currentActiveChatId = null; let currentChatPartnerName = null;
 
   onValue(ref(db, 'recent_chats/' + currentUser), (snapshot) => {
@@ -2302,10 +2435,7 @@
                   <div class="flex-1 min-w-0"><h4 class="text-gray-900 font-bold text-[15px] truncate">${partner}</h4><p class="text-gray-500 text-[12px] truncate">${details.lastMessage}</p></div>
               </div>`);
               
-              // Delivery state background updates
               const chatId = [currentUser, partner].sort().join('_');
-              
-              // Perform a cleanup of messages older than 3 days
               cleanOldMessages(chatId);
 
               get(ref(db, `chats/${chatId}`)).then((chatSnap) => {
@@ -2337,7 +2467,6 @@
       document.getElementById('bottom-nav').style.display = 'none';
       document.getElementById("chat-overlay").style.display = "flex";
       
-      // Perform initial chat cleanups
       cleanOldMessages(currentActiveChatId);
 
       const chatMessages = document.getElementById("chat-messages");
@@ -2350,7 +2479,6 @@
                   const isSelf = msgData.user === currentUser;
                   const timeString = msgData.timestamp ? new Date(msgData.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
                   
-                  // Mark incoming unread messages as read
                   if (!isSelf && msgData.status !== "read") {
                       readUpdates[`chats/${currentActiveChatId}/${msgKey}/status`] = "read";
                   }
@@ -2366,14 +2494,14 @@
                       }
 
                       chatMessages.innerHTML += `
-                          <div class="wa-bubble-sent">
+                          <div class="wa-bubble-sent animate-fade-up">
                               <span class="text-[14px] leading-relaxed">${msgData.text}</span>
                               <span class="wa-timestamp flex justify-end items-center gap-0.5">${timeString} ${tickHTML}</span>
                           </div>
                       `;
                   } else {
                       chatMessages.innerHTML += `
-                          <div class="wa-bubble-received">
+                          <div class="wa-bubble-received animate-fade-up">
                               <span class="text-[14px] leading-relaxed">${msgData.text}</span>
                               <span class="wa-timestamp">${timeString}</span>
                           </div>
@@ -2406,7 +2534,7 @@
           let currentDiamonds = parseInt(localStorage.getItem('zingoo_diamonds') || '0');
           if(currentDiamonds < 4) { showCustomAlert("Insufficient Diamonds for Chat (💎 4/msg). Please recharge."); return; }
           
-          deductDiamondsForCall(4);
+          deductAndTransferDiamonds(4, currentChatPartnerName);
 
           get(ref(db, `users/${currentChatPartnerName}/status`)).then((statusSnap) => {
               const partnerStatus = statusSnap.val() || 'offline';
@@ -2451,11 +2579,10 @@
           linkBtn.className = "flex-1 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold";
           fileContainer.classList.add('hidden');
           linkContainer.classList.remove('hidden');
-          priceContainer.classList.add('hidden'); // Free for YouTube link
+          priceContainer.classList.add('hidden'); 
       }
   };
 
-  // Robust YouTube ID extractor
   function getYouTubeId(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -2514,7 +2641,7 @@
               if(!ytId) { alert("Invalid YouTube URL!"); spinner.classList.add('hidden'); return; }
               videoUrl = `https://www.youtube.com/embed/${ytId}`;
               isYt = true;
-              uploadPrice = 0; // Free
+              uploadPrice = 0; 
           }
 
           if(!videoUrl) { throw new Error("Video upload failed."); }
@@ -2529,11 +2656,10 @@
               thumbnailUrl = "https://i.ibb.co/NdgYcgqd/file-0000000071047208aff42164a8f71ba7.png";
           }
 
-          // Push to Firebase Realtime Database
           const videoRef = push(ref(db, 'videos'));
           await set(videoRef, {
               title: title,
-              type: type, // 'short' (Reel) or 'long' (Video)
+              type: type, 
               category: category,
               videoUrl: videoUrl,
               thumbnailUrl: thumbnailUrl,
@@ -2673,7 +2799,7 @@
       } else {
           longs.forEach(video => {
               longsContainer.insertAdjacentHTML('beforeend', `
-                  <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-gray-800 cursor-pointer transition active:scale-98" onclick="playLongVideo('${video.videoUrl}')">
+                  <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-md border border-gray-800 cursor-pointer transition active:scale-98 animate-fade-up" onclick="playLongVideo('${video.videoUrl}')">
                       <div class="aspect-video relative">
                           <img src="${video.thumbnailUrl}" class="w-full h-full object-cover">
                           <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
