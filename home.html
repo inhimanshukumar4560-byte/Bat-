@@ -159,6 +159,22 @@
               transform: translateX(20px);
           }
       </style>
+
+<!-- OneSignal Web SDK Integration -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(async function() {
+    await OneSignal.init({
+      appId: "a4ca094e-be2d-4408-9b62-ab78f2fd4a2d", // OneSignal App ID
+    });
+    // Auto login OneSignal if user is already saved in localStorage
+    const storedUser = localStorage.getItem("zingoo_user");
+    if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
+        await OneSignal.login(storedUser);
+    }
+  });
+</script>
 </head>
 <body class="bg-zingoo-bg text-gray-900 relative overflow-x-hidden font-body-md antialiased pb-24 min-h-screen">
 
@@ -1531,8 +1547,30 @@
       update(ref(db, `users/${currentUser}/services`), { [service]: isActive });
   };
 
+  function cleanOldNotifications() {
+      if (!currentUser) return;
+      const notifRef = ref(db, `notifications/${currentUser}`);
+      get(notifRef).then((snapshot) => {
+          if(snapshot.exists()) {
+              const notifications = snapshot.val();
+              const now = Date.now();
+              const oneDayInMs = 24 * 60 * 60 * 1000;
+              let updates = {};
+              Object.entries(notifications).forEach(([key, n]) => {
+                  if(n.timestamp && (now - n.timestamp > oneDayInMs)) {
+                      updates[`notifications/${currentUser}/${key}`] = null;
+                  }
+              });
+              if(Object.keys(updates).length > 0) {
+                  update(ref(db), updates);
+              }
+          }
+      }).catch(err => console.error("Notification cleanup error:", err));
+  }
+
   function listenToUserData() {
       if (!currentUser) return;
+      cleanOldNotifications(); // Clean up expired notifications on load
       onValue(ref(db, `users/${currentUser}`), (snapshot) => {
           const data = snapshot.val();
           if(data) {
@@ -1769,10 +1807,7 @@
       if(isHidden) {
           renderNotificationDropdownList();
           dropdown.classList.remove('hidden');
-          // Instantly delete notifications from Firebase database once user sees them
-          if(currentUser) {
-              remove(ref(db, `notifications/${currentUser}`));
-          }
+          // Dropdown open hone par direct delete nahi hoga taaki manually clear karne par hi hate
       } else {
           dropdown.classList.add('hidden');
       }
@@ -2138,6 +2173,11 @@
       authOverlay.style.display = "flex";
       document.body.style.overflow = "hidden";
   } else {
+      if (window.OneSignal) {
+          OneSignal.push(async function() {
+              await OneSignal.login(currentUser);
+          });
+      }
       listenToUserData();
       listenForIncomingCalls(); 
       initPresence();
@@ -2225,6 +2265,12 @@
           
           currentUser = name; currentId = newId; currentAvatar = finalAvatar;
           
+          if (window.OneSignal) {
+              OneSignal.push(async function() {
+                  await OneSignal.login(name);
+              });
+          }
+
           listenToUserData(); 
           authOverlay.style.display = "none";
           document.body.style.overflow = "auto";
@@ -2832,6 +2878,23 @@
       window.location.href = payUrl;
   };
 
+  document.getElementById('chat-panel-overlay').addEventListener('click', (e) => {
+      if (e.target.closest('.chat-input-box-wrapper')) return; 
+      document.getElementById('chat-panel-overlay').classList.remove('active');
+      document.getElementById('mainBottomUI').style.display = 'block';
+  });
+
+  // Global click event to dismiss the notification dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('notification-dropdown');
+      const trigger = document.getElementById('notification-trigger');
+      if (dropdown && !dropdown.classList.contains('hidden')) {
+          if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+              dropdown.classList.add('hidden');
+          }
+      }
+  });
+});
 </script>
 </body>
 </html>
